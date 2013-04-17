@@ -2,6 +2,7 @@ custom.el
 elpa
 *.elc
 tmp
+tramp
 
 # manually installed stable org-mode
 site-lisp/_extras/org-*
