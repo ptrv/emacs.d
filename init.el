@@ -102,13 +102,10 @@
 (require 'cl)
 (load "~/.emacs-locals.el" 'noerror)
 (require 'my-secrets)
-(require 'ptrv-package)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmacro Xlaunch (&rest x)
-  (list 'if (eq window-system 'x) (cons 'progn x)))
-
-(setq ptrv-pkg
+(setq ptrv-pkgs
       '(ptrv-backup
+        ptrv-package
         ptrv-builtins
         ptrv-defuns
         ptrv-look-and-feel
@@ -151,17 +148,20 @@
 
 (cond
  ((eq system-type 'darwin)
-  (setq ptrv-pkg (append ptrv-pkg '(ptrv-osx))))
+  (setq ptrv-pkgs (append ptrv-pkgs '(ptrv-osx))))
  ((eq system-type 'gnu/linux)
-  (setq ptrv-pkg
-        (append ptrv-pkg '(ptrv-supercollider
-                           ptrv-python
-                           ptrv-c
-                           ptrv-linux
+  (setq ptrv-pkgs
+        (append ptrv-pkgs '(ptrv-supercollider
+                            ptrv-python
+                            ptrv-c
+                            ptrv-linux
                            )))))
 
-(dolist (file ptrv-pkg)
+(dolist (file ptrv-pkgs)
   (require file))
+
+(defmacro Xlaunch (&rest x)
+  (list 'if (eq window-system 'x) (cons 'progn x)))
 
 (Xlaunch (require 'ptrv-x11) )
 
