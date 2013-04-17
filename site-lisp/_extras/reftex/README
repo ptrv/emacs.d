@@ -1,0 +1,42 @@
+This is the README file for the RefTeX distribution.
+
+  Copyright (C) 2007 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+RefTeX is a specialized package for support of labels, references,
+citations, and the index in LaTeX.  RefTeX wraps itself round 4 LaTeX
+macros: \label, \ref, \cite, and \index.  Using these macros usually
+requires looking up different parts of the document and searching
+through BibTeX database files.  RefTeX automates these time-consuming
+tasks almost entirely.  It also provides functions to display the
+structure of a document and to move around in this structure quickly.
+
+RefTeX is part of Emacs (version 20.2 and later) and is distributed as
+one of the XEmacs packages.  If you use an earlier version of Emacs,
+this kit can be used to install RefTeX.
+
+For installation instructions refer to the file INSTALL included in
+the distribution.  Further documentation can be found in the manual of
+RefTeX available after installation by typing the command `C-h i d m
+reftex RET' from within Emacs.  The file INSTALL explains how to
+generate the manual in other formats than info.
+
+RefTeX was written by Carsten Dominik and others and is currently
+maintained by the AUCTeX project.  Distribution files, source code,
+and an online manual are accessible through the home page of RefTeX at
+<URL:http://www.gnu.org/software/auctex/reftex.html>.
+
+If you have questions about RefTeX, you can send email to
+<auctex@gnu.org>.  If you want to contribute code or ideas, write to
+<auctex-devel@gnu.org>.  And in the rare case of finding a bug, please
+use `M-x reftex-report-bug RET' which will prepare a bug report with
+useful information about your setup.  Remember to add essential
+information like a recipe for reproducing the bug, what you expected
+to happen, and what actually happened.  Send the bug report to
+<bug-auctex@gnu.org>.
+
+For copying conditions please refer to the file COPYING contained in
+the distribution.

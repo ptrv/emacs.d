@@ -1,0 +1,41 @@
+This is the RELEASE file for the RefTeX distribution.
+
+  Copyright (C) 2009 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+Release Notes for RefTeX 4.34 (2009-08-09)
+==========================================
+
+RefTeX is a specialized package for support of labels, references,
+citations, and the index in LaTeX.  RefTeX wraps itself around four
+LaTeX macros: \label, \ref, \cite, and \index.  Using these macros
+usually requires looking up different parts of the document and
+searching through BibTeX database files.  RefTeX automates these
+time-consuming tasks almost entirely.  It also provides functions to
+display the structure of a document and to move around in this
+structure quickly.
+
+New Features and Bug Fixes
+--------------------------
+
+Reference styles make it easier to use special referencing macros as
+provided by the `varioref', `fancyref' or `hyperref' LaTeX packages.
+The creation of BibTeX files with `reftex-create-bibtex-file' now
+recognizes cross-referenced entries and @string definitions.  See also
+the CHANGES file for a description of other changes.
+
+Availability
+------------
+
+RefTeX can be downloaded from <URL:ftp://ftp.gnu.org/gnu/reftex/>.
+For installation instructions please refer to the INSTALL file.  You
+will find more information about RefTeX including an online version of
+the manual and links to mailing lists on its home page at
+<URL:http://www.gnu.org/software/auctex/reftex.html>.
+
+Local Variables:
+mode: text
+End:

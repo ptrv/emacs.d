@@ -1,0 +1,35 @@
+@c This is part of the RefTeX manual.
+@c Copyright (C) 2007 Free Software Foundation, Inc.
+@c See file reftex.texi for copying conditions.
+@ifclear macros
+@set macros
+@ifnottex
+@macro LaTeX {}
+La@TeX{}
+@end macro
+@macro RefTeX {}
+Ref@TeX{}
+@end macro
+@macro AUCTeX {}
+AUC@TeX{}
+@end macro
+@macro BibTeX {}
+Bib@TeX{}
+@end macro
+@macro ConTeXt {}
+Con@TeX{}t
+@end macro
+@end ifnottex
+@tex
+\gdef\LaTeX{L\kern-.36em\raise.3ex\hbox{\sc{a}}\kern-.15em\TeX}
+\gdef\RefTeX{Ref\TeX}
+\gdef\AUCTeX{AUC\TeX}
+\gdef\BibTeX{Bib\TeX}
+\gdef\ConTeXt{Con\TeX t}
+@end tex
+@end ifclear
+
+@c Local Variables: 
+@c mode: texinfo
+@c TeX-master: "reftex"
+@c End: 

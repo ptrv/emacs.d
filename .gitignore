@@ -1,0 +1,7 @@
+custom.el
+elpa
+*.elc
+tmp
+
+# manually installed stable org-mode
+site-lisp/_extras/org-*

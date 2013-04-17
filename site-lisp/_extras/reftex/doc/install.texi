@@ -1,0 +1,124 @@
+@c This is part of the RefTeX manual.
+@c Copyright (C) 2007 Free Software Foundation, Inc.
+@c See file reftex.texi for copying conditions.
+@ifset rawfile
+@include macros.texi
+@raisesections
+@raisesections
+@end ifset
+
+@subsection Building and Installing
+
+Note: Currently installation is supported for Emacs only.  XEmacs users
+might want to refer to the @RefTeX{} package available through the
+package system of XEmacs.
+
+@subsubheading Installation with make
+
+In order to install RefTeX, unpack the distribution and edit the header
+of the Makefile.  Basically, you need to change the path specifications
+for Emacs Lisp files and info files.  Also, enter the name of your Emacs
+executable (usually either @samp{emacs} or @samp{xemacs}).
+
+Then, type 
+
+@example
+make
+make install
+@end example
+
+to compile and install the code and documentation.
+
+Per default @RefTeX{} is installed in its own subdirectory which might
+not be on your load path.  In this case, add it to load path with a
+command like the following, replacing the sample directory with the one
+where @RefTeX{} is installed in your case.
+
+@example
+(add-to-list 'load-path "/path/to/reftex")
+@end example
+
+Put this command into your init file before other @RefTeX{}-related
+settings.
+
+@subsubheading Installation by Hand
+
+If you want to get your hands dirty, there is also the possibility to
+install by manually copying files.
+
+@enumerate a
+@item
+Copy the reftex*.el lisp files to a directory on your load path.  Make
+sure that no old copy of @RefTeX{} shadows these files.
+@item
+Byte compile the files.  The sequence of compiling should be:
+reftex-var.el, reftex.el, and then all the others.
+@item
+Copy the info file reftex.info to the info directory.
+@end enumerate
+
+@subsection Loading @RefTeX{}
+
+In order to make the most important functions for entering @RefTeX{}
+mode available add the following line to your init file.
+
+@example
+(require 'reftex)
+@end example
+
+@subsection Entering @RefTeX{} Mode
+
+@findex turn-on-reftex
+@findex reftex-mode
+@vindex LaTeX-mode-hook
+@vindex latex-mode-hook
+To turn @RefTeX{} Mode on and off in a particular buffer, use
+@kbd{M-x reftex-mode @key{RET}}.  To turn on @RefTeX{} Mode for all
+LaTeX files, add the following lines to your @file{.emacs} file:
+
+@example
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode
+(add-hook 'latex-mode-hook 'turn-on-reftex)   ; with Emacs latex mode
+@end example
+
+That's all!
+
+To get started, read the documentation, in particular the
+@ifset rawfile
+section RefTeX in a Nutshell in the manual.
+@end ifset
+@ifclear rawfile
+summary. (@pxref{RefTeX in a Nutshell})
+@end ifclear
+
+In order to produce a printed version of the documentation, use
+@code{make pdf} to produce a reftex.pdf file.  Analogously you can use
+the @code{dvi}, @code{ps}, or @code{html} targets to create DVI,
+PostScript or HTML files.
+
+@subsection Environment
+@cindex Finding files
+@cindex BibTeX database files, not found
+@cindex TeX files, not found
+@cindex @code{TEXINPUTS}, environment variable
+@cindex @code{BIBINPUTS}, environment variable
+
+@RefTeX{} needs to access all files which are part of a multifile
+document, and the BibTeX database files requested by the
+@code{\bibliography} command.  To find these files, @RefTeX{} will
+require a search path, i.e. a list of directories to check.  Normally
+this list is stored in the environment variables @code{TEXINPUTS} and
+@code{BIBINPUTS} which are also used by @RefTeX{}.  However, on some
+systems these variables do not contain the full search path.  If
+@RefTeX{} does not work for you because it cannot find some files,
+@ifset rawfile
+see the section Finding Files in the manual.
+@end ifset
+@ifclear rawfile
+@xref{Finding Files}.
+@end ifclear
+
+@c Local Variables: 
+@c mode: texinfo
+@c TeX-master: "reftex"
+@c End: 

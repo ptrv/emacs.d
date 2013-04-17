@@ -1,0 +1,841 @@
+@c This is part of the RefTeX manual.
+@c Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+@c See file reftex.texi for copying conditions.
+@ifset rawfile
+@include macros.texi
+@end ifset
+Here is a list of recent changes to @RefTeX{}.
+
+@noindent @b{Version 4.34}
+
+@itemize @bullet
+@item
+The creation of @BibTeX{} files with @code{reftex-create-bibtex-file}
+now recognizes cross-referenced entries and @samp{@@string} definitions.
+@item
+@RefTeX{} now provides better options for defining and selecting special
+referencing macros like @samp{\vref} from the @samp{varioref} package,
+@samp{\fref} from the @samp{fancyref} package or @samp{\autoref} from
+the @samp{hyperref} package as well as page-referencing macros like
+@samp{\pageref}.
+@ifset rawfile
+See section Reference Styles in the manual
+@end ifset
+@ifclear rawfile
+@xref{Reference Styles},
+@end ifclear
+for details.
+@end itemize
+
+@noindent @b{Version 4.33}
+
+@itemize @bullet
+@item
+Update to GPLv3.
+@item
+Parse files are created in a way that does not interfere with recentf
+mode.
+@end itemize
+
+@noindent @b{Version 4.32}
+
+@itemize @bullet
+@item
+First release by @AUCTeX{} project.
+@item
+Installation routine rewritten after structure of source package
+changed.
+@item
+Activation of @RefTeX{} changed, so make sure you read the installation
+instructions and remove obsolete cruft related to @RefTeX{} from your
+init file.
+@item
+Fixed bug where point would end up in the wrong buffer when jumping
+between several @LaTeX{} and phrases buffers.
+@item
+Fixed bug where @BibTeX{} keys with hyphens were parsed incorrectly.
+@item
+Some performance improvements.
+@item
+The separator used between multiple citations in a \cite macro can now
+be changed by customizing the variable @code{reftex-cite-key-separator}.
+@end itemize
+
+@noindent @b{Version 4.28}
+
+@itemize @bullet
+@item
+Support for the Jurabib package.
+@item
+Improvements when selecting several items in a selection buffer.
+@end itemize
+
+@noindent @b{Version 4.27}
+
+@itemize @bullet
+@item
+Support for jurabib in `reftex-cite-format-builtin'.
+@item
+Bug fixes.
+@end itemize
+
+@noindent @b{Version 4.26}
+
+@itemize @bullet
+@item
+Support for global incremental search.
+@item
+Some improvements for XEmacs compatibility.
+@end itemize
+
+@noindent @b{Version 4.25}
+
+@itemize @bullet
+@item
+Fixed bug with @samp{%F} in a label prefix.  Added new escapes
+@samp{%m} and @samp{%M} for mater file name and master directory.
+@end itemize
+
+@noindent @b{Version 4.24}
+
+@itemize @bullet
+@item 
+Inserting citation commands now prompts for optional arguments
+when called with a prefix argument.  Related new options are
+@code{reftex-cite-prompt-optional-args} and
+@code{reftex-cite-cleanup-optional-args}. 
+@item
+New option @code{reftex-trust-label-prefix}.  Configure this variable
+if you'd like RefTeX to base its classification of labels on prefixes.
+This can speed-up document parsing, but may in some cases reduce the
+quality of the context used by RefTeX to describe a label.
+@item
+Fixed bug in @code{reftex-create-bibtex-file} when @code{reftex-comment-citations}
+is non-nil.
+@item
+Fixed bugs in indexing: Case-sensitive search, quotes before and/or
+after words.  Disabled indexing in comment lines.
+@end itemize
+
+@noindent @b{Version 4.22}
+
+@itemize @bullet
+@item 
+New command @code{reftex-create-bibtex-file} to create a new database
+with all entries referenced in the current document.
+@item
+New keys @kbd{e} and @kbd{E} allow to produce a BibTeX database file
+from entries marked in a citation selection buffer.
+@end itemize
+
+@noindent @b{Version 4.21}
+
+@itemize @bullet
+@item 
+Renaming labels from the toc buffer with key @kbd{M-%}.
+@end itemize
+
+@noindent @b{Version 4.20}
+
+@itemize @bullet
+@item
+Structure editing capabilities.  The command keys @kbd{<} and @kbd{>} in
+the TOC buffer promote/demote the section at point or all sections in
+the current region.
+@item
+New option @code{reftex-toc-split-windows-fraction} to set the size of
+the window used by the TOC.  This makes the old variable
+@code{reftex-toc-split-windows-horizontally-fraction} obsolete.
+@item
+A dedicated frame can show the TOC with the current section
+always automatically highlighted.  The frame is created and
+deleted from the toc buffer with the @kbd{d} key.
+@end itemize
+
+@noindent @b{Version 4.19}
+
+@itemize @bullet
+@item
+New command `reftex-toc-recenter' (@kbd{C-c -}) which shows the current
+section in the TOC buffer without selecting the TOC window.
+@item
+Recentering happens automatically in idle time when the option
+@code{reftex-auto-recenter-toc} is turned on.
+@item
+Fixed several bugs related to automatic cursor positioning in the TOC
+buffer.
+@item
+The highlight in the TOC buffer stays when the focus moves to a
+different window.
+@item
+New command `reftex-goto-label'.
+@item
+Part numbers are no longer included in chapter numbers, and a new
+part does not reset the chapter counter.  See new option
+@code{reftex-part-resets-chapter}.
+@end itemize
+
+@noindent @b{Version 4.18}
+
+@itemize @bullet
+@item
+@code{reftex-citation} uses the word before the cursor as a default
+search string.
+@item
+Simplified several regular expressions for speed.
+@item
+Better support for chapterbib.  Different chapters can now use BibTeX or
+an explicit @code{thebibliography} environment.
+@end itemize
+
+@noindent @b{Version 4.17}
+
+@itemize @bullet
+@item
+The toc window can be split off horizontally.  See new options
+@code{reftex-toc-split-windows-horizontally},
+@code{reftex-toc-split-windows-horizontally-fraction}.
+@item
+It is possible to specify a function which verifies an index match
+during global indexing.  See new option @code{reftex-index-verify-function}.
+@item
+The macros which input a file in LaTeX (like \input, \include) can
+be configured.  See new option @code{reftex-include-file-commands}.
+@item
+The macros which specify the bibliography file (like \bibliography) can
+be configured.  See new option @code{reftex-bibliography-commands}.
+@item
+The regular expression used to search for the \bibliography macro has
+been relaxed to allow for @samp{@{\bibliography@{...@}@}} needed by
+chapterbib.
+@item
+Small bug fixes.
+@end itemize
+
+@noindent @b{Version 4.15}
+
+@itemize @bullet
+@item
+Fixed bug with parsing of BibTeX files, when fields contain quotes or
+unmatched parenthesis.
+@item
+Small bug fixes.
+@item
+Improved interaction with Emacs LaTeX mode.
+@end itemize
+
+@noindent @b{Version 4.14}
+
+@itemize @bullet
+@item
+Ensure write access to all files before doing global label replace.
+@item
+Fixed bug which would parse @samp{\partial} as @samp{\part}.
+@end itemize
+
+@noindent @b{Version 4.12}
+
+@itemize @bullet
+@item
+Support for @file{bibentry} citation style.
+@end itemize
+
+@noindent @b{Version 4.11}
+
+@itemize @bullet
+@item
+Fixed bug which would parse @samp{\Section} just like @samp{\section}.
+@end itemize
+
+@noindent @b{Version 4.10}
+
+@itemize @bullet
+@item
+Renamed @file{reftex-vcr.el} to @file{reftex-dcr.el} because of conflict
+with @file{reftex-vars.el} on DOS machines.
+@item
+New options @code{reftex-parse-file-extension} and
+@code{reftex-index-phrase-file-extension}.
+@end itemize
+
+@noindent [.....]
+@ignore
+@noindent @b{Version 4.09}
+@itemize @bullet
+@item
+New option @code{reftex-toc-max-level} to limit the depth of the toc.
+New key binding @kbd{t} in the @file{*toc*} buffer to change this
+setting.
+@item
+RefTeX maintains an @file{Index Phrases} file in which phrases can be
+collected.  When the document is ready, RefTeX can search all
+these phrases and assist indexing all matches.
+@item
+The variables @code{reftex-index-macros} and
+@code{reftex-index-default-macro} have changed their syntax slightly.
+The @var{repeat} parameter has move from the latter to the former.
+Also calls to @code{reftex-add-index-macros} from AUCTeX style files
+need to be adapted.
+@item
+The variable @code{reftex-section-levels} no longer contains the
+default stuff which has been moved to a constant.
+@item
+Environments like theorems can be placed into the TOC by putting
+entries for @samp{"begin@{theorem@}"} in
+@code{reftex-section-levels}.
+@end itemize
+
+@noindent @b{Version 4.07}
+@itemize @bullet
+@item
+New option @code{reftex-toc-max-level} to limit the depth of the toc.
+The @kbd{t} key in the *toc* and *RefTeX Select* buffers also changes
+this variable.
+@end itemize
+
+@noindent @b{Version 4.06}
+@itemize @bullet
+@item
+@code{reftex-section-levels} can contain a function to compute the level
+of a sectioning command.
+@item
+Multiple @code{thebibliography} environments recognized.
+@end itemize
+
+@noindent @b{Version 4.04}
+@itemize @bullet
+@item
+New option @code{reftex-index-default-tag} implements a default for queries.
+@end itemize
+
+@noindent @b{Version 4.02}
+@itemize @bullet
+@item
+macros ending in @samp{refrange} are considered to contain references.
+@item
+Index entries made with @code{reftex-index-selection-or-word} in TeX
+math mode automatically get enclosing @samp{$} to preserve math mode.  See
+new option @code{reftex-index-math-format}.  Requires AUCTeX.
+@end itemize
+
+@noindent @b{Version 4.01}
+@itemize @bullet
+@item
+New command @code{reftex-index-globally} to index a word in many
+places in the document.  Also available from the index buffer with
+@kbd{&}.
+@item
+The first item in a @code{reftex-label-alist} entry may now also be a parser
+function to do non-standard parsing.
+@item
+@code{reftex-auto-view-crossref} no longer interferes with
+@code{pop-up-frames} (patch from Stefan Monnier).
+@end itemize
+
+@noindent @b{Version 4.00}
+@itemize @bullet
+@item
+RefTeX has been split into several smaller files which are autoloaded on
+demand.
+@item
+Index support, along with many new options.
+@item
+The selection of keys for @code{\ref} and @code{\cite} now allows to
+select multiple items by marking entries with the @kbd{m} key.
+@item
+Fancyref support.
+@end itemize
+
+@noindent @b{Version 3.43}
+@itemize @bullet
+@item
+Viewing cross-references generalized.  Now works on @code{\label},
+@code{\ref}, @code{\cite}, @code{\bibitem}, @code{\index}, variations of
+these, and from BibTeX buffers.
+@item
+New option @code{reftex-view-crossref-extra}.
+@item
+Support for the additional sectioning commands @code{\addchap} and
+@code{\addsec} which are defined in the LaTeX KOMA-Script classes.
+@item
+Files in @code{reftex-default-bibliography} will be searched along
+@code{BIBINPUTS} path.
+@item
+Reading a parse file now checks consistency.
+@end itemize
+
+@noindent @b{Version 3.42}
+@itemize @bullet
+@item
+File search further refined.  New option @code{reftex-file-extensions}.
+@item
+@file{*toc*} buffer can show the file boundaries of a multifile
+document, all labels and associated context.  New keys @kbd{i}, @kbd{l},
+and @kbd{c}.  New options @code{reftex-toc-include-labels},
+@code{reftex-toc-include-context},
+@code{reftex-toc-include-file-boundaries}. 
+@end itemize
+
+@noindent @b{Version 3.41}
+@itemize @bullet
+@item
+New options @code{reftex-texpath-environment-variables},
+@code{reftex-use-external-file-finders},
+@code{reftex-external-file-finders},
+@code{reftex-search-unrecursed-path-first}.
+@item
+@emph{kpathsearch} support.  See new options and
+@code{reftex-bibpath-environment-variables}.
+@end itemize
+
+@noindent @b{Version 3.38}
+@itemize @bullet
+@item
+@code{reftex-view-crossref} no longer moves to find a macro.  Point has
+to be on the macro argument.
+@item
+Bug fix for XEmacs selection process.
+@end itemize
+
+@noindent @b{Version 3.36}
+@itemize @bullet
+@item
+New value @code{window} for option @code{reftex-auto-view-crossref}.
+@end itemize
+
+@noindent @b{Version 3.35}
+@itemize @bullet
+@item
+ISO 8859 Latin-1 chars are converted to ASCII to derive better labels.
+This takes back the related changes in 3.34 for safety reasons.
+@end itemize
+
+@noindent @b{Version 3.34}
+@itemize @bullet
+@item
+Additional flag in @code{reftex-derive-label-parameters} do make only
+lowercase labels (default @code{t}).
+@item
+All @file{.rel} files have a final newline to avoid queries.
+@item
+Single byte representations of accented European letters (ISO-8859-1)
+are now valid in labels.
+@end itemize
+
+@noindent @b{Version 3.33}
+@itemize @bullet
+@item
+Multiple selection buffers are now hidden buffers (they start with a
+SPACE).
+@item
+Fixed bug with file search when TEXINPUTS environment variable is empty.
+@end itemize
+
+@noindent @b{Version 3.30}
+@itemize @bullet
+@item
+In @code{reftex-citation}, the regular expression used to scan BibTeX
+files can be specified using completion on known citation keys.
+@item
+New keys @kbd{a} and @kbd{A} in BibTeX selection process to cite @emph{all}
+entries.
+@item
+New command @code{reftex-renumber-simple-labels} to renumber simple
+labels like @samp{eq:13} sequentially through a document.
+@end itemize
+
+@noindent @b{Version 3.28}
+@itemize @bullet
+@item
+Auto view crossref for XEmacs uses @code{post-command-hook} to restart the
+timer, since itimer restart is not reliable.
+@item
+Option @code{reftex-bibfile-ignore-list} renamed to @code{-regexps}.
+@item
+Expansion of recursive tex and bib path rewritten.
+@item
+Fixed problem where @b{Ref@TeX{}} did not scan unsaved buffers.
+@item
+Fixed bug with section numbering after *-red sections.
+@end itemize
+
+@noindent @b{Version 3.27}
+@itemize @bullet
+@item
+Macros can define @emph{neutral} labels, just like @code{\label}
+itself.
+@item
+New option @code{reftex-allow-detached-macro-args}, default @code{nil}!
+@end itemize
+
+@noindent @b{Version 3.26}
+@itemize @bullet
+@item
+[X]Emacs 19 no longer supported.  Use 3.22 for Emacs 19.
+@item
+New hooks @code{reftex-translate-to-ascii-function},
+@code{reftex-string-to-label-function}.
+@item
+Made sure automatic crossref display will not visit/scan files.
+@end itemize
+
+@noindent @b{Version 3.25}
+@itemize @bullet
+@item
+Echoing of citation info caches the info for displayed entries.
+New option @code{reftex-cache-cite-echo}.
+@item
+@kbd{M-x reftex-reset-mode} now also removes the file with parsing
+info.
+@item
+Default of @code{reftex-revisit-to-follow} changed to nil.
+@end itemize
+
+@noindent @b{Version 3.24}
+@itemize @bullet
+@item
+New option @code{reftex-revisit-to-echo}.
+@item
+Interface with X-Symbol (>=2.6) is now complete and stable.
+@item
+Adapted to new outline, which uses overlays.
+@item
+File names in @code{\bibliography} may now have the @code{.bib}
+extension.
+@item
+Fixed Bug with parsing "single file" from master file buffer.
+@end itemize
+
+@noindent @b{Version 3.23}
+@itemize @bullet
+@item
+Parse files @file{MASTER.rel} made compatible between Emacs and XEmacs.
+@item
+@code{kill-emacs-hook} and @code{kill-buffer-hook} now write the parse
+file.
+@item
+The cursor inside a @code{\ref} or @code{\cite} macro can now trigger
+automatic display of crossref information in the echo area.  See
+variable @code{reftex-auto-view-crossref}.
+@item
+AUCTeX interface updates:
+@itemize @minus
+@item
+AUCTeX 9.9c and later notifies @b{Ref@TeX{}} about new sections.
+@item
+@b{Ref@TeX{}} notifies AUCTeX about new labels.
+@item
+@code{TeX-arg-ref} no longer used (introduction was unnecessary).
+@item
+@code{reftex-arg-label} and @code{reftex-arg-cite} fixed up.
+@item
+Settings added to @b{Ref@TeX{}} via style files remain local.
+@end itemize
+@item
+Fixed bug with @code{reftex-citation} in non-latex buffers.
+@item
+Fixed bug with syntax table and context refontification.
+@item
+Safety-net for name change of @code{font-lock-reference-face}.
+@end itemize
+
+@noindent @b{Version 3.22}
+@itemize @bullet
+@item
+Fixed bug with empty context strings.
+@item
+@code{reftex-mouse-view-crossref} is now bound by default at
+@kbd{S-mouse-2}.
+@end itemize
+
+@noindent @b{Version 3.21}
+@itemize @bullet
+@item
+New options for all faces used by @b{Ref@TeX{}}. They're in the
+customization group @code{reftex-fontification-configurations}.
+@end itemize
+
+@noindent @b{Version 3.19}
+@itemize @bullet
+@item
+Fixed bug with AUCTeX @code{TeX-master}.
+@end itemize
+
+@noindent @b{Version 3.18}
+@itemize @bullet
+@item
+The selection now uses a recursive edit, much like minibuffer input.
+This removes all restrictions during selection.  E.g. you can now
+switch buffers at will, use the mouse etc.
+@item
+New option @code{reftex-highlight-selection}.
+@item
+@kbd{mouse-2} can be used to select in selection and @file{*toc*}
+buffers.
+@item
+Fixed some problems regarding the interaction with VIPER mode.
+@item
+Follow-mode is now only used after point motion.
+@item
+@b{Ref@TeX{}} now finally does not fontify temporary files anymore.
+@end itemize
+
+@noindent @b{Version 3.17}
+@itemize @bullet
+@item
+Additional bindings in selection and @file{*toc*} buffers.  @kbd{g}
+redefined.
+@item
+New command @code{reftex-save-all-document-buffers}.
+@item
+Magic word matching made more intelligent.
+@item
+Selection process can switch to completion (with @key{TAB}).
+@item
+@code{\appendix} is now recognized and influences section numbering.
+@item
+File commentary shortened considerably (use Info documentation).
+@item
+New option @code{reftex-no-include-regexps} to skip some include files.
+@item
+New option @code{reftex-revisit-to-follow}.
+@end itemize
+
+@noindent @b{Version 3.16}
+@itemize @bullet
+@item
+New hooks @code{reftex-format-label-function},
+@code{reftex-format-ref-function}, @code{reftex-format-cite-function}.
+@item
+TeXInfo documentation completed.
+@item
+Some restrictions in Label inserting and referencing removed.
+@item
+New variable @code{reftex-default-bibliography}.
+@end itemize
+
+@noindent @b{Version 3.14}
+@itemize @bullet
+@item
+Selection buffers can be kept between selections: this is faster.
+See new variable @code{reftex-use-multiple-selection-buffers}.
+@item
+Prefix interpretation of reftex-view-crossref changed.
+@item
+Support for the @code{varioref} package (@kbd{v} key in selection
+buffer).
+@end itemize
+
+@noindent @b{Version 3.12}
+@itemize @bullet
+@item
+There are 3 new keymaps for customization: @code{reftex-toc-map},
+@code{reftex-select-label-map}, @code{reftex-select-bib-map}.
+@item
+Refontification uses more standard font-lock stuff.
+@item
+When no BibTeX database files are specified, citations can also use
+@code{\bibitem} entries from a @code{thebibliography} environment.
+@end itemize
+
+@noindent @b{Version 3.11}
+@itemize @bullet
+@item
+Fixed bug which led to naked label in (e.g.) footnotes.
+@item
+Added scroll-other-window functions to RefTeX-Select.
+@end itemize
+
+@noindent @b{Version 3.10}
+@itemize @bullet
+@item
+Fixed a bug which made reftex 3.07 fail on [X]Emacs version 19.
+@item
+Removed unimportant code which caused OS/2 Emacs to crash.
+@item
+All customization variables now accessible from menu.
+@end itemize
+
+@noindent @b{Version 3.07}
+@itemize @bullet
+@item
+@code{Ref} menu improved.
+@end itemize
+
+@noindent @b{Version 3.05}
+@itemize @bullet
+@item
+Compatibility code now first checks for XEmacs feature.
+@end itemize
+
+@noindent @b{Version 3.04}
+@itemize @bullet
+@item
+Fixed BUG in the @emph{xr} support.
+@end itemize
+
+@noindent @b{Version 3.03}
+@itemize @bullet
+@item
+Support for the LaTeX package @code{xr}, for inter-document
+references.
+@item
+A few (minor) Mule-related changes.
+@item
+Fixed bug which could cause @emph{huge} @file{.rel} files.
+@item
+Search for input and @file{.bib} files with recursive path definitions.
+@end itemize
+
+@noindent @b{Version 3.00}
+@itemize @bullet
+@item
+@b{Ref@TeX{}} should work better for very large projects:
+@itemize @bullet
+@item
+The new parser works without creating a master buffer.
+@item
+Rescanning can be limited to a part of a multifile document.
+@item
+Information from the parser can be stored in a file.
+@end itemize
+@item
+@b{Ref@TeX{}} can deal with macros having a naked label as an argument.
+@item
+Macros may have white space and newlines between arguments.
+@item
+Multiple identical section headings no longer confuse
+@code{reftex-toc}.
+@item
+@b{Ref@TeX{}} should work correctly in combination with buffer-altering
+packages like outline, folding, x-symbol, iso-cvt, isotex, etc.
+@item
+All labeled environments discussed in @emph{The LaTeX Companion} by
+Goossens, Mittelbach & Samarin, Addison-Wesley 1994) are part of
+@b{Ref@TeX{}}'s defaults.
+@end itemize
+
+@noindent @b{Version 2.17}
+@itemize @bullet
+@item
+Label prefix expands % escapes with current file name and other stuff.
+@item
+Citation format now with % escapes.  This is not backward
+compatible!
+@item
+TEXINPUTS variable recognized when looking for input files.
+@item
+Context can be the nth argument of a macro.
+@item
+Searching in the select buffer is now possible (@kbd{C-s} and
+@kbd{C-r}).
+@item
+Display and derive-label can use two different context methods.
+@item
+AMSmath @code{xalignat} and @code{xxalignat} added.
+@end itemize
+
+@noindent @b{Version 2.14}
+@itemize @bullet
+@item
+Variable @code{reftex-plug-into-AUCTeX} simplifies cooperation with
+AUCTeX.
+@end itemize
+
+@noindent @b{Version 2.11}
+@itemize @bullet
+@item
+Submitted for inclusion to Emacs and XEmacs.
+@end itemize
+
+@noindent @b{Version 2.07}
+@itemize @bullet
+@item
+New functions @code{reftex-search-document},
+@code{reftex-query-replace-document}.
+@end itemize
+
+@noindent @b{Version 2.05}
+@itemize @bullet
+@item
+Support for @file{custom.el}.
+@item
+New function @code{reftex-grep-document} (thanks to Stephen Eglen).
+@end itemize
+
+@noindent @b{Version 2.03}
+@itemize @bullet
+@item
+@code{figure*}, @code{table*}, @code{sidewaysfigure/table} added to
+default environments.
+@item
+@code{reftex-bibfile-ignore-list} introduced (thanks to Rory Molinari).
+@item
+New functions @code{reftex-arg-label}, @code{reftex-arg-ref},
+@code{reftex-arg-cite}.
+@item
+Emacs/XEmacs compatibility reworked.  XEmacs 19.15 now is
+required.
+@item
+@code{reftex-add-to-label-alist} (to be called from AUCTeX style
+files).
+@item
+Finding context with a hook function.
+@item
+Sorting BibTeX entries (new variable:
+@code{reftex-sort-bibtex-matches}).
+@end itemize
+
+@noindent @b{Version 2.00}
+@itemize @bullet
+@item
+Labels can be derived from context (default for sections).
+@item
+Configuration of label insertion and label referencing revised.
+@item
+Crossref fields in BibTeX database entries.
+@item
+@code{reftex-toc} introduced (thanks to Stephen Eglen).
+@end itemize
+
+@noindent @b{Version 1.09}
+@itemize @bullet
+@item
+Support for @code{tex-main-file}, an analogue for
+@code{TeX-master}.
+@item
+MS-DOS support.
+@end itemize
+
+@noindent @b{Version 1.07}
+@itemize @bullet
+@item
+@b{Ref@TeX{}} gets its own menu.
+@end itemize
+
+@noindent @b{Version 1.05}
+@itemize @bullet
+@item
+XEmacs port.
+@end itemize
+
+@noindent @b{Version 1.04}
+@itemize @bullet
+@item
+Macros as wrappers, AMSTeX support, delayed context parsing for
+new labels.
+@end itemize
+@end ignore
+
+@noindent @b{Version 1.00}
+
+@itemize @bullet
+@item
+released on 7 Jan 1997.
+@end itemize
+
+
+@c Local Variables: 
+@c mode: texinfo
+@c TeX-master: "reftex"
+@c End: 
