@@ -62,9 +62,9 @@
      (erc-default-face ((t (:foreground "dark green"))))
 
      ; NICK: add ido, and a bit of minibuffer colour.
-     (ido-first-match ((t (:foreground "black" :background "grey70"))))
-     (ido-only-match ((t (:foreground "black" :background "grey95"))))
-     (ido-subdir ((t (:foreground "white" :background "#758BC6" :bold t))))
+     (ido-first-match ((t (:foreground "black" :background "grey70" :bold t))))
+     (ido-only-match ((t (:foreground "dark green" :background "grey95" :bold t))))
+     (ido-subdir ((t (:foreground "white" :background "#104e8b" :bold t))))
      (ido-indicator ((t (:foreground "black" :background "deep pink"))))
      (minibuffer-prompt ((t (:foreground "dark blue" :background "grey85"))))
 
