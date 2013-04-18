@@ -36,6 +36,7 @@
 ;;(global-set-key (kbd "C-x f") 'live-recentf-ido-find-file)
 ;;(global-set-key (kbd "C-x f") 'recentf-open-files)
 ;; (global-set-key (kbd "C-x f") 'find-file-in-project)
+(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -189,10 +190,12 @@
 (global-set-key  (kbd "M-p") 'outline-previous-visible-heading)
 (global-set-key  (kbd "M-n") 'outline-next-visible-heading)
 
-;; (global-set-key (kbd "C-s") 'isearch-forward)
-;; (global-set-key (kbd "C-r") 'isearch-backward)
-;; (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
-;; (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "M-%") 'query-replace-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(global-set-key (kbd "M-C-%") 'query-replace)
 
 ;; Align your code in a pretty way.
 (global-set-key (kbd "C-x \\") 'align-regexp)
@@ -342,6 +345,9 @@
 
 (global-set-key (kbd "C-x j") 'dired-jump)
 (global-set-key (kbd "C-x 4 j") 'dired-jump-other-window)
+
+;; Help should search more than just commands
+(define-key 'help-command "a" 'apropos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
