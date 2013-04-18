@@ -37,7 +37,22 @@
 (add-to-list 'load-path (concat
                          (car (split-string (getenv "GOPATH") ":"))
                          "/src/github.com/nsf/gocode/emacs"))
-(require 'go-autocomplete)
+
+(eval-after-load "go-mode"
+  '(progn
+     (require 'go-autocomplete)
+     (defface ac-go-mode-candidate-face
+       '((t (:background "lightgray" :foreground "navy")))
+       "Face for go-autocomplete candidate"
+       :group 'auto-complete)
+     (defface ac-go-mode-selection-face
+       '((t (:background "navy" :foreground "white")))
+       "Face for the go-autocomplete selected candidate."
+       :group 'auto-complete)
+     (setcar (nthcdr 1 ac-source-go)
+             '(candidate-face . ac-go-mode-candidate-face))
+     (setcar (nthcdr 2 ac-source-go)
+             '(selection-face . ac-go-mode-selection-face))))
 
 (defun go-dot-complete ()
   "Insert dot and complete code at point."
@@ -46,10 +61,6 @@
   (unless (ac-cursor-on-diable-face-p)
     (auto-complete)))
 
-(setcar (nthcdr 1 ac-source-go)
-        '(candidate-face . ac-clang-candidate-face))
-(setcar (nthcdr 2 ac-source-go)
-        '(selection-face . ac-clang-selection-face))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compile fucntions
 (defun go-build ()
