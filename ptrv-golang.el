@@ -63,12 +63,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compile fucntions
-(defun go-build ()
+(defun go-cmd-build ()
   "compile project"
   (interactive)
   (compile "go build"))
 
-(defun go-test ()
+(defun go-cmd-test ()
   "test project"
   (interactive)
   (compile "go test -v"))
@@ -115,8 +115,8 @@
   (local-set-key (kbd "M-.") 'godef-jump)
   (define-key go-mode-map (kbd "C-c C-c c") 'go-run)
   (define-key go-mode-map (kbd "C-c C-c r") 'go-run-buffer)
-  (define-key go-mode-map (kbd "C-c C-c b") 'go-build)
-  (define-key go-mode-map (kbd "C-c C-c t") 'go-test)
+  (define-key go-mode-map (kbd "C-c C-c b") 'go-cmd-build)
+  (define-key go-mode-map (kbd "C-c C-c t") 'go-cmd-test)
   (define-key go-mode-map (kbd "C-c C-c g") 'go-chk)
   (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
   (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
