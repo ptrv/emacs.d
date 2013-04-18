@@ -24,7 +24,7 @@
 	url = https://github.com/ptrv/arduino-mode.git
 [submodule "site-lisp/org2blog"]
 	path = site-lisp/org2blog
-	url = https://github.com/punchagan/org2blog.git
+	url = https://github.com/ptrv/org2blog.git
     ignore = untracked
 [submodule "site-lisp/insert-time"]
 	path = site-lisp/insert-time
@@ -58,3 +58,6 @@
 [submodule "site-lisp/flycheck-go-alt"]
 	path = site-lisp/flycheck-go-alt
 	url = https://gist.github.com/5414276.git
+[submodule "site-lisp/metaweblog"]
+	path = site-lisp/metaweblog
+	url = https://github.com/punchagan/metaweblog.el.git
