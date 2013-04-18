@@ -3,6 +3,7 @@ elpa
 *.elc
 tmp
 tramp
+url/cookies
 
 # manually installed stable org-mode
 site-lisp/_extras/org-*
