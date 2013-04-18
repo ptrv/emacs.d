@@ -194,6 +194,10 @@
 (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; smooth-scrolling
+(setq smooth-scroll-margin 5)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-misc)
 ;;; ptrv-misc.el ends here
