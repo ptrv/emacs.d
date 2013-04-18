@@ -7,12 +7,15 @@
 [submodule "site-lisp/auto-complete-auctex"]
 	path = site-lisp/auto-complete-auctex
 	url = https://github.com/monsanto/auto-complete-auctex.git
+    ignore = untracked
 [submodule "site-lisp/emacs-faust-mode"]
 	path = site-lisp/emacs-faust-mode
 	url = https://github.com/ptrv/emacs-faust-mode.git
+    ignore = untracked
 [submodule "site-lisp/emacs-pcomplete-plugins"]
 	path = site-lisp/emacs-pcomplete-plugins
 	url = https://github.com/DamienCassou/emacs-pcomplete-plugins.git
+    ignore = untracked
 [submodule "site-lisp/processing2-emacs"]
 	path = site-lisp/processing2-emacs
 	url = https://github.com/ptrv/processing2-emacs.git
@@ -22,9 +25,11 @@
 [submodule "site-lisp/org2blog"]
 	path = site-lisp/org2blog
 	url = https://github.com/punchagan/org2blog.git
+    ignore = untracked
 [submodule "site-lisp/insert-time"]
 	path = site-lisp/insert-time
 	url = https://github.com/rmm5t/insert-time.el.git
+    ignore = untracked
 [submodule "site-lisp/chuck-mode"]
 	path = site-lisp/chuck-mode
 	url = https://github.com/ptrv/chuck-mode.git
@@ -34,15 +39,19 @@
 [submodule "site-lisp/kibit-mode"]
 	path = site-lisp/kibit-mode
 	url = https://github.com/aredington/kibit-mode.git
+    ignore = untracked
 [submodule "site-lisp/4clj-el"]
 	path = site-lisp/4clj-el
 	url = https://github.com/dcluna/4clj-el.git
+    ignore = untracked
 [submodule "site-lisp/org-present"]
 	path = site-lisp/org-present
 	url = https://github.com/rlister/org-present.git
+    ignore = untracked
 [submodule "site-lisp/emacs-clang-complete-async"]
 	path = site-lisp/emacs-clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
+    ignore = untracked
 [submodule "site-lisp/ibuffer-git"]
 	path = site-lisp/ibuffer-git
 	url = git://github.com/jrockway/ibuffer-git
