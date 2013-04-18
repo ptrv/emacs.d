@@ -188,10 +188,6 @@
 ;; (defun flymake-get-tex-args (file-name)
 ;;   (list "pdflatex" (list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
 
-(require 'auto-complete-auctex)
-
-(define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
-(define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
 
 (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
 
@@ -212,8 +208,11 @@
  :doc-spec '(("(latex2e)Concept Index" )
              ("(latex2e)Command Index")))
 
-(eval-after-load 'latex-mode
+(eval-after-load "latex"
   '(progn
+     (require 'auto-complete-auctex)
+     (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
+     (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
      (require 'pstricks)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
