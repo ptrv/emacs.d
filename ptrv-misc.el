@@ -182,6 +182,7 @@
       '(("github\\.com" . gfm-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; projectile
 
 (projectile-global-mode)
 

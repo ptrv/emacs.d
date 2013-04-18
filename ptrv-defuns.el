@@ -132,8 +132,7 @@ Symbols matching the text at point are put first in the completion list."
 ;; Makes load time faster.
 (defun byte-recompile-home ()
   (interactive)
-  ;;(byte-recompile-directory "~/.emacs.d" 0)
-  (byte-recompile-directory ptrv-pack-root-dir 0))
+  (byte-recompile-directory "~/.emacs.d" 0))
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil

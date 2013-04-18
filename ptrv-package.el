@@ -127,6 +127,7 @@
                         nrepl-eval-sexp-fu
                         mwe-log-commands
                         uuid
+                        idomenu
                         )
   "A list of packages to ensure are installed at launch.")
 

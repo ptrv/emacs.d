@@ -49,6 +49,7 @@
                          (define-key map (kbd "C-g")     'yas-abort-snippet)
                          (define-key map (kbd "C-d")     'yas-skip-and-clear-or-delete-char)
                          map))
+     (require 'dropdown-list)
      (setq yas-prompt-functions '(yas-dropdown-prompt
                                   yas-ido-prompt
                                   yas-x-prompt

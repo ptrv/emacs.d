@@ -38,8 +38,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(add-hook 'emacs-lisp-mode-hook (lambda () (flycheck-mode -1)))
-(add-hook 'lisp-interaction-mode (lambda () (flycheck-mode -1)))
+(add-hook 'emacs-lisp-mode-hook #'(lambda () (flycheck-mode -1)))
+(add-hook 'lisp-interaction-mode #'(lambda () (flycheck-mode -1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
