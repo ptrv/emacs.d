@@ -538,6 +538,15 @@ file of a buffer in an external program."
 (defun ptrv-user-first-name-p ()
   (not (string-equal "" (ptrv-user-first-name))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
+(defun conditionally-enable-paredit-mode ()
+  "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
+  (if (eq this-command 'eval-expression)
+      (enable-paredit-mode)))
+
+(add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-defuns)
 ;;; ptrv-defuns.el ends here
