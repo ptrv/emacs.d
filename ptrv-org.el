@@ -51,35 +51,34 @@
 ;;(setq org-clock-idle-time 10)
 (setq org-src-fontify-natively nil)
 ;; Override
-(add-hook 'org-mode-hook
-          (lambda()
-            (local-set-key [(control meta return)] 'org-insert-heading)
-            (local-set-key [(control shift left)] 'previous-buffer)
-            (local-set-key [(control shift right)] 'next-buffer)
-            ;; (local-set-key [(meta shift right)] 'ido-switch-buffer)
-            ;; (local-set-key [(meta shift left)] 'magit-status)
-            (auto-complete-mode -1)
-            )
-          )
 
-(add-hook 'org-mode-hook 'turn-off-flyspell)
-;; (add-hook 'org-mode-hook
-;;           (lambda ()
-;;             (make-variable-buffer-local 'yas/trigger-key)
-;;             (org-set-local 'yas/trigger-key [tab])
-;;             (define-key yas/keymap [tab] 'yas/next-field-group)))
 
-;; (defun yas/org-very-safe-expand ()
-;;   (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; yasnippet workaround
+(defun yas/org-very-safe-expand ()
+  (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
 
-;; (add-hook 'org-mode-hook
-;;           (lambda ()
-;;             ;; yasnippet (using the new org-cycle hooks)
-;;             (make-variable-buffer-local 'yas/trigger-key)
-;;             (setq yas/trigger-key [tab])
-;;             (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-;;             (define-key yas/keymap [tab] 'yas/next-field)))
+(defun org-mode-yasnippet-workaround ()
+  (make-variable-buffer-local 'yas/trigger-key)
+  (setq yas/trigger-key [tab])
+  (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+  (define-key yas/keymap [tab] 'yas/next-field))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun org-mode-init ()
+  (local-set-key [(control meta return)] 'org-insert-heading)
+  (local-set-key [(control shift left)] 'previous-buffer)
+  (local-set-key [(control shift right)] 'next-buffer)
+  ;; (local-set-key [(meta shift right)] 'ido-switch-buffer)
+  ;; (local-set-key [(meta shift left)] 'magit-status)
+  (auto-complete-mode -1)
+  (turn-off-flyspell)
+  (org-mode-yasnippet-workaround))
+
+(add-hook 'org-mode-hook 'org-mode-init)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
 (setq org-default-notes-file "~/Dropbox/org/captures.org")
 
