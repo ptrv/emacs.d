@@ -93,8 +93,8 @@
                    t))
     ;; escape space in file names
     (setq go-list-result
-          (loop for i in go-list-result-list
-                collect (s-replace " " "\\ " i)))
+          (mapcar
+           (lambda (x) (s-replace " " "\\ " i)) go-list-result-list))
     (setq files-list (s-join " " go-list-result))
     (compile (concat "go run " files-list))))
 

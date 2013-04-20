@@ -151,7 +151,6 @@
                               "*clang-complete*"
                               "*compilation*"
                               "*Packages*"
-                              "TAGS"
                               "*file-index*"
                               " output*"
                               "*tramp/"

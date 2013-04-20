@@ -33,7 +33,7 @@
  ((eq system-type 'darwin)
   (setq processing-location "processing-java"))
  ((eq system-type 'gnu/linux)
-  ;; (setq processing-location "~/applications/processing-2.0/processing-java")
+  (setq processing-location "~/applications/processing-2.0/processing-java")
   )
  )
 
