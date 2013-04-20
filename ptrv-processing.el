@@ -34,24 +34,26 @@
   (setq processing-location "processing-java"))
  ((eq system-type 'gnu/linux)
   (setq processing-location "~/applications/processing-2.0/processing-java")
+  ))
+
+(defun processing-mode-init ()
+  (make-local-variable 'ac-sources)
+  (setq ac-sources '(ac-source-yasnippet
+                     ;;ac-source-gtags
+                     ac-source-dictionary
+                     ac-source-words-in-buffer
+                     ac-source-words-in-same-mode-buffers
+                     ;;ac-source-words-in-all-buffer
+                     ;;ac-source-semantic
+                     ))
+  (make-local-variable 'ac-user-dictionary)
+  (setq ac-user-dictionary processing-functions)
+  (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
+  (setq ac-user-dictionary (append ac-user-dictionary processing-constants))
   )
- )
-
-
-;;(yas-load-directory (concat (live-pack-lib-dir) "processing2-emacs/snippets"))
-
-(add-hook 'processing-mode-hook
-          (lambda ()
-            (setq ac-sources
-                  '(ac-source-yasnippet
-                    ;;ac-source-dictionary
-                    ac-source-words-in-buffer
-                    ac-source-words-in-same-mode-buffers
-                    ;;ac-source-words-in-all-buffer
-                    ;;ac-source-semantic
-                    ))))
 
 (add-to-list 'ac-modes 'processing-mode)
+(add-hook 'processing-mode-hook 'processing-mode-init)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
