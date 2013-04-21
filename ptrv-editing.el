@@ -36,7 +36,8 @@
 (global-set-key (kbd "C-a") 'smart-beginning-of-line)
 
 ;; Subword mode (consider CamelCase chunks as words)
-(global-subword-mode 1)
+;;(global-subword-mode 1)
+(add-hook 'prog-mode-hook 'subword-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; move-text
