@@ -31,7 +31,7 @@
 (setq auto-revert-verbose nil)
 
 (setq-default indent-tabs-mode nil) ; And force use of spaces
-(setq c-basic-offset 4)     ; indents 4 chars
+(setq-default c-basic-offset 4)     ; indents 4 chars
 (setq-default tab-width 4)          ; and 4 char wide for TAB
 
 (custom-set-variables
@@ -45,6 +45,7 @@
 ;           (lambda () (if (not indent-tabs-mode)
 ;                          (untabify (point-min) (point-max)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Do not allow to kill the *scratch* buffer
 (defvar unkillable-scratch-buffer-erase)
 (setq unkillable-scratch-buffer-erase nil)
@@ -68,6 +69,7 @@
     t))
 (add-hook 'kill-buffer-query-functions 'unkillable-scratch-buffer)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; make file executabable on save if has shebang
 (add-hook 'after-save-hook
           #'(lambda ()
@@ -81,6 +83,18 @@
                    (shell-command (concat "chmod u+x " (shell-quote-argument buffer-file-name)))
                    (message
                     (concat "Saved as script: " buffer-file-name)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; fix whitespace-cleanup
+;; http://stackoverflow.com/a/12958498/464831
+(defadvice whitespace-cleanup (around whitespace-cleanup-indent-tab
+                                      activate)
+  "Fix whitespace-cleanup indent-tabs-mode bug"
+  (let ((whitespace-indent-tabs-mode indent-tabs-mode)
+        (whitespace-tab-width tab-width))
+    ad-do-it))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-buffer)
 ;;; ptrv-buffer.el ends here
