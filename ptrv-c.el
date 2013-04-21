@@ -24,7 +24,9 @@
 
 ;;; Code:
 
-(setq c-default-style "linux")
+(setq c-default-style '((java-mode . "java")
+                        (awk-mode . "awk")
+                        (other . "stroustrup")))
 
 ;; Hook auto-complete into clang
 (eval-after-load "cc-mode"
