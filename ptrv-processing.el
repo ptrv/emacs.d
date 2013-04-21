@@ -34,6 +34,7 @@
   (setq processing-location "processing-java"))
  ((eq system-type 'gnu/linux)
   (setq processing-location "~/applications/processing-2.0/processing-java")
+  (setq processing-application-dir "~/applications/processing-2.0")
   ))
 
 (defun processing-mode-init ()
