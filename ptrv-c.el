@@ -49,7 +49,7 @@
             (unless (string-match ".*flycheck.*" buffer-file-name)
               (setq ac-sources '(ac-source-clang-async))
               (ac-clang-launch-completion-process))
-            (dtrt-indent-mode 1)
+            ;; (dtrt-indent-mode 1)
             (set (make-local-variable 'before-save-hook) nil)))
 
 (defun set-ff-find-other-file-binding ()

@@ -68,7 +68,7 @@
                         gitignore-mode
                         gitconfig-mode
                         gnuplot
-                        dtrt-indent
+                        ;;dtrt-indent
                         exec-path-from-shell
                         s
                         dash
