@@ -547,6 +547,16 @@ file of a buffer in an external program."
 (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
+(defun kill-other-buffers ()
+  "Kill all buffers but the current one.
+Don't mess with special buffers."
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
+      (kill-buffer buffer))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-defuns)
 ;;; ptrv-defuns.el ends here

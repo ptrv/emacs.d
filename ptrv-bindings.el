@@ -44,7 +44,7 @@
 ;; Jump to a definition in the current file. (This is awesome.)
 (global-set-key (kbd "C-x C-i") 'idomenu)
 
-;(windmove-default-keybindings) ;; Shift+direction
+;;(windmove-default-keybindings) ;; Shift+direction
 
 (global-set-key [(control shift left)] 'previous-buffer)
 (global-set-key [(control shift right)] 'next-buffer)
@@ -213,8 +213,8 @@
 (define-key lisp-mode-shared-map (kbd "M-RET") 'live-lisp-describe-thing-at-point)
 (eval-after-load 'nrepl
   '(progn
-    (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
-    (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)))
+     (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
+     (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)))
 
 ;; Make Emacs use "newline-and-indent" when you hit the Enter key so
 ;; that you don't need to keep using TAB to align yourself when coding.
@@ -349,6 +349,10 @@
 ;; Help should search more than just commands
 (define-key 'help-command "a" 'apropos)
 
+;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
+(global-set-key (kbd "C-x O") #'(lambda ()
+                                  (interactive)
+                                  (other-window -1)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-bindings)
