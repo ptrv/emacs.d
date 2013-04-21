@@ -38,10 +38,9 @@
 
 (defun processing-mode-init ()
   (make-local-variable 'ac-sources)
-  (setq ac-sources '(ac-source-yasnippet
-                     ac-source-dictionary
-                     ac-source-words-in-buffer
-                     ))
+  (setq ac-sources '(ac-source-dictionary
+                     ac-source-yasnippet
+                     ac-source-words-in-buffer))
   (make-local-variable 'ac-user-dictionary)
   (setq ac-user-dictionary processing-functions)
   (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
