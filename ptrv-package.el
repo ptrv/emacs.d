@@ -1,4 +1,4 @@
-;;; ptrv-package.el --- packae-conf
+;;; ptrv-package.el --- package-conf
 
 ;; Copyright (C) 2013  ptrv <mail@petervasil.net>
 
@@ -128,6 +128,7 @@
                         mwe-log-commands
                         uuid
                         idomenu
+                        google-this
                         )
   "A list of packages to ensure are installed at launch.")
 

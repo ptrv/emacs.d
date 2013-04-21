@@ -40,6 +40,7 @@
     (lambda-mode . "")
     (projectile-mode . "")
     (kibit-mode . " κ")
+    (google-this-mode . "")
     ;; Major modes
     (nrepl-mode . "ηζ")
     (clojure-mode . "λ")

@@ -188,6 +188,10 @@
 (setq smooth-scroll-margin 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; google-this
+(google-this-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-misc)
 ;;; ptrv-misc.el ends here
