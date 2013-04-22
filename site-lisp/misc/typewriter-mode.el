@@ -33,51 +33,41 @@
 (defcustom typewriter-end-column 80
   "End of line column number")
 
-(defcustom typewriter-play-command "aplay"
+(defcustom typewriter-play-command nil
   "Sound player command")
+
+(defun typewriter-play-sound (sound-file)
+  "Play sound"
+  (if typewriter-play-command
+	  (start-process-shell-command "typewriter-sound" nil
+                                   (format typewriter-play-command
+                                           sound-file))
+	(play-sound-file sound-file)))
 
 ;; Play typing sound
 (defun play-typewriter-sound ()
-  (if (equal (this-command-keys) (kbd "RET"))
-      nil
-    (start-process-shell-command "typewriter" nil
-                                 (concat
-                                  typewriter-play-command
-                                  " "
-                                  typewriter-sound-default
-                                  ))))
+  (unless (equal (this-command-keys) (kbd "RET"))
+    (typewriter-play-sound typewriter-sound-default)))
 
 ;; Play bell when cursor is at column 80
 (defun play-typewriter-end ()
-  (current-column) typewriter-end-column
-  (start-process-shell-command "typewriter" nil
-                               (concat
-                                typewriter-play-command
-                                " "
-                                typewriter-sound-end
-                                )))
+  (if (eq (current-column) typewriter-end-column)
+      (typewriter-play-sound typewriter-sound-end)))
 
 ;; Return sound
 (defun play-typewriter-return ()
   (if (equal (this-command-keys) (kbd "RET"))
-      (start-process-shell-command "typewriter" nil
-                                   (concat
-                                    typewriter-play-command
-                                    " "
-                                    typewriter-sound-return
-                                    ))))
+      (typewriter-play-sound typewriter-sound-return)))
 
 (defun typewriter-mode-turn-on ()
   (add-hook 'post-self-insert-hook 'play-typewriter-sound)
   (add-hook 'post-command-hook 'play-typewriter-end)
-  (add-hook 'post-command-hook 'play-typewriter-return)
-  )
+  (add-hook 'post-command-hook 'play-typewriter-return))
 
 (defun typewriter-mode-turn-off ()
   (remove-hook 'post-self-insert-hook 'play-typewriter-sound)
   (remove-hook 'post-command-hook 'play-typewriter-end)
-  (remove-hook 'post-command-hook 'play-typewriter-return)
-  )
+  (remove-hook 'post-command-hook 'play-typewriter-return))
 
 (define-minor-mode typewriter-mode
   "Toggle typewriter-mode"
@@ -88,8 +78,7 @@
   :global t
   (if typewriter-mode
       (typewriter-mode-turn-on)
-    (typewriter-mode-turn-off))
-  )
+    (typewriter-mode-turn-off)))
 
 (provide 'typewriter-mode)
 ;;; typewriter-mode.el ends here

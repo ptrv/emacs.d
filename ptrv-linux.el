@@ -86,6 +86,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; typeriter-mode
 (autoload 'typewriter-mode "typewriter-mode" nil t)
+(setq typewriter-play-command "aplay %s")
 (setq typewriter-sound-default (concat
                                 ptrv-etc-dir
                                 "sounds/9744__horn__typewriter.wav"))
