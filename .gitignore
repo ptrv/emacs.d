@@ -4,6 +4,7 @@ elpa
 tmp
 tramp
 url/cookies
+.org-id-locations
 
 # manually installed stable org-mode
 site-lisp/_extras/org-*
