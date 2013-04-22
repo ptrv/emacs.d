@@ -62,6 +62,7 @@
         ("*pytest*" :noselect t)
         ("*Python*" :stick t)
         ("*jedi:doc*" :noselect t)
+        ("*Registers*" :noselect t)
         ))
 
 

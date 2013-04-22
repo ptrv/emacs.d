@@ -312,15 +312,15 @@
 
 ;; http://irreal.org/blog/?p=1742
 (global-set-key (kbd "C-c t")
-                (lambda ()
-                  "Bring up a full-screen eshell or restore previous config."
-                  (interactive)
-                  (if (string= "eshell-mode" major-mode)
-                      (jump-to-register :eshell-fullscreen)
-                    (progn
-                      (window-configuration-to-register :eshell-fullscreen)
-                      (eshell)
-                      (delete-other-windows)))))
+                #'(lambda ()
+                    "Bring up a full-screen eshell or restore previous config."
+                    (interactive)
+                    (if (string= "eshell-mode" major-mode)
+                        (jump-to-register :eshell-fullscreen)
+                      (progn
+                        (window-configuration-to-register :eshell-fullscreen)
+                        (eshell)
+                        (delete-other-windows)))))
 
 (global-set-key (kbd "M-j")
                 (lambda ()
@@ -353,6 +353,15 @@
 (global-set-key (kbd "C-x O") #'(lambda ()
                                   (interactive)
                                   (other-window -1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; registers
+(global-set-key (kbd "C-x r T") 'string-insert-rectangle)
+(global-set-key (kbd "C-x r v") 'ptrv-list-registers)
+
+(set-register ?e '(file . "~/.emacs.d"))
+(set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-bindings)

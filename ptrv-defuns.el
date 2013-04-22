@@ -557,6 +557,19 @@ Don't mess with special buffers."
       (kill-buffer buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Don't sort the registers list because it might contain keywords
+(defun ptrv-list-registers ()
+  "Display a list of nonempty registers saying briefly what they contain."
+  (interactive)
+  (let ((list (copy-sequence register-alist)))
+    ;;(setq list (sort list (lambda (a b) (< (car a) (car b)))))
+    (with-output-to-temp-buffer "*Registers*"
+      (dolist (elt list)
+	(when (get-register (car elt))
+	  (describe-register-1 (car elt))
+	  (terpri))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-defuns)
 ;;; ptrv-defuns.el ends here
