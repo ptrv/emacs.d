@@ -109,6 +109,7 @@
         ptrv-builtins
         ptrv-defuns
         ptrv-look-and-feel
+        ptrv-window-number
         ptrv-ido
         ptrv-shell
         ptrv-lisp
