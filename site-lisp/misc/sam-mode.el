@@ -18,7 +18,8 @@
 
 (defvar sam-keywords
   '("mass" "ground" "port" "resonator" "link" "touch" "pluck"
-    "waveguide" "termination" "junction" "audioout"))
+    "waveguide" "termination" "junction" "audioout" "pulsetouch"
+    "friction"))
 
 (defvar sam-functions
   '("simpleString" "simpleStringTerm"))
@@ -47,7 +48,7 @@
 
 ;; define the mode
 (define-derived-mode sam-mode fundamental-mode
-  "SAM"
+  "Synth-A-Modeler"
   "Major mode for editing Synth-A-Modeler files"
 
   ;; code for syntax highlighting
