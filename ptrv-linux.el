@@ -32,7 +32,7 @@
 
 (defun setup-frame-hook (frame)
   ;; (run-with-idle-timer 0.2 nil 'toggle-frame-maximized)
-  (run-with-idle-timer 0.2 nil 'toggle-fullscreen)
+  ;;(run-with-idle-timer 0.2 nil 'toggle-fullscreen)
   )
 (add-hook 'after-make-frame-functions 'setup-frame-hook)
 
