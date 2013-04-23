@@ -51,7 +51,7 @@
         ("*gists*" :height 30)
         ("*sldb.*":regexp t :height 30)
         ("*Gofmt Errors*" :noselect t)
-        ("\\*godoc*" :regexp t :height 30)
+        ("\\*godoc" :regexp t :height 30)
         ("*Shell Command Output*" :noselect t)
         ("*nrepl-error*" :height 20 :stick t)
         ("*nrepl-doc*" :height 20 :stick t)

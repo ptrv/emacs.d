@@ -105,6 +105,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun go-create-package (name &optional arg)
+  "Create a new sketch with NAME under GOPATH src folder.
+
+If ARG is not nil, create package in current directory"
+  (interactive "sInsert new package name: \nP")
+  (let ((name (remove ?\s name))
+        (root-dir (concat (car (split-string (getenv "GOPATH") ":"))
+                          "/src/github.com/ptrv")))
+    (if (not (string-equal "" name))
+        (progn
+          (unless arg (setq name (concat root-dir "/" name)))
+          (make-directory name)
+          (find-file (concat name "/main.go")))
+      (error "Please insert a package name"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; hooks
 (defun go-mode-init ()
@@ -120,6 +135,7 @@
   (define-key go-mode-map (kbd "C-c C-c g") 'go-chk)
   (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
   (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
+  (define-key go-mode-map (kbd "C-c C-p") 'go-create-package)
   (define-key go-mode-map "." 'go-dot-complete))
 
 (add-hook 'go-mode-hook 'go-mode-init)
