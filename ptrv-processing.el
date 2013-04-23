@@ -28,6 +28,7 @@
 (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
 (autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
 (eval-after-load 'yasnippet '(processing-snippets-initialize))
+(autoload 'processing-find-sketch "processing-mode" nil t)
 
 (cond
  ((eq system-type 'darwin)
@@ -35,6 +36,7 @@
  ((eq system-type 'gnu/linux)
   (setq processing-location "~/applications/processing-2.0/processing-java")
   (setq processing-application-dir "~/applications/processing-2.0")
+  (setq processing-sketch-dir "~/processing_sketches_v2")
   ))
 
 (defun processing-mode-init ()
