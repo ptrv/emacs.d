@@ -8,3 +8,6 @@ alias gl git pull
 alias gp git push
 alias md mkdir -p $*
 alias gop cd $GOPATH
+alias ... cd ../..
+alias .... cd ../../..
+alias ..... cd ../../../..
