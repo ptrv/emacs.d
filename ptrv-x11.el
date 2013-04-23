@@ -41,7 +41,8 @@
 (cond ((and
          (<= (x-display-pixel-width) 1280)
          (<= (x-display-pixel-height) 800))
-       (toggle-fullscreen))
+       ;; (toggle-fullscreen)
+       )
       (t
        ;; (set-frame-size (selected-frame) 110 60)
        (set-frame-size (selected-frame) 130 60)
