@@ -363,6 +363,10 @@
 (set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-key Info-mode-map "ä" 'Info-forward-node)
+(define-key Info-mode-map "ö" 'Info-backward-node)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-bindings)
 ;;; ptrv-bindings.el ends here
