@@ -158,6 +158,7 @@
                             ptrv-linux
                             )))))
 
+(add-to-list 'load-path (concat dotfiles-dir "lisp"))
 (dolist (file ptrv-pkgs)
   (require file))
 
