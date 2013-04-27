@@ -185,9 +185,9 @@
 
 ;;(add-hook 'python-mode-hook #'lambda-mode 1)
 
-(add-hook 'python-mode-hook (lambda ()
-                              (smart-operator-mode 1)
-                              (define-key smart-operator-mode-map "." nil)))
+;; (add-hook 'python-mode-hook (lambda ()
+;;                               (smart-operator-mode 1)
+;;                               (define-key smart-operator-mode-map "." nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
