@@ -32,8 +32,8 @@
 
 (add-hook 'markdown-mode-hook 'turn-on-pandoc)
 
-(custom-set-variables
- '(pandoc-binary "/usr/local/bin/pandoc"))
+;; (custom-set-variables
+;;  '(pandoc-binary "/usr/local/bin/pandoc"))
 
 (add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode))
 
