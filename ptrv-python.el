@@ -181,7 +181,7 @@
 
 ;;(add-hook 'python-mode-hook #'(lambda () (autopair-mode)))
 
-(add-hook 'python-mode-hook #'lambda-mode 1)
+;;(add-hook 'python-mode-hook #'lambda-mode 1)
 
 (add-hook 'python-mode-hook (lambda ()
                               (smart-operator-mode 1)

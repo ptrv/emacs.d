@@ -86,10 +86,10 @@
      (define-key pure-mode-map (kbd "C-x M-p") 'pure-scratchpad)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; lambda-mode
-(autoload 'lambda-mode "lambda-mode" nil t)
-(setq lambda-symbol (string (make-char 'greek-iso8859-7 107)))
-(add-hook 'emacs-lisp-mode-hook #'lambda-mode 1)
+;; ;; lambda-mode
+;; (autoload 'lambda-mode "lambda-mode" nil t)
+;; (setq lambda-symbol (string (make-char 'greek-iso8859-7 107)))
+;; (add-hook 'emacs-lisp-mode-hook #'lambda-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smart-operator
