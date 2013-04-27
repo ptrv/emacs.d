@@ -129,6 +129,7 @@
                         uuid
                         idomenu
                         google-this
+                        virtualenv
                         )
   "A list of packages to ensure are installed at launch.")
 
