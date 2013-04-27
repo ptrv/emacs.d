@@ -90,6 +90,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(exec-path-from-shell-copy-env "PYTHONPATH")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emacs-jedi
 (eval-when-compile (require 'jedi nil t))
