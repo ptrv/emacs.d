@@ -145,19 +145,24 @@ If ARG is not nil, create package in current directory"
 ;; (add-to-list 'load-path (concat
 ;;                          (car (split-string (getenv "GOPATH") ":"))
 ;;                          "/src/github.com/ptrv/goflymake"))
-;; (require 'go-flycheck)
+(add-to-list 'load-path (concat
+                         (car (split-string (getenv "GOPATH") ":"))
+                         "/src/github.com/ptrv/goflycheck"))
+(require 'go-flycheck)
 
-;; (eval-after-load 'flycheck
-;;   '(progn
-;;      (flycheck-declare-checker go
-;;        "A Go syntax and style checker using the gofmt utility. "
-;;        :command '("gofmt" source)
-;;        :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
-;;        :modes 'go-mode
-;;        :next-checkers '((no-errors . go-goflymake)))
-;;      (add-to-list 'flycheck-checkers 'go)))
+(eval-after-load 'flycheck
+  '(progn
+     (flycheck-declare-checker go
+       "A Go syntax and style checker using the gofmt utility. "
+       :command '("gofmt" source)
+       :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
+       :modes 'go-mode
+       ;; :next-checkers '((no-errors . go-goflymake))
+       :next-checkers '((no-errors . go-goflycheck))
+       )
+     (add-to-list 'flycheck-checkers 'go t)))
 
-(require 'flycheck-go-alt)
+;;(require 'flycheck-go-alt)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
