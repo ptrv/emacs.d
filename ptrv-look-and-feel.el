@@ -24,10 +24,6 @@
 
 ;;; Code:
 
-;;(require 'highlight)
-
-;; look-and-feel.el
-
 ;; Show column numbers in modeline
 (setq column-number-mode t)
 
@@ -45,27 +41,26 @@
 
 (global-hl-line-mode 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar ptrv-themes-dir (concat dotfiles-dir "themes"))
 (add-to-list 'load-path ptrv-themes-dir)
-;; (load-file (concat (file-name-as-directory ptrv-themes-dir) "gandalf-ptrv.el"))
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; taken from colour-pack
 (require 'live-fontify-hex)
 
 (font-lock-add-keywords 'lisp-mode
                         '((live-fontify-hex-colors)))
-
 (font-lock-add-keywords 'emacs-lisp-mode
                         '((live-fontify-hex-colors)))
-
 (font-lock-add-keywords 'lisp-interaction-mode
                         '((live-fontify-hex-colors)))
-
 (font-lock-add-keywords 'css-mode
                         '((live-fontify-hex-colors)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; nyan-mode
 (autoload 'nyan-mode "nyan-mode" nil t)
 (setq nyan-bar-length 16)
