@@ -38,10 +38,10 @@
                     (list #'autopair-default-handle-action
                           #'autopair-python-triple-quote-action))))
 
-(add-hook 'c++-mode-hook
-          #'(lambda ()
-              (push '(?< . ?>)
-                    (getf autopair-extra-pairs :code))))
+;; (add-hook 'c++-mode-hook
+;;           #'(lambda ()
+;;               (push '(?< . ?>)
+;;                     (getf autopair-extra-pairs :code))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
