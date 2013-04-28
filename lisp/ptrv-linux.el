@@ -27,7 +27,7 @@
 ;; (if (display-graphic-p)
 ;;     (progn
 ;;       (add-to-list 'default-frame-alist '(font . "Inconsolata-12"))))
-(set-default-font "Inconsolata-12")
+(set-frame-font "Inconsolata-12" nil t)
 (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)
 
 (defun setup-frame-hook (frame)
