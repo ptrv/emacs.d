@@ -54,6 +54,37 @@
 (add-hook 'processing-mode-hook 'processing-mode-init)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; If htmlize is installed, provide this function to copy buffer or
+;; region to clipboard
+(eval-after-load "processing-mode"
+  '(when (and (fboundp 'htmlize-buffer)
+              (fboundp 'htmlize-region))
+     (defun processing-copy-as-html (&optional arg)
+       ""
+       (interactive "P")
+       (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
+               'processing-mode)
+           (save-excursion
+             (let ((htmlbuf (if (region-active-p)
+                                (htmlize-region (region-beginning) (region-end))
+                              (htmlize-buffer))))
+               (if arg
+                   (switch-to-buffer htmlbuf)
+                 (progn
+                   (with-current-buffer htmlbuf
+                     (clipboard-kill-ring-save (point-min) (point-max)))
+                   (kill-buffer htmlbuf)
+                   (message "Copied as HTML to clipboard")))))
+         (message (concat "Copy as HTML failed, because current "
+                          "buffer is not a Processing buffer."))))
+     (define-key processing-mode-map (kbd "C-c C-p H") 'processing-copy-as-html)
+     (easy-menu-add-item processing-mode-menu nil (list "---"))
+     (easy-menu-add-item processing-mode-menu nil
+                         ["Copy as HTML" processing-copy-as-html
+                          :help "Copy buffer or region as HTML to clipboard"])))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-processing)
 ;;; ptrv-processing.el ends here
