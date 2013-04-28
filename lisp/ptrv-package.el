@@ -130,6 +130,7 @@
                         idomenu
                         google-this
                         virtualenv
+                        htmlize
                         )
   "A list of packages to ensure are installed at launch.")
 
