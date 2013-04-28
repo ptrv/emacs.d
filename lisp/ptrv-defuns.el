@@ -570,6 +570,14 @@ Don't mess with special buffers."
 	  (terpri))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
+(defun switch-to-previous-buffer ()
+  "Switch to previous open buffer.
+Repeated invocation toggle between the two most recently open buffers."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-defuns)
 ;;; ptrv-defuns.el ends here

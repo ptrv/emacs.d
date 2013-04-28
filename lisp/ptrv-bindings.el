@@ -367,6 +367,10 @@
 (define-key Info-mode-map "ö" 'Info-backward-node)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; key-chord
+(key-chord-define-global "JJ" 'switch-to-previous-buffer)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-bindings)
 ;;; ptrv-bindings.el ends here
