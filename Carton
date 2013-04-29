@@ -5,87 +5,127 @@
 
 (depends-on "carton")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; libraries
 (depends-on "dash")
 (depends-on "s")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; vcs
 (depends-on "magit")
-(depends-on "wrap-region")
-(depends-on "go-mode")
-(depends-on "starter-kit-eshell")
-(depends-on "ack-and-a-half")
-(depends-on "session")
-(depends-on "notify")
-(depends-on "edit-server")
-(depends-on "color-theme")
-(depends-on "org-plus-contrib")
-(depends-on "markdown-mode")
-(depends-on "js2-mode")
-(depends-on "apache-mode")
-(depends-on "yaml-mode")
-(depends-on "xml-rpc")
-(depends-on "pytest")
+(depends-on "ahg")
 (depends-on "git-commit-mode")
 (depends-on "gitignore-mode")
 (depends-on "gitconfig-mode")
-(depends-on "gnuplot")
-;;(depends-on "dtrt-indent")
-(depends-on "exec-path-from-shell")
-(depends-on "ido-ubiquitous")
-(depends-on "refheap")
-(depends-on "epc")
+(depends-on "git-gutter")
+(depends-on "gist")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; editor
 (depends-on "iflipb")
-(depends-on "find-file-in-project")
-(depends-on "pomodoro")
-(depends-on "flycheck")
-(depends-on "pandoc-mode")
 (depends-on "iedit")
-(depends-on "glsl-mode")
-(depends-on "ag")
-(depends-on "cmake-mode")
-(depends-on "pylint")
-(depends-on "lua-mode")
-(depends-on "ahg")
-(depends-on "autopair")
-(depends-on "tea-time")
-(depends-on "json-mode")
-(depends-on "iy-go-to-char")
-(depends-on "projectile")
-(depends-on "popwin")
-(depends-on "edit-server-htmlize")
-(depends-on "move-text")
-(depends-on "pcmpl-git")
+(depends-on "wrap-region")
+(depends-on "starter-kit-eshell")
+(depends-on "session")
 (depends-on "multiple-cursors")
 (depends-on "expand-region")
-(depends-on "w3m")
-(depends-on "flymake-cursor")
-(depends-on "litable")
-(depends-on "smex")
-(depends-on "auto-complete")
-(depends-on "yasnippet")
-(depends-on "clojure-mode")
-(depends-on "align-cljlet")
-(depends-on "nrepl")
-(depends-on "gist")
-(depends-on "paredit")
+(depends-on "iy-go-to-char")
+(depends-on "move-text")
 (depends-on "window-number")
-(depends-on "elisp-slime-nav")
 (depends-on "buffer-move")
-(depends-on "ac-nrepl")
 (depends-on "undo-tree")
-(depends-on "scratch")
-(depends-on "browse-kill-ring")
+(depends-on "flycheck")
+(depends-on "flymake-cursor")
+(depends-on "autopair")
 (depends-on "ace-jump-mode")
-(depends-on "git-gutter")
-(depends-on "nyan-mode")
+(depends-on "browse-kill-ring")
 (depends-on "key-chord")
-(depends-on "jedi")
-(depends-on "smooth-scrolling")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ido
+(depends-on "smex")
+(depends-on "ido-ubiquitous")
+(depends-on "idomenu")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; completion
+(depends-on "auto-complete")
+(depends-on "ac-nrepl")
+(depends-on "pcmpl-git")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; snippets
+(depends-on "yasnippet")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; lisp
+(depends-on "paredit")
 (depends-on "rainbow-delimiters")
 (depends-on "mic-paren")
 (depends-on "nrepl-eval-sexp-fu")
+(depends-on "elisp-slime-nav")
+(depends-on "clojure-mode")
+(depends-on "align-cljlet")
+(depends-on "nrepl")
+(depends-on "litable")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; markup
+(depends-on "org-plus-contrib")
+(depends-on "markdown-mode")
+(depends-on "pandoc-mode")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ui
+(depends-on "notify")
+(depends-on "color-theme")
+(depends-on "popwin")
+(depends-on "smooth-scrolling")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; utilities
+(depends-on "xml-rpc")
+(depends-on "refheap")
+(depends-on "pomodoro")
+(depends-on "edit-server")
+(depends-on "edit-server-htmlize")
+(depends-on "epc")
+(depends-on "tea-time")
+(depends-on "google-this")
+(depends-on "htmlize")
 (depends-on "mwe-log-commands")
 (depends-on "uuid")
-(depends-on "idomenu")
-(depends-on "google-this")
+(depends-on "nyan-mode")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tools
+(depends-on "ag")
+(depends-on "ack-and-a-half")
+(depends-on "exec-path-from-shell")
 (depends-on "virtualenv")
-(depends-on "htmlize")
+(depends-on "w3m")
+(depends-on "scratch")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; python
+(depends-on "pytest")
+(depends-on "pylint")
+(depends-on "jedi")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; major modes
+(depends-on "go-mode")
+(depends-on "glsl-mode")
+(depends-on "js2-mode")
+(depends-on "apache-mode")
+(depends-on "yaml-mode")
+(depends-on "cmake-mode")
+(depends-on "lua-mode")
+(depends-on "json-mode")
+(depends-on "gnuplot")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; project
+(depends-on "find-file-in-project")
+(depends-on "projectile")
