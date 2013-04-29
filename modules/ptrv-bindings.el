@@ -372,5 +372,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-key emacs-lisp-mode-map (kbd "C-c C-z") 'visit-ielm)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (provide 'ptrv-bindings)
 ;;; ptrv-bindings.el ends here
