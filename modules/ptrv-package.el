@@ -31,7 +31,7 @@
 (dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
                   ("marmalade" . "http://marmalade-repo.org/packages/")
                   ("elpa" . "http://tromey.com/elpa/")
-                  ;;("org" . "http://orgmode.org/elpa/")
+                  ("org" . "http://orgmode.org/elpa/")
                   ))
   (add-to-list 'package-archives source t))
 
@@ -57,7 +57,7 @@
                         notify
                         edit-server
                         color-theme
-                        ;;org-plus-contrib
+                        org-plus-contrib
                         markdown-mode
                         js2-mode
                         apache-mode
