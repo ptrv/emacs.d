@@ -142,12 +142,12 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; flycheck support
-;; (add-to-list 'load-path (concat
-;;                          (car (split-string (getenv "GOPATH") ":"))
-;;                          "/src/github.com/ptrv/goflymake"))
 (add-to-list 'load-path (concat
                          (car (split-string (getenv "GOPATH") ":"))
-                         "/src/github.com/ptrv/goflycheck"))
+                         "/src/github.com/dougm/goflymake"))
+;; (add-to-list 'load-path (concat
+;;                          (car (split-string (getenv "GOPATH") ":"))
+;;                          "/src/github.com/ptrv/goflycheck"))
 (require 'go-flycheck)
 
 (eval-after-load 'flycheck
@@ -157,10 +157,12 @@ If ARG is not nil, create package in current directory"
        :command '("gofmt" source)
        :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
        :modes 'go-mode
-       ;; :next-checkers '((no-errors . go-goflymake))
-       :next-checkers '((no-errors . go-goflycheck))
+       :next-checkers '((no-errors . go-goflymake))
        )
-     (add-to-list 'flycheck-checkers 'go t)))
+     (add-to-list 'flycheck-checkers 'go t)
+     ;; remove go-goflymake from begin of list and add it to the end
+     (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
+     (add-to-list 'flycheck-checkers 'go-goflymake t)))
 
 ;;(require 'flycheck-go-alt)
 
