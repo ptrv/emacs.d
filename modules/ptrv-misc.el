@@ -192,6 +192,9 @@
 (google-this-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ediff
+(setq ediff-split-window-function 'split-window-horizontally)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-misc)
 ;;; ptrv-misc.el ends here
