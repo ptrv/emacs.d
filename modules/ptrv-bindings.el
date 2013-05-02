@@ -369,6 +369,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key-chord
 (key-chord-define-global "JJ" 'switch-to-previous-buffer)
+(key-chord-define-global "KK" 'winner-undo)
+(key-chord-define-global "LL" 'winner-redo)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
