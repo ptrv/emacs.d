@@ -38,15 +38,15 @@
 ;;      (<= (x-display-pixel-height) 800))
 ;;     (toggle-fullscreen))
 
-(cond ((and
-         (<= (x-display-pixel-width) 1280)
-         (<= (x-display-pixel-height) 800))
+(cond ((and (<= (x-display-pixel-width) 1280)
+            (<= (x-display-pixel-height) 800))
        ;; (toggle-fullscreen)
        )
-      (t
+      ((and (eq (x-display-pixel-width) 1680)
+            (eq (x-display-pixel-height) 1050))
        ;; (set-frame-size (selected-frame) 110 60)
-       (set-frame-size (selected-frame) 130 60)
-       (set-frame-position (selected-frame) 500 20)))
+       (set-frame-size (selected-frame) 130 55)
+       (set-frame-position (selected-frame) 500 30)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
