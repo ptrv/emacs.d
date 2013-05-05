@@ -135,6 +135,19 @@
 ;; (add-hook 'remember-mode-hook 'org-remember-apply-template)
 ;;(require 'org-latex)
 
+(setq org-ditaa-jar-path "~/applications/ditaa.jar")
+(setq org-plantuml-jar-path "~/applications/plantuml.jar")
+
+(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+
+; Make babel results blocks lowercase
+(setq org-babel-results-keyword "results")
+
+(defun bh/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sh . t)
@@ -142,10 +155,15 @@
   (C . t)
   (octave . t)
   (emacs-lisp . t)
-  (java . t)
   (latex . t)
+  (ditaa . t)
+  (dot . t)
+  (plantuml . t)
+  (gnuplot . t)
   ))
 
+; Use fundamental mode when editing plantuml blocks with C-c '
+(add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
 (add-to-list 'org-src-lang-modes '("sam" . sam))
 
 ;; Open mailto links in gmail
