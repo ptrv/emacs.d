@@ -92,13 +92,13 @@
 
 (exec-path-from-shell-copy-env "PYTHONPATH")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; emacs-jedi
-(eval-when-compile (require 'jedi nil t))
-(autoload 'jedi:setup "jedi" nil t)
-(setq jedi:setup-keys t)
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; emacs-jedi
+;; (eval-when-compile (require 'jedi nil t))
+;; (autoload 'jedi:setup "jedi" nil t)
+;; (setq jedi:setup-keys t)
+;; (add-hook 'python-mode-hook 'jedi:setup)
+;; (setq jedi:complete-on-dot t)
 
 ;; (add-hook 'python-mode-hook
 ;;           (lambda ()

@@ -113,6 +113,7 @@
 (depends-on "pytest")
 (depends-on "pylint")
 (depends-on "jedi")
+(depends-on "elpy")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; major modes

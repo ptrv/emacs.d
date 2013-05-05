@@ -153,6 +153,7 @@
  ((eq system-type 'gnu/linux)
   (setq ptrv-pkgs
         (append ptrv-pkgs '(ptrv-supercollider
+                            ptrv-elpy
                             ptrv-python
                             ptrv-c
                             ptrv-linux
