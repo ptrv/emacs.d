@@ -91,12 +91,6 @@
     (local-set-key [?\t] 'forward-button)
     (local-set-key [backtab] 'backward-button))
 
-  ;; Raise all supercollider windows.
-  (define-key sclang-mode-map (kbd "C-c f")
-    (lambda ()
-      (interactive)
-      (sclang-eval-string "Window.allWindows.do(_.front);")))
-
   (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
   (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
   (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
@@ -108,6 +102,27 @@
                                             (scroll-other-window-down 4)))
   )
 (add-hook 'sclang-mode-hook 'supercollider-init)
+
+(eval-after-load "sclang-mode"
+  '(progn
+     ;; Raise all supercollider windows.
+     (define-key sclang-mode-map (kbd "C-c f")
+       (lambda ()
+         (interactive)
+         (sclang-eval-string "Window.allWindows.do(_.front);")))
+     (define-key sclang-server-key-map [?l]
+       (lambda ()
+         (interactive)
+         (sclang-eval-string "Server.default.meter;")))
+     (define-key sclang-server-key-map [?s]
+       (lambda ()
+         (interactive)
+         (sclang-eval-string "Server.default.scope(numChannels: 2);")))
+     (define-key sclang-server-key-map [?h]
+       (lambda ()
+         (interactive)
+         (sclang-eval-string "HelperWindow.new;")))
+     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
