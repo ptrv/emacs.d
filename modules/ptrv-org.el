@@ -146,6 +146,8 @@
   (latex . t)
   ))
 
+(add-to-list 'org-src-lang-modes '("sam" . sam))
+
 ;; Open mailto links in gmail
 (setq org-link-mailto-program
       '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
