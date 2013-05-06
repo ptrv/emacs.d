@@ -131,3 +131,9 @@
 ;; project
 (depends-on "find-file-in-project")
 (depends-on "projectile")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Local Variables:
+;; mode: emacs-lisp
+;; End:
