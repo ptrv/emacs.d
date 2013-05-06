@@ -124,7 +124,7 @@
             (local-set-key (kbd "C-c C-a") 'pytest-all)
             (local-set-key (kbd "C-c C-,") 'pytest-module)
             (local-set-key (kbd "C-c C-.") 'pytest-one)
-            (local-set-key (kbd "C-c C-d") 'pytest-directory)
+            ;;(local-set-key (kbd "C-c C-d") 'pytest-directory)
             ;; (local-set-key (kbd "C-c t p a") 'pytest-pdb-all)
             ;; (local-set-key (kbd "C-c t p m") 'pytest-pdb-module)
             ;; (local-set-key (kbd "C-c t p .") 'pytest-pdb-one)

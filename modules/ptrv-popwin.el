@@ -61,6 +61,7 @@
         ("*Compile-Log" :height 20 :stick t)
         ("*pytest*" :noselect t)
         ("*Python*" :stick t)
+        ("*Python Doc*" :noselect t)
         ("*jedi:doc*" :noselect t)
         ("*Registers*" :noselect t)
         ))

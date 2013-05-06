@@ -30,5 +30,16 @@
                                  auto-complete-mode))
 (elpy-enable)
 
+(eval-after-load "elpy"
+  '(progn
+     (define-key elpy-mode-map (kbd "C-c C-f") nil)
+     (define-key elpy-mode-map (kbd "C-c C-j") nil)
+     (define-key elpy-mode-map (kbd "C-c C-n") nil)
+     (define-key elpy-mode-map (kbd "C-c C-p") nil)
+     ))
+
+(set-face-background 'highlight-indentation-face "#e3e3d3")
+(set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+
 (provide 'ptrv-elpy)
 ;;; ptrv-elpy.el ends here
