@@ -79,5 +79,7 @@
 (require 'nrepl-eval-sexp-fu)
 (setq nrepl-eval-sexp-fu-flash-duration 0.5)
 
+(add-hook 'emacs-lisp-mode-hook 'lexbind-mode)
+
 (provide 'ptrv-lisp)
 ;;; ptrv-lisp.el ends here
