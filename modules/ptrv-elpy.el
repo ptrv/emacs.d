@@ -28,7 +28,7 @@
                                  highlight-indentation-mode
                                  yas-minor-mode
                                  auto-complete-mode))
-(elpy-enable)
+(elpy-enable t)
 
 (eval-after-load "elpy"
   '(progn
@@ -36,10 +36,16 @@
      (define-key elpy-mode-map (kbd "C-c C-j") nil)
      (define-key elpy-mode-map (kbd "C-c C-n") nil)
      (define-key elpy-mode-map (kbd "C-c C-p") nil)
-     ))
+     (setq python-check-command "flake8")
+     (add-hook 'python-mode-hook 'elpy-initialize-local-variables)))
 
 (set-face-background 'highlight-indentation-face "#e3e3d3")
 (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+
+(eval-after-load "projectile"
+  '(progn
+     (add-to-list 'projectile-project-root-files ".ropeproject" t)
+     (add-to-list 'projectile-project-root-files "setup.py" t)))
 
 (provide 'ptrv-elpy)
 ;;; ptrv-elpy.el ends here
