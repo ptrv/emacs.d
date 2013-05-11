@@ -54,12 +54,12 @@
      (setcar (nthcdr 2 ac-source-go)
              '(selection-face . ac-go-mode-selection-face))))
 
-(defun go-dot-complete ()
-  "Insert dot and complete code at point."
-  (interactive)
-  (insert ".")
-  (unless (ac-cursor-on-diable-face-p)
-    (auto-complete)))
+;; (defun go-dot-complete ()
+;;   "Insert dot and complete code at point."
+;;   (interactive)
+;;   (insert ".")
+;;   (unless (ac-cursor-on-diable-face-p)
+;;     (auto-complete)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compile fucntions
@@ -136,7 +136,7 @@ If ARG is not nil, create package in current directory"
   (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
   (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
   (define-key go-mode-map (kbd "C-c C-p") 'go-create-package)
-  (define-key go-mode-map "." 'go-dot-complete))
+  (define-key go-mode-map "." 'ac-dot-complete))
 
 (add-hook 'go-mode-hook 'go-mode-init)
 

@@ -37,7 +37,10 @@
      (define-key elpy-mode-map (kbd "C-c C-n") nil)
      (define-key elpy-mode-map (kbd "C-c C-p") nil)
      (setq python-check-command "flake8")
-     (add-hook 'python-mode-hook 'elpy-initialize-local-variables)))
+     (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
+     ;; complete on dot
+     (define-key elpy-mode-map "." 'ac-dot-complete)
+     ))
 
 (set-face-background 'highlight-indentation-face "#e3e3d3")
 (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")

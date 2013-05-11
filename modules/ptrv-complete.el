@@ -62,6 +62,14 @@
 (ac-set-trigger-key "TAB")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; complete on dot
+(defun ac-dot-complete ()
+  "Insert dot and complete code at point."
+  (interactive)
+  (insert ".")
+  (unless (ac-cursor-on-diable-face-p)
+    (auto-complete)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'ptrv-complete)
 ;;; ptrv-complete.el ends here
