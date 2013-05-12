@@ -1,6 +1,3 @@
-[submodule "snippets/sclang-mode"]
-	path = snippets/sclang-mode
-	url = https://github.com/ptrv/sclang-mode.git
 [submodule "site-lisp/_extras/yasnippet-snippets"]
 	path = site-lisp/_extras/yasnippet-snippets
 	url = https://github.com/ptrv/yasnippet-snippets.git
