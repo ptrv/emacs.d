@@ -24,9 +24,15 @@
 
 ;;; Code:
 
-(add-to-list 'bkup-backup-directory-info
-             (list tramp-file-name-regexp ""))
-(setq tramp-bkup-backup-directory-info  nil)
+(setq backup-enable-predicate
+      (lambda (name)
+        (and (normal-backup-enable-predicate name)
+             (not
+              (let ((method (file-remote-p name 'method)))
+                (when (stringp method)
+                  (member method '("su" "sudo"))))))))
+
+(setq tramp-backup-directory-alist backup-directory-alist)
 
 (defun sudo-edit (&optional arg)
   (interactive "P")
