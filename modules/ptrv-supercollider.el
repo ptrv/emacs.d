@@ -35,15 +35,16 @@
      (setq w3m-auto-show 1)
      ))
 
-(setq w3m-key-binding 'info)
-(setq sclang-auto-scroll-post-buffer nil)
-(setq sclang-eval-line-forward nil)
-(setq sclang-help-path '("/usr/local/share/SuperCollider/Help" "~/.local/share/SuperCollider/Extensions"))
-(setq sclang-library-configuration-file "~/.sclang.cfg")
-(setq sclang-runtime-directory "~/scwork/")
-(setq sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
-(setq w3m-pop-up-frames t)
-(setq w3m-pop-up-windows nil)
+(setq w3m-key-binding 'info
+      w3m-pop-up-frames t
+      w3m-pop-up-windows nil)
+
+(setq sclang-auto-scroll-post-buffer nil
+      sclang-eval-line-forward nil
+      ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
+      sclang-library-configuration-file "~/.sclang.cfg"
+      sclang-runtime-directory "~/scwork/"
+      sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
 ;; ##### extension for block error messages ####
 ;;(load-file (concat (live-pack-lib-dir) "ext-scel.el"))
@@ -78,6 +79,7 @@
   (add-to-list 'ac-modes 'sclang-mode)
   (make-local-variable 'ac-user-dictionary-files)
   (add-to-list 'ac-user-dictionary-files "~/.sc_completion")
+
   ;; (add-to-list 'ac-user-dictionary-files
   ;;              "~/.local/share/SuperCollider/sclang_completion_dict")
   (yas-minor-mode 1)
@@ -91,20 +93,14 @@
     (local-set-key [?\t] 'forward-button)
     (local-set-key [backtab] 'backward-button))
 
-  (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
-  (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
-  (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
-  (define-key sclang-mode-map (kbd "M-Ä") (lambda ()
-                                            (interactive)
-                                            (scroll-other-window 4)))
-  (define-key sclang-mode-map (kbd "M-Ö") (lambda ()
-                                            (interactive)
-                                            (scroll-other-window-down 4)))
   )
 (add-hook 'sclang-mode-hook 'supercollider-init)
 
-(eval-after-load "sclang-mode"
+(eval-after-load "sclang"
   '(progn
+     (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
+     (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
+     (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
      ;; Raise all supercollider windows.
      (define-key sclang-mode-map (kbd "C-c f")
        (lambda ()
