@@ -58,3 +58,6 @@
 [submodule "site-lisp/metaweblog"]
 	path = site-lisp/metaweblog
 	url = https://github.com/punchagan/metaweblog.el.git
+[submodule "site-lisp/_extras/sclang-snippets"]
+	path = site-lisp/_extras/sclang-snippets
+	url = https://github.com/ptrv/sclang-snippets.git
