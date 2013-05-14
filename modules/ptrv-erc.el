@@ -41,7 +41,7 @@
       ((string= system-name "anoth")
        (setq erc-autojoin-channels-alist
              (list (append (car erc-autojoin-channels-alist)
-                           '("#supercollider" "#ubuntu")))))
+                           '("#supercollider" "#archlinux")))))
       ;; (t (setq erc-autojoin-channels-alist
       ;;          '(("freenode.net" "#emacs" "#clojure" "overtone"))))
       )
