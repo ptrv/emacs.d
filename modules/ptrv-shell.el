@@ -70,5 +70,7 @@
 (setq term-default-bg-color "black")
 (setq term-default-fg-color "white")
 
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
 (provide 'ptrv-shell)
 ;;; ptrv-shell.el ends here
