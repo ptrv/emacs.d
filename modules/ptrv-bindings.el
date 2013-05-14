@@ -371,10 +371,15 @@
 (key-chord-define-global "JJ" 'switch-to-previous-buffer)
 (key-chord-define-global "KK" 'winner-undo)
 (key-chord-define-global "LL" 'winner-redo)
+(key-chord-define-global "BB" 'ido-switch-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'visit-ielm)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(global-set-key (kbd "<C-f9>") #'global-git-gutter-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
