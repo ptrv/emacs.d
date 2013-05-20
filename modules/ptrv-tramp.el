@@ -33,6 +33,7 @@
                   (member method '("su" "sudo"))))))))
 
 (setq tramp-backup-directory-alist backup-directory-alist)
+(setq tramp-persistency-file-name (concat ptrv-tmp-dir "tramp"))
 
 (defun sudo-edit (&optional arg)
   (interactive "P")
