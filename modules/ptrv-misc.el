@@ -174,6 +174,8 @@
 ;; projectile
 
 (projectile-global-mode)
+(setq projectile-known-projects-file
+      (concat ptrv-tmp-dir "projectile-bookmarks.eld"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; iedit
