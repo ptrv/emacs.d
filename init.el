@@ -57,11 +57,12 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Get hostname
-(setq hostname (replace-regexp-in-string
-                "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)"
-                ""
-                (with-output-to-string
-                  (call-process "hostname" nil standard-output))))
+(setq ptrv-hostname (replace-regexp-in-string
+                     "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)"
+                     ""
+                     (with-output-to-string
+                       (call-process "hostname" nil standard-output))))
+(setq system-name ptrv-hostname)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add .emacs.d to load-path
