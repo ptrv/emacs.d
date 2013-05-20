@@ -34,6 +34,8 @@
       ido-max-prospects 10
       ido-default-file-method 'selected-window)
 
+(setq ido-save-directory-list-file (concat ptrv-tmp-dir "ido.last"))
+
 (icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,6 +69,7 @@
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(setq smex-save-file (concat ptrv-tmp-dir "smex-items"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
