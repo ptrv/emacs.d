@@ -32,12 +32,12 @@
 ;;IRC
 (erc-autojoin-mode 1)
 (setq erc-autojoin-channels-alist
-      '(("freenode.net" "#emacs" "#clojure" "#overtone" "#go-nuts")))
+      '(("freenode.net" "#emacs")))
 
 (cond ((string= system-name "alderaan")
        (setq erc-autojoin-channels-alist
              (list (append (car erc-autojoin-channels-alist)
-                           '("#supercollider" "#crunchbang" "#debian")))))
+                           '("#supercollider" "#archlinux")))))
       ((string= system-name "anoth")
        (setq erc-autojoin-channels-alist
              (list (append (car erc-autojoin-channels-alist)
