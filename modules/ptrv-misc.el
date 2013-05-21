@@ -206,5 +206,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (provide 'ptrv-misc)
 ;;; ptrv-misc.el ends here
