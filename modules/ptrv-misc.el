@@ -173,9 +173,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile
 
-(projectile-global-mode)
-(setq projectile-known-projects-file
-      (concat ptrv-tmp-dir "projectile-bookmarks.eld"))
+;; (autoload 'projectile-mode "projectile" nil t nil)
+;; (autoload 'projectile-global-mode "projectile" nil t nil)
+
+;; (projectile-global-mode)
+;; (setq projectile-known-projects-file
+;;       (concat ptrv-tmp-dir "projectile-bookmarks.eld"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; iedit

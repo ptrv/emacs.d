@@ -35,7 +35,7 @@
 (global-set-key (kbd "C-x f") 'ido-recentf-open)
 ;;(global-set-key (kbd "C-x f") 'live-recentf-ido-find-file)
 ;;(global-set-key (kbd "C-x f") 'recentf-open-files)
-;; (global-set-key (kbd "C-x f") 'find-file-in-project)
+(global-set-key (kbd "C-c p f") 'find-file-in-project)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
 (global-set-key (kbd "C-c r") 'revert-buffer)
