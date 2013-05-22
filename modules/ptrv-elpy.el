@@ -30,6 +30,10 @@
                                  auto-complete-mode))
 (elpy-enable t)
 
+(add-hook 'elpy-mode-hook #'(lambda ()
+                              (when (file-remote-p (buffer-file-name))
+                                (elpy-disable))))
+
 (eval-after-load "elpy"
   '(progn
      (define-key elpy-mode-map (kbd "C-c C-f") nil)
@@ -40,15 +44,22 @@
      (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
      ;; complete on dot
      (define-key elpy-mode-map "." 'ac-dot-complete)
+
+     (defun elpy-use-ipython-pylab ()
+       "Set defaults to use IPython instead of the standard interpreter."
+       (interactive)
+       (unless (boundp 'python-python-command)
+         (elpy-use-ipython)
+         (setq python-shell-interpreter-args "--pylab")))
      ))
 
 (set-face-background 'highlight-indentation-face "#e3e3d3")
 (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
-(eval-after-load "projectile"
-  '(progn
-     (add-to-list 'projectile-project-root-files ".ropeproject" t)
-     (add-to-list 'projectile-project-root-files "setup.py" t)))
+;; (eval-after-load "projectile"
+;;   '(progn
+;;      (add-to-list 'projectile-project-root-files ".ropeproject" t)
+;;      (add-to-list 'projectile-project-root-files "setup.py" t)))
 
 (provide 'ptrv-elpy)
 ;;; ptrv-elpy.el ends here
