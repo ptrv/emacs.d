@@ -56,10 +56,5 @@
 (set-face-background 'highlight-indentation-face "#e3e3d3")
 (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
-;; (eval-after-load "projectile"
-;;   '(progn
-;;      (add-to-list 'projectile-project-root-files ".ropeproject" t)
-;;      (add-to-list 'projectile-project-root-files "setup.py" t)))
-
 (provide 'ptrv-elpy)
 ;;; ptrv-elpy.el ends here

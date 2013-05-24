@@ -125,6 +125,7 @@
         ptrv-yasnippet
         ptrv-bindings
         ptrv-misc
+        ptrv-project
         ptrv-webjump
         ptrv-popwin
         ptrv-buffer

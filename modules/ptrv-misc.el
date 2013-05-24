@@ -171,16 +171,6 @@
       '(("github\\.com" . gfm-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; projectile
-
-;; (autoload 'projectile-mode "projectile" nil t nil)
-;; (autoload 'projectile-global-mode "projectile" nil t nil)
-
-;; (projectile-global-mode)
-;; (setq projectile-known-projects-file
-;;       (concat ptrv-tmp-dir "projectile-bookmarks.eld"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; iedit
 (setq iedit-toggle-key-default (kbd "C-;"))
 (define-key global-map iedit-toggle-key-default 'iedit-mode)
@@ -203,10 +193,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; url config dir
 (setq url-configuration-directory (concat ptrv-tmp-dir "url"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
