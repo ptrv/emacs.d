@@ -184,5 +184,10 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(when (executable-find "errcheck")
+  (autoload 'go-errcheck "go-errcheck" nil t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (provide 'ptrv-golang)
 ;;; ptrv-golang.el ends here
