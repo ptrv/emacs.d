@@ -28,12 +28,6 @@
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
 
-(defvar reftex-dir (concat dotfiles-dir "site-lisp/_extras/reftex/"))
-(add-to-list 'load-path (concat reftex-dir "lisp"))
-(eval-after-load 'info
-  '(add-to-list 'Info-directory-list
-                (concat reftex-dir "doc")))
-
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
