@@ -132,11 +132,9 @@
         ptrv-tramp
         ptrv-ibuffer
         ptrv-vcs
-        ptrv-bindings
         ptrv-monkey-patch
         ptrv-nrepl
         ptrv-yasnippet
-        ptrv-bindings
         ptrv-misc
         ptrv-project
         ptrv-webjump
