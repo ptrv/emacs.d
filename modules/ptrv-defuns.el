@@ -31,76 +31,10 @@
     (when file
       (find-file file))))
 
-;; Cosmetic
-
-;; (defun pretty-lambdas ()
-;;   (font-lock-add-keywords
-;;    nil `(("(?\\(lambda\\>\\)"
-;;           (0 (progn (compose-region (match-beginning 1) (match-end 1)
-;;                                     ,(make-char 'greek-iso8859-7 107))
-;;                     nil))))))
-
-(defun duplicate-line()
-  (interactive)
-  (move-beginning-of-line 1)
-  (kill-line)
-  (yank)
-  (open-line 1)
-  (forward-line 1)
-  (yank)
-  )
 
 (defun refresh-file ()
   (interactive)
   (revert-buffer t t nil))
-
-(defun ido-imenu ()
-  "Update the imenu index and then use ido to select a symbol to navigate to.
-Symbols matching the text at point are put first in the completion list."
-  (interactive)
-  (imenu--make-index-alist)
-  (let ((name-and-pos '())
-        (symbol-names '()))
-    (cl-flet ((addsymbols (symbol-list)
-                          (when (listp symbol-list)
-                            (dolist (symbol symbol-list)
-                              (let ((name nil) (position nil))
-                                (cond
-                                 ((and (listp symbol) (imenu--subalist-p symbol))
-                                  (addsymbols symbol))
-
-                                 ((listp symbol)
-                                  (setq name (car symbol))
-                                  (setq position (cdr symbol)))
-
-                                 ((stringp symbol)
-                                  (setq name symbol)
-                                  (setq position (get-text-property 1 'org-imenu-marker symbol))))
-
-                                (unless (or (null position) (null name))
-                                  (add-to-list 'symbol-names name)
-                                  (add-to-list 'name-and-pos (cons name position))))))))
-      (addsymbols imenu--index-alist))
-    ;; If there are matching symbols at point, put them at the beginning of `symbol-names'.
-    (let ((symbol-at-point (thing-at-point 'symbol)))
-      (when symbol-at-point
-        (let* ((regexp (concat (regexp-quote symbol-at-point) "$"))
-               (matching-symbols (delq nil (mapcar (lambda (symbol)
-                                                     (if (string-match regexp symbol) symbol))
-                                                   symbol-names))))
-          (when matching-symbols
-            (sort matching-symbols (lambda (a b) (> (length a) (length b))))
-            (mapc (lambda (symbol) (setq symbol-names (cons symbol (delete symbol symbol-names))))
-                  matching-symbols)))))
-    (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
-           (position (cdr (assoc selected-symbol name-and-pos))))
-      (goto-char position))))
-
-(defun sudo-edit-this ()
-  (interactive)
-  (if buffer-file-name
-      (find-alternate-file (concat "/sudo:root@localhost:" (buffer-file-name)))
-    (sudo-edit)))
 
 ;; https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun swap-windows ()
@@ -153,72 +87,6 @@ Symbols matching the text at point are put first in the completion list."
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; http://stackoverflow.com/a/2423919/464831
-;; (defun move-text-internal (arg)
-;;   (cond
-;;    ((and mark-active transient-mark-mode)
-;;     (if (> (point) (mark))
-;;         (exchange-point-and-mark))
-;;     (let ((column (current-column))
-;;           (text (delete-and-extract-region (point) (mark))))
-;;       (forward-line arg)
-;;       (move-to-column column t)
-;;       (set-mark (point))
-;;       (insert text)
-;;       (exchange-point-and-mark)
-;;       (setq deactivate-mark nil)))
-;;    (t
-;;     (beginning-of-line)
-;;     (when (or (> arg 0) (not (bobp)))
-;;       (forward-line)
-;;       (when (or (< arg 0) (not (eobp)))
-;;         (transpose-lines arg))
-;;       (forward-line -1)))))
-
-;; (defun move-text-down (arg)
-;;   "Move region (transient-mark-mode active) or current line
-;;   arg lines down."
-;;   (interactive "*p")
-;;   (move-text-internal arg))
-
-;; (defun move-text-up (arg)
-;;   "Move region (transient-mark-mode active) or current line
-;;   arg lines up."
-;;   (interactive "*p")
-;;   (move-text-internal (- arg)))
-
-
-
-;; ;; Duplicate start of line or region, from http://www.emacswiki.org/emacs/DuplicateStartOfLineOrRegion
-;; (defun duplicate-start-of-line-or-region ()
-;;   (interactive)
-;;   (if mark-active
-;;       (duplicate-region)
-;;     (duplicate-start-of-line)))
-;; (defun duplicate-start-of-line ()
-;;   (if (bolp)
-;;       (progn
-;;         (end-of-line)
-;;         (duplicate-start-of-line)
-;;         (beginning-of-line))
-;;     (let ((text (buffer-substring (point)
-;;                                   (beginning-of-thing 'line))))
-;;       (forward-line)
-;;       (push-mark)
-;;       (insert text)
-;;       (open-line 1))))
-;; (defun duplicate-region ()
-;;   (let* ((end (region-end))
-;;          (text (buffer-substring (region-beginning) end)))
-;;     (goto-char end)
-;;     (insert text)
-;;     (push-mark end)
-;;     (setq deactivate-mark nil)
-;;     (exchange-point-and-mark)))
-
-;; (global-set-key (kbd "C-S-d") 'duplicate-start-of-line-or-region)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://www.emacswiki.org/emacs/basic-edit-toolkit.el
@@ -415,32 +283,14 @@ If mark is activate, duplicate region lines below."
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
-;; ;; http://www.emacswiki.org/emacs/WordCount
-;; (defun count-words-region (start end)
-;;   (interactive "r")
-;;   (save-excursion
-;;     (let ((n 0))
-;;       (goto-char start)
-;;       (while (< (point) end)
-;;         (if (forward-word 1)
-;;             (setq n (1+ n))))
-;;       (message "Region has %d words" n)
-;;       n)))
-
-;; (defun count-lines-words-region (start end)
-;;   "Print number of lines words and characters in the region."
-;;   (interactive "r")
-;;   (message "Region has %d lines, %d words, %d characters"
-;;            (count-lines start end)
-;;            (count-words-region start end)
-;;            (- end start)))
-
-;; (defun wc () (interactive) (shell-command (concat "wc " buffer-file-name)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun xml-format ()
   (interactive)
   (save-excursion
     (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun ergoemacs-open-in-desktop ()
   "Show current file in desktop (OS's file manager)."

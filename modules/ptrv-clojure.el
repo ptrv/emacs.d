@@ -84,9 +84,9 @@
 (add-hook 'clojure-mode-hook 'kibit-mode)
 
 (eval-after-load "kibit-mode"
-'(progn
-   (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
-   (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check)))
+  '(progn
+     (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
+     (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

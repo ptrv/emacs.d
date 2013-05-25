@@ -59,7 +59,7 @@
 ;;   (interactive)
 ;;   (insert ".")
 ;;   (unless (ac-cursor-on-diable-face-p)
-;;     (auto-complete)))
+;;     (auto-complete '(ac-source-go))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compile fucntions
