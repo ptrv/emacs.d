@@ -27,20 +27,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; projectile
 
-(setq projectile-known-projects-file (concat
-                                      ptrv-tmp-dir
-                                      "projectile-bookmarks.eld")
-      projectile-cache-file (concat ptrv-tmp-dir "projectile.cache"))
+(after 'projectile-autoloads
+  (setq projectile-known-projects-file (concat
+                                        ptrv-tmp-dir
+                                        "projectile-bookmarks.eld")
+        projectile-cache-file (concat ptrv-tmp-dir "projectile.cache"))
 
-(autoload 'projectile-mode "projectile" nil t nil)
-(autoload 'projectile-global-mode "projectile" nil t nil)
+  (projectile-global-mode)
 
-(projectile-global-mode)
-
-(eval-after-load "projectile"
-  '(progn
-     (add-to-list 'projectile-project-root-files ".ropeproject" t)
-     (add-to-list 'projectile-project-root-files "setup.py" t)))
+  (after 'projectile
+    (add-to-list 'projectile-project-root-files ".ropeproject" t)
+    (add-to-list 'projectile-project-root-files "setup.py" t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ffip

@@ -33,28 +33,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; undo-tree
-(global-undo-tree-mode)
+(after 'undo-tree-autoloads
+  (global-undo-tree-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse-kill-ring
-(setq browse-kill-ring-highlight-current-entry t)
-(setq browse-kill-ring-no-duplicates t)
-(setq browse-kill-ring-display-duplicates nil)
-(setq browse-kill-ring-highlight-inserted-item nil)
+(after 'browse-kill-ring-autoloads
+  (setq browse-kill-ring-highlight-current-entry t)
+  (setq browse-kill-ring-no-duplicates t)
+  (setq browse-kill-ring-display-duplicates nil)
+  (setq browse-kill-ring-highlight-inserted-item nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; insert-time
-(require 'insert-time)
-(setq insert-date-format "%Y-%m-%d")
-(setq insert-time-format "%H:%M:%S")
+(with-library 'insert-time
+  (setq insert-date-format "%Y-%m-%d")
+  (setq insert-time-format "%H:%M:%S"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; pomodoro.el
-(autoload 'pomodoro-add-to-mode-line "pomodoro" t)
-(pomodoro-add-to-mode-line)
-(setq pomodoro-sound-player "/usr/bin/aplay")
-(setq pomodoro-break-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
-(setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
+(after 'pomodoro-autoloads
+  (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
+  (pomodoro-add-to-mode-line)
+  (setq pomodoro-sound-player "/usr/bin/aplay")
+  (setq pomodoro-break-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
+  (setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; switch between sqlite3 and spatialite excutable
@@ -128,63 +131,63 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; iflipb-conf.el
+(after 'iflipb-autoloads
+  (setq iflipb-ignore-buffers '("*Ack-and-a-half*"
+                                "*Help*"
+                                "*Compile-Log*"
+                                "*Ibuffer*"
+                                "*Messages*"
+                                "*scratch*"
+                                "*Completions*"
+                                "*magit"
+                                "*Pymacs*"
+                                "*clang-complete*"
+                                "*compilation*"
+                                "*Packages*"
+                                "*file-index*"
+                                " output*"
+                                "*tramp/"
+                                "*project-status*"
+                                "SCLang:PostBuffer*"
+                                ))
 
-(setq iflipb-ignore-buffers '("*Ack-and-a-half*"
-                              "*Help*"
-                              "*Compile-Log*"
-                              "*Ibuffer*"
-                              "*Messages*"
-                              "*scratch*"
-                              "*Completions*"
-                              "*magit"
-                              "*Pymacs*"
-                              "*clang-complete*"
-                              "*compilation*"
-                              "*Packages*"
-                              "*file-index*"
-                              " output*"
-                              "*tramp/"
-                              "*project-status*"
-                              "SCLang:PostBuffer*"
-                              ))
-
-(setq iflipb-wrap-around t)
+  (setq iflipb-wrap-around t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ack-and-a-half
-(defalias 'ack 'ack-and-a-half)
-(defalias 'ack-same 'ack-and-a-half-same)
-(defalias 'ack-find-file 'ack-and-a-half-find-file)
-(defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
+(after 'ack-and-a-half-autoloads
+  (defalias 'ack 'ack-and-a-half)
+  (defalias 'ack-same 'ack-and-a-half-same)
+  (defalias 'ack-find-file 'ack-and-a-half-find-file)
+  (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; edit-server
-
-(autoload 'edit-server-start "edit-server" "" t)
-
-(add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-(add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
-
-(edit-server-start)
-
-(setq edit-server-url-major-mode-alist
-      '(("github\\.com" . gfm-mode)))
+(after 'edit-server-autoloads
+  (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
+  (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
+  (edit-server-start)
+  (setq edit-server-url-major-mode-alist
+        '(("github\\.com" . gfm-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; iedit
-(setq iedit-toggle-key-default (kbd "C-;"))
-(define-key global-map iedit-toggle-key-default 'iedit-mode)
-(define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
-(define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
-(define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
+(after 'iedit-autoloads
+  (setq iedit-toggle-key-default (kbd "C-;"))
+  (define-key global-map iedit-toggle-key-default 'iedit-mode)
+  (define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
+  (define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
+  (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smooth-scrolling
-(setq smooth-scroll-margin 5)
+(after 'smooth-scrolling-autoloads
+  (setq smooth-scroll-margin 5))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; google-this
-(google-this-mode 1)
+(after 'google-this-autoloads
+  (google-this-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ediff

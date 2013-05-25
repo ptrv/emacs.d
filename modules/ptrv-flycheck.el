@@ -43,13 +43,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(eval-after-load "flycheck"
-  '(progn
-     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-     (setq flycheck-highlighting-mode 'lines)
-
-     ))
+(after 'flycheck
+  (setq flycheck-highlighting-mode 'lines))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

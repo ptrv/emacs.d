@@ -28,75 +28,77 @@
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
 
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
-(add-hook 'LaTeX-mode-hook 'reftex-mode)
-(setq reftex-plug-into-AUCTeX t)
+(after 'latex
+  (message "Load latex!!!")
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+  (add-hook 'LaTeX-mode-hook 'reftex-mode)
+  (setq reftex-plug-into-AUCTeX t)
 
-(add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
 
-(setq TeX-source-correlate-method 'synctex)
+  (setq TeX-source-correlate-method 'synctex)
 
-(eval-after-load "tex"
-  '(progn
-     (add-to-list 'TeX-command-list
-                  '("latexmk"
-                    "latexmk %s"
-                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
-     (add-to-list 'TeX-command-list
-                  '("latexmk clean"
-                    "latexmk -c %s"
-                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -c") t)
-     (add-to-list 'TeX-command-list
-                  '("latexmk cleanall"
-                    "latexmk -C %s"
-                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t)))
+  (eval-after-load "tex"
+    '(progn
+       (add-to-list 'TeX-command-list
+                    '("latexmk"
+                      "latexmk %s"
+                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
+       (add-to-list 'TeX-command-list
+                    '("latexmk clean"
+                      "latexmk -c %s"
+                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -c") t)
+       (add-to-list 'TeX-command-list
+                    '("latexmk cleanall"
+                      "latexmk -C %s"
+                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t)))
 
-(defun okular-make-url () (concat
-                           "file://"
-                           (expand-file-name (funcall file "pdf" t)
-                                             (file-name-directory (TeX-master-file)))
-                           "#src:"
-                           (TeX-current-line) (buffer-file-name)))
+  (defun okular-make-url () (concat
+                             "file://"
+                             (expand-file-name (funcall file "pdf" t)
+                                               (file-name-directory (TeX-master-file)))
+                             "#src:"
+                             (TeX-current-line) (buffer-file-name)))
 
-(cond ((eq system-type 'gnu/linux)
-       (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
-       (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular")))
-       (add-hook 'LaTeX-mode-hook
-                 (lambda ()
-                   (add-to-list 'TeX-expand-list
-                                '("%u" okular-make-url)))))
-      ((eq system-type 'darwin)
-       (setq TeX-view-program-selection '((output-pdf "Skim")))
-       (setq TeX-view-program-list
-             '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))
+  (cond ((eq system-type 'gnu/linux)
+         (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
+         (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular")))
+         (add-hook 'LaTeX-mode-hook
+                   (lambda ()
+                     (add-to-list 'TeX-expand-list
+                                  '("%u" okular-make-url)))))
+        ((eq system-type 'darwin)
+         (setq TeX-view-program-selection '((output-pdf "Skim")))
+         (setq TeX-view-program-list
+               '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))
 
 
-(add-hook 'LaTeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+  (add-hook 'LaTeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
-(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
 
-(custom-set-variables
- '(reftex-ref-style-default-list (quote ("Hyperref")))
- ;; '(reftex-cite-format 'natbib)
- )
+  (custom-set-variables
+   '(reftex-ref-style-default-list (quote ("Hyperref")))
+   ;; '(reftex-cite-format 'natbib)
+   )
 
-(autoload 'info-lookup-add-help "info-look" nil nil)
-(info-lookup-add-help
- :mode 'latex-mode
- :regexp ".*"
- :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
- :doc-spec '(("(latex2e)Concept Index" )
-             ("(latex2e)Command Index")))
+  (autoload 'info-lookup-add-help "info-look" nil nil)
+  (info-lookup-add-help
+   :mode 'latex-mode
+   :regexp ".*"
+   :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
+   :doc-spec '(("(latex2e)Concept Index" )
+               ("(latex2e)Command Index")))
 
-(eval-after-load "latex"
-  '(progn
-     (require 'auto-complete-auctex)
-     (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
-     (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
-     (require 'pstricks)))
+  (eval-after-load "latex"
+    '(progn
+       (require 'auto-complete-auctex)
+       (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
+       (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
+       (require 'pstricks))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
