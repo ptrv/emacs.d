@@ -34,27 +34,30 @@
                               (when (file-remote-p (buffer-file-name))
                                 (elpy-disable))))
 
-(eval-after-load "elpy"
-  '(progn
-     (define-key elpy-mode-map (kbd "C-c C-f") nil)
-     (define-key elpy-mode-map (kbd "C-c C-j") nil)
-     (define-key elpy-mode-map (kbd "C-c C-n") nil)
-     (define-key elpy-mode-map (kbd "C-c C-p") nil)
-     (setq python-check-command "flake8")
-     (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
-     ;; complete on dot
-     (define-key elpy-mode-map "." 'ac-dot-complete)
+(after 'elpy
+  (define-key elpy-mode-map (kbd "C-c C-f") nil)
+  (define-key elpy-mode-map (kbd "C-c C-j") nil)
+  (define-key elpy-mode-map (kbd "C-c C-n") nil)
+  (define-key elpy-mode-map (kbd "C-c C-p") nil)
+  (setq python-check-command "flake8")
+  (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
+  ;; complete on dot
+  (define-key elpy-mode-map "." 'ac-dot-complete)
 
-     (defun elpy-use-ipython-pylab ()
-       "Set defaults to use IPython instead of the standard interpreter."
-       (interactive)
-       (unless (boundp 'python-python-command)
-         (elpy-use-ipython)
-         (setq python-shell-interpreter-args "--pylab")))
-     ))
+  (defun elpy-use-ipython-pylab ()
+    "Set defaults to use IPython instead of the standard interpreter."
+    (interactive)
+    (unless (boundp 'python-python-command)
+      (elpy-use-ipython)
+      (setq python-shell-interpreter-args "--pylab")))
+  )
 
-(set-face-background 'highlight-indentation-face "#e3e3d3")
-(set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+(after 'highlight-indentation
+  (set-face-background 'highlight-indentation-face "#e3e3d3")
+  (set-face-background 'highlight-indentation-current-column-face "#c3b3b3"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-elpy)
+
 ;;; ptrv-elpy.el ends here
