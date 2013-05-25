@@ -104,6 +104,19 @@
 (load "~/.emacs-locals.el" 'noerror)
 (require 'my-secrets)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; essential macros
+(defmacro after (mode &rest body)
+  "`eval-after-load' MODE evaluate BODY."
+  (declare (indent defun))
+  `(eval-after-load ,mode
+     '(progn ,@body)))
+
+(defmacro with-library (symbol &rest body)
+  "Evaluate BODY only if require SYMBOL is successful."
+  (declare (indent defun))
+  `(when (require ,symbol nil t)
+     ,@body))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq ptrv-pkgs
       '(ptrv-backup
         ptrv-package

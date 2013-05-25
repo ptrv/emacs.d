@@ -24,108 +24,105 @@
 
 ;;; Code:
 
-(require 'sclang)
+(after 'w3m
+  (define-key w3m-mode-map [left] 'backward-char)
+  (define-key w3m-mode-map [right] 'forward-char)
+  (define-key w3m-mode-map [up] 'previous-line)
+  (define-key w3m-mode-map [down] 'next-line)
+  (setq w3m-auto-show 1)
+  (setq w3m-key-binding 'info)
+  (setq w3m-pop-up-frames t)
+  (setq w3m-pop-up-windows nil))
 
-(eval-after-load "w3m"
-  '(progn
-     (define-key w3m-mode-map [left] 'backward-char)
-     (define-key w3m-mode-map [right] 'forward-char)
-     (define-key w3m-mode-map [up] 'previous-line)
-     (define-key w3m-mode-map [down] 'next-line)
-     (setq w3m-auto-show 1)
-     ))
+(with-library 'sclang
 
-(setq w3m-key-binding 'info
-      w3m-pop-up-frames t
-      w3m-pop-up-windows nil)
+  (setq sclang-auto-scroll-post-buffer nil
+        sclang-eval-line-forward nil
+        ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
+        sclang-library-configuration-file "~/.sclang.cfg"
+        sclang-runtime-directory "~/scwork/"
+        sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-(setq sclang-auto-scroll-post-buffer nil
-      sclang-eval-line-forward nil
-      ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
-      sclang-library-configuration-file "~/.sclang.cfg"
-      sclang-runtime-directory "~/scwork/"
-      sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
+  ;; ##### extension for block error messages ####
+  ;;(load-file (concat (live-pack-lib-dir) "ext-scel.el"))
 
-;; ##### extension for block error messages ####
-;;(load-file (concat (live-pack-lib-dir) "ext-scel.el"))
+  ;; (add-hook 'sclang-mode-hook
+  ;;           (lambda ()
+  ;;             (setq ac-sources
+  ;;                   '(ac-source-dictionary
+  ;;                     ac-source-words-in-buffer
+  ;;                     ac-source-words-in-same-mode-buffers
+  ;;                     ac-source-words-in-all-buffer
+  ;;                     ;;ac-source-yasnippet
+  ;;                     ac-source-semantic))))
 
-;; (add-hook 'sclang-mode-hook
-;;           (lambda ()
-;;             (setq ac-sources
-;;                   '(ac-source-dictionary
-;;                     ac-source-words-in-buffer
-;;                     ac-source-words-in-same-mode-buffers
-;;                     ac-source-words-in-all-buffer
-;;                     ;;ac-source-yasnippet
-;;                     ac-source-semantic))))
 
-(defun sclang-mode-untabify ()
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "[ \t]+$" nil t)
-      (delete-region (match-beginning 0) (match-end 0)))
-    (goto-char (point-min))
-    (if (search-forward "\t" nil t)
-        (untabify (1- (point)) (point-max))))
-  nil)
+  (defun sclang-mode-untabify ()
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "[ \t]+$" nil t)
+        (delete-region (match-beginning 0) (match-end 0)))
+      (goto-char (point-min))
+      (if (search-forward "\t" nil t)
+          (untabify (1- (point)) (point-max))))
+    nil)
 
-;; (require 'ext-scel)
-;; (setq sclang-minibuf-results nil)
-;; (setq sclang-collapse t)
+  ;; (require 'ext-scel)
+  ;; (setq sclang-minibuf-results nil)
+  ;; (setq sclang-collapse t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; hooks
-(defun supercollider-init ()
-  (add-to-list 'ac-modes 'sclang-mode)
-  (make-local-variable 'ac-user-dictionary-files)
-  (add-to-list 'ac-user-dictionary-files "~/.sc_completion")
+  ;; hooks
 
-  ;; (add-to-list 'ac-user-dictionary-files
-  ;;              "~/.local/share/SuperCollider/sclang_completion_dict")
-  (yas-minor-mode 1)
-  (make-local-variable 'write-contents-hooks)
-  (add-hook 'write-contents-hooks 'sclang-mode-untabify)
+  (defun supercollider-init ()
+    (add-to-list 'ac-modes 'sclang-mode)
+    (make-local-variable 'ac-user-dictionary-files)
+    (add-to-list 'ac-user-dictionary-files "~/.sc_completion")
 
-  ;; set buffer local keymap to set TAB for jumping to next button in
-  ;; post window when using ext-scel's collapsible post window text.
-  (when (string= (buffer-name) sclang-post-buffer)
-    (use-local-map (copy-keymap sclang-mode-map))
-    (local-set-key [?\t] 'forward-button)
-    (local-set-key [backtab] 'backward-button))
+    ;; (add-to-list 'ac-user-dictionary-files
+    ;;              "~/.local/share/SuperCollider/sclang_completion_dict")
+    (yas-minor-mode 1)
+    (make-local-variable 'write-contents-hooks)
+    (add-hook 'write-contents-hooks 'sclang-mode-untabify)
 
-  )
-(add-hook 'sclang-mode-hook 'supercollider-init)
+    ;; set buffer local keymap to set TAB for jumping to next button in
+    ;; post window when using ext-scel's collapsible post window text.
+    (when (string= (buffer-name) sclang-post-buffer)
+      (use-local-map (copy-keymap sclang-mode-map))
+      (local-set-key [?\t] 'forward-button)
+      (local-set-key [backtab] 'backward-button))
 
-(eval-after-load "sclang"
-  '(progn
-     (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
-     (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
-     (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
-     ;; Raise all supercollider windows.
-     (define-key sclang-mode-map (kbd "C-c f")
-       (lambda ()
-         (interactive)
-         (sclang-eval-string "Window.allWindows.do(_.front);")))
-     (define-key sclang-server-key-map [?l]
-       (lambda ()
-         (interactive)
-         (sclang-eval-string "Server.default.meter;")))
-     (define-key sclang-server-key-map [?s]
-       (lambda ()
-         (interactive)
-         (sclang-eval-string "Server.default.scope(numChannels: 2);")))
-     (define-key sclang-server-key-map [?h]
-       (lambda ()
-         (interactive)
-         (sclang-eval-string "HelperWindow.new;")))
-     ))
+    )
+  (add-hook 'sclang-mode-hook 'supercollider-init)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (eval-after-load "sclang"
+    '(progn
+       (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
+       (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
+       (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
+       ;; Raise all supercollider windows.
+       (define-key sclang-mode-map (kbd "C-c f")
+         (lambda ()
+           (interactive)
+           (sclang-eval-string "Window.allWindows.do(_.front);")))
+       (define-key sclang-server-key-map [?l]
+         (lambda ()
+           (interactive)
+           (sclang-eval-string "Server.default.meter;")))
+       (define-key sclang-server-key-map [?s]
+         (lambda ()
+           (interactive)
+           (sclang-eval-string "Server.default.scope(numChannels: 2);")))
+       (define-key sclang-server-key-map [?h]
+         (lambda ()
+           (interactive)
+           (sclang-eval-string "HelperWindow.new;")))
+       ))
 
-(if (fboundp 'completing-read-ido)
-    (progn
-      (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-interface)
-      (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-full-interface)))
+  (if (fboundp 'completing-read-ido)
+      (progn
+        (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-interface)
+        (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-full-interface))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
