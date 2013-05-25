@@ -360,6 +360,8 @@
 (global-set-key (kbd "C-x r v") 'ptrv-list-registers)
 
 (set-register ?e '(file . "~/.emacs.d"))
+(set-register ?i '(file . "~/.emacs.d/init.el"))
+(set-register ?m '(file . "~/.emacs.d/modules"))
 (set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -380,6 +382,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (global-set-key (kbd "<C-f9>") #'global-git-gutter-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;(global-set-key (kbd "C-c I") 'find-user-init-file)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
