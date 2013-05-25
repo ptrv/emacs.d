@@ -1,4 +1,5 @@
 ;; my-sectrets.el
 
-(load-library "~/.secrets.gpg")
+(unless (load "~/.secrets.gpg" t)
+  (warn "Could not load secrets file!"))
 (provide 'my-secrets)
