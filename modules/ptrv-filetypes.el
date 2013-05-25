@@ -93,6 +93,10 @@
 (autoload 'arduino-mode "arduino-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.ino\\'" . arduino-mode))
 
+;; arch linux
+(add-to-list 'auto-mode-alist '("PKGBUILD$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.install$" . shell-script-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'ptrv-filetypes)
