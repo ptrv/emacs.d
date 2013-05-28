@@ -30,7 +30,7 @@
 
 ;; Hook auto-complete into clang
 (after 'cc-mode
-  (message "Load cc-mode congig !!!")
+  (message "cc-mode config has been loaded !!!")
   (require 'auto-complete-clang-async)
   (setq ac-clang-complete-executable
         (concat dotfiles-dir "site-lisp/emacs-clang-complete-async/clang-complete"))

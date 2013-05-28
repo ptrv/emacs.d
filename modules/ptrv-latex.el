@@ -29,7 +29,7 @@
 (load "preview-latex.el" nil t t)
 
 (after 'latex
-  (message "Load latex!!!")
+  (message "latex config has been loaded !!!")
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
   (setq-default TeX-master nil)

@@ -47,7 +47,7 @@
 (global-set-key (kbd "C-c g") 'gtd)
 
 (after 'org
-  (message "Load Org config !!!")
+  (message "Org config has been loaded !!!")
   (setq org-outline-path-complete-in-steps nil)
   (setq org-completion-use-iswitchb nil)
   (setq org-completion-use-ido t)
