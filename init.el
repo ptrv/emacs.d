@@ -245,6 +245,24 @@
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
+;; taken from colour-pack
+(require 'live-fontify-hex)
+
+(font-lock-add-keywords 'lisp-mode
+                        '((live-fontify-hex-colors)))
+(font-lock-add-keywords 'emacs-lisp-mode
+                        '((live-fontify-hex-colors)))
+(font-lock-add-keywords 'lisp-interaction-mode
+                        '((live-fontify-hex-colors)))
+(font-lock-add-keywords 'css-mode
+                        '((live-fontify-hex-colors)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; nyan-mode
+(autoload 'nyan-mode "nyan-mode" nil t)
+(setq nyan-bar-length 16)
+(nyan-mode 1)
+
 ;;;; window-number
 (after 'window-number-autoloads
   (autoload 'window-number-mode "window-number"
