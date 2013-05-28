@@ -42,8 +42,8 @@ the mode-line."
   (window-number-meta-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  )
 
-  (provide 'ptrv-window-number)
+(provide 'ptrv-window-number)
 
 ;;; ptrv-window-number.el ends here
-  )
