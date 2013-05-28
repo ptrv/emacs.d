@@ -32,76 +32,121 @@
 (exec-path-from-shell-copy-env "GOROOT")
 (exec-path-from-shell-copy-env "GOPATH")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; go-lang completion
-(add-to-list 'load-path (concat
-                         (car (split-string (getenv "GOPATH") ":"))
-                         "/src/github.com/nsf/gocode/emacs"))
+(after 'go-mode
+  (message "go-mode config has been loaded !!!")
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; go-lang completion
+  (add-to-list 'load-path (concat
+                           (car (split-string (getenv "GOPATH") ":"))
+                           "/src/github.com/nsf/gocode/emacs"))
 
-(eval-after-load "go-mode"
-  '(progn
-     (require 'go-autocomplete)
-     (defface ac-go-mode-candidate-face
-       '((t (:background "lightgray" :foreground "navy")))
-       "Face for go-autocomplete candidate"
-       :group 'auto-complete)
-     (defface ac-go-mode-selection-face
-       '((t (:background "navy" :foreground "white")))
-       "Face for the go-autocomplete selected candidate."
-       :group 'auto-complete)
-     (setcar (nthcdr 1 ac-source-go)
-             '(candidate-face . ac-go-mode-candidate-face))
-     (setcar (nthcdr 2 ac-source-go)
-             '(selection-face . ac-go-mode-selection-face))))
+  (require 'go-autocomplete)
+  (defface ac-go-mode-candidate-face
+    '((t (:background "lightgray" :foreground "navy")))
+    "Face for go-autocomplete candidate"
+    :group 'auto-complete)
+  (defface ac-go-mode-selection-face
+    '((t (:background "navy" :foreground "white")))
+    "Face for the go-autocomplete selected candidate."
+    :group 'auto-complete)
+  (setcar (nthcdr 1 ac-source-go)
+          '(candidate-face . ac-go-mode-candidate-face))
+  (setcar (nthcdr 2 ac-source-go)
+          '(selection-face . ac-go-mode-selection-face))
 
-;; (defun go-dot-complete ()
-;;   "Insert dot and complete code at point."
-;;   (interactive)
-;;   (insert ".")
-;;   (unless (ac-cursor-on-diable-face-p)
-;;     (auto-complete '(ac-source-go))))
+  ;; (defun go-dot-complete ()
+  ;;   "Insert dot and complete code at point."
+  ;;   (interactive)
+  ;;   (insert ".")
+  ;;   (unless (ac-cursor-on-diable-face-p)
+  ;;     (auto-complete '(ac-source-go))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; compile fucntions
-(defun go-cmd-build ()
-  "compile project"
-  (interactive)
-  (compile "go build"))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; compile fucntions
+  (defun go-cmd-build ()
+    "compile project"
+    (interactive)
+    (compile "go build"))
 
-(defun go-cmd-test ()
-  "test project"
-  (interactive)
-  (compile "go test -v"))
+  (defun go-cmd-test ()
+    "test project"
+    (interactive)
+    (compile "go test -v"))
 
-(defun go-chk ()
-  "gocheck project"
-  (interactive)
-  (compile "go test -gocheck.vv"))
+  (defun go-chk ()
+    "gocheck project"
+    (interactive)
+    (compile "go test -gocheck.vv"))
 
-(defun go-run ()
-  "go run current package"
-  (interactive)
-  (let (files-list
-        go-list-result
-        go-list-result-list)
-    ;; get package files as list
-    (setq go-list-result-list
-          (s-split ","
-                   (car (process-lines
-                         "go" "list" "-f"
-                         "{{range .GoFiles}}{{.}},{{end}}"))
-                   t))
-    ;; escape space in file names
-    (setq go-list-result
-          (mapcar
-           (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
-    (setq files-list (s-join " " go-list-result))
-    (compile (concat "go run " files-list))))
+  (defun go-run ()
+    "go run current package"
+    (interactive)
+    (let (files-list
+          go-list-result
+          go-list-result-list)
+      ;; get package files as list
+      (setq go-list-result-list
+            (s-split ","
+                     (car (process-lines
+                           "go" "list" "-f"
+                           "{{range .GoFiles}}{{.}},{{end}}"))
+                     t))
+      ;; escape space in file names
+      (setq go-list-result
+            (mapcar
+             (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
+      (setq files-list (s-join " " go-list-result))
+      (compile (concat "go run " files-list))))
 
-(defun go-run-buffer ()
-  "go run current buffer"
-  (interactive)
-  (compile (concat "go run " buffer-file-name)))
+  (defun go-run-buffer ()
+    "go run current buffer"
+    (interactive)
+    (compile (concat "go run " buffer-file-name)))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; hooks
+  (defun go-mode-init ()
+    (make-local-variable 'before-save-hook)
+    (setq before-save-hook 'gofmt-before-save)
+    (hs-minor-mode 1)
+    ;;(flycheck-mode-on-safe)
+    (local-set-key (kbd "M-.") 'godef-jump)
+    (define-key go-mode-map (kbd "C-c C-c c") 'go-run)
+    (define-key go-mode-map (kbd "C-c C-c r") 'go-run-buffer)
+    (define-key go-mode-map (kbd "C-c C-c b") 'go-cmd-build)
+    (define-key go-mode-map (kbd "C-c C-c t") 'go-cmd-test)
+    (define-key go-mode-map (kbd "C-c C-c g") 'go-chk)
+    (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
+    (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
+    (define-key go-mode-map (kbd "C-c C-p") 'go-create-package)
+    (define-key go-mode-map "." 'ac-dot-complete))
+
+  (add-hook 'go-mode-hook 'go-mode-init)
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; flycheck support
+  (add-to-list 'load-path (concat
+                           (car (split-string (getenv "GOPATH") ":"))
+                           "/src/github.com/dougm/goflymake"))
+  ;; (add-to-list 'load-path (concat
+  ;;                          (car (split-string (getenv "GOPATH") ":"))
+  ;;                          "/src/github.com/ptrv/goflycheck"))
+  (require 'go-flycheck)
+
+  (after 'flycheck
+    (flycheck-declare-checker go
+      "A Go syntax and style checker using the gofmt utility. "
+      :command '("gofmt" source)
+      :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
+      :modes 'go-mode
+      :next-checkers '((no-errors . go-goflymake))
+      )
+    (add-to-list 'flycheck-checkers 'go t)
+       ;; remove go-goflymake from begin of list and add it to the end
+
+    (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
+    (add-to-list 'flycheck-checkers 'go-goflymake t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -121,48 +166,6 @@ If ARG is not nil, create package in current directory"
       (error "Please insert a package name"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; hooks
-(defun go-mode-init ()
-  (make-local-variable 'before-save-hook)
-  (setq before-save-hook 'gofmt-before-save)
-  (hs-minor-mode 1)
-  ;;(flycheck-mode-on-safe)
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (define-key go-mode-map (kbd "C-c C-c c") 'go-run)
-  (define-key go-mode-map (kbd "C-c C-c r") 'go-run-buffer)
-  (define-key go-mode-map (kbd "C-c C-c b") 'go-cmd-build)
-  (define-key go-mode-map (kbd "C-c C-c t") 'go-cmd-test)
-  (define-key go-mode-map (kbd "C-c C-c g") 'go-chk)
-  (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
-  (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
-  (define-key go-mode-map (kbd "C-c C-p") 'go-create-package)
-  (define-key go-mode-map "." 'ac-dot-complete))
-
-(add-hook 'go-mode-hook 'go-mode-init)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; flycheck support
-(add-to-list 'load-path (concat
-                         (car (split-string (getenv "GOPATH") ":"))
-                         "/src/github.com/dougm/goflymake"))
-;; (add-to-list 'load-path (concat
-;;                          (car (split-string (getenv "GOPATH") ":"))
-;;                          "/src/github.com/ptrv/goflycheck"))
-(require 'go-flycheck)
-
-(eval-after-load 'flycheck
-  '(progn
-     (flycheck-declare-checker go
-       "A Go syntax and style checker using the gofmt utility. "
-       :command '("gofmt" source)
-       :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
-       :modes 'go-mode
-       :next-checkers '((no-errors . go-goflymake))
-       )
-     (add-to-list 'flycheck-checkers 'go t)
-     ;; remove go-goflymake from begin of list and add it to the end
-     (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
-     (add-to-list 'flycheck-checkers 'go-goflymake t)))
 
 ;;(require 'flycheck-go-alt)
 
