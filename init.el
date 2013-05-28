@@ -132,7 +132,6 @@
         ptrv-tramp
         ptrv-ibuffer
         ptrv-vcs
-        ptrv-monkey-patch
         ptrv-nrepl
         ptrv-yasnippet
         ptrv-misc
