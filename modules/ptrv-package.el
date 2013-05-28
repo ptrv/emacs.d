@@ -138,7 +138,7 @@
 ;;   (when (not (package-installed-p p))
 ;;     (package-install p)))
 
-(require 'package)
+;; (require 'package)
 (package-initialize)
 (require 'carton)
 (carton-setup dotfiles-dir)
