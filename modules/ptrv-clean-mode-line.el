@@ -48,7 +48,7 @@
     (python-mode . "Py")
     (emacs-lisp-mode . "EL")
     (markdown-mode . "md")
-    (org-mode . "Ο")
+    ;; (org-mode . "Ο")
     (processing-mode . "P5"))
   "Alist for `clean-mode-line'.
 
