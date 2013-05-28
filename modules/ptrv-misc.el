@@ -28,16 +28,17 @@
 ;; session.el
 ;; save a list of open files in $HOME/.emacs.desktop
 ;; save the desktop file automatically if it already exists
+;;;; desktop.el
 (setq desktop-save (quote if-exists))
 (desktop-save-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; undo-tree
+;;;; undo-tree
 (after 'undo-tree-autoloads
   (global-undo-tree-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; browse-kill-ring
+;;;; browse-kill-ring
 (after 'browse-kill-ring-autoloads
   (setq browse-kill-ring-highlight-current-entry t)
   (setq browse-kill-ring-no-duplicates t)
@@ -45,13 +46,13 @@
   (setq browse-kill-ring-highlight-inserted-item nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; insert-time
+;;;; insert-time.el
 (with-library 'insert-time
   (setq insert-date-format "%Y-%m-%d")
   (setq insert-time-format "%H:%M:%S"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; pomodoro.el
+;;;; pomodoro.el
 (after 'pomodoro-autoloads
   (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
   (pomodoro-add-to-mode-line)
@@ -60,6 +61,7 @@
   (setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; sql-mode
 ;; switch between sqlite3 and spatialite excutable
 (defun sql-switch-spatialite-sqlite ()
   (interactive)
@@ -71,11 +73,11 @@
     (message "sql-sqlite-program changed to %s" change)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; the silver searcher
+;;;; the silver searcher
 (setq ag-highlight-search t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; pure-mode
+;;;; pure-mode
 (autoload 'pure-mode "pure-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.pure\\(rc\\)?$" . pure-mode))
 (eval-after-load "pure-mode"
@@ -95,11 +97,11 @@
 ;; (add-hook 'emacs-lisp-mode-hook #'lambda-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; smart-operator
+;;;; smart-operator
 (autoload 'smart-operator-mode "smart-operator" nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; tea-time
+;;;; tea-time
 (autoload 'tea-time "tea-time" nil t)
 (setq tea-time-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
 (cond
@@ -109,7 +111,7 @@
   (setq tea-time-sound-command "paplay %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; xah lee modes
+;;;; xah lee modes
 (autoload 'xmsi-mode "xmsi-math-symbols-input"
   "Load xmsi minor mode for inputting math/Unicode symbols." t)
 (eval-after-load "xmsi-math-symbols-input"
@@ -130,7 +132,7 @@
                  "%b"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; iflipb-conf.el
+;;;; iflipb
 (after 'iflipb-autoloads
   (setq iflipb-ignore-buffers '("*Ack-and-a-half*"
                                 "*Help*"
@@ -154,7 +156,7 @@
   (setq iflipb-wrap-around t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ack-and-a-half
+;;;; ack-and-a-half
 (after 'ack-and-a-half-autoloads
   (defalias 'ack 'ack-and-a-half)
   (defalias 'ack-same 'ack-and-a-half-same)
@@ -162,7 +164,7 @@
   (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; edit-server
+;;;; edit-server
 (after 'edit-server-autoloads
   (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
   (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
@@ -171,7 +173,7 @@
         '(("github\\.com" . gfm-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; iedit
+;;;; iedit
 (after 'iedit-autoloads
   (setq iedit-toggle-key-default (kbd "C-;"))
   (define-key global-map iedit-toggle-key-default 'iedit-mode)
@@ -180,21 +182,21 @@
   (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; smooth-scrolling
+;;;; smooth-scrolling
 (after 'smooth-scrolling-autoloads
   (setq smooth-scroll-margin 5))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; google-this
+;;;; google-this
 (after 'google-this-autoloads
   (google-this-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ediff
+;;;; ediff
 (setq ediff-split-window-function 'split-window-horizontally)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; url config dir
+;;;; url
 (setq url-configuration-directory (concat ptrv-tmp-dir "url"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
