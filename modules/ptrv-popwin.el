@@ -27,8 +27,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; popwin-conf.el
 
-(autoload 'popwin-mode "popwin" nil t)
+(require 'popwin)
 (popwin-mode 1)
+(global-set-key (kbd " C-z") popwin:keymap)
 
 ;; popwin settings
 (setq popwin:special-display-config
