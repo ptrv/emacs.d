@@ -1,28 +1,4 @@
-;;; init.el --- ptrv init
-
-;; Copyright (C) 2013  ptrv <mail@petervasil.net>
-
-;; Author: ptrv <mail@petervasil.net>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
+;;; init.el --- ptrv init file
 
 ;;;; basic init stuff
 (setq initial-scratch-message ";;
@@ -44,6 +20,9 @@
 
 (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
   (when (fboundp mode) (funcall mode -1)))
+
+(defconst *is-mac* (eq system-type 'darwin))
+(defconst *is-linux* (eq system-type 'gnu/linux))
 
 ;;set all coding systems to utf-8
 (set-language-environment 'utf-8)
@@ -1834,29 +1813,6 @@ point reaches the beginning or end of the buffer, stop there."
   )
 
 ;;;; clean-mode-line
-;; (after 'diminish-autoloads
-;;   (after 'auto-complete (diminish 'auto-complete-mode " α"))
-;;   (after 'yasnippet (diminish 'yas-minor-mode " γ"))
-;;   (after 'paredit (diminish 'paredit-mode " Φ"))
-;;   (after 'eldoc (diminish 'eldoc-mode))
-;;   (after 'abbrev (diminish 'abbrev-mode))
-;;   (after 'undo-tree (diminish 'undo-tree-mode " τ"))
-;;   (after 'elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
-;;   (after 'nrepl (diminish 'nrepl-interaction-mode " ηζ"))
-;;   (diminish 'auto-fill-function " φ")
-;;   (after 'autopair (diminish 'autopair-mode))
-;;   (after 'projectile (diminish 'projectile-mode))
-;;   (after 'kibit-mode (diminish 'kibit-mode " κ"))
-;;   (after 'google-this (diminish 'google-this-mode))
-;;   ;; Major modes
-;;   (after 'nrepl (diminish 'nrepl-mode "ηζ"))
-;;   (after 'clojure-mode (diminish 'clojure-mode "λ"))
-;;   (after 'hi-lock (diminish 'hi-lock-mode))
-;;   (after 'python (diminish 'python-mode "Py"))
-;;   (diminish 'emacs-lisp-mode "EL")
-;;   (after 'markdown-mode (diminish 'markdown-mode "md"))
-;;   (after 'processing-mode (diminish 'processing-mode "P5")))
-
 (defvar mode-line-cleaner-alist
   `((auto-complete-mode . " α")
     (yas-minor-mode . " γ")
@@ -1864,12 +1820,10 @@ point reaches the beginning or end of the buffer, stop there."
     (eldoc-mode . "")
     (abbrev-mode . "")
     (undo-tree-mode . " τ")
-    (wrap-region-mode . "")
     (elisp-slime-nav-mode . " δ")
     (nrepl-interaction-mode . " ηζ")
     (auto-fill-function . " φ")
     (autopair-mode . "")
-    (lambda-mode . "")
     (projectile-mode . "")
     (kibit-mode . " κ")
     (google-this-mode . "")
@@ -1900,45 +1854,45 @@ want to use in the modeline *in lieu of* the original.")
                (setq mode-name mode-str)))))
 (add-hook 'after-change-major-mode-hook 'clean-mode-line)
 
-;;;; platform sepcific
-(cond
- ((eq system-type 'darwin)
-  (setq mac-option-key-is-meta nil)
-  (setq mac-command-key-is-meta t)
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier nil)
+;;;; osx
+(when *is-mac*
+ (setq mac-option-key-is-meta nil)
+ (setq mac-command-key-is-meta t)
+ (setq mac-command-modifier 'meta)
+ (setq mac-option-modifier nil)
 
-  (if (window-system)
-      (progn
-        (add-to-list 'default-frame-alist '(font . "Inconsolata-16"))
-        (set-frame-size (selected-frame) 120 52)
-        (set-frame-position (selected-frame) 100 24)))
+ (if (window-system)
+     (progn
+       (add-to-list 'default-frame-alist '(font . "Inconsolata-16"))
+       (set-frame-size (selected-frame) 120 52)
+       (set-frame-position (selected-frame) 100 24)))
 
-  (setq default-input-method "MacOSX")
+ (setq default-input-method "MacOSX")
 
-  ;; Make cut and paste work with the OS X clipboard
+ ;; Make cut and paste work with the OS X clipboard
 
-  (defun live-copy-from-osx ()
-    (shell-command-to-string "pbpaste"))
+ (defun live-copy-from-osx ()
+   (shell-command-to-string "pbpaste"))
 
-  (defun live-paste-to-osx (text &optional push)
-    (let ((process-connection-type nil))
-      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-        (process-send-string proc text)
-        (process-send-eof proc))))
+ (defun live-paste-to-osx (text &optional push)
+   (let ((process-connection-type nil))
+     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+       (process-send-string proc text)
+       (process-send-eof proc))))
 
-  (when (not window-system)
-    (setq interprogram-cut-function 'live-paste-to-osx)
-    (setq interprogram-paste-function 'live-copy-from-osx))
+ (when (not window-system)
+   (setq interprogram-cut-function 'live-paste-to-osx)
+   (setq interprogram-paste-function 'live-copy-from-osx))
 
-  ;; Work around a bug on OS X where system-name is a fully qualified
-  ;; domain name
-  (setq system-name (car (split-string system-name "\\.")))
+ ;; Work around a bug on OS X where system-name is a fully qualified
+ ;; domain name
+ (setq system-name (car (split-string system-name "\\.")))
 
-  ;; Ignore .DS_Store files with ido mode
-  (add-to-list 'ido-ignore-files "\\.DS_Store"))
- ((eq system-type 'gnu/linux)
+ ;; Ignore .DS_Store files with ido mode
+ (add-to-list 'ido-ignore-files "\\.DS_Store"))
 
+;;;; linux
+(when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
   (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)
 
@@ -1965,7 +1919,7 @@ want to use in the modeline *in lieu of* the original.")
 
     (add-hook 'erc-text-matched-hook 'my-notify-erc))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; typeriter-mode
   (autoload 'typewriter-mode "typewriter-mode" nil t)
   (setq typewriter-play-command "paplay %s")
@@ -1977,8 +1931,7 @@ want to use in the modeline *in lieu of* the original.")
                               "sounds/eol-bell.wav"))
   (setq typewriter-sound-return (concat
                                  ptrv-etc-dir
-                                 "sounds/carriage-return.wav"))
-  ))
+                                 "sounds/carriage-return.wav")))
 
 ;;;; superollider
 (after 'w3m
@@ -2006,20 +1959,6 @@ want to use in the modeline *in lieu of* the original.")
         sclang-runtime-directory "~/scwork/"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-  ;; ##### extension for block error messages ####
-  ;;(load-file (concat (live-pack-lib-dir) "ext-scel.el"))
-
-  ;; (add-hook 'sclang-mode-hook
-  ;;           (lambda ()
-  ;;             (setq ac-sources
-  ;;                   '(ac-source-dictionary
-  ;;                     ac-source-words-in-buffer
-  ;;                     ac-source-words-in-same-mode-buffers
-  ;;                     ac-source-words-in-all-buffer
-  ;;                     ;;ac-source-yasnippet
-  ;;                     ac-source-semantic))))
-
-
   (defun sclang-mode-untabify ()
     (save-excursion
       (goto-char (point-min))
@@ -2029,13 +1968,6 @@ want to use in the modeline *in lieu of* the original.")
       (if (search-forward "\t" nil t)
           (untabify (1- (point)) (point-max))))
     nil)
-
-  ;; (require 'ext-scel)
-  ;; (setq sclang-minibuf-results nil)
-  ;; (setq sclang-collapse t)
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; hooks
 
   (defun supercollider-init ()
     (add-to-list 'ac-modes 'sclang-mode)
@@ -2921,7 +2853,6 @@ Start `ielm' if it's not already running."
                   ((setq sym (variable-at-point)) (describe-variable sym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;;; server
 (require 'server)
 (unless (server-running-p)
