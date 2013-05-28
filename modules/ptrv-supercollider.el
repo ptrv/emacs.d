@@ -34,8 +34,14 @@
   (setq w3m-pop-up-frames t)
   (setq w3m-pop-up-windows nil))
 
-(with-library 'sclang
+(defun sclang-ptrv ()
+  (interactive)
+  (if (require 'sclang nil t)
+      (sclang-start)
+    (message "SCLang is not installed!")))
 
+(after 'sclang
+  (message "sclang config has been loaded !!!")
   (setq sclang-auto-scroll-post-buffer nil
         sclang-eval-line-forward nil
         ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
@@ -71,7 +77,7 @@
   ;; (setq sclang-minibuf-results nil)
   ;; (setq sclang-collapse t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; hooks
 
   (defun supercollider-init ()
