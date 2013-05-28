@@ -31,65 +31,64 @@
     dir))
 
 (setq gist-view-gist t)
-(eval-after-load 'gist
-  '(progn
-    (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
-    (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop"))))
+(after 'gist
+  (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
+  (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git-gutter
-(setq git-gutter:window-width 2)
+(after 'git-gutter-autoloads
+  (setq git-gutter:window-width 2)
 
-;;(global-git-gutter-mode t)
+  ;;(global-git-gutter-mode t)
 
-(setq git-gutter:lighter " G-+")
+  (setq git-gutter:lighter " G-+")
 
-(setq git-gutter:modified-sign "~ ")
-(setq git-gutter:added-sign "+ ")
-(setq git-gutter:deleted-sign "- ")
-(setq git-gutter:unchanged-sign "  ")
+  (setq git-gutter:modified-sign "~ ")
+  (setq git-gutter:added-sign "+ ")
+  (setq git-gutter:deleted-sign "- ")
+  (setq git-gutter:unchanged-sign "  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; magit
 ;; newline after 72 chars in magit-log-edit-mode
-(add-hook 'magit-log-edit-mode-hook
-          (lambda ()
-             (set-fill-column 72)
-             (auto-fill-mode 1)))
+(after 'magit
+  (add-hook 'magit-log-edit-mode-hook
+            (lambda ()
+              (set-fill-column 72)
+              (auto-fill-mode 1)))
 
-;; http://whattheemacsd.com/setup-magit.el-01.html
-;; full screen magit-status
-(eval-after-load 'magit
-  '(progn
-     (defadvice magit-status (around magit-fullscreen activate)
-       (window-configuration-to-register :magit-fullscreen)
-       ad-do-it
-       (delete-other-windows))
-     (defun magit-quit-session ()
-       "Restores the previous window configuration and kills the magit buffer"
-       (interactive)
-       (kill-buffer)
-       (jump-to-register :magit-fullscreen))
-     (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+  ;; http://whattheemacsd.com/setup-magit.el-01.html
+  ;; full screen magit-status
+  (defadvice magit-status (around magit-fullscreen activate)
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+  (defun magit-quit-session ()
+    "Restores the previous window configuration and kills the magit buffer"
+    (interactive)
+    (kill-buffer)
+    (jump-to-register :magit-fullscreen))
+  (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
 
-     (defun magit-toggle-whitespace ()
-       (interactive)
-       (if (member "-w" magit-diff-options)
-           (magit-dont-ignore-whitespace)
-         (magit-ignore-whitespace)))
+  (defun magit-toggle-whitespace ()
+    (interactive)
+    (if (member "-w" magit-diff-options)
+        (magit-dont-ignore-whitespace)
+      (magit-ignore-whitespace)))
 
-     (defun magit-ignore-whitespace ()
-       (interactive)
-       (add-to-list 'magit-diff-options "-w")
-       (magit-refresh))
+  (defun magit-ignore-whitespace ()
+    (interactive)
+    (add-to-list 'magit-diff-options "-w")
+    (magit-refresh))
 
-     (defun magit-dont-ignore-whitespace ()
-       (interactive)
-       (setq magit-diff-options (remove "-w" magit-diff-options))
-       (magit-refresh))
+  (defun magit-dont-ignore-whitespace ()
+    (interactive)
+    (setq magit-diff-options (remove "-w" magit-diff-options))
+    (magit-refresh))
 
-     (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
-     ))
+  (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mercurial

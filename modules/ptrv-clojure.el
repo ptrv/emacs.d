@@ -25,89 +25,81 @@
 ;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(eval-after-load 'clojure-mode
-  '(progn
-     (font-lock-add-keywords
-      'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
-                       (0 (progn (compose-region (match-beginning 1)
-                                                 (match-end 1) "λ")
-                                 nil)))))
-     (font-lock-add-keywords
-      'clojure-mode `(("\\(#\\)("
-                       (0 (progn (compose-region (match-beginning 1)
-                                                 (match-end 1) "ƒ")
-                                 nil)))))
-     (font-lock-add-keywords
-       'clojure-mode `(("\\(#\\){"
-                        (0 (progn (compose-region (match-beginning 1)
-                                                  (match-end 1) "∈")
-                                  nil)))))))
+(after 'find-file-in-project
+  (add-to-list 'ffip-patterns "*.clj"))
 
-(eval-after-load 'find-file-in-project
-  '(add-to-list 'ffip-patterns "*.clj"))
+(after 'clojure-mode
+  (message "clojure config has been loaded !!!")
 
-;;(require 'clojure-mode)
+  (font-lock-add-keywords
+   'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
+                    (0 (progn (compose-region (match-beginning 1)
+                                              (match-end 1) "λ")
+                              nil)))))
+  (font-lock-add-keywords
+   'clojure-mode `(("\\(#\\)("
+                    (0 (progn (compose-region (match-beginning 1)
+                                              (match-end 1) "ƒ")
+                              nil)))))
+  (font-lock-add-keywords
+   'clojure-mode `(("\\(#\\){"
+                    (0 (progn (compose-region (match-beginning 1)
+                                              (match-end 1) "∈")
+                              nil)))))
+  (add-hook 'clojure-mode-hook
+            (lambda ()
+              (setq buffer-save-without-query t)))
 
-(add-hook 'clojure-mode-hook
-          (lambda ()
-            (setq buffer-save-without-query t)))
+  ;;command to align let statements
+  ;;To use: M-x align-cljlet
+  ;; (live-add-pack-lib "align-cljlet")
+  ;; (require 'align-cljlet)
 
-;;command to align let statements
-;;To use: M-x align-cljlet
-;; (live-add-pack-lib "align-cljlet")
-;; (require 'align-cljlet)
+  ;;Treat hyphens as a word character when transposing words
+  (defvar clojure-mode-with-hyphens-as-word-sep-syntax-table
+    (let ((st (make-syntax-table clojure-mode-syntax-table)))
+      (modify-syntax-entry ?- "w" st)
+      st))
+  (defun live-transpose-words-with-hyphens (arg)
+    "Treat hyphens as a word character when transposing words"
+    (interactive "*p")
+    (with-syntax-table clojure-mode-with-hyphens-as-word-sep-syntax-table
+      (transpose-words arg)))
 
-;;Treat hyphens as a word character when transposing words
-(eval-after-load 'clojure-mode
-  '(progn
-     (defvar clojure-mode-with-hyphens-as-word-sep-syntax-table
-       (let ((st (make-syntax-table clojure-mode-syntax-table)))
-	 (modify-syntax-entry ?- "w" st)
-	 st))
-     (defun live-transpose-words-with-hyphens (arg)
-       "Treat hyphens as a word character when transposing words"
-       (interactive "*p")
-       (with-syntax-table clojure-mode-with-hyphens-as-word-sep-syntax-table
-	 (transpose-words arg)))
+  (define-key clojure-mode-map (kbd "M-t") 'live-transpose-words-with-hyphens)
 
-     (define-key clojure-mode-map (kbd "M-t") 'live-transpose-words-with-hyphens)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-))
+  (autoload 'kibit-mode "kibit-mode" nil t)
+  (add-hook 'clojure-mode-hook 'kibit-mode)
 
+  (after 'kibit-mode
+    (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
+    (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;; (flycheck-declare-checker clojure-kibit
+  ;;   "A Clojure code analyzer using the kibit utility."
+  ;;   :command `(,(concat kibit-mode-path "bin/kibit-flymake.sh") source)
+  ;;   :error-patterns '(("\\(?1:.*\\):\\(?2:[0-9]+\\): \\(?4:ERROR: .* CORRECTION: .*\\)" error))
+  ;;   :modes 'clojure-mode)
+
+  ;; (add-to-list 'flycheck-checkers 'clojure-kibit)
+
+  (add-hook 'clojure-mode-hook (lambda () (flycheck-mode -1)))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; push-mark when switching to nrepl via C-c C-z
+  (defadvice nrepl-switch-to-repl-buffer (around
+                                          nrepl-switch-to-repl-buffer-with-mark
+                                          activate)
+    (with-current-buffer (current-buffer)
+      (push-mark)
+      ad-do-it)))
 
 (setq auto-mode-alist (append '(("\\.cljs$" . clojure-mode))
                               auto-mode-alist))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(autoload 'kibit-mode "kibit-mode" nil t)
-(add-hook 'clojure-mode-hook 'kibit-mode)
-
-(eval-after-load "kibit-mode"
-  '(progn
-     (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
-     (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (flycheck-declare-checker clojure-kibit
-;;   "A Clojure code analyzer using the kibit utility."
-;;   :command `(,(concat kibit-mode-path "bin/kibit-flymake.sh") source)
-;;   :error-patterns '(("\\(?1:.*\\):\\(?2:[0-9]+\\): \\(?4:ERROR: .* CORRECTION: .*\\)" error))
-;;   :modes 'clojure-mode)
-
-;; (add-to-list 'flycheck-checkers 'clojure-kibit)
-
-(add-hook 'clojure-mode-hook (lambda () (flycheck-mode -1)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; push-mark when switching to nrepl via C-c C-z
-(defadvice nrepl-switch-to-repl-buffer (around
-                                        nrepl-switch-to-repl-buffer-with-mark
-                                        activate)
-  (with-current-buffer (current-buffer)
-    (push-mark)
-    ad-do-it))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 4clojure

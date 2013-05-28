@@ -24,47 +24,32 @@
 
 ;;; Code:
 
-
-;; (setenv "PATH" (shell-command-to-string "echo $PATH"))
-;; (setenv "PATH" (replace-regexp-in-string "[[:space:]\n]*$" ""
-;;                                          (shell-command-to-string "$SHELL -l -c 'echo $PATH'")))
-
-;; (defun set-exec-path-from-shell-PATH ()
-;;   (let ((path-from-shell
-;;          (replace-regexp-in-string "[[:space:]\n]*$" ""
-;;                                    (shell-command-to-string "$SHELL --login -c 'echo $PATH'"))))
-;;     (setenv "PATH" path-from-shell)
-;;     (setq exec-path (split-string path-from-shell path-separator))
-;;     ))
-;; (when (or
-;;        (equal system-type 'darwin)
-;;        (equal system-type 'gnu/linux))
-;;   (set-exec-path-from-shell-PATH))
-
 (exec-path-from-shell-initialize)
 
 ;;; Eshell
-;; (eval-when-compile (require 'eshell nil t))
-(setq eshell-aliases-file (concat dotfiles-dir "etc/eshell_aliases"))
+(after 'eshell
+  (message "Eshell config has been loaded !!!")
+  ;; (eval-when-compile (require 'eshell nil t))
+  (setq eshell-aliases-file (concat dotfiles-dir "etc/eshell_aliases"))
 
-(defun eshell/clear ()
-  "04Dec2001 - sailor, to clear the eshell buffer."
-  (interactive)
-  (let ((inhibit-read-only t))
-    (erase-buffer)))
+  (defun eshell/clear ()
+    "04Dec2001 - sailor, to clear the eshell buffer."
+    (interactive)
+    (let ((inhibit-read-only t))
+      (erase-buffer)))
 
-(defun eshell/e (file)
-  (find-file-other-window file))
+  (defun eshell/e (file)
+    (find-file-other-window file))
 
-(add-hook 'eshell-prompt-load-hook
-          (lambda ()
-            (set-face-attribute 'eshell-prompt-face nil :foreground "dark green")))
+  (add-hook 'eshell-prompt-load-hook
+            (lambda ()
+              (set-face-attribute 'eshell-prompt-face nil :foreground "dark green")))
 
-(autoload 'pcomplete/go "pcmpl-go" nil nil)
-(autoload 'pcomplete/lein "pcmpl-lein" nil nil)
+  (autoload 'pcomplete/go "pcmpl-go" nil nil)
+  (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
 
-(eval-after-load 'auto-complete
-  '(require 'eshell-ac-pcomplete))
+  (after 'auto-complete
+    (require 'eshell-ac-pcomplete)))
 
 ;;; Term
 (setq term-default-bg-color "black")

@@ -27,62 +27,66 @@
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
 (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
 (autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
-(eval-after-load 'yasnippet '(processing-snippets-initialize))
+;;(eval-after-load 'yasnippet '(processing-snippets-initialize))
 (autoload 'processing-find-sketch "processing-mode" nil t)
 
-(cond
- ((eq system-type 'darwin)
-  (setq processing-location "processing-java"))
- ((eq system-type 'gnu/linux)
-  (setq processing-location "~/applications/processing-2.0/processing-java")
-  (setq processing-application-dir "~/applications/processing-2.0")
-  (setq processing-sketch-dir "~/processing_sketches_v2")
-  ))
+(after 'processing-mode
+  (message "Processing config has been loaded !!!")
 
-(defun processing-mode-init ()
-  (make-local-variable 'ac-sources)
-  (setq ac-sources '(ac-source-dictionary
-                     ac-source-yasnippet
-                     ac-source-words-in-buffer))
-  (make-local-variable 'ac-user-dictionary)
-  (setq ac-user-dictionary processing-functions)
-  (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
-  (setq ac-user-dictionary (append ac-user-dictionary processing-constants))
-  )
+  (after 'yasnippet
+    (processing-snippets-initialize))
 
-(add-to-list 'ac-modes 'processing-mode)
-(add-hook 'processing-mode-hook 'processing-mode-init)
+  (cond
+   ((eq system-type 'darwin)
+    (setq processing-location "processing-java"))
+   ((eq system-type 'gnu/linux)
+    (setq processing-location "~/applications/processing-2.0/processing-java")
+    (setq processing-application-dir "~/applications/processing-2.0")
+    (setq processing-sketch-dir "~/processing_sketches_v2")
+    ))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; If htmlize is installed, provide this function to copy buffer or
-;; region to clipboard
-(eval-after-load "processing-mode"
-  '(when (and (fboundp 'htmlize-buffer)
-              (fboundp 'htmlize-region))
-     (defun processing-copy-as-html (&optional arg)
-       ""
-       (interactive "P")
-       (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
-               'processing-mode)
-           (save-excursion
-             (let ((htmlbuf (if (region-active-p)
-                                (htmlize-region (region-beginning) (region-end))
-                              (htmlize-buffer))))
-               (if arg
-                   (switch-to-buffer htmlbuf)
-                 (progn
-                   (with-current-buffer htmlbuf
-                     (clipboard-kill-ring-save (point-min) (point-max)))
-                   (kill-buffer htmlbuf)
-                   (message "Copied as HTML to clipboard")))))
-         (message (concat "Copy as HTML failed, because current "
-                          "buffer is not a Processing buffer."))))
-     (define-key processing-mode-map (kbd "C-c C-p H") 'processing-copy-as-html)
-     (easy-menu-add-item processing-mode-menu nil (list "---"))
-     (easy-menu-add-item processing-mode-menu nil
-                         ["Copy as HTML" processing-copy-as-html
-                          :help "Copy buffer or region as HTML to clipboard"])))
+  (defun processing-mode-init ()
+    (make-local-variable 'ac-sources)
+    (setq ac-sources '(ac-source-dictionary
+                       ac-source-yasnippet
+                       ac-source-words-in-buffer))
+    (make-local-variable 'ac-user-dictionary)
+    (setq ac-user-dictionary processing-functions)
+    (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
+    (setq ac-user-dictionary (append ac-user-dictionary processing-constants))
+    )
 
+  (add-to-list 'ac-modes 'processing-mode)
+  (add-hook 'processing-mode-hook 'processing-mode-init)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; If htmlize is installed, provide this function to copy buffer or
+  ;; region to clipboard
+  (when (and (fboundp 'htmlize-buffer)
+             (fboundp 'htmlize-region))
+    (defun processing-copy-as-html (&optional arg)
+      ""
+      (interactive "P")
+      (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
+              'processing-mode)
+          (save-excursion
+            (let ((htmlbuf (if (region-active-p)
+                               (htmlize-region (region-beginning) (region-end))
+                             (htmlize-buffer))))
+              (if arg
+                  (switch-to-buffer htmlbuf)
+                (progn
+                  (with-current-buffer htmlbuf
+                    (clipboard-kill-ring-save (point-min) (point-max)))
+                  (kill-buffer htmlbuf)
+                  (message "Copied as HTML to clipboard")))))
+        (message (concat "Copy as HTML failed, because current "
+                         "buffer is not a Processing buffer."))))
+    (define-key processing-mode-map (kbd "C-c C-p H") 'processing-copy-as-html)
+    (easy-menu-add-item processing-mode-menu nil (list "---"))
+    (easy-menu-add-item processing-mode-menu nil
+                        ["Copy as HTML" processing-copy-as-html
+                         :help "Copy buffer or region as HTML to clipboard"])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
