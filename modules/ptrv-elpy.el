@@ -25,15 +25,16 @@
 ;;; Code:
 
 (after 'python
-  (setq elpy-default-minor-modes '(eldoc-mode
-                                   highlight-indentation-mode
-                                   yas-minor-mode
-                                   auto-complete-mode))
-  (elpy-enable t)
+  (after 'elpy-autoloads
+    (setq elpy-default-minor-modes '(eldoc-mode
+                                     highlight-indentation-mode
+                                     yas-minor-mode
+                                     auto-complete-mode))
+    (elpy-enable t)
 
-  (add-hook 'elpy-mode-hook #'(lambda ()
-                                (when (file-remote-p (buffer-file-name))
-                                  (elpy-disable)))))
+    (add-hook 'elpy-mode-hook #'(lambda ()
+                                  (when (file-remote-p (buffer-file-name))
+                                    (elpy-disable))))))
 
 (after 'elpy
   (define-key elpy-mode-map (kbd "C-c C-f") nil)
