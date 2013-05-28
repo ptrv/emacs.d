@@ -55,7 +55,7 @@
 (after 'pomodoro-autoloads
   (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
   (pomodoro-add-to-mode-line)
-  (setq pomodoro-sound-player "/usr/bin/aplay")
+  (setq pomodoro-sound-player "/usr/bin/paplay")
   (setq pomodoro-break-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
   (setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav")))
 
@@ -106,7 +106,7 @@
  ((eq system-type 'darwin)
   (setq tea-time-sound-command "afplay %s"))
  ((eq system-type 'gnu/linux)
-  (setq tea-time-sound-command "aplay %s")))
+  (setq tea-time-sound-command "paplay %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; xah lee modes
