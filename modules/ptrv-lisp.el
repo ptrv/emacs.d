@@ -41,7 +41,14 @@
   (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'enable-paredit-mode)
   (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-delimiters-mode))
 
-;; emacs lisp
+;;;; emacs lisp
+(defun imenu-elisp-sections ()
+  (setq imenu-prev-index-position-function nil)
+  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
+
+(add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
+
+
 (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
 
 (add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
