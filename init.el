@@ -2374,6 +2374,9 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Help should search more than just commands
 (define-key 'help-command "a" 'apropos)
 
+(global-set-key (kbd "C-h F") 'find-function)
+(global-set-key (kbd "C-h V") 'find-variable)
+
 ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
 (global-set-key (kbd "C-x O") #'(lambda ()
                                   (interactive)
