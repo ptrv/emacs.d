@@ -840,11 +840,10 @@ the mode-line."
 ;;;; tea-time
 (autoload 'tea-time "tea-time" nil t)
 (setq tea-time-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
-(cond
- ((eq system-type 'darwin)
-  (setq tea-time-sound-command "afplay %s"))
- ((eq system-type 'gnu/linux)
-  (setq tea-time-sound-command "paplay %s")))
+(cond (*is-mac*
+       (setq tea-time-sound-command "afplay %s"))
+      (*is-linux*
+       (setq tea-time-sound-command "paplay %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xah lee modes
@@ -1243,14 +1242,14 @@ the mode-line."
                              "#src:"
                              (TeX-current-line) (buffer-file-name)))
 
-  (cond ((eq system-type 'gnu/linux)
+  (cond (*is-linux*
          (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
          (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular")))
          (add-hook 'LaTeX-mode-hook
                    (lambda ()
                      (add-to-list 'TeX-expand-list
                                   '("%u" okular-make-url)))))
-        ((eq system-type 'darwin)
+        (*is-mac*
          (setq TeX-view-program-selection '((output-pdf "Skim")))
          (setq TeX-view-program-list
                '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))
@@ -1663,14 +1662,12 @@ point reaches the beginning or end of the buffer, stop there."
   (after 'yasnippet
     (processing-snippets-initialize))
 
-  (cond
-   ((eq system-type 'darwin)
-    (setq processing-location "processing-java"))
-   ((eq system-type 'gnu/linux)
-    (setq processing-location "~/applications/processing-2.0/processing-java")
-    (setq processing-application-dir "~/applications/processing-2.0")
-    (setq processing-sketch-dir "~/processing_sketches_v2")
-    ))
+  (cond (*is-mac*
+         (setq processing-location "processing-java"))
+        (*is-linux*
+         (setq processing-location "~/applications/processing-2.0/processing-java")
+         (setq processing-application-dir "~/applications/processing-2.0")
+         (setq processing-sketch-dir "~/processing_sketches_v2")))
 
   (defun processing-mode-init ()
     (make-local-variable 'ac-sources)
@@ -2667,8 +2664,8 @@ If mark is activate, duplicate region lines below."
   (cond
    ((string-equal system-type "windows-nt")
     (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
-   ((string-equal system-type "darwin") (shell-command "open ."))
-   ((string-equal system-type "gnu/linux")
+   (*is-mac* (shell-command "open ."))
+   (*is-linux*
     (let ((process-connection-type nil)) (start-process "" nil "xdg-open" "."))
     ;; (shell-command "xdg-open .") ;; 2013-02-10 this sometimes froze emacs till the folder is closed. ⁖ with nautilus
     )))
@@ -2691,7 +2688,7 @@ file of a buffer in an external program."
   (interactive)
   (when buffer-file-name
     (shell-command (concat
-                    (if (eq system-type 'darwin)
+                    (if *is-mac*
                         "open"
                       (read-shell-command "Open current file with: "))
                     " "
