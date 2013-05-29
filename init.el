@@ -999,6 +999,7 @@ the mode-line."
         ("*Python Doc*" :noselect t)
         ("*jedi:doc*" :noselect t)
         ("*Registers*" :noselect t)
+        ("*ielm*" :stick t)
         ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
