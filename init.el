@@ -1,5 +1,6 @@
 ;;; init.el --- ptrv init file
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; basic init stuff
 (setq initial-scratch-message ";;
 ;; I'm sorry, Emacs failed to start correctly.
@@ -44,13 +45,11 @@
                        (call-process "hostname" nil standard-output))))
 (setq system-name ptrv-hostname)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add .emacs.d to load-path
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
 (add-to-list 'load-path dotfiles-dir)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set all dirs
 (setq
  ptrv-etc-dir      (file-name-as-directory (concat dotfiles-dir "etc"))
@@ -66,7 +65,6 @@
 (make-directory ptrv-backups-dir t)
 (make-directory ptrv-pscratch-dir t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add every subdirectory of ~/.emacs.d/site-lisp to the load path
 (dolist
     (project (directory-files (concat dotfiles-dir "site-lisp") t "\\w+"))
@@ -74,7 +72,6 @@
              (not (string-match "_extras" project)))
     (add-to-list 'load-path project)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set paths to custom.el and loaddefs.el
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
@@ -83,6 +80,7 @@
 (require 'cl)
 (load "~/.emacs-locals.el" 'noerror)
 (require 'my-secrets)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; macros
 (defmacro after (mode &rest body)
@@ -96,8 +94,8 @@
   (declare (indent defun))
   `(when (require ,symbol nil t)
      ,@body))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
 (setq auto-save-list-file-name
       (concat ptrv-autosaves-dir "autosave-list"))
@@ -112,11 +110,13 @@
       kept-old-versions 2
       version-control t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; package
 (package-initialize)
 (require 'carton)
 (carton-setup dotfiles-dir)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
 ;; default browser
 (setq browse-url-generic-program (executable-find "google-chrome")
@@ -197,7 +197,6 @@
 
 (setq x-select-enable-clipboard t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;remove all trailing whitespace and trailing blank lines before
 ;;saving the file
 (defun ptrv-cleanup-whitespace ()
@@ -212,6 +211,7 @@
       savehist-file (concat ptrv-tmp-dir "savehist"))
 (savehist-mode t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; spelling
 (setq ispell-program-name "aspell" ; use aspell instead of ispell
       ispell-extra-args '("--sug-mode=ultra"))
@@ -221,6 +221,7 @@
   (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
   (define-key flyspell-mode-map (kbd "C-.") 'ispell-word))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; hippie-expand
 ;; http://trey-jackson.blogspot.de/2007/12/emacs-tip-5-hippie-expand.html
 (setq hippie-expand-try-functions-list
@@ -236,6 +237,7 @@
         try-complete-lisp-symbol
         ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; look-and-feel
 (setq column-number-mode t)
 (global-hl-line-mode 1)
@@ -263,6 +265,7 @@
 (setq nyan-bar-length 16)
 (nyan-mode 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; window-number
 (after 'window-number-autoloads
   (autoload 'window-number-mode "window-number"
@@ -278,6 +281,7 @@ the mode-line."
     t)
   (window-number-meta-mode 1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
 (setq ido-max-directory-size 100000)
 (ido-mode t)
@@ -289,6 +293,7 @@ the mode-line."
 (setq ido-save-directory-list-file (concat ptrv-tmp-dir "ido.last"))
 (icomplete-mode 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido-ubiquitous
 (after 'ido-ubiquitous-autoloads
   (ido-ubiquitous-mode 1)
@@ -311,6 +316,7 @@ the mode-line."
   ;; (ido-ubiquitous-use-new-completing-read yas-expand 'yasnippet)
   (ido-ubiquitous-use-new-completing-read yas-visit-snippet-file 'yasnippet))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smex
 (after 'smex-autoloads
   (setq smex-save-file (concat ptrv-tmp-dir "smex-items"))
@@ -320,6 +326,7 @@ the mode-line."
   ;; This is your old M-x.
   (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; shell
 (exec-path-from-shell-initialize)
 
@@ -347,6 +354,7 @@ the mode-line."
   (after 'auto-complete
     (require 'eshell-ac-pcomplete)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; paredit
 (after 'paredit-autoloads
   (autoload 'enable-paredit-mode "paredit"
@@ -358,11 +366,13 @@ the mode-line."
     ;; need a binding that works in the terminal
     (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; rainbow-delimiters
 (after 'rainbow-delimiters-autoloads
   (dolist (x '(scheme emacs-lisp lisp clojure))
     (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-delimiters-mode)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elisp
 (defun imenu-elisp-sections ()
   (setq imenu-prev-index-position-function nil)
@@ -389,6 +399,7 @@ the mode-line."
 (after 'lexbind-mode-autoloads
   (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clojure
 (after 'find-file-in-project
   (add-to-list 'ffip-patterns "*.clj"))
@@ -428,8 +439,6 @@ the mode-line."
 
   (define-key clojure-mode-map (kbd "M-t") 'live-transpose-words-with-hyphens)
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
   (autoload 'kibit-mode "kibit-mode" nil t)
   (add-hook 'clojure-mode-hook 'kibit-mode)
 
@@ -438,7 +447,7 @@ the mode-line."
     (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check))
 
   (add-hook 'clojure-mode-hook (lambda () (flycheck-mode -1)))
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   ;; push-mark when switching to nrepl via C-c C-z
   (defadvice nrepl-switch-to-repl-buffer (around
                                           nrepl-switch-to-repl-buffer-with-mark
@@ -450,9 +459,11 @@ the mode-line."
 (setq auto-mode-alist (append '(("\\.cljs$" . clojure-mode))
                               auto-mode-alist))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; 4clojure
 (autoload '4clojure-problem "four-clj" nil t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; complete
 (require 'auto-complete-config)
 (ac-config-default)
@@ -498,6 +509,7 @@ the mode-line."
   (unless (ac-cursor-on-diable-face-p)
     (auto-complete)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tramp
 (setq backup-enable-predicate
       (lambda (name)
@@ -516,6 +528,7 @@ the mode-line."
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ibuffer
 (setq ibuffer-saved-filter-groups
       (quote (("default"
@@ -554,6 +567,7 @@ the mode-line."
                 (mode 16 16 :left :elide)
                 " " filename-and-process))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gist
 (after 'gist-autoloads
   (defvar pcache-directory
@@ -566,6 +580,7 @@ the mode-line."
     (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
     (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; git-gutter
 (after 'git-gutter-autoloads
   (setq git-gutter:window-width 2)
@@ -576,6 +591,7 @@ the mode-line."
   (setq git-gutter:deleted-sign "- ")
   (setq git-gutter:unchanged-sign "  "))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; magit
 ;; newline after 72 chars in magit-log-edit-mode
 (after 'magit
@@ -615,9 +631,11 @@ the mode-line."
 
   (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; mercurial
 (require 'ahg nil t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nrepl
 (defun live-windows-hide-eol ()
  "Do not show ^M in files containing mixed UNIX and DOS line endings."
@@ -661,7 +679,7 @@ the mode-line."
 
 (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
 
-;;; Monkey Patch nREPL with better behaviour:
+;; Monkey Patch nREPL with better behaviour:
 
 (defun live-nrepl-err-handler (buffer ex root-ex session)
   "Make an error handler for BUFFER, EX, ROOT-EX and SESSION."
@@ -695,7 +713,7 @@ the mode-line."
 
 ;;(setq nrepl-err-handler 'live-nrepl-err-handler)
 
-;;; Region discovery fix
+;; Region discovery fix
 (defun nrepl-region-for-expression-at-point ()
   "Return the start and end position of defun at point."
   (when (and (live-paredit-top-level-p)
@@ -713,7 +731,7 @@ the mode-line."
         (backward-sexp)
         (list (point) end)))))
 
-;;; Windows M-. navigation fix
+;; Windows M-. navigation fix
 (defun nrepl-jump-to-def (var)
   "Jump to the definition of the var at point."
   (let ((form (format "((clojure.core/juxt
@@ -732,6 +750,7 @@ the mode-line."
 
 (setq nrepl-port "4555")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; yasnippet
 (after 'yasnippet-autoloads
   (yas-global-mode 1)
@@ -750,14 +769,17 @@ the mode-line."
                                  yas-x-prompt
                                  yas-completing-prompt))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; desktop.el
 (setq desktop-save (quote if-exists))
 (desktop-save-mode 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; undo-tree
 (after 'undo-tree-autoloads
   (global-undo-tree-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; browse-kill-ring
 (after 'browse-kill-ring-autoloads
   (setq browse-kill-ring-highlight-current-entry t)
@@ -766,11 +788,13 @@ the mode-line."
   (setq browse-kill-ring-highlight-inserted-item nil)
   (browse-kill-ring-default-keybindings))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; insert-time.el
 (with-library 'insert-time
   (setq insert-date-format "%Y-%m-%d")
   (setq insert-time-format "%H:%M:%S"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pomodoro.el
 (after 'pomodoro-autoloads
   (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
@@ -779,6 +803,7 @@ the mode-line."
   (setq pomodoro-break-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
   (setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; sql-mode
 ;; switch between sqlite3 and spatialite excutable
 (defun sql-switch-spatialite-sqlite ()
@@ -790,9 +815,11 @@ the mode-line."
     (setq sql-sqlite-program change)
     (message "sql-sqlite-program changed to %s" change)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; the silver searcher
 (setq ag-highlight-search t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pure-mode
 (autoload 'pure-mode "pure-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.pure\\(rc\\)?$" . pure-mode))
@@ -805,9 +832,11 @@ the mode-line."
   (define-key pure-mode-map (kbd "C-c M-p") 'run-pure)
   (define-key pure-mode-map (kbd "C-x M-p") 'pure-scratchpad))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smart-operator
 (autoload 'smart-operator-mode "smart-operator" nil t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tea-time
 (autoload 'tea-time "tea-time" nil t)
 (setq tea-time-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
@@ -817,6 +846,7 @@ the mode-line."
  ((eq system-type 'gnu/linux)
   (setq tea-time-sound-command "paplay %s")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xah lee modes
 (autoload 'xmsi-mode "xmsi-math-symbols-input"
   "Load xmsi minor mode for inputting math/Unicode symbols." t)
@@ -824,7 +854,6 @@ the mode-line."
   '(progn
      (define-key xmsi-keymap (kbd "S-SPC") 'nil)
      (define-key xmsi-keymap (kbd "C-c C-8") 'xmsi-change-to-symbol)))
-
 
 ;; xub-mode
 (autoload 'xub-mode "xub-mode" "Load xub-mode for browsing Unicode." t)
@@ -836,6 +865,7 @@ the mode-line."
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iflipb
 (after 'iflipb-autoloads
   (setq iflipb-ignore-buffers '("*Ack-and-a-half*"
@@ -863,6 +893,7 @@ the mode-line."
     (global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
     (global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ack-and-a-half
 (after 'ack-and-a-half-autoloads
   (defalias 'ack 'ack-and-a-half)
@@ -870,6 +901,7 @@ the mode-line."
   (defalias 'ack-find-file 'ack-and-a-half-find-file)
   (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
 (after 'edit-server-autoloads
   (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
@@ -878,6 +910,7 @@ the mode-line."
   (setq edit-server-url-major-mode-alist
         '(("github\\.com" . gfm-mode))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iedit
 (after 'iedit-autoloads
   (setq iedit-toggle-key-default (kbd "C-;"))
@@ -886,20 +919,25 @@ the mode-line."
   (define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
   (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smooth-scrolling
 (after 'smooth-scrolling-autoloads
   (setq smooth-scroll-margin 5))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; google-this
 (after 'google-this-autoloads
   (google-this-mode 1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ediff
 (setq ediff-split-window-function 'split-window-horizontally)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; url
 (setq url-configuration-directory (concat ptrv-tmp-dir "url"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; projectile
 (after 'projectile-autoloads
   (setq projectile-known-projects-file (concat
@@ -915,10 +953,12 @@ the mode-line."
     (define-key projectile-mode-map (kbd "C-c p f") 'nil)
     (define-key projectile-mode-map (kbd "C-c p F") 'projectile-find-file)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
 (after 'find-file-in-project
   (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; webjump
 (after 'webjump
   (setq webjump-sites
@@ -974,6 +1014,7 @@ the mode-line."
                     ""]))
                 webjump-sample-sites)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
 (require 'popwin)
 (popwin-mode 1)
@@ -1014,6 +1055,7 @@ the mode-line."
         ("*Registers*" :noselect t)
         ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; buffer
 (global-auto-revert-mode t)
 
@@ -1074,6 +1116,7 @@ the mode-line."
         (whitespace-tab-width tab-width))
     ad-do-it))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
@@ -1199,11 +1242,13 @@ the mode-line."
 (after 'ox
   (load "~/.org-publish-projects.el" 'noerror))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org2blog
 (require 'org2blog-autoloads)
 (after 'org2blog
   (load "~/.org-blogs.el" 'noerror))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org-present
 (autoload 'org-present "org-present" nil t)
 (add-hook 'org-present-mode-hook
@@ -1215,6 +1260,7 @@ the mode-line."
             (org-present-small)
             (org-remove-inline-images)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; latex
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
@@ -1291,6 +1337,7 @@ the mode-line."
        (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
        (require 'pstricks))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
 (add-to-list 'auto-mode-alist '("\\.zsh-template$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
@@ -1376,19 +1423,21 @@ the mode-line."
 ;; turn on abbrev mode globally
 (setq-default abbrev-mode t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pandoc
 (autoload 'turn-on-pandoc "pandoc-mode" nil t)
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 (add-hook 'markdown-mode-hook 'turn-on-pandoc)
 (add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; golang
 (exec-path-from-shell-copy-env "GOROOT")
 (exec-path-from-shell-copy-env "GOPATH")
 
 (after 'go-mode
   (message "go-mode config has been loaded !!!")
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   ;; go-lang completion
   (add-to-list 'load-path (concat
                            (car (split-string (getenv "GOPATH") ":"))
@@ -1415,7 +1464,6 @@ the mode-line."
   ;;   (unless (ac-cursor-on-diable-face-p)
   ;;     (auto-complete '(ac-source-go))))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; compile fucntions
   (defun go-cmd-build ()
     "compile project"
@@ -1457,8 +1505,6 @@ the mode-line."
     (interactive)
     (compile (concat "go run " buffer-file-name)))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; hooks
   (defun go-mode-init ()
     (make-local-variable 'before-save-hook)
     (setq before-save-hook 'gofmt-before-save)
@@ -1477,8 +1523,6 @@ the mode-line."
 
   (add-hook 'go-mode-hook 'go-mode-init)
 
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; flycheck support
   (add-to-list 'load-path (concat
                            (car (split-string (getenv "GOPATH") ":"))
@@ -1502,8 +1546,6 @@ the mode-line."
     (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
     (add-to-list 'flycheck-checkers 'go-goflymake t)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun go-create-package (name &optional arg)
   "Create a new sketch with NAME under GOPATH src folder.
 
@@ -1522,6 +1564,7 @@ If ARG is not nil, create package in current directory"
 (when (executable-find "errcheck")
   (autoload 'go-errcheck "go-errcheck" nil t))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xml
 (add-to-list 'auto-mode-alist '("\\.gpx$" . nxml-mode))
 
@@ -1541,6 +1584,7 @@ If ARG is not nil, create package in current directory"
   ;; treat an element as a single expression instead of only tag
   (setq nxml-sexp-element-flag t))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; erc
 (when (and (boundp 'freenode-user)
            (boundp 'freenode-pass))
@@ -1595,14 +1639,17 @@ If ARG is not nil, create package in current directory"
                       (when (eq major-mode 'erc-mode)
                         (setq erc-fill-column (- (window-width w) 2))))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; faust-mode
 (setq auto-mode-alist (cons '("\\.dsp$" . faust-mode) auto-mode-alist))
 (autoload 'faust-mode "faust-mode" "FAUST editing mode." t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Synth-A-Modeler mode
 (setq auto-mode-alist (cons '("\\.mdl$" . sam-mode) auto-mode-alist))
 (autoload 'sam-mode "sam-mode" "Synth-A-Modeler editing mode." t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; editing
 (setq sentence-end-double-space nil)
 
@@ -1637,10 +1684,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;;(global-subword-mode 1)
 (add-hook 'prog-mode-hook 'subword-mode)
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; move-text
 (move-text-default-bindings)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
@@ -1660,6 +1708,7 @@ point reaches the beginning or end of the buffer, stop there."
                            (or load-file-name (buffer-file-name)))
                           "../etc/css/markdown.css")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
 (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
@@ -1696,7 +1745,6 @@ point reaches the beginning or end of the buffer, stop there."
   (add-to-list 'ac-modes 'processing-mode)
   (add-hook 'processing-mode-hook 'processing-mode-init)
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; If htmlize is installed, provide this function to copy buffer or
   ;; region to clipboard
   (when (and (fboundp 'htmlize-buffer)
@@ -1725,6 +1773,7 @@ point reaches the beginning or end of the buffer, stop there."
                         ["Copy as HTML" processing-copy-as-html
                          :help "Copy buffer or region as HTML to clipboard"])))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; flycheck
 (after 'flycheck-autoloads
   (unless (and (>= emacs-major-version 24)
@@ -1741,6 +1790,7 @@ point reaches the beginning or end of the buffer, stop there."
   (after 'flycheck
     (setq flycheck-highlighting-mode 'lines)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; flymake
 (defvar flymake-mode-map
   (let ((map (make-sparse-keymap)))
@@ -1749,6 +1799,7 @@ point reaches the beginning or end of the buffer, stop there."
     map))
 (add-to-list 'minor-mode-map-alist `(flymake-mode . ,flymake-mode-map) t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; hideshow
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 (dolist (x '(emacs-lisp lisp java perl sh python))
@@ -1810,6 +1861,7 @@ point reaches the beginning or end of the buffer, stop there."
   (save-excursion
     (hs-show-block)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; autopair
 (after 'autopair-autoloads
   (autopair-global-mode 1)
@@ -1830,6 +1882,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;;                     (getf autopair-extra-pairs :code))))
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clean-mode-line
 (defvar mode-line-cleaner-alist
   `((auto-complete-mode . " α")
@@ -1872,6 +1925,7 @@ want to use in the modeline *in lieu of* the original.")
                (setq mode-name mode-str)))))
 (add-hook 'after-change-major-mode-hook 'clean-mode-line)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; osx
 (when *is-mac*
  (setq mac-option-key-is-meta nil)
@@ -1909,6 +1963,7 @@ want to use in the modeline *in lieu of* the original.")
  ;; Ignore .DS_Store files with ido mode
  (add-to-list 'ido-ignore-files "\\.DS_Store"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; linux
 (when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
@@ -1937,7 +1992,6 @@ want to use in the modeline *in lieu of* the original.")
 
     (add-hook 'erc-text-matched-hook 'my-notify-erc))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; typeriter-mode
   (autoload 'typewriter-mode "typewriter-mode" nil t)
   (setq typewriter-play-command "paplay %s")
@@ -1951,6 +2005,7 @@ want to use in the modeline *in lieu of* the original.")
                                  ptrv-etc-dir
                                  "sounds/carriage-return.wav")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; superollider
 (after 'w3m
   (define-key w3m-mode-map [left] 'backward-char)
@@ -2073,6 +2128,7 @@ want to use in the modeline *in lieu of* the original.")
   (set-face-background 'highlight-indentation-face "#e3e3d3")
   (set-face-background 'highlight-indentation-current-column-face "#c3b3b3"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; python
 (after 'python
   (exec-path-from-shell-copy-env "PYTHONPATH")
@@ -2101,7 +2157,6 @@ want to use in the modeline *in lieu of* the original.")
    :doc-spec
    '(("(python)Index" nil "")))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; PythonTidy
   (defun pytidy-whole-buffer ()
     (interactive)
@@ -2109,7 +2164,6 @@ want to use in the modeline *in lieu of* the original.")
       (shell-command-on-region (point-min) (point-max) "pythontidy" t)
       (goto-char a)))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; pylookup
   (eval-when-compile (require 'pylookup))
   (setq pylookup-dir (concat dotfiles-dir "site-lisp/pylookup"))
@@ -2130,12 +2184,12 @@ want to use in the modeline *in lieu of* the original.")
     '(progn
        (define-key python-mode-map (kbd "C-c L") 'pylookup-lookup)))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; pylint
   (autoload 'pylint "pylint")
   (add-hook 'python-mode-hook 'pylint-add-menu-items)
   (add-hook 'python-mode-hook 'pylint-add-key-bindings))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; cc-mode
 (setq c-default-style '((java-mode . "java")
                         (awk-mode . "awk")
@@ -2173,6 +2227,7 @@ want to use in the modeline *in lieu of* the original.")
   (add-hook 'c-mode-hook 'set-ff-find-other-file-binding)
   (add-hook 'c++-mode-hook 'set-ff-find-other-file-binding))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; x11
 (when (eq window-system 'x)
   ;; Maximise the Emacs window
@@ -2193,6 +2248,7 @@ want to use in the modeline *in lieu of* the original.")
          (set-frame-size (selected-frame) 130 55)
          (set-frame-position (selected-frame) 500 30))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; multiple-cursors
 (after 'multiple-cursors-autoloads
   ;;(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
@@ -2201,11 +2257,13 @@ want to use in the modeline *in lieu of* the original.")
   (global-set-key (kbd "C-ö") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-ä") 'mc/mark-all-like-this))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; expand-region
 (after 'expand-region-autoloads
   (global-set-key (kbd "C-ü") 'er/expand-region)
   (global-set-key (kbd "C-Ü") 'er/contract-region))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; key-chord
 (after 'key-chord-autoloads
   (key-chord-mode 1)
@@ -2214,6 +2272,7 @@ want to use in the modeline *in lieu of* the original.")
   (key-chord-define-global "LL" 'winner-redo)
   (key-chord-define-global "BB" 'ido-switch-buffer))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; bindings
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
@@ -2389,7 +2448,6 @@ want to use in the modeline *in lieu of* the original.")
                                   (interactive)
                                   (other-window -1)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; registers
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
 (global-set-key (kbd "C-x r v") 'ptrv-list-registers)
@@ -2400,24 +2458,16 @@ want to use in the modeline *in lieu of* the original.")
 (set-register ?z '(file . "~/.oh-my-zsh"))
 (set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-key Info-mode-map "ä" 'Info-forward-node)
 (define-key Info-mode-map "ö" 'Info-backward-node)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'visit-ielm)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (global-set-key (kbd "<C-f9>") #'global-git-gutter-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (global-set-key (kbd "C-c I") 'find-user-init-file)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;;; defuns
 (defun recentf-ido-find-file ()
   "Find a recent file using ido."
@@ -2425,7 +2475,6 @@ want to use in the modeline *in lieu of* the original.")
   (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
     (when file
       (find-file file))))
-
 
 (defun refresh-file ()
   (interactive)
@@ -2483,7 +2532,6 @@ want to use in the modeline *in lieu of* the original.")
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://www.emacswiki.org/emacs/basic-edit-toolkit.el
 (defun duplicate-line-or-region-above (&optional reverse)
   "Duplicate current line or region above.
@@ -2565,7 +2613,6 @@ If mark is activate, duplicate region lines below."
     (save-excursion
       (comment-or-uncomment-region beg end))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; define function to shutdown emacs server instance
 (defun server-shutdown ()
   "Save buffers, Quit, and Shutdown (kill) server"
@@ -2678,14 +2725,10 @@ If mark is activate, duplicate region lines below."
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun xml-format ()
   (interactive)
   (save-excursion
     (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun ergoemacs-open-in-desktop ()
   "Show current file in desktop (OS's file manager)."
@@ -2760,7 +2803,6 @@ file of a buffer in an external program."
          (buffer-substring (region-beginning) (region-end))
        (read-string "Google: "))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; from emacs-live
 (require 'uuid)
 (defun ptrv-persistent-scratch-buffer ()
@@ -2782,7 +2824,7 @@ file of a buffer in an external program."
 
 (defun ptrv-user-first-name-p ()
   (not (string-equal "" (ptrv-user-first-name))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
 (defun conditionally-enable-paredit-mode ()
   "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
@@ -2791,7 +2833,6 @@ file of a buffer in an external program."
 
 (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
 (defun kill-other-buffers ()
   "Kill all buffers but the current one.
@@ -2801,7 +2842,6 @@ Don't mess with special buffers."
     (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
       (kill-buffer buffer))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Don't sort the registers list because it might contain keywords
 (defun ptrv-list-registers ()
   "Display a list of nonempty registers saying briefly what they contain."
@@ -2814,7 +2854,6 @@ Don't mess with special buffers."
 	  (describe-register-1 (car elt))
 	  (terpri))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
 (defun switch-to-previous-buffer ()
   "Switch to previous open buffer.
@@ -2822,7 +2861,6 @@ Repeated invocation toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://emacsredux.com/blog/2013/04/29/start-command-or-switch-to-its-buffer/
 (defun start-or-switch-to (function buffer-name)
   "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
@@ -2841,7 +2879,6 @@ Start `ielm' if it's not already running."
   (interactive)
   (start-or-switch-to 'ielm "*ielm*"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
 (defun find-user-init-file ()
   "Edit the `user-init-file', in another window."
