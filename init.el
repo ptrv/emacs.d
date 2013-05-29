@@ -171,6 +171,8 @@
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
 
+(windmove-default-keybindings)
+
 (when (fboundp 'winner-mode)
       (winner-mode 1))
 
@@ -269,22 +271,6 @@
 (autoload 'nyan-mode "nyan-mode" nil t)
 (setq nyan-bar-length 16)
 (nyan-mode 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; window-number
-(after 'window-number-autoloads
-  (autoload 'window-number-mode "window-number"
-    "A global minor mode that enables selection of windows according to
-numbers with the C-x C-j prefix.  Another mode,
-`window-number-meta-mode' enables the use of the M- prefix."
-    t)
-  (window-number-mode 1)
-  (autoload 'window-number-meta-mode "window-number"
-    "A global minor mode that enables use of the M- prefix to select
-windows, use `window-number-mode' to display the window numbers in
-the mode-line."
-    t)
-  (window-number-meta-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
@@ -1077,6 +1063,8 @@ the mode-line."
   (find-file "~/Dropbox/org/newgtd.org"))
 (global-set-key (kbd "C-c g") 'gtd)
 
+(setq org-replace-disputed-keys t)
+
 (after 'org
   (message "Org config has been loaded !!!")
   (setq org-outline-path-complete-in-steps nil)
@@ -1084,7 +1072,7 @@ the mode-line."
   (setq org-completion-use-ido t)
 
   (setq org-log-done t)
-  (setq org-replace-disputed-keys nil)
+
   (setq org-clock-into-drawer t)
   ;;(setq org-clock-idle-time 10)
   (setq org-src-fontify-natively nil)
@@ -1099,6 +1087,12 @@ the mode-line."
     (setq yas/trigger-key [tab])
     (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
     (define-key yas/keymap [tab] 'yas/next-field))
+
+  ;; Make windmove work in org-mode:
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
 
   (defun org-mode-init ()
     ;; (local-set-key [(control meta return)] 'org-insert-heading)
