@@ -117,6 +117,11 @@
 (carton-setup dotfiles-dir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; PATH
+(after 'exec-path-from-shell-autoloads
+  (exec-path-from-shell-initialize))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
 ;; default browser
 (setq browse-url-generic-program (executable-find "google-chrome")
@@ -327,9 +332,7 @@ the mode-line."
   (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; shell
-(exec-path-from-shell-initialize)
-
+;;;; Eshell
 (after 'eshell
   (message "Eshell config has been loaded !!!")
   ;; (eval-when-compile (require 'eshell nil t))
