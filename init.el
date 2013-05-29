@@ -163,7 +163,7 @@
 (setq save-place-file (concat ptrv-tmp-dir "places"))
 
 ;;enable cua-mode for rectangular selections
-(cua-mode 1)
+;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
 
 (when (fboundp 'winner-mode)
@@ -1154,9 +1154,9 @@ the mode-line."
     (define-key yas/keymap [tab] 'yas/next-field))
 
   (defun org-mode-init ()
-    (local-set-key [(control meta return)] 'org-insert-heading)
-    (local-set-key [(control shift left)] 'previous-buffer)
-    (local-set-key [(control shift right)] 'next-buffer)
+    ;; (local-set-key [(control meta return)] 'org-insert-heading)
+    ;; (local-set-key [(control shift left)] 'previous-buffer)
+    ;; (local-set-key [(control shift right)] 'next-buffer)
     ;; (local-set-key [(meta shift right)] 'ido-switch-buffer)
     ;; (local-set-key [(meta shift left)] 'magit-status)
     (auto-complete-mode -1)
@@ -2881,21 +2881,21 @@ Start `ielm' if it's not already running."
      -- for a function name where point is
      -- for a variable name where point is
      -- for a surrounding function call"
-          (interactive)
-          (let (sym)
-            ;; sigh, function-at-point is too clever.  we want only the first half.
-            (cond ((setq sym (ignore-errors
-                               (with-syntax-table emacs-lisp-mode-syntax-table
-                                 (save-excursion
-                                   (or (not (zerop (skip-syntax-backward "_w")))
-                                       (eq (char-syntax (char-after (point))) ?w)
-                                       (eq (char-syntax (char-after (point))) ?_)
-                                       (forward-sexp -1))
-                                   (skip-chars-forward "`'")
-                                   (let ((obj (read (current-buffer))))
-                                     (and (symbolp obj) (fboundp obj) obj))))))
-                   (describe-function sym))
-                  ((setq sym (variable-at-point)) (describe-variable sym)))))
+  (interactive)
+  (let (sym)
+    ;; sigh, function-at-point is too clever.  we want only the first half.
+    (cond ((setq sym (ignore-errors
+                       (with-syntax-table emacs-lisp-mode-syntax-table
+                         (save-excursion
+                           (or (not (zerop (skip-syntax-backward "_w")))
+                               (eq (char-syntax (char-after (point))) ?w)
+                               (eq (char-syntax (char-after (point))) ?_)
+                               (forward-sexp -1))
+                           (skip-chars-forward "`'")
+                           (let ((obj (read (current-buffer))))
+                             (and (symbolp obj) (fboundp obj) obj))))))
+           (describe-function sym))
+          ((setq sym (variable-at-point)) (describe-variable sym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; server
