@@ -1181,6 +1181,9 @@ the mode-line."
   (setq org-link-mailto-program
         '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s")))
 
+(after 'calendar
+  (setq calendar-week-start-day 1))
+
 ;; org publish projects file
 (after 'ox
   (load "~/.org-publish-projects.el" 'noerror))
