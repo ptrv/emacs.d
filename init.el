@@ -1278,20 +1278,19 @@ the mode-line."
 
   (setq TeX-source-correlate-method 'synctex)
 
-  (eval-after-load "tex"
-    '(progn
-       (add-to-list 'TeX-command-list
-                    '("latexmk"
-                      "latexmk %s"
-                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
-       (add-to-list 'TeX-command-list
-                    '("latexmk clean"
-                      "latexmk -c %s"
-                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -c") t)
-       (add-to-list 'TeX-command-list
-                    '("latexmk cleanall"
-                      "latexmk -C %s"
-                      TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t)))
+  (after 'tex
+    (add-to-list 'TeX-command-list
+                  '("latexmk"
+                    "latexmk %s"
+                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
+    (add-to-list 'TeX-command-list
+                 '("latexmk clean"
+                   "latexmk -c %s"
+                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -c") t)
+    (add-to-list 'TeX-command-list
+                 '("latexmk cleanall"
+                   "latexmk -C %s"
+                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t))
 
   (defun okular-make-url () (concat
                              "file://"
@@ -1330,12 +1329,10 @@ the mode-line."
    :doc-spec '(("(latex2e)Concept Index" )
                ("(latex2e)Command Index")))
 
-  (eval-after-load "latex"
-    '(progn
-       (require 'auto-complete-auctex)
-       (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
-       (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
-       (require 'pstricks))))
+  (require 'auto-complete-auctex)
+  (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
+  (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
+  (require 'pstricks))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
@@ -1906,11 +1903,7 @@ point reaches the beginning or end of the buffer, stop there."
     (emacs-lisp-mode . "EL")
     (markdown-mode . "md")
     (processing-mode . "P5"))
-  "Alist for `clean-mode-line'.
-
-When you add a new element to the alist, keep in mind that you
-must pass the correct minor/major mode symbol and a string you
-want to use in the modeline *in lieu of* the original.")
+  "Alist for `clean-mode-line'.")
 
 (defun clean-mode-line ()
   (interactive)
@@ -1923,6 +1916,7 @@ want to use in the modeline *in lieu of* the original.")
                ;; major mode
              (when (eq mode major-mode)
                (setq mode-name mode-str)))))
+
 (add-hook 'after-change-major-mode-hook 'clean-mode-line)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2063,29 +2057,27 @@ want to use in the modeline *in lieu of* the original.")
     )
   (add-hook 'sclang-mode-hook 'supercollider-init)
 
-  (eval-after-load "sclang"
-    '(progn
-       (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
-       (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
-       (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
-       ;; Raise all supercollider windows.
-       (define-key sclang-mode-map (kbd "C-c f")
-         (lambda ()
-           (interactive)
-           (sclang-eval-string "Window.allWindows.do(_.front);")))
-       (define-key sclang-server-key-map [?l]
-         (lambda ()
-           (interactive)
-           (sclang-eval-string "Server.default.meter;")))
-       (define-key sclang-server-key-map [?s]
-         (lambda ()
-           (interactive)
-           (sclang-eval-string "Server.default.scope(numChannels: 2);")))
-       (define-key sclang-server-key-map [?h]
-         (lambda ()
-           (interactive)
-           (sclang-eval-string "HelperWindow.new;")))
-       ))
+  (after 'sclang
+    (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
+    (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
+    (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
+    ;; Raise all supercollider windows.
+    (define-key sclang-mode-map (kbd "C-c f")
+      (lambda ()
+        (interactive)
+        (sclang-eval-string "Window.allWindows.do(_.front);")))
+    (define-key sclang-server-key-map [?l]
+      (lambda ()
+        (interactive)
+        (sclang-eval-string "Server.default.meter;")))
+    (define-key sclang-server-key-map [?s]
+      (lambda ()
+        (interactive)
+        (sclang-eval-string "Server.default.scope(numChannels: 2);")))
+    (define-key sclang-server-key-map [?h]
+      (lambda ()
+        (interactive)
+        (sclang-eval-string "HelperWindow.new;"))))
 
   (if (fboundp 'completing-read-ido)
       (progn
@@ -2180,9 +2172,7 @@ want to use in the modeline *in lieu of* the original.")
   (autoload 'pylookup-update "pylookup"
     "Run pylookup-update and create the database at `pylookup-db-file'." t)
 
-  (eval-after-load 'python
-    '(progn
-       (define-key python-mode-map (kbd "C-c L") 'pylookup-lookup)))
+  (define-key python-mode-map (kbd "C-c L") 'pylookup-lookup)
 
   ;; pylint
   (autoload 'pylint "pylint")
@@ -2353,7 +2343,7 @@ want to use in the modeline *in lieu of* the original.")
   (global-set-key (kbd "C-o") 'ace-jump-mode))
 
 ;; Show documentation/information with M-RET
-(define-key lisp-mode-shared-map (kbd "M-RET") 'live-lisp-describe-thing-at-point)
+(define-key lisp-mode-shared-map (kbd "M-RET") 'ptrv-lisp-describe-thing-at-point)
 (after 'nrepl
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc))
@@ -2885,7 +2875,7 @@ Start `ielm' if it's not already running."
   (interactive)
   (find-file user-init-file))
 
-(defun live-lisp-describe-thing-at-point ()
+(defun ptrv-lisp-describe-thing-at-point ()
   "Show the documentation of the Elisp function and variable near point.
    This checks in turn:
      -- for a function name where point is
