@@ -218,6 +218,8 @@
       savehist-file (concat ptrv-tmp-dir "savehist"))
 (savehist-mode t)
 
+(setq completion-cycle-threshold 5)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; spelling
 (setq ispell-program-name "aspell" ; use aspell instead of ispell
