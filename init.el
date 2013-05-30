@@ -1825,43 +1825,32 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clean-mode-line
-(defvar mode-line-cleaner-alist
-  `((auto-complete-mode . " α")
-    (yas-minor-mode . " γ")
-    (paredit-mode . " Φ")
-    (eldoc-mode . "")
-    (abbrev-mode . "")
-    (undo-tree-mode . " τ")
-    (elisp-slime-nav-mode . " δ")
-    (nrepl-interaction-mode . " ηζ")
-    (auto-fill-function . " φ")
-    (autopair-mode . "")
-    (projectile-mode . "")
-    (kibit-mode . " κ")
-    (google-this-mode . "")
-    ;; Major modes
-    (nrepl-mode . "ηζ")
-    (clojure-mode . "λ")
-    (hi-lock-mode . "")
-    (python-mode . "Py")
-    (emacs-lisp-mode . "EL")
-    (markdown-mode . "md")
-    (processing-mode . "P5"))
-  "Alist for `clean-mode-line'.")
+(after 'diminish-autoloads
+  (after 'auto-complete (diminish 'auto-complete-mode " α"))
+  (after 'yasnippet (diminish 'yas-minor-mode " γ"))
+  (after 'paredit (diminish 'paredit-mode " Φ"))
+  (after 'eldoc (diminish 'eldoc-mode))
+  (after 'abbrev (diminish 'abbrev-mode))
+  (after 'undo-tree (diminish 'undo-tree-mode " τ"))
+  (after 'elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
+  (after 'nrepl (diminish 'nrepl-interaction-mode " ηζ"))
+  (after 'simple (diminish 'auto-fill-function " φ"))
+  (after 'autopair (diminish 'autopair-mode))
+  (after 'projectile (diminish 'projectile-mode))
+  (after 'kibit-mode (diminish 'kibit-mode " κ"))
+  (after 'google-this (diminish 'google-this-mode)))
 
-(defun clean-mode-line ()
-  (interactive)
-  (loop for cleaner in mode-line-cleaner-alist
-        do (let* ((mode (car cleaner))
-                 (mode-str (cdr cleaner))
-                 (old-mode-str (cdr (assq mode minor-mode-alist))))
-             (when old-mode-str
-                 (setcar old-mode-str mode-str))
-               ;; major mode
-             (when (eq mode major-mode)
-               (setq mode-name mode-str)))))
+(defmacro rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after rename-modeline activate)
+        (setq mode-name ,new-name))))
 
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
+(rename-modeline "nrepl" nrepl-mode "ηζ")
+(rename-modeline "clojure-mode" clojure-mode "λ")
+(rename-modeline "python" python-mode "Py")
+(rename-modeline "lisp-mode" emacs-lisp-mode "EL")
+(rename-modeline "markdown-mode" markdown-mode "md")
+(rename-modeline "processing-mode" processing-mode "P5")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; osx
