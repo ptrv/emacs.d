@@ -171,7 +171,7 @@
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
 
-(windmove-default-keybindings)
+(windmove-default-keybindings 'super)
 
 (when (fboundp 'winner-mode)
       (winner-mode 1))
@@ -1065,7 +1065,7 @@
   (find-file "~/Dropbox/org/newgtd.org"))
 (global-set-key (kbd "C-c g") 'gtd)
 
-(setq org-replace-disputed-keys t)
+;;(setq org-replace-disputed-keys t)
 
 (after 'org
   (message "Org config has been loaded !!!")
