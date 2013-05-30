@@ -1395,10 +1395,10 @@
     '((t (:background "navy" :foreground "white")))
     "Face for the go-autocomplete selected candidate."
     :group 'auto-complete)
-  (setcar (nthcdr 1 ac-source-go)
-          '(candidate-face . ac-go-mode-candidate-face))
-  (setcar (nthcdr 2 ac-source-go)
-          '(selection-face . ac-go-mode-selection-face))
+  (setcdr (assoc 'candidate-face ac-source-go)
+          'ac-go-mode-candidate-face)
+  (setcdr (assoc 'selection-face ac-source-go)
+          'ac-go-mode-selection-face)
 
   ;; (defun go-dot-complete ()
   ;;   "Insert dot and complete code at point."
