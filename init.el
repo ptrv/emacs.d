@@ -1064,7 +1064,7 @@
 (defun gtd ()
   (interactive)
   (find-file "~/Dropbox/org/newgtd.org"))
-(global-set-key (kbd "C-c g") 'gtd)
+;;(global-set-key (kbd "C-c g") 'gtd)
 
 ;;(setq org-replace-disputed-keys t)
 
@@ -1108,6 +1108,8 @@
     (org-mode-yasnippet-workaround))
 
   (add-hook 'org-mode-hook 'org-mode-init)
+
+  (define-key org-mode-map (kbd "C-c g") 'org-sparse-tree)
 
   (setq org-default-notes-file "~/Dropbox/org/captures.org")
   ;; Set to the location of your Org files on your local system
