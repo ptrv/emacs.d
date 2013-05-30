@@ -1355,6 +1355,9 @@
 (add-to-list 'auto-mode-alist '("PKGBUILD$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.install$" . shell-script-mode))
 
+;; json
+(add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+
 ;;;; abbrev
 (define-abbrev-table 'global-abbrev-table
   '(
