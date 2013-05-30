@@ -24,6 +24,7 @@
 
 (defconst *is-mac* (eq system-type 'darwin))
 (defconst *is-linux* (eq system-type 'gnu/linux))
+(defconst *is-x11* (eq window-system 'x))
 
 ;;set all coding systems to utf-8
 (set-language-environment 'utf-8)
@@ -2155,7 +2156,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; x11
-(when (eq window-system 'x)
+(when *is-x11*
   ;; Maximise the Emacs window
   (defun toggle-fullscreen ()
     (interactive)
