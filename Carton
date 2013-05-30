@@ -87,7 +87,6 @@
 (depends-on "pomodoro")
 (depends-on "edit-server")
 (depends-on "edit-server-htmlize")
-(depends-on "epc")
 (depends-on "tea-time")
 (depends-on "google-this")
 (depends-on "htmlize")
