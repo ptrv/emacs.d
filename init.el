@@ -97,6 +97,9 @@
   `(when (require ,symbol nil t)
      ,@body))
 
+(defconst ptrv-font-lock-keywords
+  `((,(concat "(" (regexp-opt '("after" "with-library") 'words))
+     1 'font-lock-keyword-face)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
 (setq auto-save-list-file-name
@@ -414,13 +417,20 @@
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-(add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
-
 (add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
-(define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
+
+(after 'lisp-mode
+  (font-lock-add-keywords 'emacs-lisp-mode ptrv-font-lock-keywords :append)
+  (font-lock-add-keywords 'lisp-interaction-mode ptrv-font-lock-keywords :append)
+  (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+  (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent))
+
+(after 'ielm
+  (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv-font-lock-keywords :append)
+  (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))
+
 
 (after 'mic-paren-autoloads
   (paren-activate))
