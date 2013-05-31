@@ -25,6 +25,7 @@
 (defconst *is-mac* (eq system-type 'darwin))
 (defconst *is-linux* (eq system-type 'gnu/linux))
 (defconst *is-x11* (eq window-system 'x))
+(defconst *is-windows* (eq system-type 'windows-nt))
 
 ;;set all coding systems to utf-8
 (set-language-environment 'utf-8)
@@ -124,7 +125,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
-;; default browser
 (setq browse-url-generic-program (executable-find "google-chrome")
       browse-url-browser-function 'browse-url-generic)
 
@@ -200,8 +200,7 @@
 (show-paren-mode 1)
 
 ;;default to unified diffs
-(setq diff-switches "-u"
-      ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq diff-switches "-u")
 
 (setq x-select-enable-clipboard t)
 
@@ -345,6 +344,52 @@
     (require 'eshell-ac-pcomplete)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; complete
+(require 'auto-complete-config)
+(ac-config-default)
+(ac-flyspell-workaround)
+(setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat"))
+
+(setq ac-auto-show-menu t)
+(setq ac-dwim t)
+(setq ac-use-menu-map t)
+(setq ac-quick-help-delay 0.8)
+(setq ac-quick-help-height 60)
+(setq ac-disable-inline t)
+(setq ac-show-menu-immediately-on-auto-complete t)
+(setq ac-ignore-case nil)
+(setq ac-candidate-menu-min 0)
+(setq ac-auto-start nil)
+
+(set-default 'ac-sources
+             '(ac-source-dictionary
+               ac-source-words-in-buffer
+               ac-source-words-in-same-mode-buffers
+               ac-source-semantic
+               ac-source-yasnippet))
+
+(dolist (mode '(magit-log-edit-mode log-edit-mode org-mode text-mode haml-mode
+                sass-mode yaml-mode csv-mode espresso-mode haskell-mode
+                html-mode nxml-mode sh-mode smarty-mode clojure-mode
+                lisp-mode textile-mode markdown-mode tuareg-mode))
+  (add-to-list 'ac-modes mode))
+
+(define-key ac-completing-map (kbd "C-M-n") 'ac-next)
+(define-key ac-completing-map (kbd "C-M-p") 'ac-previous)
+(define-key ac-completing-map "\t" 'ac-complete)
+(define-key ac-completing-map (kbd "M-RET") 'ac-help)
+;;(define-key ac-completing-map "\r" 'nil)
+(ac-set-trigger-key "TAB")
+
+;; complete on dot
+(defun ac-dot-complete ()
+  "Insert dot and complete code at point."
+  (interactive)
+  (insert ".")
+  (unless (ac-cursor-on-diable-face-p)
+    (auto-complete)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; paredit
 (after 'paredit-autoloads
   (autoload 'enable-paredit-mode "paredit"
@@ -453,50 +498,117 @@
 (autoload '4clojure-problem "four-clj" nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; complete
-(require 'auto-complete-config)
-(ac-config-default)
-(ac-flyspell-workaround)
-(setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat"))
+;;;; nrepl
+(after 'nrepl-autoloads
+  (setq nrepl-popup-stacktraces nil
+        nrepl-popup-stacktraces-in-repl nil
+        nrepl-port "4555")
 
-(setq ac-auto-show-menu t)
-(setq ac-dwim t)
-(setq ac-use-menu-map t)
-(setq ac-quick-help-delay 0.8)
-(setq ac-quick-help-height 60)
-(setq ac-disable-inline t)
-(setq ac-show-menu-immediately-on-auto-complete t)
-(setq ac-ignore-case nil)
-(setq ac-candidate-menu-min 0)
-(setq ac-auto-start nil)
+  (add-to-list 'same-window-buffer-names "*nrepl*")
 
-(set-default 'ac-sources
-             '(ac-source-dictionary
-               ac-source-words-in-buffer
-               ac-source-words-in-same-mode-buffers
-               ac-source-semantic
-               ac-source-yasnippet))
+  (after 'nrepl
+    (add-hook 'nrepl-interaction-mode-hook
+              (lambda ()
+                (nrepl-turn-on-eldoc-mode)
+                (enable-paredit-mode)))
 
-(dolist (mode '(magit-log-edit-mode log-edit-mode org-mode text-mode haml-mode
-                sass-mode yaml-mode csv-mode espresso-mode haskell-mode
-                html-mode nxml-mode sh-mode smarty-mode clojure-mode
-                lisp-mode textile-mode markdown-mode tuareg-mode))
-  (add-to-list 'ac-modes mode))
+    (add-hook 'nrepl-mode-hook
+              (lambda ()
+                (nrepl-turn-on-eldoc-mode)
+                (enable-paredit-mode)
+                (define-key nrepl-mode-map
+                  (kbd "{") 'paredit-open-curly)
+                (define-key nrepl-mode-map
+                  (kbd "}") 'paredit-close-curly)))
 
-(define-key ac-completing-map (kbd "C-M-n") 'ac-next)
-(define-key ac-completing-map (kbd "C-M-p") 'ac-previous)
-(define-key ac-completing-map "\t" 'ac-complete)
-(define-key ac-completing-map (kbd "M-RET") 'ac-help)
-;;(define-key ac-completing-map "\r" 'nil)
-(ac-set-trigger-key "TAB")
 
-;; complete on dot
-(defun ac-dot-complete ()
-  "Insert dot and complete code at point."
-  (interactive)
-  (insert ".")
-  (unless (ac-cursor-on-diable-face-p)
-    (auto-complete)))
+    ;;Auto Complete
+    (after 'ac-nrepl-autoloads
+      (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+      (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup))
+
+    (after 'auto-complete
+      (add-to-list 'ac-modes 'nrepl-mode))
+
+    ;; specify the print length to be 100 to stop infinite sequences killing things.
+    (defun live-nrepl-set-print-length ()
+      (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
+    (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
+
+    ;; ;; Monkey Patch nREPL with better behaviour:
+    ;; (defun live-nrepl-err-handler (buffer ex root-ex session)
+    ;;   "Make an error handler for BUFFER, EX, ROOT-EX and SESSION."
+    ;;   ;; TODO: use ex and root-ex as fallback values to display when pst/print-stack-trace-not-found
+    ;;   (let ((replp (equal 'nrepl-mode (buffer-local-value 'major-mode buffer))))
+    ;;     (if (or (and nrepl-popup-stacktraces-in-repl replp)
+    ;;             (and nrepl-popup-stacktraces (not replp)))
+    ;;         (lexical-let ((nrepl-popup-on-error nrepl-popup-on-error)
+    ;;                       (err-buffer (nrepl-popup-buffer nrepl-error-buffer t)))
+    ;;           (with-current-buffer buffer
+    ;;             (nrepl-send-string "(if-let [pst+ (clojure.core/resolve 'clj-stacktrace.repl/pst+)]
+    ;;                       (pst+ *e) (clojure.stacktrace/print-stack-trace *e))"
+    ;;                                (nrepl-make-response-handler err-buffer
+    ;;                                                             '()
+    ;;                                                             (lambda (err-buffer str)
+    ;;                                                               (with-current-buffer err-buffer (goto-char (point-max)))
+    ;;                                                               (nrepl-emit-into-popup-buffer err-buffer str)
+    ;;                                                               (with-current-buffer err-buffer (goto-char (point-min)))
+    ;;                                                               )
+    ;;                                                             (lambda (err-buffer str)
+    ;;                                                               (with-current-buffer err-buffer (goto-char (point-max)))
+    ;;                                                               (nrepl-emit-into-popup-buffer err-buffer str)
+    ;;                                                               (with-current-buffer err-buffer (goto-char (point-min)))
+    ;;                                                               )
+    ;;                                                             '())
+    ;;                                (nrepl-current-ns)
+    ;;                                (nrepl-current-tooling-session)))
+    ;;           (with-current-buffer nrepl-error-buffer
+    ;;             (compilation-minor-mode 1))
+    ;;           ))))
+    ;; ;;(setq nrepl-err-handler 'live-nrepl-err-handler)
+
+    ;; Region discovery fix
+    (defun nrepl-region-for-expression-at-point ()
+      "Return the start and end position of defun at point."
+      (when (and (live-paredit-top-level-p)
+                 (save-excursion
+                   (ignore-errors (forward-char))
+                   (live-paredit-top-level-p)))
+        (error "Not in a form"))
+
+      (save-excursion
+        (save-match-data
+          (ignore-errors (live-paredit-forward-down))
+          (paredit-forward-up)
+          (while (ignore-errors (paredit-forward-up) t))
+          (let ((end (point)))
+            (backward-sexp)
+            (list (point) end)))))
+
+    (when *is-windows*
+      (defun live-windows-hide-eol ()
+        "Do not show ^M in files containing mixed UNIX and DOS line endings."
+        (interactive)
+        (setq buffer-display-table (make-display-table))
+        (aset buffer-display-table ?\^M []))
+      (add-hook 'nrepl-mode-hook 'live-windows-hide-eol)
+
+      ;; Windows M-. navigation fix
+      (defun nrepl-jump-to-def (var)
+        "Jump to the definition of the var at point."
+        (let ((form (format "((clojure.core/juxt
+                         (comp (fn [s] (if (clojure.core/re-find #\"[Ww]indows\" (System/getProperty \"os.name\"))
+                                           (.replace s \"file:/\" \"file:\")
+                                           s))
+                               clojure.core/str
+                               clojure.java.io/resource :file)
+                         (comp clojure.core/str clojure.java.io/file :file) :line)
+                        (clojure.core/meta (clojure.core/ns-resolve '%s '%s)))"
+                            (nrepl-current-ns) var)))
+          (nrepl-send-string form
+                             (nrepl-jump-to-def-handler (current-buffer))
+                             (nrepl-current-ns)
+                             (nrepl-current-tooling-session)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tramp
@@ -625,121 +737,6 @@
 (require 'ahg nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; nrepl
-(defun live-windows-hide-eol ()
- "Do not show ^M in files containing mixed UNIX and DOS line endings."
- (interactive)
- (setq buffer-display-table (make-display-table))
- (aset buffer-display-table ?\^M []))
-
-
-(when (eq system-type 'windows-nt)
-  (add-hook 'nrepl-mode-hook 'live-windows-hide-eol ))
-
-(add-hook 'nrepl-interaction-mode-hook
-          (lambda ()
-            (nrepl-turn-on-eldoc-mode)
-            (enable-paredit-mode)))
-
-(add-hook 'nrepl-mode-hook
-          (lambda ()
-            (nrepl-turn-on-eldoc-mode)
-            (enable-paredit-mode)
-            (define-key nrepl-mode-map
-              (kbd "{") 'paredit-open-curly)
-            (define-key nrepl-mode-map
-              (kbd "}") 'paredit-close-curly)))
-
-(setq nrepl-popup-stacktraces nil)
-(setq nrepl-popup-stacktraces-in-repl nil)
-(add-to-list 'same-window-buffer-names "*nrepl*")
-
-;;Auto Complete
-;;(require 'ac-nrepl )
-(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-(add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
-
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'nrepl-mode))
-
-;; specify the print length to be 100 to stop infinite sequences killing things.
-(defun live-nrepl-set-print-length ()
-  (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
-
-(add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
-
-;; Monkey Patch nREPL with better behaviour:
-
-(defun live-nrepl-err-handler (buffer ex root-ex session)
-  "Make an error handler for BUFFER, EX, ROOT-EX and SESSION."
-  ;; TODO: use ex and root-ex as fallback values to display when pst/print-stack-trace-not-found
-  (let ((replp (equal 'nrepl-mode (buffer-local-value 'major-mode buffer))))
-    (if (or (and nrepl-popup-stacktraces-in-repl replp)
-            (and nrepl-popup-stacktraces (not replp)))
-        (lexical-let ((nrepl-popup-on-error nrepl-popup-on-error)
-                      (err-buffer (nrepl-popup-buffer nrepl-error-buffer t)))
-          (with-current-buffer buffer
-            (nrepl-send-string "(if-let [pst+ (clojure.core/resolve 'clj-stacktrace.repl/pst+)]
-                        (pst+ *e) (clojure.stacktrace/print-stack-trace *e))"
-                               (nrepl-make-response-handler err-buffer
-                                                            '()
-                                                            (lambda (err-buffer str)
-                                                              (with-current-buffer err-buffer (goto-char (point-max)))
-                                                              (nrepl-emit-into-popup-buffer err-buffer str)
-                                                              (with-current-buffer err-buffer (goto-char (point-min)))
-                                                              )
-                                                            (lambda (err-buffer str)
-                                                              (with-current-buffer err-buffer (goto-char (point-max)))
-                                                              (nrepl-emit-into-popup-buffer err-buffer str)
-                                                              (with-current-buffer err-buffer (goto-char (point-min)))
-                                                              )
-                                                            '())
-                               (nrepl-current-ns)
-                               (nrepl-current-tooling-session)))
-          (with-current-buffer nrepl-error-buffer
-            (compilation-minor-mode 1))
-          ))))
-
-;;(setq nrepl-err-handler 'live-nrepl-err-handler)
-
-;; Region discovery fix
-(defun nrepl-region-for-expression-at-point ()
-  "Return the start and end position of defun at point."
-  (when (and (live-paredit-top-level-p)
-             (save-excursion
-               (ignore-errors (forward-char))
-               (live-paredit-top-level-p)))
-    (error "Not in a form"))
-
-  (save-excursion
-    (save-match-data
-      (ignore-errors (live-paredit-forward-down))
-      (paredit-forward-up)
-      (while (ignore-errors (paredit-forward-up) t))
-      (let ((end (point)))
-        (backward-sexp)
-        (list (point) end)))))
-
-;; Windows M-. navigation fix
-(defun nrepl-jump-to-def (var)
-  "Jump to the definition of the var at point."
-  (let ((form (format "((clojure.core/juxt
-                         (comp (fn [s] (if (clojure.core/re-find #\"[Ww]indows\" (System/getProperty \"os.name\"))
-                                           (.replace s \"file:/\" \"file:\")
-                                           s))
-                               clojure.core/str
-                               clojure.java.io/resource :file)
-                         (comp clojure.core/str clojure.java.io/file :file) :line)
-                        (clojure.core/meta (clojure.core/ns-resolve '%s '%s)))"
-                      (nrepl-current-ns) var)))
-    (nrepl-send-string form
-                       (nrepl-jump-to-def-handler (current-buffer))
-                       (nrepl-current-ns)
-                       (nrepl-current-tooling-session))))
-
-(setq nrepl-port "4555")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; yasnippet
 (after 'yasnippet-autoloads
   (yas-global-mode 1)
@@ -760,7 +757,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; desktop.el
-(setq desktop-save (quote if-exists))
+(setq desktop-save 'if-exists)
 (desktop-save-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -795,14 +792,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; sql-mode
 ;; switch between sqlite3 and spatialite excutable
-(defun sql-switch-spatialite-sqlite ()
-  (interactive)
-  (let* ((sqlprog sql-sqlite-program)
-         (change (if (string-match "sqlite" sqlprog)
-                     (executable-find "spatialite")
-                   (executable-find "sqlite3"))))
-    (setq sql-sqlite-program change)
-    (message "sql-sqlite-program changed to %s" change)))
+(after 'sql
+  (defun sql-switch-spatialite-sqlite ()
+    (interactive)
+    (let* ((sqlprog sql-sqlite-program)
+           (change (if (string-match "sqlite" sqlprog)
+                       (executable-find "spatialite")
+                     (executable-find "sqlite3"))))
+      (setq sql-sqlite-program change)
+      (message "sql-sqlite-program changed to %s" change))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; the silver searcher
@@ -919,7 +917,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ediff
-(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-split-window-function 'split-window-horizontally
+      ediff-window-setup-function 'ediff-setup-windows-plain)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; url
@@ -950,7 +949,7 @@
 ;;;; popwin
 (with-library 'popwin
   (popwin-mode 1)
-  (global-set-key (kbd " C-z") popwin:keymap)
+  (global-set-key (kbd "C-z") popwin:keymap)
 
   (setq popwin:special-display-config
         '(("*Help*" :height 30 :stick t)
@@ -2521,8 +2520,7 @@ If mark is activate, duplicate region lines below."
   "Save buffers, Quit, and Shutdown (kill) server"
   (interactive)
   (save-some-buffers)
-  (kill-emacs)
-  )
+  (kill-emacs))
 
 (defun exit-emacs-client ()
   "consistent exit emacsclient.
@@ -2637,7 +2635,7 @@ If mark is activate, duplicate region lines below."
   "Show current file in desktop (OS's file manager)."
   (interactive)
   (cond
-   ((string-equal system-type "windows-nt")
+   (*is-windows*
     (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
    (*is-mac* (shell-command "open ."))
    (*is-linux*
@@ -2702,7 +2700,8 @@ file of a buffer in an external program."
   (browse-url
    (concat
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
-    (url-hexify-string (if mark-active
+    (url-hexify-string
+     (if mark-active
          (buffer-substring (region-beginning) (region-end))
        (read-string "Google: "))))))
 
