@@ -2715,25 +2715,11 @@ file of a buffer in an external program."
          (buffer-substring (region-beginning) (region-end))
        (read-string "Google: "))))))
 
-;; from emacs-live
-(require 'uuid)
-(defun ptrv-persistent-scratch-buffer ()
-  "Create a new persistent empty buffer (i.e. saved as a file)"
-  (interactive)
-  (let* ((id (uuid-string))
-         (fname (concat ptrv-pscratch-dir id))
-         (buf (get-buffer-create id)))
-    (switch-to-buffer buf)
-    (with-current-buffer buf
-      (save-buffer)
-      (auto-save-mode 1))))
-
 (defun ptrv-user-first-name ()
   (let* ((first-name (car (split-string user-full-name))))
     (if first-name
         (capitalize first-name)
       "")))
-
 (defun ptrv-user-first-name-p ()
   (not (string-equal "" (ptrv-user-first-name))))
 

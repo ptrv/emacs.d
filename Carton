@@ -91,7 +91,6 @@
 (depends-on "google-this")
 (depends-on "htmlize")
 (depends-on "mwe-log-commands")
-(depends-on "uuid")
 (depends-on "nyan-mode")
 (depends-on "diminish")
 
