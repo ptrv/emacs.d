@@ -6,12 +6,12 @@
 (depends-on "carton")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; libraries
+;;;; libraries
 (depends-on "dash")
 (depends-on "s")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; vcs
+;;;; vcs
 (depends-on "magit")
 (depends-on "ahg")
 (depends-on "git-commit-mode")
@@ -21,7 +21,7 @@
 (depends-on "gist")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; editor
+;;;; editor
 (depends-on "iflipb")
 (depends-on "iedit")
 (depends-on "starter-kit-eshell")
@@ -37,25 +37,25 @@
 (depends-on "key-chord")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ido
+;;;; ido
 (depends-on "smex")
 (depends-on "ido-ubiquitous")
 (depends-on "idomenu")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; completion
+;;;; completion
 (depends-on "auto-complete")
 (depends-on "ac-nrepl")
 (depends-on "pcmpl-git")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; snippets
+;;;; snippets
 (depends-on "dropdown-list")
 (depends-on "yasnippet")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; lisp
+;;;; lisp
 (depends-on "paredit")
 (depends-on "rainbow-delimiters")
 (depends-on "mic-paren")
@@ -68,20 +68,20 @@
 (depends-on "lexbind-mode")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; markup
+;;;; markup
 (depends-on "org-plus-contrib")
 (depends-on "markdown-mode")
 (depends-on "pandoc-mode")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ui
+;;;; ui
 (depends-on "notify")
 (depends-on "color-theme")
 (depends-on "popwin")
 (depends-on "smooth-scrolling")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; utilities
+;;;; utilities
 (depends-on "xml-rpc")
 (depends-on "refheap")
 (depends-on "pomodoro")
@@ -96,7 +96,7 @@
 (depends-on "diminish")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; tools
+;;;; tools
 (depends-on "ag")
 (depends-on "ack-and-a-half")
 (depends-on "exec-path-from-shell")
@@ -104,7 +104,7 @@
 (depends-on "scratch")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; python
+;;;; python
 (depends-on "pytest")
 (depends-on "pylint")
 (depends-on "jedi")
@@ -112,7 +112,7 @@
 (depends-on "virtualenv")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; major modes
+;;;; major modes
 (depends-on "go-mode")
 (depends-on "glsl-mode")
 (depends-on "js2-mode")
@@ -124,12 +124,12 @@
 (depends-on "gnuplot")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; project
+;;;; project
 (depends-on "find-file-in-project")
 (depends-on "projectile")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; minor-modes
+;;;; minor-modes
 (depends-on "love-minor-mode")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
