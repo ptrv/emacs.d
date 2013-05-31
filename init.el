@@ -257,9 +257,7 @@
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
-;; taken from colour-pack
 (require 'live-fontify-hex)
-
 (font-lock-add-keywords 'lisp-mode
                         '((live-fontify-hex-colors)))
 (font-lock-add-keywords 'emacs-lisp-mode
@@ -369,7 +367,6 @@
 (defun imenu-elisp-sections ()
   (setq imenu-prev-index-position-function nil)
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
-
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
@@ -755,11 +752,11 @@
                         (define-key map (kbd "C-g")     'yas-abort-snippet)
                         (define-key map (kbd "C-d")     'yas-skip-and-clear-or-delete-char)
                         map))
-    (require 'dropdown-list)
-    (setq yas-prompt-functions '(yas-dropdown-prompt
-                                 yas-ido-prompt
+    (setq yas-prompt-functions '(yas-ido-prompt
                                  yas-x-prompt
-                                 yas-completing-prompt))))
+                                 yas-completing-prompt))
+    (with-library 'dropdown-list
+      (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; desktop.el
@@ -951,45 +948,45 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
-(require 'popwin)
-(popwin-mode 1)
-(global-set-key (kbd " C-z") popwin:keymap)
+(with-library 'popwin
+  (popwin-mode 1)
+  (global-set-key (kbd " C-z") popwin:keymap)
 
-(setq popwin:special-display-config
-      '(("*Help*" :height 30 :stick t)
-        ("*Completions*" :noselect t)
-        ("*compilation*" :noselect t)
-        ("*Messages*")
-        ("*Occur*" :noselect t)
-        ("\\*Slime Description.*" :noselect t :regexp t :height 30)
-        ("*magit-commit*" :noselect t :height 30 :width 80 :stick t)
-        ("*magit-diff*" :noselect t :height 30 :width 80)
-        ("*magit-edit-log*" :noselect t :height 15 :width 80)
-        ("*magit-process*" :noselect t :height 15 :width 80)
-        ("\\*Slime Inspector.*" :regexp t :height 30)
-        ("*Ido Completions*" :noselect t :height 30)
-        ;;("*eshell*" :height 20)
-        ("\\*ansi-term\\*.*" :regexp t :height 30)
-        ("*shell*" :height 30)
-        (".*overtone.log" :regexp t :height 30)
-        ("*gists*" :height 30)
-        ("*sldb.*":regexp t :height 30)
-        ("*Gofmt Errors*" :noselect t)
-        ("\\*godoc" :regexp t :height 30)
-        ("*Shell Command Output*" :noselect t)
-        ("*nrepl-error*" :height 20 :stick t)
-        ("*nrepl-doc*" :height 20 :stick t)
-        ("*nrepl-src*" :height 20 :stick t)
-        ("*Kill Ring*" :height 30)
-        ("*project-status*" :noselect t)
-        ("*Compile-Log" :height 20 :stick t)
-        ("*pytest*" :noselect t)
-        ("*Python*" :stick t)
-        ("*Python Doc*" :noselect t)
-        ("*jedi:doc*" :noselect t)
-        ("*Registers*" :noselect t)
-        ("*ielm*" :stick t)
-        ))
+  (setq popwin:special-display-config
+        '(("*Help*" :height 30 :stick t)
+          ("*Completions*" :noselect t)
+          ("*compilation*" :noselect t)
+          ("*Messages*")
+          ("*Occur*" :noselect t)
+          ("\\*Slime Description.*" :noselect t :regexp t :height 30)
+          ("*magit-commit*" :noselect t :height 30 :width 80 :stick t)
+          ("*magit-diff*" :noselect t :height 30 :width 80)
+          ("*magit-edit-log*" :noselect t :height 15 :width 80)
+          ("*magit-process*" :noselect t :height 15 :width 80)
+          ("\\*Slime Inspector.*" :regexp t :height 30)
+          ("*Ido Completions*" :noselect t :height 30)
+          ;;("*eshell*" :height 20)
+          ("\\*ansi-term\\*.*" :regexp t :height 30)
+          ("*shell*" :height 30)
+          (".*overtone.log" :regexp t :height 30)
+          ("*gists*" :height 30)
+          ("*sldb.*":regexp t :height 30)
+          ("*Gofmt Errors*" :noselect t)
+          ("\\*godoc" :regexp t :height 30)
+          ("*Shell Command Output*" :noselect t)
+          ("*nrepl-error*" :height 20 :stick t)
+          ("*nrepl-doc*" :height 20 :stick t)
+          ("*nrepl-src*" :height 20 :stick t)
+          ("*Kill Ring*" :height 30)
+          ("*project-status*" :noselect t)
+          ("*Compile-Log" :height 20 :stick t)
+          ("*pytest*" :noselect t)
+          ("*Python*" :stick t)
+          ("*Python Doc*" :noselect t)
+          ("*jedi:doc*" :noselect t)
+          ("*Registers*" :noselect t)
+          ("*ielm*" :stick t)
+          )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; buffer
@@ -1193,9 +1190,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org2blog
-(require 'org2blog-autoloads)
-(after 'org2blog
-  (load "~/.org-blogs.el" 'noerror))
+(with-library 'org2blog-autoloads
+  (after 'org2blog
+    (load "~/.org-blogs.el" 'noerror)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org-present
@@ -1299,17 +1296,8 @@
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 
-;; Apache config
-(autoload 'apache-mode "apache-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.htaccess\\'"   . apache-mode))
-(add-to-list 'auto-mode-alist '("httpd\\.conf\\'"  . apache-mode))
-(add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
-(add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
-(add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
-
 ;; Snippets
-(add-to-list 'auto-mode-alist '("lib/snippets" . snippet-mode))
-(add-to-list 'auto-mode-alist '("etc/snippets" . snippet-mode))
+(add-to-list 'auto-mode-alist '("snippets" . snippet-mode))
 (add-to-list 'auto-mode-alist '("\\.yasnippet$" . snippet-mode))
 
 ;; pd-mode
@@ -1341,11 +1329,6 @@
 ;; IanniX
 (add-to-list 'auto-mode-alist '("\\.nxscript$" . js-mode))
 
-;; lua-mode
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-
 ;; ChucK
 (autoload 'chuck-mode "chuck-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.ck$" . chuck-mode))
@@ -1367,17 +1350,29 @@
     ;; typo corrections
     ("teh" "the")
     ))
-;; stop asking whether to save newly added abbrev when quitting emacs
-(setq save-abbrevs nil)
-;; turn on abbrev mode globally
-(setq-default abbrev-mode t)
+(setq save-abbrevs nil)              ; stop asking whether to save newly
+                                     ; added abbrev when quitting emacs
+(setq-default abbrev-mode t)            ; turn on abbrev mode globally
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; markdown
+;; (setq-default markdown-command
+;;               (concat
+;;                "pandoc -S -s --self-contained -f markdown -t html5 --css="
+;;                markdown-css-path
+;;                " "))
+
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+
+(setq markdown-css-path (concat ptrv-etc-dir "css/markdown.css"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pandoc
-(autoload 'turn-on-pandoc "pandoc-mode" nil t)
-(add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-(add-hook 'markdown-mode-hook 'turn-on-pandoc)
-(add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode))
+(after 'pandoc-mode-autoloads
+  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+  (add-hook 'markdown-mode-hook 'turn-on-pandoc)
+  (add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; golang
@@ -1392,19 +1387,19 @@
                            (car (split-string (getenv "GOPATH") ":"))
                            "/src/github.com/nsf/gocode/emacs"))
 
-  (require 'go-autocomplete)
-  (defface ac-go-mode-candidate-face
-    '((t (:background "lightgray" :foreground "navy")))
-    "Face for go-autocomplete candidate"
-    :group 'auto-complete)
-  (defface ac-go-mode-selection-face
-    '((t (:background "navy" :foreground "white")))
-    "Face for the go-autocomplete selected candidate."
-    :group 'auto-complete)
-  (setcdr (assoc 'candidate-face ac-source-go)
-          'ac-go-mode-candidate-face)
-  (setcdr (assoc 'selection-face ac-source-go)
-          'ac-go-mode-selection-face)
+  (with-library 'go-autocomplete
+    (defface ac-go-mode-candidate-face
+      '((t (:background "lightgray" :foreground "navy")))
+      "Face for go-autocomplete candidate"
+      :group 'auto-complete)
+    (defface ac-go-mode-selection-face
+      '((t (:background "navy" :foreground "white")))
+      "Face for the go-autocomplete selected candidate."
+      :group 'auto-complete)
+    (setcdr (assoc 'candidate-face ac-source-go)
+            'ac-go-mode-candidate-face)
+    (setcdr (assoc 'selection-face ac-source-go)
+            'ac-go-mode-selection-face))
 
   ;; (defun go-dot-complete ()
   ;;   "Insert dot and complete code at point."
@@ -1479,22 +1474,21 @@
   ;; (add-to-list 'load-path (concat
   ;;                          (car (split-string (getenv "GOPATH") ":"))
   ;;                          "/src/github.com/ptrv/goflycheck"))
-  (require 'go-flycheck)
-  (setq goflymake-debug nil)
+  (with-library 'go-flycheck
+    (setq goflymake-debug nil)
 
-  (after 'flycheck
-    (flycheck-declare-checker go
-      "A Go syntax and style checker using the gofmt utility. "
-      :command '("gofmt" source)
-      :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
-      :modes 'go-mode
-      :next-checkers '((no-errors . go-goflymake))
-      )
-    (add-to-list 'flycheck-checkers 'go t)
-       ;; remove go-goflymake from begin of list and add it to the end
-
-    (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
-    (add-to-list 'flycheck-checkers 'go-goflymake t)))
+    (after 'flycheck
+      (flycheck-declare-checker go
+        "A Go syntax and style checker using the gofmt utility. "
+        :command '("gofmt" source)
+        :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
+        :modes 'go-mode
+        :next-checkers '((no-errors . go-goflymake))
+        )
+      (add-to-list 'flycheck-checkers 'go t)
+      ;; remove go-goflymake from begin of list and add it to the end
+      (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
+      (add-to-list 'flycheck-checkers 'go-goflymake t))))
 
 (defun go-create-package (name &optional arg)
   "Create a new sketch with NAME under GOPATH src folder.
@@ -1630,33 +1624,12 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key [remap move-beginning-of-line]
                 'smarter-move-beginning-of-line)
 
-;; Subword mode (consider CamelCase chunks as words)
 ;;(global-subword-mode 1)
 (add-hook 'prog-mode-hook 'subword-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; move-text
 (move-text-default-bindings)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; markdown
-(autoload 'markdown-mode "markdown-mode.el"
-   "Major mode for editing Markdown files" t)
-
-;; (setq-default markdown-command
-;;               (concat
-;;                "pandoc -S -s --self-contained -f markdown -t html5 --css="
-;;                markdown-css-path
-;;                " "))
-
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
-
-(setq markdown-css-path (expand-file-name
-                         (concat
-                          (file-name-directory
-                           (or load-file-name (buffer-file-name)))
-                          "../etc/css/markdown.css")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
@@ -1687,8 +1660,7 @@ point reaches the beginning or end of the buffer, stop there."
     (make-local-variable 'ac-user-dictionary)
     (setq ac-user-dictionary processing-functions)
     (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
-    (setq ac-user-dictionary (append ac-user-dictionary processing-constants))
-    )
+    (setq ac-user-dictionary (append ac-user-dictionary processing-constants)))
 
   (add-to-list 'ac-modes 'processing-mode)
   (add-hook 'processing-mode-hook 'processing-mode-init)
@@ -2128,29 +2100,30 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Hook auto-complete into clang
 (after 'cc-mode
   (message "cc-mode config has been loaded !!!")
-  (require 'auto-complete-clang-async)
-  (setq ac-clang-complete-executable
-        (concat dotfiles-dir "site-lisp/emacs-clang-complete-async/clang-complete"))
-  (when (not (file-exists-p ac-clang-complete-executable))
-    (warn (concat "The clang-complete executable doesn't exist")))
-  ;; (when (not (file-exists-p clang-complete-executable))
-  ;;   (warn (concat "The clang-complete executable doesn't exist - please run "
-  ;;                 dotfiles-dir "setup.sh to compile it.")))
-  ;; Add Qt4 includes to load path if installed
+  (with-library 'auto-complete-clang-async
+    (setq ac-clang-complete-executable
+          (concat dotfiles-dir "site-lisp/emacs-clang-complete-async/clang-complete"))
+    (when (not (file-exists-p ac-clang-complete-executable))
+      (warn (concat "The clang-complete executable doesn't exist")))
+    ;; (when (not (file-exists-p clang-complete-executable))
+    ;;   (warn (concat "The clang-complete executable doesn't exist - please run "
+    ;;                 dotfiles-dir "setup.sh to compile it.")))
+    ;; Add Qt4 includes to load path if installed
 
-  (when (file-exists-p "/usr/include/qt4")
-    (setq ac-clang-flags
-          (mapcar (lambda (f) (concat "-I" f))
-                  (directory-files "/usr/include/qt4" t "Qt\\w+"))))
+    (when (file-exists-p "/usr/include/qt4")
+      (setq ac-clang-flags
+            (mapcar (lambda (f) (concat "-I" f))
+                    (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
+    (add-hook 'c++-mode-hook
+              (lambda ()
+                (unless (string-match ".*flycheck.*" buffer-file-name)
+                  (setq ac-sources '(ac-source-clang-async))
+                  (ac-clang-launch-completion-process)))))
 
-  (add-hook 'c++-mode-hook
-            (lambda ()
-              (unless (string-match ".*flycheck.*" buffer-file-name)
-                (setq ac-sources '(ac-source-clang-async))
-                (ac-clang-launch-completion-process))
-              ;; (dtrt-indent-mode 1)
-              (set (make-local-variable 'before-save-hook) nil)))
+  (defun ptrv-c++-mode-init ()
+    (set (make-local-variable 'before-save-hook) nil))
+  (add-hook 'c++-mode-hook 'ptrv-c++-mode-init)
 
   (defun set-ff-find-other-file-binding ()
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
