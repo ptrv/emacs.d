@@ -1480,6 +1480,7 @@
   ;;                          (car (split-string (getenv "GOPATH") ":"))
   ;;                          "/src/github.com/ptrv/goflycheck"))
   (require 'go-flycheck)
+  (setq goflymake-debug nil)
 
   (after 'flycheck
     (flycheck-declare-checker go
