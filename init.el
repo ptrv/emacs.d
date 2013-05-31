@@ -98,8 +98,11 @@
      ,@body))
 
 (defconst ptrv-font-lock-keywords
-  `((,(concat "(" (regexp-opt '("after" "with-library") 'words))
-     1 'font-lock-keyword-face)))
+  `((,(concat "(" (regexp-opt '("after" "with-library") 'words)
+              "\\>[ 	']*\\(\\sw+\\)?")
+     (1 font-lock-keyword-face)
+     (2 font-lock-constant-face nil t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
 (setq auto-save-list-file-name
