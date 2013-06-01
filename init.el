@@ -777,15 +777,6 @@
   (global-undo-tree-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; browse-kill-ring
-(ptrv/after 'browse-kill-ring-autoloads
-  (setq browse-kill-ring-highlight-current-entry t)
-  (setq browse-kill-ring-no-duplicates t)
-  (setq browse-kill-ring-display-duplicates nil)
-  (setq browse-kill-ring-highlight-inserted-item nil)
-  (browse-kill-ring-default-keybindings))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; insert-time.el
 (ptrv/with-library 'insert-time
   (setq insert-date-format "%Y-%m-%d")

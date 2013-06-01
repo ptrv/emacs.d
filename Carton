@@ -33,7 +33,6 @@
 (depends-on "flymake-cursor")
 (depends-on "autopair")
 (depends-on "ace-jump-mode")
-(depends-on "browse-kill-ring")
 (depends-on "key-chord")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
