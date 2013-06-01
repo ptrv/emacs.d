@@ -1554,7 +1554,8 @@ If ARG is not nil, create package in current directory"
     (erc-services-mode 1)
     (setq erc-prompt-for-nickserv-password nil)
     (setq erc-nickserv-passwords
-          `((freenode ((,freenode-user . ,freenode-pass)))))
+          `((freenode ((,freenode-user . ,freenode-pass)))
+            (oftc ((,oftc-user . ,oftc-pass)))))
 
     ;;IRC
     (erc-autojoin-mode 1)
