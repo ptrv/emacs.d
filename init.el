@@ -80,8 +80,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'cl)
-(load "~/.emacs-locals.el" 'noerror)
-(require 'my-secrets)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; macros
@@ -1204,7 +1202,8 @@
 ;;;; org2blog
 (with-library 'org2blog-autoloads
   (after 'org2blog
-    (load "~/.org-blogs.el" 'noerror)))
+    (after 'my-secrets
+      (load "~/.org-blogs.el" 'noerror))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org-present
@@ -1542,9 +1541,7 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; erc
-(when (and (boundp 'freenode-user)
-           (boundp 'freenode-pass))
-
+(after 'my-secrets
   (defun erc-connect ()
     "Start up erc and connect to freedonde"
     (interactive)
@@ -2817,6 +2814,11 @@ Start `ielm' if it's not already running."
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; local settings
+(load "~/.emacs-locals.el" 'noerror)
+(require 'my-secrets)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; custom settings
