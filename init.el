@@ -1355,6 +1355,9 @@
 ;; json
 (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
 
+;; Carton
+(add-to-list 'auto-mode-alist '("/Carton$" .  emacs-lisp-mode))
+
 ;;;; abbrev
 (define-abbrev-table 'global-abbrev-table
   '(
