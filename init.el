@@ -1885,7 +1885,8 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;; linux
 (when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
-  (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)
+  (after 'eshell
+    (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil))
 
   (defun setup-frame-hook (frame)
     ;; (run-with-idle-timer 0.2 nil 'toggle-frame-maximized)
@@ -1912,16 +1913,17 @@ point reaches the beginning or end of the buffer, stop there."
 
   ;; typeriter-mode
   (autoload 'typewriter-mode "typewriter-mode" nil t)
-  (setq typewriter-play-command "paplay %s")
-  (setq typewriter-sound-default (concat
-                                  ptrv-etc-dir
-                                  "sounds/9744__horn__typewriter.wav"))
-  (setq typewriter-sound-end (concat
-                              ptrv-etc-dir
-                              "sounds/eol-bell.wav"))
-  (setq typewriter-sound-return (concat
-                                 ptrv-etc-dir
-                                 "sounds/carriage-return.wav")))
+  (after 'typewriter-mode
+    (setq typewriter-play-command "paplay %s")
+    (setq typewriter-sound-default (concat
+                                    ptrv-etc-dir
+                                    "sounds/9744__horn__typewriter.wav"))
+    (setq typewriter-sound-end (concat
+                                ptrv-etc-dir
+                                "sounds/eol-bell.wav"))
+    (setq typewriter-sound-return (concat
+                                   ptrv-etc-dir
+                                   "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; superollider
@@ -2291,9 +2293,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
-        If no region is selected and current line is not blank and we are not at the end of the line,
-        then comment current line.
-        Replaces default behaviour of comment-dwim, when it inserts comment at the end of the line."
+
+If no region is selected and current line is not blank and we are
+not at the end of the line, then comment current line. Replaces
+default behaviour of comment-dwim, when it inserts comment at the
+end of the line."
   (interactive "*P")
   (comment-normalize-vars)
   (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
