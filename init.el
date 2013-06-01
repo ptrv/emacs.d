@@ -83,20 +83,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; macros
-(defmacro after (mode &rest body)
+(defmacro ptrv/after (mode &rest body)
   "`eval-after-load' MODE evaluate BODY."
   (declare (indent defun))
   `(eval-after-load ,mode
      '(progn ,@body)))
 
-(defmacro with-library (symbol &rest body)
+(defmacro ptrv/with-library (symbol &rest body)
   "Evaluate BODY only if require SYMBOL is successful."
   (declare (indent defun))
   `(when (require ,symbol nil t)
      ,@body))
 
 (defconst ptrv-font-lock-keywords
-  `((,(concat "(" (regexp-opt '("after" "with-library") 'words)
+  `((,(concat "(" (regexp-opt '("ptrv/after" "ptrv/with-library") 'words)
               "\\>[ 	']*\\(\\sw+\\)?")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face nil t))))
@@ -124,7 +124,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; PATH
-(after 'exec-path-from-shell-autoloads
+(ptrv/after 'exec-path-from-shell-autoloads
   (exec-path-from-shell-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,7 +230,7 @@
       ispell-extra-args '("--sug-mode=ultra"))
 (autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
 
-(after 'flyspell
+(ptrv/after 'flyspell
   (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
   (define-key flyspell-mode-map (kbd "C-.") 'ispell-word))
 
@@ -290,7 +290,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido-ubiquitous
-(after 'ido-ubiquitous-autoloads
+(ptrv/after 'ido-ubiquitous-autoloads
   (ido-ubiquitous-mode 1)
   (ido-ubiquitous-disable-in erc-iswitchb)
 
@@ -313,7 +313,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smex
-(after 'smex-autoloads
+(ptrv/after 'smex-autoloads
   (setq smex-save-file (concat ptrv-tmp-dir "smex-items"))
   (smex-initialize)
   (global-set-key (kbd "M-x") 'smex)
@@ -323,7 +323,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Eshell
-(after 'eshell
+(ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
   ;; (eval-when-compile (require 'eshell nil t))
   (setq eshell-aliases-file (concat dotfiles-dir "etc/eshell_aliases"))
@@ -344,7 +344,7 @@
   (autoload 'pcomplete/go "pcmpl-go" nil nil)
   (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
 
-  (after 'auto-complete
+  (ptrv/after 'auto-complete
     (require 'eshell-ac-pcomplete)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -395,19 +395,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; paredit
-(after 'paredit-autoloads
+(ptrv/after 'paredit-autoloads
   (autoload 'enable-paredit-mode "paredit"
     "Turn on pseudo-structural editing of Lisp code."
     t)
   (dolist (x '(scheme emacs-lisp lisp clojure))
     (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'enable-paredit-mode))
-  (after 'paredit
+  (ptrv/after 'paredit
     ;; need a binding that works in the terminal
     (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; rainbow-delimiters
-(after 'rainbow-delimiters-autoloads
+(ptrv/after 'rainbow-delimiters-autoloads
   (dolist (x '(scheme emacs-lisp lisp clojure))
     (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-delimiters-mode)))
 
@@ -420,7 +420,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
 
-(after 'lisp-mode
+(ptrv/after 'lisp-mode
   (font-lock-add-keywords 'emacs-lisp-mode ptrv-font-lock-keywords :append)
   (font-lock-add-keywords 'lisp-interaction-mode ptrv-font-lock-keywords :append)
   (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
@@ -428,28 +428,28 @@
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
   (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent))
 
-(after 'ielm
+(ptrv/after 'ielm
   (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv-font-lock-keywords :append)
   (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))
 
 
-(after 'mic-paren-autoloads
+(ptrv/after 'mic-paren-autoloads
   (paren-activate))
 
-(after 'nrepl-eval-sexp-fu-autoloads
+(ptrv/after 'nrepl-eval-sexp-fu-autoloads
   (require 'highlight)
   (require 'nrepl-eval-sexp-fu)
   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
 
-(after 'lexbind-mode-autoloads
+(ptrv/after 'lexbind-mode-autoloads
   (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clojure
-(after 'find-file-in-project
+(ptrv/after 'find-file-in-project
   (add-to-list 'ffip-patterns "*.clj"))
 
-(after 'clojure-mode
+(ptrv/after 'clojure-mode
   (message "clojure config has been loaded !!!")
 
   (font-lock-add-keywords
@@ -487,7 +487,7 @@
   (autoload 'kibit-mode "kibit-mode" nil t)
   (add-hook 'clojure-mode-hook 'kibit-mode)
 
-  (after 'kibit-mode
+  (ptrv/after 'kibit-mode
     (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
     (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check))
 
@@ -510,14 +510,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nrepl
-(after 'nrepl-autoloads
+(ptrv/after 'nrepl-autoloads
   (setq nrepl-popup-stacktraces nil
         nrepl-popup-stacktraces-in-repl nil
         nrepl-port "4555")
 
   (add-to-list 'same-window-buffer-names "*nrepl*")
 
-  (after 'nrepl
+  (ptrv/after 'nrepl
     (add-hook 'nrepl-interaction-mode-hook
               (lambda ()
                 (nrepl-turn-on-eldoc-mode)
@@ -534,11 +534,11 @@
 
 
     ;;Auto Complete
-    (after 'ac-nrepl-autoloads
+    (ptrv/after 'ac-nrepl-autoloads
       (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
       (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup))
 
-    (after 'auto-complete
+    (ptrv/after 'auto-complete
       (add-to-list 'ac-modes 'nrepl-mode))
 
     ;; specify the print length to be 100 to stop infinite sequences killing things.
@@ -667,7 +667,7 @@
 
 (setq ibuffer-show-empty-filter-groups nil)
 
-(with-library 'ibuffer-git
+(ptrv/with-library 'ibuffer-git
   (setq ibuffer-formats
         '((mark modified read-only git-status-mini " "
                 (name 18 18 :left :elide)
@@ -681,20 +681,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gist
-(after 'gist-autoloads
+(ptrv/after 'pcache-autoloads
   (defvar pcache-directory
     (let ((dir (file-name-as-directory (concat ptrv-tmp-dir "pcache"))))
       (make-directory dir t)
-      dir))
+      dir)))
 
+(ptrv/after 'gist
   (setq gist-view-gist t)
-  (after 'gist
-    (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
-    (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop"))))
+  (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
+  (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; git-gutter
-(after 'git-gutter-autoloads
+(ptrv/after 'git-gutter-autoloads
   (setq git-gutter:window-width 2)
   ;;(global-git-gutter-mode t)
   (setq git-gutter:lighter " G-+")
@@ -706,7 +706,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; magit
 ;; newline after 72 chars in magit-log-edit-mode
-(after 'magit
+(ptrv/after 'magit
   (add-hook 'magit-log-edit-mode-hook
             (lambda ()
               (set-fill-column 72)
@@ -749,9 +749,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; yasnippet
-(after 'yasnippet-autoloads
+(ptrv/after 'yasnippet-autoloads
   (yas-global-mode 1)
-  (after 'yasnippet
+  (ptrv/after 'yasnippet
     (setq yas-keymap  (let ((map (make-sparse-keymap)))
                         (define-key map [(control tab)] 'yas-next-field-or-maybe-expand)
                         (define-key map (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
@@ -763,7 +763,7 @@
     (setq yas-prompt-functions '(yas-ido-prompt
                                  yas-x-prompt
                                  yas-completing-prompt))
-    (with-library 'dropdown-list
+    (ptrv/with-library 'dropdown-list
       (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -773,12 +773,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; undo-tree
-(after 'undo-tree-autoloads
+(ptrv/after 'undo-tree-autoloads
   (global-undo-tree-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; browse-kill-ring
-(after 'browse-kill-ring-autoloads
+(ptrv/after 'browse-kill-ring-autoloads
   (setq browse-kill-ring-highlight-current-entry t)
   (setq browse-kill-ring-no-duplicates t)
   (setq browse-kill-ring-display-duplicates nil)
@@ -787,13 +787,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; insert-time.el
-(with-library 'insert-time
+(ptrv/with-library 'insert-time
   (setq insert-date-format "%Y-%m-%d")
   (setq insert-time-format "%H:%M:%S"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pomodoro.el
-(after 'pomodoro-autoloads
+(ptrv/after 'pomodoro-autoloads
   (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
   (pomodoro-add-to-mode-line)
   (setq pomodoro-sound-player "/usr/bin/paplay")
@@ -803,7 +803,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; sql-mode
 ;; switch between sqlite3 and spatialite excutable
-(after 'sql
+(ptrv/after 'sql
   (defun sql-switch-spatialite-sqlite ()
     (interactive)
     (let* ((sqlprog sql-sqlite-program)
@@ -821,7 +821,7 @@
 ;;;; pure-mode
 (autoload 'pure-mode "pure-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.pure\\(rc\\)?$" . pure-mode))
-(after 'pure-mode
+(ptrv/after 'pure-mode
   (add-hook 'pure-mode-hook 'hs-minor-mode)
   (add-hook 'pure-eval-mode-hook
             (lambda ()
@@ -864,7 +864,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iflipb
-(after 'iflipb-autoloads
+(ptrv/after 'iflipb-autoloads
   (setq iflipb-ignore-buffers '("*Ack-and-a-half*"
                                 "*Help*"
                                 "*Compile-Log*"
@@ -884,7 +884,7 @@
                                 "SCLang:PostBuffer*"
                                 ))
   (setq iflipb-wrap-around t)
-  (after 'iflipb-autoloads
+  (ptrv/after 'iflipb-autoloads
     (global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
     (global-set-key (kbd "C-<prior>") 'iflipb-previous-buffer)
     (global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
@@ -892,7 +892,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ack-and-a-half
-(after 'ack-and-a-half-autoloads
+(ptrv/after 'ack-and-a-half-autoloads
   (defalias 'ack 'ack-and-a-half)
   (defalias 'ack-same 'ack-and-a-half-same)
   (defalias 'ack-find-file 'ack-and-a-half-find-file)
@@ -900,7 +900,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
-(after 'edit-server-autoloads
+(ptrv/after 'edit-server-autoloads
   (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
   (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
   (edit-server-start)
@@ -909,7 +909,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iedit
-(after 'iedit-autoloads
+(ptrv/after 'iedit-autoloads
   (setq iedit-toggle-key-default (kbd "C-;"))
   (define-key global-map iedit-toggle-key-default 'iedit-mode)
   (define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
@@ -918,12 +918,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smooth-scrolling
-(after 'smooth-scrolling-autoloads
+(ptrv/after 'smooth-scrolling-autoloads
   (setq smooth-scroll-margin 5))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; google-this
-(after 'google-this-autoloads
+(ptrv/after 'google-this-autoloads
   (google-this-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -937,7 +937,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; projectile
-(after 'projectile-autoloads
+(ptrv/after 'projectile-autoloads
   (setq projectile-known-projects-file (concat
                                         ptrv-tmp-dir
                                         "projectile-bookmarks.eld")
@@ -945,7 +945,7 @@
 
   (projectile-global-mode)
 
-  (after 'projectile
+  (ptrv/after 'projectile
     (add-to-list 'projectile-project-root-files ".ropeproject" t)
     (add-to-list 'projectile-project-root-files "setup.py" t)
     (define-key projectile-mode-map (kbd "C-c p f") 'nil)
@@ -953,12 +953,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
-(after 'find-file-in-project
+(ptrv/after 'find-file-in-project
   (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
-(with-library 'popwin
+(ptrv/with-library 'popwin
   (popwin-mode 1)
   (global-set-key (kbd "C-z") popwin:keymap)
 
@@ -1075,7 +1075,7 @@
 
 ;;(setq org-replace-disputed-keys t)
 
-(after 'org
+(ptrv/after 'org
   (message "Org config has been loaded !!!")
   (setq org-outline-path-complete-in-steps nil)
   (setq org-completion-use-iswitchb nil)
@@ -1191,18 +1191,18 @@
   (setq org-link-mailto-program
         '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s")))
 
-(after 'calendar
+(ptrv/after 'calendar
   (setq calendar-week-start-day 1))
 
 ;; org publish projects file
-(after 'ox
+(ptrv/after 'ox
   (load "~/.org-publish-projects.el" 'noerror))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org2blog
-(with-library 'org2blog-autoloads
-  (after 'org2blog
-    (after 'my-secrets
+(ptrv/with-library 'org2blog-autoloads
+  (ptrv/after 'org2blog
+    (ptrv/after 'my-secrets
       (load "~/.org-blogs.el" 'noerror))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1222,7 +1222,7 @@
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
 
-(after 'latex
+(ptrv/after 'latex
   (message "latex config has been loaded !!!")
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
@@ -1235,7 +1235,7 @@
 
   (setq TeX-source-correlate-method 'synctex)
 
-  (after 'tex
+  (ptrv/after 'tex
     (add-to-list 'TeX-command-list
                   '("latexmk"
                     "latexmk %s"
@@ -1380,7 +1380,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pandoc
-(after 'pandoc-mode-autoloads
+(ptrv/after 'pandoc-mode-autoloads
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
   (add-hook 'markdown-mode-hook 'turn-on-pandoc)
   (add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode)))
@@ -1390,7 +1390,7 @@
 (exec-path-from-shell-copy-env "GOROOT")
 (exec-path-from-shell-copy-env "GOPATH")
 
-(after 'go-mode
+(ptrv/after 'go-mode
   (message "go-mode config has been loaded !!!")
 
   ;; go-lang completion
@@ -1398,7 +1398,7 @@
                            (car (split-string (getenv "GOPATH") ":"))
                            "/src/github.com/nsf/gocode/emacs"))
 
-  (with-library 'go-autocomplete
+  (ptrv/with-library 'go-autocomplete
     (defface ac-go-mode-candidate-face
       '((t (:background "lightgray" :foreground "navy")))
       "Face for go-autocomplete candidate"
@@ -1485,10 +1485,10 @@
   ;; (add-to-list 'load-path (concat
   ;;                          (car (split-string (getenv "GOPATH") ":"))
   ;;                          "/src/github.com/ptrv/goflycheck"))
-  (with-library 'go-flycheck
+  (ptrv/with-library 'go-flycheck
     (setq goflymake-debug nil)
 
-    (after 'flycheck
+    (ptrv/after 'flycheck
       (flycheck-declare-checker go
         "A Go syntax and style checker using the gofmt utility. "
         :command '("gofmt" source)
@@ -1523,7 +1523,7 @@ If ARG is not nil, create package in current directory"
 ;;;; xml
 (add-to-list 'auto-mode-alist '("\\.gpx$" . nxml-mode))
 
-(after 'nxml-mode
+(ptrv/after 'nxml-mode
   ;; make nxml outline work with gpx files
   (defun gpx-setup ()
     (when (and (stringp buffer-file-name)
@@ -1541,7 +1541,7 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; erc
-(after 'my-secrets
+(ptrv/after 'my-secrets
   (defun erc-connect ()
     "Start up erc and connect to freedonde"
     (interactive)
@@ -1550,7 +1550,7 @@ If ARG is not nil, create package in current directory"
          :port 6667
          :nick freenode-user
          ))
-  (after 'erc
+  (ptrv/after 'erc
     (erc-services-mode 1)
     (setq erc-prompt-for-nickserv-password nil)
     (setq erc-nickserv-passwords
@@ -1580,7 +1580,7 @@ If ARG is not nil, create package in current directory"
     (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
                                     "324" "329" "332" "333" "353" "477"))))
 
-(after 'erc
+(ptrv/after 'erc
   ;;change wrap width when window is resized
   (make-variable-buffer-local 'erc-fill-column)
   (add-hook 'window-configuration-change-hook
@@ -1649,10 +1649,10 @@ point reaches the beginning or end of the buffer, stop there."
 ;;(eval-after-load 'yasnippet '(processing-snippets-initialize))
 (autoload 'processing-find-sketch "processing-mode" nil t)
 
-(after 'processing-mode
+(ptrv/after 'processing-mode
   (message "Processing config has been loaded !!!")
 
-  (after 'yasnippet
+  (ptrv/after 'yasnippet
     (processing-snippets-initialize))
 
   (cond (*is-mac*
@@ -1705,7 +1705,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; flycheck
-(after 'flycheck-autoloads
+(ptrv/after 'flycheck-autoloads
   (unless (and (>= emacs-major-version 24)
                (>= emacs-minor-version 3))
     (add-to-list 'debug-ignored-errors "\\`No more Flycheck errors\\'")
@@ -1717,7 +1717,7 @@ point reaches the beginning or end of the buffer, stop there."
   (add-hook 'emacs-lisp-mode-hook #'(lambda () (flycheck-mode -1)))
   (add-hook 'lisp-interaction-mode #'(lambda () (flycheck-mode -1)))
 
-  (after 'flycheck
+  (ptrv/after 'flycheck
     (setq flycheck-highlighting-mode 'lines)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1793,7 +1793,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; autopair
-(after 'autopair-autoloads
+(ptrv/after 'autopair-autoloads
   (autopair-global-mode 1)
 
   (defadvice enable-paredit-mode (before disable-autopair activate)
@@ -1814,20 +1814,20 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clean-mode-line
-(after 'diminish-autoloads
-  (after 'auto-complete (diminish 'auto-complete-mode " α"))
-  (after 'yasnippet (diminish 'yas-minor-mode " γ"))
-  (after 'paredit (diminish 'paredit-mode " Φ"))
-  (after 'eldoc (diminish 'eldoc-mode))
-  (after 'abbrev (diminish 'abbrev-mode))
-  (after 'undo-tree (diminish 'undo-tree-mode " τ"))
-  (after 'elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
-  (after 'nrepl (diminish 'nrepl-interaction-mode " ηζ"))
-  (after 'simple (diminish 'auto-fill-function " φ"))
-  (after 'autopair (diminish 'autopair-mode))
-  (after 'projectile (diminish 'projectile-mode))
-  (after 'kibit-mode (diminish 'kibit-mode " κ"))
-  (after 'google-this (diminish 'google-this-mode)))
+(ptrv/after 'diminish-autoloads
+  (ptrv/after 'auto-complete (diminish 'auto-complete-mode " α"))
+  (ptrv/after 'yasnippet (diminish 'yas-minor-mode " γ"))
+  (ptrv/after 'paredit (diminish 'paredit-mode " Φ"))
+  (ptrv/after 'eldoc (diminish 'eldoc-mode))
+  (ptrv/after 'abbrev (diminish 'abbrev-mode))
+  (ptrv/after 'undo-tree (diminish 'undo-tree-mode " τ"))
+  (ptrv/after 'elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
+  (ptrv/after 'nrepl (diminish 'nrepl-interaction-mode " ηζ"))
+  (ptrv/after 'simple (diminish 'auto-fill-function " φ"))
+  (ptrv/after 'autopair (diminish 'autopair-mode))
+  (ptrv/after 'projectile (diminish 'projectile-mode))
+  (ptrv/after 'kibit-mode (diminish 'kibit-mode " κ"))
+  (ptrv/after 'google-this (diminish 'google-this-mode)))
 
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -1883,7 +1883,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;; linux
 (when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
-  (after 'eshell
+  (ptrv/after 'eshell
     (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil))
 
   (defun setup-frame-hook (frame)
@@ -1893,7 +1893,7 @@ point reaches the beginning or end of the buffer, stop there."
   (add-hook 'after-make-frame-functions 'setup-frame-hook)
 
   ;; erc notification
-  (after 'erc
+  (ptrv/after 'erc
     (defun my-notify-erc (match-type nickuserhost message)
       "Notify when a message is received."
       (unless (posix-string-match "^\\** *Users on #" message)
@@ -1911,7 +1911,7 @@ point reaches the beginning or end of the buffer, stop there."
 
   ;; typeriter-mode
   (autoload 'typewriter-mode "typewriter-mode" nil t)
-  (after 'typewriter-mode
+  (ptrv/after 'typewriter-mode
     (setq typewriter-play-command "paplay %s")
     (setq typewriter-sound-default (concat
                                     ptrv-etc-dir
@@ -1925,7 +1925,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; superollider
-(after 'w3m
+(ptrv/after 'w3m
   (define-key w3m-mode-map [left] 'backward-char)
   (define-key w3m-mode-map [right] 'forward-char)
   (define-key w3m-mode-map [up] 'previous-line)
@@ -1941,7 +1941,7 @@ point reaches the beginning or end of the buffer, stop there."
       (sclang-start)
     (message "SCLang is not installed!")))
 
-(after 'sclang
+(ptrv/after 'sclang
   (message "sclang config has been loaded !!!")
   (setq sclang-auto-scroll-post-buffer nil
         sclang-eval-line-forward nil
@@ -1981,7 +1981,7 @@ point reaches the beginning or end of the buffer, stop there."
     )
   (add-hook 'sclang-mode-hook 'supercollider-init)
 
-  (after 'sclang
+  (ptrv/after 'sclang
     (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
     (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
     (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
@@ -2010,8 +2010,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elpy
-(after 'python
-  (after 'elpy-autoloads
+(ptrv/after 'python
+  (ptrv/after 'elpy-autoloads
     (setq elpy-default-minor-modes '(eldoc-mode
                                      highlight-indentation-mode
                                      yas-minor-mode
@@ -2022,7 +2022,7 @@ point reaches the beginning or end of the buffer, stop there."
                                   (when (file-remote-p (buffer-file-name))
                                     (elpy-disable))))))
 
-(after 'elpy
+(ptrv/after 'elpy
   (define-key elpy-mode-map (kbd "C-c C-f") nil)
   (define-key elpy-mode-map (kbd "C-c C-j") nil)
   (define-key elpy-mode-map (kbd "C-c C-n") nil)
@@ -2040,13 +2040,13 @@ point reaches the beginning or end of the buffer, stop there."
       (setq python-shell-interpreter-args "--pylab")))
   )
 
-(after 'highlight-indentation
+(ptrv/after 'highlight-indentation
   (set-face-background 'highlight-indentation-face "#e3e3d3")
   (set-face-background 'highlight-indentation-current-column-face "#c3b3b3"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; python
-(after 'python
+(ptrv/after 'python
   (exec-path-from-shell-copy-env "PYTHONPATH")
 
   ;; pytest
@@ -2110,9 +2110,9 @@ point reaches the beginning or end of the buffer, stop there."
                         (other . "stroustrup")))
 
 ;; Hook auto-complete into clang
-(after 'cc-mode
+(ptrv/after 'cc-mode
   (message "cc-mode config has been loaded !!!")
-  (with-library 'auto-complete-clang-async
+  (ptrv/with-library 'auto-complete-clang-async
     (setq ac-clang-complete-executable
           (concat dotfiles-dir "site-lisp/emacs-clang-complete-async/clang-complete"))
     (when (not (file-exists-p ac-clang-complete-executable))
@@ -2165,7 +2165,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; multiple-cursors
-(after 'multiple-cursors-autoloads
+(ptrv/after 'multiple-cursors-autoloads
   ;;(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
   (global-set-key (kbd "C-c C-ö") 'mc/edit-lines)
   (global-set-key (kbd "C-ä") 'mc/mark-next-like-this)
@@ -2174,13 +2174,13 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; expand-region
-(after 'expand-region-autoloads
+(ptrv/after 'expand-region-autoloads
   (global-set-key (kbd "C-ü") 'er/expand-region)
   (global-set-key (kbd "C-Ü") 'er/contract-region))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; key-chord
-(after 'key-chord-autoloads
+(ptrv/after 'key-chord-autoloads
   (key-chord-mode 1)
   (key-chord-define-global "JJ" 'switch-to-previous-buffer)
   (key-chord-define-global "KK" 'winner-undo)
@@ -2264,12 +2264,12 @@ point reaches the beginning or end of the buffer, stop there."
       (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
 
 ;; Ace jump mode
-(after 'ace-jump-mode-autoloads
+(ptrv/after 'ace-jump-mode-autoloads
   (global-set-key (kbd "C-o") 'ace-jump-mode))
 
 ;; Show documentation/information with M-RET
 (define-key lisp-mode-shared-map (kbd "M-RET") 'ptrv-lisp-describe-thing-at-point)
-(after 'nrepl
+(ptrv/after 'nrepl
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc))
 
@@ -2319,7 +2319,7 @@ end of the line."
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
-(after 'sql
+(ptrv/after 'sql
   (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
   (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer)
   (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
@@ -2345,7 +2345,7 @@ end of the line."
 (global-set-key (kbd "S-<f11>") 'toggle-fold-all)
 
 ;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
-(after 'cua-rect
+(ptrv/after 'cua-rect
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
