@@ -300,11 +300,13 @@
   (ido-ubiquitous-mode 1)
   (ido-ubiquitous-disable-in erc-iswitchb)
 
-  (add-to-list 'ido-ubiquitous-command-exceptions 'sh-set-shell)
-  (add-to-list 'ido-ubiquitous-command-exceptions 'ispell-change-dictionary)
-  (add-to-list 'ido-ubiquitous-command-exceptions 'add-dir-local-variable)
-  (add-to-list 'ido-ubiquitous-command-exceptions 'ahg-do-command)
-  ;;(add-to-list 'ido-ubiquitous-command-exceptions 'godoc)
+  (dolist (cmd '(sh-set-shell
+                 ispell-change-dictionary
+                 add-dir-local-variable
+                 ahg-do-command
+                 sclang-dump-interface
+                 sclang-dump-full-interface))
+    (add-to-list 'ido-ubiquitous-command-exceptions cmd))
 
   ;; Fix ido-ubiquitous for newer packages
   (defmacro ido-ubiquitous-use-new-completing-read (cmd package)
@@ -360,16 +362,16 @@
 (ac-flyspell-workaround)
 (setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat"))
 
-(setq ac-auto-show-menu t)
-(setq ac-dwim t)
-(setq ac-use-menu-map t)
-(setq ac-quick-help-delay 0.8)
-(setq ac-quick-help-height 60)
-(setq ac-disable-inline t)
-(setq ac-show-menu-immediately-on-auto-complete t)
-(setq ac-ignore-case nil)
-(setq ac-candidate-menu-min 0)
-(setq ac-auto-start nil)
+(setq ac-auto-show-menu t
+      ac-dwim t
+      ac-use-menu-map t
+      ac-quick-help-delay 0.8
+      ac-quick-help-height 60
+      ac-disable-inline t
+      ac-show-menu-immediately-on-auto-complete t
+      ac-ignore-case nil
+      ac-candidate-menu-min 0
+      ac-auto-start nil)
 
 (set-default 'ac-sources
              '(ac-source-dictionary
@@ -562,38 +564,6 @@
       (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
     (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
 
-    ;; ;; Monkey Patch nREPL with better behaviour:
-    ;; (defun live-nrepl-err-handler (buffer ex root-ex session)
-    ;;   "Make an error handler for BUFFER, EX, ROOT-EX and SESSION."
-    ;;   ;; TODO: use ex and root-ex as fallback values to display when pst/print-stack-trace-not-found
-    ;;   (let ((replp (equal 'nrepl-mode (buffer-local-value 'major-mode buffer))))
-    ;;     (if (or (and nrepl-popup-stacktraces-in-repl replp)
-    ;;             (and nrepl-popup-stacktraces (not replp)))
-    ;;         (lexical-let ((nrepl-popup-on-error nrepl-popup-on-error)
-    ;;                       (err-buffer (nrepl-popup-buffer nrepl-error-buffer t)))
-    ;;           (with-current-buffer buffer
-    ;;             (nrepl-send-string "(if-let [pst+ (clojure.core/resolve 'clj-stacktrace.repl/pst+)]
-    ;;                       (pst+ *e) (clojure.stacktrace/print-stack-trace *e))"
-    ;;                                (nrepl-make-response-handler err-buffer
-    ;;                                                             '()
-    ;;                                                             (lambda (err-buffer str)
-    ;;                                                               (with-current-buffer err-buffer (goto-char (point-max)))
-    ;;                                                               (nrepl-emit-into-popup-buffer err-buffer str)
-    ;;                                                               (with-current-buffer err-buffer (goto-char (point-min)))
-    ;;                                                               )
-    ;;                                                             (lambda (err-buffer str)
-    ;;                                                               (with-current-buffer err-buffer (goto-char (point-max)))
-    ;;                                                               (nrepl-emit-into-popup-buffer err-buffer str)
-    ;;                                                               (with-current-buffer err-buffer (goto-char (point-min)))
-    ;;                                                               )
-    ;;                                                             '())
-    ;;                                (nrepl-current-ns)
-    ;;                                (nrepl-current-tooling-session)))
-    ;;           (with-current-buffer nrepl-error-buffer
-    ;;             (compilation-minor-mode 1))
-    ;;           ))))
-    ;; ;;(setq nrepl-err-handler 'live-nrepl-err-handler)
-
     ;; Region discovery fix
     (defun nrepl-region-for-expression-at-point ()
       "Return the start and end position of defun at point."
@@ -705,8 +675,9 @@
 
 (ptrv/after 'gist
   (setq gist-view-gist t)
-  (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
-  (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop")))
+  (dolist (mode '((processing-mode . "pde")
+                  (conf-mode . "desktop")))
+    (add-to-list 'gist-supported-modes-alist mode)))
 
 ;; A key map for Gisting
 (defvar ptrv/gist-map
@@ -957,11 +928,8 @@
   (projectile-global-mode)
 
   (ptrv/after 'projectile
-    (add-to-list 'projectile-project-root-files ".ropeproject" t)
-    (add-to-list 'projectile-project-root-files "setup.py" t)
-    ;; (define-key projectile-mode-map (kbd "C-c p f") 'nil)
-    ;; (define-key projectile-mode-map (kbd "C-c p F") 'projectile-find-file)
-    ))
+    (dolist (file '(".ropeproject" "setup.py"))
+      (add-to-list 'projectile-project-root-files file t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
@@ -2092,12 +2060,7 @@ prompt for the command to use."
     (define-key sclang-server-key-map [?h]
       (lambda ()
         (interactive)
-        (sclang-eval-string "HelperWindow.new;"))))
-
-  (if (fboundp 'completing-read-ido)
-      (progn
-        (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-interface)
-        (add-to-list 'ido-ubiquitous-command-exceptions 'sclang-dump-full-interface))))
+        (sclang-eval-string "HelperWindow.new;")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elpy
