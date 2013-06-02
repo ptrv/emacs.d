@@ -175,6 +175,9 @@
 ;;enable cua-mode for rectangular selections
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
+;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
+(ptrv/after 'cua-rect
+  (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (windmove-default-keybindings 'super)
 
@@ -330,6 +333,11 @@
   (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; idomenu
+(ptrv/after 'idomenu-autoloads
+  (global-set-key (kbd "C-x C-i") 'idomenu))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Eshell
 (ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
@@ -354,6 +362,11 @@
 
   (ptrv/after 'auto-complete
     (require 'eshell-ac-pcomplete)))
+
+;; Start eshell or switch to it if it's active.
+(global-set-key (kbd "C-x m") 'eshell)
+;; Start a new eshell even if one is active.
+(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; complete
@@ -797,7 +810,11 @@
                        (executable-find "spatialite")
                      (executable-find "sqlite3"))))
       (setq sql-sqlite-program change)
-      (message "sql-sqlite-program changed to %s" change))))
+      (message "sql-sqlite-program changed to %s" change)))
+
+  (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
+  (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer)
+  (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smart-operator
@@ -934,7 +951,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
 (ptrv/after 'find-file-in-project
-  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py")))
+  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
+  (define-key ptrv/file-commands-map "f" 'ffip))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
@@ -1038,6 +1056,9 @@
   (let ((whitespace-indent-tabs-mode indent-tabs-mode)
         (whitespace-tab-width tab-width))
     ad-do-it))
+
+;; use ibuffer
+(global-set-key [remap list-buffers] 'ibuffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org
@@ -1808,6 +1829,10 @@ prompt for the command to use."
         (define-key map [(shift mouse-2)] 'hs-mouse-toggle-hiding)
         map))
 
+;; (global-set-key (kbd "<f11>") 'toggle-fold)
+(global-set-key (kbd "<f11>") 'hs-toggle-hiding)
+(global-set-key (kbd "S-<f11>") 'toggle-fold-all)
+
 ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
 (setq hs-isearch-open t)
 
@@ -2215,19 +2240,14 @@ prompt for the command to use."
   (key-chord-define-global "BB" 'ido-switch-buffer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Ace jump mode
+(ptrv/after 'ace-jump-mode-autoloads
+  (global-set-key (kbd "C-o") 'ace-jump-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; bindings
-;; (define-key global-map (kbd "C-+") 'text-scale-increase)
-;; (define-key global-map (kbd "C--") 'text-scale-decrease)
-
 (global-set-key (kbd "C-x f") 'ido-recentf-open)
-(global-set-key (kbd "C-c p F") 'find-file-in-project)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
-
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-
-(global-set-key (kbd "C-x C-i") 'idomenu)
-
-(global-set-key [f5] 'refresh-file)
 
 ;; Split Windows
 (global-set-key [f6] 'split-window-horizontally)
@@ -2236,7 +2256,12 @@ prompt for the command to use."
 (global-set-key [f9] 'delete-other-windows)
 
 ;;diff shortcuts
-(global-set-key (kbd "C-c d f") 'diff-buffer-with-file)
+(defvar ptrv/diff-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "d" 'diff)
+    (define-key map "f" 'diff-buffer-with-file)
+    map)
+  "Keymap for diff commands.")
 
 (defvar ptrv/windows-map
   (let ((map (make-sparse-keymap)))
@@ -2271,31 +2296,8 @@ prompt for the command to use."
     (let ((case-fold-search isearch-case-fold-search))
       (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
 
-;; Ace jump mode
-(ptrv/after 'ace-jump-mode-autoloads
-  (global-set-key (kbd "C-o") 'ace-jump-mode))
-
 (global-set-key "\C-m" 'newline-and-indent)
 
-;; Start eshell or switch to it if it's active.
-(global-set-key (kbd "C-x m") 'eshell)
-;; Start a new eshell even if one is active.
-(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
-
-;; Original idea from
-;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
-(defun comment-dwim-line (&optional arg)
-  "Replacement for the comment-dwim command.
-
-If no region is selected and current line is not blank and we are
-not at the end of the line, then comment current line. Replaces
-default behaviour of comment-dwim, when it inserts comment at the
-end of the line."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (comment-dwim arg)))
 (global-set-key (kbd "M-;") 'comment-dwim-line)
 
 (global-set-key (kbd "M-/") 'hippie-expand)
@@ -2308,22 +2310,9 @@ end of the line."
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
-(ptrv/after 'sql
-  (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
-  (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer)
-  (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
-
 (global-set-key (kbd "M-j") (lambda ()
                               (interactive)
                               (join-line -1)))
-
-;; (global-set-key (kbd "<f11>") 'toggle-fold)
-(global-set-key (kbd "<f11>") 'hs-toggle-hiding)
-(global-set-key (kbd "S-<f11>") 'toggle-fold-all)
-
-;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
-(ptrv/after 'cua-rect
-  (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 (global-set-key (kbd "C-M-z") 'indent-defun)
@@ -2346,32 +2335,25 @@ end of the line."
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
 (global-set-key (kbd "C-x r v") 'ptrv/list-registers)
 
-(defvar ptrv/favs nil)
-(defun ptrv/quickly-open-fav (char)
-  (interactive "cFav:")
-  (let ((fav (assoc char ptrv/favs)))
-    (if fav (let ((fav-file (cdr fav)))
-              (message "Open file: %s" fav-file)
-              (find-file fav-file))
-      (message "No such fav :("))))
-
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
-  (define-key map "w" ptrv/windows-map)
-  (define-key map "q" 'exit-emacs-client)
-  (define-key map "t" 'ptrv/eshell-or-restore)
-  (define-key map "r" 'revert-buffer)
-  (define-key map "v" 'halve-other-window-height)
-  (define-key map "l" 'org-store-link)
   (define-key map "A" 'org-agenda)
   (define-key map "B" 'org-iswitchb)
   (define-key map "C" 'org-capture)
-  (define-key map "g" 'magit-status)
   (define-key map "G" ptrv/gist-map)
-  (define-key map "a" ptrv/ack-map)
-  (define-key map "f" ptrv/file-commands-map)
   (define-key map "I" 'ptrv/find-user-init-file)
-  (define-key map "j" 'ptrv/quickly-open-fav))
+  (define-key map "R" 'refresh-file)
+  (define-key map "a" ptrv/ack-map)
+  (define-key map "d" ptrv/diff-map)
+  (define-key map "f" ptrv/file-commands-map)
+  (define-key map "g" 'magit-status)
+  (define-key map "j" 'ptrv/quickly-open-fav)
+  (define-key map "l" 'org-store-link)
+  (define-key map "q" 'exit-emacs-client)
+  (define-key map "r" 'revert-buffer)
+  (define-key map "t" 'ptrv/eshell-or-restore)
+  (define-key map "v" 'halve-other-window-height)
+  (define-key map "w" ptrv/windows-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defuns
@@ -2385,6 +2367,29 @@ end of the line."
 (defun refresh-file ()
   (interactive)
   (revert-buffer t t nil))
+
+(defvar ptrv/favs nil)
+(defun ptrv/quickly-open-fav (char)
+  (interactive "cFav:")
+  (let ((fav (assoc char ptrv/favs)))
+    (if fav (let ((fav-file (cdr fav)))
+              (message "Open file: %s" fav-file)
+              (find-file fav-file))
+      (message "No such fav :("))))
+
+;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
+(defun comment-dwim-line (&optional arg)
+  "Replacement for the comment-dwim command.
+
+If no region is selected and current line is not blank and we are
+not at the end of the line, then comment current line. Replaces
+default behaviour of comment-dwim, when it inserts comment at the
+end of the line."
+  (interactive "*P")
+  (comment-normalize-vars)
+  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+    (comment-dwim arg)))
 
 ;; http://irreal.org/blog/?p=1742
 (defun ptrv/eshell-or-restore ()
