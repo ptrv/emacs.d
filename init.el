@@ -226,11 +226,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; spelling
-(setq ispell-program-name "aspell" ; use aspell instead of ispell
-      ispell-extra-args '("--sug-mode=ultra"))
-(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
+(ptrv/after 'ispell
+  (setq ispell-program-name "aspell" ; use aspell instead of ispell
+        ;; ispell-extra-args '("--sug-mode=ultra")
+        ispell-dictionary "en"          ; default dictionary
+        ispell-silently-savep t))       ; Don't ask when saving the private dict
 
 (ptrv/after 'flyspell
+  (setq flyspell-use-meta-tab nil
+        flyspell-issue-welcome-flag nil
+        flyspell-issue-message-flag nil)
+  (define-key flyspell-mode-map "\M-\t" nil)
   (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
   (define-key flyspell-mode-map (kbd "C-.") 'ispell-word))
 
