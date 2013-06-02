@@ -805,23 +805,6 @@
       (message "sql-sqlite-program changed to %s" change))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; the silver searcher
-(setq ag-highlight-search t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; pure-mode
-(autoload 'pure-mode "pure-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.pure\\(rc\\)?$" . pure-mode))
-(ptrv/after 'pure-mode
-  (add-hook 'pure-mode-hook 'hs-minor-mode)
-  (add-hook 'pure-eval-mode-hook
-            (lambda ()
-              (define-key pure-eval-mode-map [up] 'comint-previous-input)
-              (define-key pure-eval-mode-map [down] 'comint-next-input)))
-  (define-key pure-mode-map (kbd "C-c M-p") 'run-pure)
-  (define-key pure-mode-map (kbd "C-x M-p") 'pure-scratchpad))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smart-operator
 (autoload 'smart-operator-mode "smart-operator" nil t)
 
