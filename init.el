@@ -129,48 +129,78 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
+(setq-default fill-column 72
+              indent-tabs-mode nil)
+
 (setq browse-url-generic-program (executable-find "google-chrome")
-      browse-url-browser-function 'browse-url-generic)
-
-;; follow version controlled symlinks automatically
-(setq vc-follow-symlinks t)
-(setq compilation-scroll-output t)
-
-;; disabled commands
-(put 'downcase-region 'disabled nil)
-(put 'updacase-region 'disabled nil)
+      browse-url-browser-function 'browse-url-generic
+      initial-major-mode 'lisp-interaction-mode
+      redisplay-dont-pause t
+      column-number-mode t
+      echo-keystrokes 0.02
+      inhibit-startup-message t
+      transient-mark-mode t
+      shift-select-mode t
+      require-final-newline t
+      truncate-partial-width-windows nil
+      delete-by-moving-to-trash t
+      confirm-nonexistent-file-or-buffer nil
+      query-replace-highlight t
+      next-error-highlight t
+      next-error-highlight-no-select t
+      font-lock-maximum-decoration t
+      color-theme-is-global t
+      ring-bell-function 'ignore
+      compilation-scroll-output t
+      vc-follow-symlinks t
+      diff-switches "-u"
+      completion-cycle-threshold 5
+      x-select-enable-clipboard t
+      ;; from https://github.com/technomancy/better-defaults
+      x-select-enable-primary t
+      save-interprogram-paste-before-kill t
+      apropos-do-all t
+      mouse-yank-at-point t
+      ;;recentf
+      recentf-save-file (concat ptrv-tmp-dir "recentf")
+      recentf-max-saved-items 100)
 
 (auto-insert-mode 1)
-
-(setq font-lock-maximum-decoration t
-      color-theme-is-global t)
-
-(set-default 'fill-column 72)
-(setq ring-bell-function 'ignore)
+(auto-compression-mode t)
+(show-paren-mode 1)
+(recentf-mode t)
+(winner-mode 1)
+(windmove-default-keybindings 'super)
 
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-(setq uniquify-separator "/")
-(setq uniquify-after-kill-buffer-p t)
-(setq uniquify-ignore-buffers-re "^\\*")
-
-(setq recentf-save-file (concat ptrv-tmp-dir "recentf")
-      recentf-max-saved-items 200)
-(recentf-mode t)
-
-;; 50 files ought to be enough.
-(setq recentf-max-saved-items 50)
-
-(defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-        (message "Aborting")))
+(setq uniquify-buffer-name-style 'forward
+      uniquify-separator "/"
+      uniquify-after-kill-buffer-p t
+      uniquify-ignore-buffers-re "^\\*")
 
 (require 'saveplace)
 (setq-default save-place t)
 (setq save-place-file (concat ptrv-tmp-dir "places"))
+
+;; savehist keeps track of some history
+(setq savehist-additional-variables '(search ring regexp-search-ring)
+      savehist-autosave-interval 60
+      savehist-file (concat ptrv-tmp-dir "savehist"))
+(savehist-mode t)
+
+;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+(setq utf-translate-cjk-mode nil)
+
+;;remove all trailing whitespace and trailing blank lines before
+;;saving the file
+(defun ptrv/cleanup-whitespace ()
+  (let ((whitespace-style '(trailing empty)) )
+    (whitespace-cleanup)))
+(add-hook 'before-save-hook 'ptrv/cleanup-whitespace)
+
+;; disabled commands
+(put 'downcase-region 'disabled nil)
+(put 'updacase-region 'disabled nil)
 
 ;;enable cua-mode for rectangular selections
 ;; (cua-mode 1)
@@ -178,54 +208,6 @@
 ;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
 (ptrv/after 'cua-rect
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
-
-(windmove-default-keybindings 'super)
-
-(when (fboundp 'winner-mode)
-      (winner-mode 1))
-
-(setq initial-major-mode 'lisp-interaction-mode
-      redisplay-dont-pause t
-      column-number-mode t
-      echo-keystrokes 0.02
-      inhibit-startup-message t
-      transient-mark-mode t
-      shift-select-mode nil
-      require-final-newline t
-      truncate-partial-width-windows nil
-      delete-by-moving-to-trash nil
-      confirm-nonexistent-file-or-buffer nil
-      query-replace-highlight t
-      next-error-highlight t
-      next-error-highlight-no-select t)
-
-;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-(setq utf-translate-cjk-mode nil)
-
-(set-default 'indent-tabs-mode nil)
-(auto-compression-mode t)
-(show-paren-mode 1)
-
-;;default to unified diffs
-(setq diff-switches "-u")
-
-(setq x-select-enable-clipboard t)
-
-;;remove all trailing whitespace and trailing blank lines before
-;;saving the file
-(defun ptrv-cleanup-whitespace ()
-  (let ((whitespace-style '(trailing empty)) )
-    (whitespace-cleanup)))
-(add-hook 'before-save-hook 'ptrv-cleanup-whitespace)
-
-;; savehist keeps track of some history
-(setq savehist-additional-variables
-      '(search ring regexp-search-ring)
-      savehist-autosave-interval 60
-      savehist-file (concat ptrv-tmp-dir "savehist"))
-(savehist-mode t)
-
-(setq completion-cycle-threshold 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; spelling
@@ -287,14 +269,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
-(setq ido-max-directory-size 100000)
 (ido-mode t)
 (setq ido-enable-prefix nil
       ido-enable-flex-matching t
       ido-create-new-buffer 'always
       ido-max-prospects 10
-      ido-default-file-method 'selected-window)
-(setq ido-save-directory-list-file (concat ptrv-tmp-dir "ido.last"))
+      ido-default-file-method 'selected-window
+      ido-max-directory-size 100000
+      ido-save-directory-list-file (concat ptrv-tmp-dir "ido.last"))
 (icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,9 +355,9 @@
 (require 'auto-complete-config)
 (ac-config-default)
 (ac-flyspell-workaround)
-(setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat"))
 
-(setq ac-auto-show-menu t
+(setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat")
+      ac-auto-show-menu t
       ac-dwim t
       ac-use-menu-map t
       ac-quick-help-delay 0.8
@@ -399,12 +381,13 @@
                 lisp-mode textile-mode markdown-mode tuareg-mode))
   (add-to-list 'ac-modes mode))
 
-(define-key ac-completing-map (kbd "C-M-n") 'ac-next)
-(define-key ac-completing-map (kbd "C-M-p") 'ac-previous)
-(define-key ac-completing-map "\t" 'ac-complete)
-(define-key ac-completing-map (kbd "M-RET") 'ac-help)
-;;(define-key ac-completing-map "\r" 'nil)
-(define-key ac-completing-map "\r" 'ac-complete)
+(let ((map ac-completing-map))
+  (define-key map (kbd "C-M-n") 'ac-next)
+  (define-key map (kbd "C-M-p") 'ac-previous)
+  (define-key map "\t" 'ac-complete)
+  (define-key map (kbd "M-RET") 'ac-help)
+  ;;(define-key map "\r" 'nil)
+  (define-key map "\r" 'ac-complete))
 
 (ac-set-trigger-key "TAB")
 
@@ -2246,7 +2229,7 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; bindings
-(global-set-key (kbd "C-x f") 'ido-recentf-open)
+(global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
 ;; Split Windows
@@ -2357,7 +2340,7 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defuns
-(defun recentf-ido-find-file ()
+(defun ptrv/ido-recentf-open ()
   "Find a recent file using ido."
   (interactive)
   (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
