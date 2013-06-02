@@ -1219,8 +1219,7 @@
                    "latexmk -C %s"
                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t))
 
-  (add-hook 'LaTeX-mode-hook #'(lambda ()
-                                 (setq-default TeX-command-default "latexmk")))
+  (add-hook 'LaTeX-mode-hook #'(lambda () (setq TeX-command-default "latexmk")))
 
   ;; clean intermediate files from latexmk
   (dolist (it '("\\.fdb_latexmk" "\\.fls"))
