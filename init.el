@@ -2397,6 +2397,14 @@ end of the line."
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
 (global-set-key (kbd "C-x r v") 'ptrv/list-registers)
 
+(defvar ptrv/favs nil)
+(defun ptrv/quickly-open-fav (char)
+  (interactive "cFav:")
+  (let ((fav (assoc char ptrv/favs)))
+    (if fav (let ((fav-file (cdr fav)))
+              (message "Open file: %s" fav-file)
+              (find-file fav-file))
+      (message "No such fav :("))))
 
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
@@ -2413,7 +2421,8 @@ end of the line."
   (define-key map "G" ptrv/gist-map)
   (define-key map "a" ptrv/ack-map)
   (define-key map "f" ptrv/file-commands-map)
-  (define-key map "I" 'ptrv/find-user-init-file))
+  (define-key map "I" 'ptrv/find-user-init-file)
+  (define-key map "j" 'ptrv/quickly-open-fav))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defuns
