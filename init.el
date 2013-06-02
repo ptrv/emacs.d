@@ -2023,7 +2023,7 @@ prompt for the command to use."
   (setq w3m-pop-up-frames t)
   (setq w3m-pop-up-windows nil))
 
-(defun sclang-ptrv ()
+(defun ptrv/sclang ()
   (interactive)
   (if (require 'sclang nil t)
       (sclang-start)
