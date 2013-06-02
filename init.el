@@ -383,6 +383,8 @@
 (define-key ac-completing-map "\t" 'ac-complete)
 (define-key ac-completing-map (kbd "M-RET") 'ac-help)
 ;;(define-key ac-completing-map "\r" 'nil)
+(define-key ac-completing-map "\r" 'ac-complete)
+
 (ac-set-trigger-key "TAB")
 
 ;; complete on dot
@@ -426,7 +428,8 @@
   (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-  (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent))
+  (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm))
 
 (ptrv/after 'ielm
   (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv-font-lock-keywords :append)
@@ -692,6 +695,14 @@
   (add-to-list 'gist-supported-modes-alist '(processing-mode . "pde"))
   (add-to-list 'gist-supported-modes-alist '(conf-mode . "desktop")))
 
+;; A key map for Gisting
+(defvar ptrv/gist-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "c" #'gist-region-or-buffer)
+    (define-key map "l" #'gist-list)
+    map)
+  "Keymap for Gists.")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; git-gutter
 (ptrv/after 'git-gutter-autoloads
@@ -865,12 +876,25 @@
     (global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ack-and-a-half
+;;;; Ack and Ag
+;; ack-and-a-half
 (ptrv/after 'ack-and-a-half-autoloads
   (defalias 'ack 'ack-and-a-half)
   (defalias 'ack-same 'ack-and-a-half-same)
   (defalias 'ack-find-file 'ack-and-a-half-find-file)
   (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
+
+(defvar ptrv/ack-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "a") #'ack-and-a-half)
+    (define-key map (kbd "s") #'ack-and-a-half-same)
+    (define-key map (kbd "g") #'ag)
+    (define-key map (kbd "r") #'ag-regexp)
+    map)
+  "Keymap for Ack.")
+
+;; the silver searcher
+(setq ag-highlight-search t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
@@ -922,8 +946,9 @@
   (ptrv/after 'projectile
     (add-to-list 'projectile-project-root-files ".ropeproject" t)
     (add-to-list 'projectile-project-root-files "setup.py" t)
-    (define-key projectile-mode-map (kbd "C-c p f") 'nil)
-    (define-key projectile-mode-map (kbd "C-c p F") 'projectile-find-file)))
+    ;; (define-key projectile-mode-map (kbd "C-c p f") 'nil)
+    ;; (define-key projectile-mode-map (kbd "C-c p F") 'projectile-find-file)
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
@@ -1036,11 +1061,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
 
 (defun gtd ()
   (interactive)
@@ -1619,6 +1639,85 @@ point reaches the beginning or end of the buffer, stop there."
 (move-text-default-bindings)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; file commands
+(defun ptrv/get-standard-open-command ()
+  "Get the standard command to open a file."
+  (cond
+   (*is-mac* "open")
+   (*is-linux* "xdg-open")))
+
+;; http://emacsredux.com/blog/2013/03/27/open-file-in-external-program/
+(defun ptrv/open-with (arg)
+  "Open the file visited by the current buffer externally.
+
+Use the standard program to open the file.  With prefix ARG,
+prompt for the command to use."
+  (interactive "P")
+  (unless (buffer-file-name)
+    (user-error "This buffer is not visiting a file"))
+  (let ((command (unless arg (ptrv/get-standard-open-command))))
+    (unless command
+      (setq command (read-shell-command "Open current file with: ")))
+    (shell-command (concat command " "
+                           (shell-quote-argument (buffer-file-name))))))
+
+;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
+(defun ptrv/copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+;; http://whattheemacsd.com/file-defuns.el-01.html
+(defun ptrv/rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists!" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+
+(defun ptrv/delete-file-and-buffer ()
+  "Delete the current file and kill the buffer."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (cond
+     ((not filename) (kill-buffer))
+     ((vc-backend filename) (vc-delete-file filename))
+     (:else
+      (delete-file filename)
+      (kill-buffer)))))
+
+;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
+(defun ptrv/find-user-init-file ()
+  "Edit the `user-init-file', in another window."
+  (interactive)
+  (find-file user-init-file))
+
+(defvar ptrv/file-commands-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "o" #'ptrv/open-with)
+    (define-key map "R" #'ptrv/rename-current-buffer-file)
+    (define-key map "D" #'ptrv/delete-file-and-buffer)
+    (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
+    ;; (define-key map "i" #'ptrv/find-user-init-file)
+    map)
+  "Keymap for file functions.")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
 (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
@@ -1953,9 +2052,8 @@ point reaches the beginning or end of the buffer, stop there."
     (when (string= (buffer-name) sclang-post-buffer)
       (use-local-map (copy-keymap sclang-mode-map))
       (local-set-key [?\t] 'forward-button)
-      (local-set-key [backtab] 'backward-button))
+      (local-set-key [backtab] 'backward-button)))
 
-    )
   (add-hook 'sclang-mode-hook 'supercollider-init)
 
   (ptrv/after 'sclang
@@ -1963,7 +2061,7 @@ point reaches the beginning or end of the buffer, stop there."
     (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
     (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
     ;; Raise all supercollider windows.
-    (define-key sclang-mode-map (kbd "C-c f")
+    (define-key sclang-mode-map (kbd "C-c F")
       (lambda ()
         (interactive)
         (sclang-eval-string "Window.allWindows.do(_.front);")))
@@ -2170,10 +2268,9 @@ point reaches the beginning or end of the buffer, stop there."
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
 (global-set-key (kbd "C-x f") 'ido-recentf-open)
-(global-set-key (kbd "C-c p f") 'find-file-in-project)
+(global-set-key (kbd "C-c p F") 'find-file-in-project)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
-(global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Jump to a definition in the current file. (This is awesome.)
@@ -2187,42 +2284,30 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key [f8] 'delete-window)
 (global-set-key [f9] 'delete-other-windows)
 
-(global-set-key (kbd "C-x g") 'magit-status)
-
-;;mark current function
-(global-set-key (kbd "C-x C-p") 'mark-defun)
+;;(global-set-key (kbd "C-x g") 'magit-status)
 
 ;;emacs-lisp shortcuts
 (global-set-key (kbd "C-c C-e") 'eval-and-replace)
 
-(global-set-key (kbd "C-c m s") 'eval-and-replace) ;swap
-(global-set-key (kbd "C-c m b") 'eval-buffer)
-(global-set-key (kbd "C-c m e") 'eval-last-sexp)
-(global-set-key (kbd "C-c m i") 'eval-expression)
-(global-set-key (kbd "C-c m d") 'eval-defun)
-(global-set-key (kbd "C-c m n") 'eval-print-last-sexp)
-(global-set-key (kbd "C-c m r") 'eval-region)
-
 ;;diff shortcuts
 (global-set-key (kbd "C-c d f") 'diff-buffer-with-file)
 
-(global-set-key (kbd "C-c w s") 'swap-windows)
-(global-set-key (kbd "C-c w r") 'rotate-windows)
-
-(global-set-key (kbd "C-c w .") (lambda () (interactive) (shrink-window-horizontally 4)))
-(global-set-key (kbd "C-c w ,") (lambda () (interactive) (enlarge-window-horizontally 4)))
-(global-set-key (kbd "C-c w <down>") (lambda () (interactive) (enlarge-window -4)))
-(global-set-key (kbd "C-c w <up>") (lambda () (interactive) (enlarge-window 4)))
-
-;; winner undo and redo
-(global-set-key (kbd "C-c w b") 'winner-undo)
-(global-set-key (kbd "C-c w f") 'winner-redo)
+(defvar ptrv/windows-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "s" 'swap-windows)
+    (define-key map "r" 'rotate-windows)
+    (define-key map "." (lambda () (interactive) (shrink-window-horizontally 4)))
+    (define-key map "," (lambda () (interactive) (enlarge-window-horizontally 4)))
+    (define-key map (kbd "<down>") (lambda () (interactive) (enlarge-window -4)))
+    (define-key map (kbd "<up>") (lambda () (interactive) (enlarge-window 4)))
+    (define-key map "b" 'winner-undo)
+    (define-key map "f" 'winner-redo)
+    map)
+  "Keymap for window manipulation")
 
 ;;fast vertical naviation
 (global-set-key  (kbd "M-U") (lambda () (interactive) (forward-line -10)))
 (global-set-key  (kbd "M-D") (lambda () (interactive) (forward-line 10)))
-(global-set-key  (kbd "M-p") 'outline-previous-visible-heading)
-(global-set-key  (kbd "M-n") 'outline-next-visible-heading)
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
@@ -2245,7 +2330,7 @@ point reaches the beginning or end of the buffer, stop there."
   (global-set-key (kbd "C-o") 'ace-jump-mode))
 
 ;; Show documentation/information with M-RET
-(define-key lisp-mode-shared-map (kbd "M-RET") 'ptrv-lisp-describe-thing-at-point)
+(define-key lisp-mode-shared-map (kbd "M-RET") 'ptrv/lisp-describe-thing-at-point)
 (ptrv/after 'nrepl
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc))
@@ -2258,11 +2343,6 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "C-x m") 'eshell)
 ;; Start a new eshell even if one is active.
 (global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
-
-(define-key ac-completing-map "\r" 'ac-complete)
-
-;; kill regions
-(global-set-key (kbd "C-x C-k") 'kill-region)
 
 ;; Original idea from
 ;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
@@ -2278,18 +2358,12 @@ end of the line."
   (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
-
 (global-set-key (kbd "M-;") 'comment-dwim-line)
 
 (global-set-key (kbd "M-/") 'hippie-expand)
 
 (global-set-key (kbd "C-S-d") 'duplicate-line-or-region-below)
-
 (global-set-key (kbd "C-S-M-d") 'duplicate-line-below-comment)
-
-(global-set-key (kbd "C-c q") 'exit-emacs-client)
-
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
 (global-set-key (kbd "<C-M-return>") 'open-line-below)
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
@@ -2300,18 +2374,6 @@ end of the line."
   (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
   (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer)
   (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
-
-;; http://irreal.org/blog/?p=1742
-(global-set-key (kbd "C-c t")
-                #'(lambda ()
-                    "Bring up a full-screen eshell or restore previous config."
-                    (interactive)
-                    (if (string= "eshell-mode" major-mode)
-                        (jump-to-register :eshell-fullscreen)
-                      (progn
-                        (window-configuration-to-register :eshell-fullscreen)
-                        (eshell)
-                        (delete-other-windows)))))
 
 (global-set-key (kbd "M-j") (lambda ()
                               (interactive)
@@ -2344,22 +2406,29 @@ end of the line."
 
 ;; registers
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
-(global-set-key (kbd "C-x r v") 'ptrv-list-registers)
+(global-set-key (kbd "C-x r v") 'ptrv/list-registers)
 
-;; (set-register ?e '(file . "~/.emacs.d"))
-;; (set-register ?i '(file . "~/.emacs.d/init.el"))
-;; (set-register ?m '(file . "~/.emacs.d/modules"))
 (set-register ?z '(file . "~/.oh-my-zsh"))
 (set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
 
-(define-key Info-mode-map "ä" 'Info-forward-node)
-(define-key Info-mode-map "ö" 'Info-backward-node)
-
-(define-key emacs-lisp-mode-map (kbd "C-c C-z") 'visit-ielm)
-
 (global-set-key (kbd "<C-f9>") #'global-git-gutter-mode)
 
-(global-set-key (kbd "C-c I") 'find-user-init-file)
+;; Keymap for characters following C-c
+(let ((map mode-specific-map))
+  (define-key map "w" ptrv/windows-map)
+  (define-key map "q" 'exit-emacs-client)
+  (define-key map "t" 'ptrv/eshell-or-restore)
+  (define-key map "r" 'revert-buffer)
+  (define-key map "v" 'halve-other-window-height)
+  (define-key map "l" 'org-store-link)
+  (define-key map "A" 'org-agenda)
+  (define-key map "B" 'org-iswitchb)
+  (define-key map "C" 'org-capture)
+  (define-key map "g" 'magit-status)
+  (define-key map "G" ptrv/gist-map)
+  (define-key map "a" ptrv/ack-map)
+  (define-key map "f" ptrv/file-commands-map)
+  (define-key map "I" 'ptrv/find-user-init-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defuns
@@ -2373,6 +2442,17 @@ end of the line."
 (defun refresh-file ()
   (interactive)
   (revert-buffer t t nil))
+
+;; http://irreal.org/blog/?p=1742
+(defun ptrv/eshell-or-restore ()
+  "Bring up a full-screen eshell or restore previous config."
+  (interactive)
+  (if (string= "eshell-mode" major-mode)
+      (jump-to-register :eshell-fullscreen)
+    (progn
+      (window-configuration-to-register :eshell-fullscreen)
+      (eshell)
+      (delete-other-windows))))
 
 ;; https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun swap-windows ()
@@ -2525,24 +2605,6 @@ If mark is activate, duplicate region lines below."
       (server-edit)
     (delete-frame)))
 
-;; http://whattheemacsd.com/file-defuns.el-01.html
-(defun rename-current-buffer-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (let ((new-name (read-file-name "New name: " filename)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists!" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
-
 ;; http://whattheemacsd.com/editing-defuns.el-01.html
 (defun open-line-below ()
   (interactive)
@@ -2556,7 +2618,6 @@ If mark is activate, duplicate region lines below."
   (newline)
   (forward-line -1)
   (indent-for-tab-command))
-
 
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
@@ -2604,60 +2665,16 @@ If mark is activate, duplicate region lines below."
           "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
           "culpa qui officia deserunt mollit anim id est laborum."))
 
-(defun fd-switch-dictionary()
-  (interactive)
-  (let* ((dic ispell-current-dictionary)
-         (change (if (string= dic "de_DE-neu") "american" "de_DE-neu")))
-    (ispell-change-dictionary change)
-    (message "Dictionary switched from %s to %s" dic change)))
-
 ;; http://stackoverflow.com/a/4988206
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
   (interactive)
   (enlarge-window (/ (window-height (next-window)) 2)))
-(global-set-key (kbd "C-c v") 'halve-other-window-height)
 
 (defun xml-format ()
   (interactive)
   (save-excursion
     (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-
-(defun ergoemacs-open-in-desktop ()
-  "Show current file in desktop (OS's file manager)."
-  (interactive)
-  (cond
-   (*is-windows*
-    (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
-   (*is-mac* (shell-command "open ."))
-   (*is-linux*
-    (let ((process-connection-type nil)) (start-process "" nil "xdg-open" "."))
-    ;; (shell-command "xdg-open .") ;; 2013-02-10 this sometimes froze emacs till the folder is closed. ⁖ with nautilus
-    )))
-
-;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
-(defun copy-file-name-to-clipboard ()
-  "Copy the current buffer file name to the clipboard."
-  (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
-    (when filename
-      (kill-new filename)
-      (message "Copied buffer file name '%s' to the clipboard." filename))))
-
-;; http://emacsredux.com/blog/2013/03/27/open-file-in-external-program/
-(defun open-with ()
-  "Simple function that allows us to open the underlying
-file of a buffer in an external program."
-  (interactive)
-  (when buffer-file-name
-    (shell-command (concat
-                    (if *is-mac*
-                        "open"
-                      (read-shell-command "Open current file with: "))
-                    " "
-                    buffer-file-name))))
 
 ;; http://emacsredux.com/blog/2013/03/27/indent-region-or-buffer/
 (defun indent-buffer ()
@@ -2685,25 +2702,13 @@ file of a buffer in an external program."
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 
-;; http://emacsredux.com/blog/2013/03/28/google/
-(defun google ()
-  "Google the selected region if any, display a query prompt otherwise."
-  (interactive)
-  (browse-url
-   (concat
-    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
-    (url-hexify-string
-     (if mark-active
-         (buffer-substring (region-beginning) (region-end))
-       (read-string "Google: "))))))
-
-(defun ptrv-user-first-name ()
+(defun ptrv/user-first-name ()
   (let* ((first-name (car (split-string user-full-name))))
     (if first-name
         (capitalize first-name)
       "")))
-(defun ptrv-user-first-name-p ()
-  (not (string-equal "" (ptrv-user-first-name))))
+(defun ptrv/user-first-name-p ()
+  (not (string-equal "" (ptrv/user-first-name))))
 
 ;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
 (defun conditionally-enable-paredit-mode ()
@@ -2723,7 +2728,7 @@ Don't mess with special buffers."
       (kill-buffer buffer))))
 
 ;; Don't sort the registers list because it might contain keywords
-(defun ptrv-list-registers ()
+(defun ptrv/list-registers ()
   "Display a list of nonempty registers saying briefly what they contain."
   (interactive)
   (let ((list (copy-sequence register-alist)))
@@ -2741,31 +2746,14 @@ Repeated invocation toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
-;; http://emacsredux.com/blog/2013/04/29/start-command-or-switch-to-its-buffer/
-(defun start-or-switch-to (function buffer-name)
-  "Invoke FUNCTION if there is no buffer with BUFFER-NAME.
-Otherwise switch to the buffer named BUFFER-NAME.  Don't clobber
-the current buffer."
-  (if (not (get-buffer buffer-name))
-      (progn
-        (split-window-sensibly (selected-window))
-        (other-window 1)
-        (funcall function))
-    (switch-to-buffer-other-window buffer-name)))
-
-(defun visit-ielm ()
-  "Switch to default `ielm' buffer.
-Start `ielm' if it's not already running."
+(defun switch-to-ielm ()
+  "Switch to an ielm window.
+Create a new ielm process if required."
   (interactive)
-  (start-or-switch-to 'ielm "*ielm*"))
+  (pop-to-buffer (get-buffer-create "*ielm*"))
+  (ielm))
 
-;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
-(defun find-user-init-file ()
-  "Edit the `user-init-file', in another window."
-  (interactive)
-  (find-file user-init-file))
-
-(defun ptrv-lisp-describe-thing-at-point ()
+(defun ptrv/lisp-describe-thing-at-point ()
   "Show the documentation of the Elisp function and variable near point.
    This checks in turn:
      -- for a function name where point is
@@ -2805,10 +2793,10 @@ Start `ielm' if it's not already running."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; welcome-message stuff
 (setq ptrv-welcome-messages
-      (if (ptrv-user-first-name-p)
-          (list (concat "Hello " (ptrv-user-first-name) ", somewhere in the world the sun is shining for you right now.")
-                (concat "Hello " (ptrv-user-first-name) ", it's lovely to see you again. I do hope that you're well.")
-                (concat (ptrv-user-first-name) ", turn your head towards the sun and the shadows will fall behind you.")
+      (if (ptrv/user-first-name-p)
+          (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
+                (concat "Hello " (ptrv/user-first-name) ", it's lovely to see you again. I do hope that you're well.")
+                (concat (ptrv/user-first-name) ", turn your head towards the sun and the shadows will fall behind you.")
                 )
         (list  "Hello, somewhere in the world the sun is shining for you right now."
                "Hello, it's lovely to see you again. I do hope that you're well."
