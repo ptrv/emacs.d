@@ -429,12 +429,16 @@
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
   (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
-  (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm))
+  (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
+  (define-key lisp-mode-shared-map (kbd "C-c C-e") 'eval-and-replace)
+
+  (ptrv/after 'elisp-slime-nav
+    (define-key lisp-mode-shared-map (kbd "M-RET")
+      'elisp-slime-nav-describe-elisp-thing-at-point)))
 
 (ptrv/after 'ielm
   (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv-font-lock-keywords :append)
   (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))
-
 
 (ptrv/after 'mic-paren-autoloads
   (paren-activate))
@@ -535,6 +539,9 @@
                 (define-key nrepl-mode-map
                   (kbd "}") 'paredit-close-curly)))
 
+    ;; Show documentation/information with M-RET
+    (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
+    (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
     ;;Auto Complete
     (ptrv/after 'ac-nrepl-autoloads
@@ -2269,7 +2276,6 @@ prompt for the command to use."
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; Jump to a definition in the current file. (This is awesome.)
 (global-set-key (kbd "C-x C-i") 'idomenu)
 
 (global-set-key [f5] 'refresh-file)
@@ -2279,11 +2285,6 @@ prompt for the command to use."
 (global-set-key [f7] 'split-window-vertically)
 (global-set-key [f8] 'delete-window)
 (global-set-key [f9] 'delete-other-windows)
-
-;;(global-set-key (kbd "C-x g") 'magit-status)
-
-;;emacs-lisp shortcuts
-(global-set-key (kbd "C-c C-e") 'eval-and-replace)
 
 ;;diff shortcuts
 (global-set-key (kbd "C-c d f") 'diff-buffer-with-file)
@@ -2325,14 +2326,6 @@ prompt for the command to use."
 (ptrv/after 'ace-jump-mode-autoloads
   (global-set-key (kbd "C-o") 'ace-jump-mode))
 
-;; Show documentation/information with M-RET
-(define-key lisp-mode-shared-map (kbd "M-RET") 'ptrv/lisp-describe-thing-at-point)
-(ptrv/after 'nrepl
-  (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
-  (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc))
-
-;; Make Emacs use "newline-and-indent" when you hit the Enter key so
-;; that you don't need to keep using TAB to align yourself when coding.
 (global-set-key "\C-m" 'newline-and-indent)
 
 ;; Start eshell or switch to it if it's active.
@@ -2404,10 +2397,6 @@ end of the line."
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
 (global-set-key (kbd "C-x r v") 'ptrv/list-registers)
 
-(set-register ?z '(file . "~/.oh-my-zsh"))
-(set-register ?o '(file . "~/Dropbox/org/newgtd.org"))
-
-(global-set-key (kbd "<C-f9>") #'global-git-gutter-mode)
 
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
@@ -2748,28 +2737,6 @@ Create a new ielm process if required."
   (interactive)
   (pop-to-buffer (get-buffer-create "*ielm*"))
   (ielm))
-
-(defun ptrv/lisp-describe-thing-at-point ()
-  "Show the documentation of the Elisp function and variable near point.
-   This checks in turn:
-     -- for a function name where point is
-     -- for a variable name where point is
-     -- for a surrounding function call"
-  (interactive)
-  (let (sym)
-    ;; sigh, function-at-point is too clever.  we want only the first half.
-    (cond ((setq sym (ignore-errors
-                       (with-syntax-table emacs-lisp-mode-syntax-table
-                         (save-excursion
-                           (or (not (zerop (skip-syntax-backward "_w")))
-                               (eq (char-syntax (char-after (point))) ?w)
-                               (eq (char-syntax (char-after (point))) ?_)
-                               (forward-sexp -1))
-                           (skip-chars-forward "`'")
-                           (let ((obj (read (current-buffer))))
-                             (and (symbolp obj) (fboundp obj) obj))))))
-           (describe-function sym))
-          ((setq sym (variable-at-point)) (describe-variable sym)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; server
