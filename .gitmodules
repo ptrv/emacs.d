@@ -30,9 +30,6 @@
 [submodule "site-lisp/chuck-mode"]
 	path = site-lisp/chuck-mode
 	url = https://github.com/ptrv/chuck-mode.git
-[submodule "site-lisp/pylookup"]
-	path = site-lisp/pylookup
-	url = https://github.com/tsgates/pylookup.git
 [submodule "site-lisp/kibit-mode"]
 	path = site-lisp/kibit-mode
 	url = https://github.com/aredington/kibit-mode.git

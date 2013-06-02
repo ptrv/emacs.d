@@ -2153,31 +2153,6 @@ prompt for the command to use."
    :doc-spec
    '(("(python)Index" nil "")))
 
-  ;; PythonTidy
-  (defun pytidy-whole-buffer ()
-    (interactive)
-    (let ((a (point)))
-      (shell-command-on-region (point-min) (point-max) "pythontidy" t)
-      (goto-char a)))
-
-  ;; pylookup
-  (eval-when-compile (require 'pylookup))
-  (setq pylookup-dir (concat dotfiles-dir "site-lisp/pylookup"))
-  (setq pylookup-program (concat pylookup-dir "/pylookup.py"))
-  (setq pylookup-db-file (concat pylookup-dir "/pylookup.db"))
-
-  ;; set search option if you want
-  ;; (setq pylookup-search-options '("--insensitive" "0" "--desc" "0"))
-
-  ;; to speedup, just load it on demand
-  (autoload 'pylookup-lookup "pylookup"
-    "Lookup SEARCH-TERM in the Python HTML indexes." t)
-
-  (autoload 'pylookup-update "pylookup"
-    "Run pylookup-update and create the database at `pylookup-db-file'." t)
-
-  (define-key python-mode-map (kbd "C-c L") 'pylookup-lookup)
-
   ;; pylint
   (autoload 'pylint "pylint")
   (add-hook 'python-mode-hook 'pylint-add-menu-items)
