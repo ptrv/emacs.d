@@ -1238,9 +1238,9 @@
 
   (ptrv/after 'tex
     (add-to-list 'TeX-command-list
-                  '("latexmk"
-                    "latexmk %s"
-                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
+                 '("latexmk"
+                   "latexmk %s"
+                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
     (add-to-list 'TeX-command-list
                  '("latexmk clean"
                    "latexmk -c %s"
@@ -1249,6 +1249,13 @@
                  '("latexmk cleanall"
                    "latexmk -C %s"
                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t))
+
+  (add-hook 'LaTeX-mode-hook #'(lambda ()
+                                 (setq-default TeX-command-default "latexmk")))
+
+  ;; clean intermediate files from latexmk
+  (dolist (it '("\\.fdb_latexmk" "\\.fls"))
+    (add-to-list 'LaTeX-clean-intermediate-suffixes it))
 
   (defun okular-make-url () (concat
                              "file://"
@@ -1269,8 +1276,6 @@
          (setq TeX-view-program-list
                '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))
 
-
-  (add-hook 'LaTeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
   (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
 
