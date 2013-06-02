@@ -2057,9 +2057,7 @@ prompt for the command to use."
   (add-hook 'sclang-mode-hook 'supercollider-init)
 
   (ptrv/after 'sclang
-    (define-key sclang-mode-map (kbd "C-c ö") 'sclang-dump-interface)
-    (define-key sclang-mode-map (kbd "C-c ü") 'sclang-dump-full-interface)
-    (define-key sclang-mode-map (kbd "C-c ä") 'sclang-pop-definition-mark)
+    (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
     ;; Raise all supercollider windows.
     (define-key sclang-mode-map (kbd "C-c F")
       (lambda ()
@@ -2241,17 +2239,15 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; multiple-cursors
 (ptrv/after 'multiple-cursors-autoloads
-  ;;(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C-c C-ö") 'mc/edit-lines)
-  (global-set-key (kbd "C-ä") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-ö") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-ä") 'mc/mark-all-like-this))
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; expand-region
 (ptrv/after 'expand-region-autoloads
-  (global-set-key (kbd "C-ü") 'er/expand-region)
-  (global-set-key (kbd "C-Ü") 'er/contract-region))
+  (global-set-key (kbd "C-=") 'er/expand-region))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; key-chord
@@ -2264,8 +2260,8 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; bindings
-(define-key global-map (kbd "C-+") 'text-scale-increase)
-(define-key global-map (kbd "C--") 'text-scale-decrease)
+;; (define-key global-map (kbd "C-+") 'text-scale-increase)
+;; (define-key global-map (kbd "C--") 'text-scale-decrease)
 
 (global-set-key (kbd "C-x f") 'ido-recentf-open)
 (global-set-key (kbd "C-c p F") 'find-file-in-project)
