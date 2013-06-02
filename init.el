@@ -163,7 +163,8 @@
       mouse-yank-at-point t
       ;;recentf
       recentf-save-file (concat ptrv-tmp-dir "recentf")
-      recentf-max-saved-items 100)
+      recentf-max-saved-items 100
+      url-configuration-directory (concat ptrv-tmp-dir "url"))
 
 (auto-insert-mode 1)
 (auto-compression-mode t)
@@ -188,6 +189,10 @@
       savehist-file (concat ptrv-tmp-dir "savehist"))
 (savehist-mode t)
 
+;; desktop.el
+(setq desktop-save 'if-exists)
+(desktop-save-mode 1)
+
 ;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 (setq utf-translate-cjk-mode nil)
 
@@ -208,6 +213,12 @@
 ;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
 (ptrv/after 'cua-rect
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ediff
+(ptrv/after 'ediff
+  (setq ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; spelling
@@ -613,8 +624,8 @@
                 (when (stringp method)
                   (member method '("su" "sudo"))))))))
 
-(setq tramp-backup-directory-alist backup-directory-alist)
-(setq tramp-persistency-file-name (concat ptrv-tmp-dir "tramp"))
+(setq tramp-backup-directory-alist backup-directory-alist
+      tramp-persistency-file-name (concat ptrv-tmp-dir "tramp"))
 
 (defun sudo-edit (&optional arg)
   (interactive "P")
@@ -758,11 +769,6 @@
       (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; desktop.el
-(setq desktop-save 'if-exists)
-(desktop-save-mode 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; undo-tree
 (ptrv/after 'undo-tree-autoloads
   (global-undo-tree-mode))
@@ -878,7 +884,8 @@
   "Keymap for Ack.")
 
 ;; the silver searcher
-(setq ag-highlight-search t)
+(ptrv/after 'ag-autoloads
+  (setq ag-highlight-search t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
@@ -907,15 +914,6 @@
 ;;;; google-this
 (ptrv/after 'google-this-autoloads
   (google-this-mode 1))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ediff
-(setq ediff-split-window-function 'split-window-horizontally
-      ediff-window-setup-function 'ediff-setup-windows-plain)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; url
-(setq url-configuration-directory (concat ptrv-tmp-dir "url"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; projectile
@@ -984,12 +982,12 @@
 (global-auto-revert-mode t)
 
 ;; Also auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
 
-(setq-default indent-tabs-mode nil) ; And force use of spaces
-(setq-default c-basic-offset 4)     ; indents 4 chars
-(setq-default tab-width 4)          ; and 4 char wide for TAB
+(setq-default indent-tabs-mode nil ; And force use of spaces
+              c-basic-offset 4     ; indents 4 chars
+              tab-width 4)         ; and 4 char wide for TAB
 
 (custom-set-variables
  '(tab-stop-list (quote (2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))))
@@ -1046,13 +1044,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-
-(defun gtd ()
-  (interactive)
-  (find-file "~/Dropbox/org/newgtd.org"))
-;;(global-set-key (kbd "C-c g") 'gtd)
-
-;;(setq org-replace-disputed-keys t)
 
 (ptrv/after 'org
   (message "Org config has been loaded !!!")
@@ -1354,12 +1345,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; markdown
-;; (setq-default markdown-command
-;;               (concat
-;;                "pandoc -S -s --self-contained -f markdown -t html5 --css="
-;;                markdown-css-path
-;;                " "))
-
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
@@ -1469,9 +1454,7 @@
   (add-to-list 'load-path (concat
                            (car (split-string (getenv "GOPATH") ":"))
                            "/src/github.com/dougm/goflymake"))
-  ;; (add-to-list 'load-path (concat
-  ;;                          (car (split-string (getenv "GOPATH") ":"))
-  ;;                          "/src/github.com/ptrv/goflycheck"))
+
   (ptrv/with-library 'go-flycheck
     (setq goflymake-debug nil)
 
@@ -1521,10 +1504,9 @@ If ARG is not nil, create package in current directory"
       (setq nxml-heading-element-name-regexp "name\\|time")
       ))
   (add-hook 'nxml-mode-hook 'gpx-setup)
-  ;; typing a slash automatically completes the end-tag
-  (setq nxml-slash-auto-complete-flag t)
-  ;; treat an element as a single expression instead of only tag
-  (setq nxml-sexp-element-flag t))
+
+  (setq nxml-slash-auto-complete-flag t
+        nxml-sexp-element-flag t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; erc
@@ -1874,13 +1856,7 @@ prompt for the command to use."
             #'(lambda ()
                 (setq autopair-handle-action-fns
                       (list #'autopair-default-handle-action
-                            #'autopair-python-triple-quote-action))))
-
-  ;; (add-hook 'c++-mode-hook
-  ;;           #'(lambda ()
-  ;;               (push '(?< . ?>)
-  ;;                     (getf autopair-extra-pairs :code))))
-  )
+                            #'autopair-python-triple-quote-action)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clean-mode-line
@@ -1929,18 +1905,18 @@ prompt for the command to use."
 
  ;; Make cut and paste work with the OS X clipboard
 
- (defun live-copy-from-osx ()
+ (defun ptrv/copy-from-osx ()
    (shell-command-to-string "pbpaste"))
 
- (defun live-paste-to-osx (text &optional push)
+ (defun ptrv/paste-to-osx (text &optional push)
    (let ((process-connection-type nil))
      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
        (process-send-string proc text)
        (process-send-eof proc))))
 
  (when (not window-system)
-   (setq interprogram-cut-function 'live-paste-to-osx)
-   (setq interprogram-paste-function 'live-copy-from-osx))
+   (setq interprogram-cut-function 'ptrv/paste-to-osx)
+   (setq interprogram-paste-function 'ptrv/copy-from-osx))
 
  ;; Work around a bug on OS X where system-name is a fully qualified
  ;; domain name
@@ -2085,14 +2061,16 @@ prompt for the command to use."
                                     (elpy-disable))))))
 
 (ptrv/after 'elpy
-  (define-key elpy-mode-map (kbd "C-c C-f") nil)
-  (define-key elpy-mode-map (kbd "C-c C-j") nil)
-  (define-key elpy-mode-map (kbd "C-c C-n") nil)
-  (define-key elpy-mode-map (kbd "C-c C-p") nil)
+  (let ((map elpy-mode-map))
+    (define-key map (kbd "C-c C-f") nil)
+    (define-key map (kbd "C-c C-j") nil)
+    (define-key map (kbd "C-c C-n") nil)
+    (define-key map (kbd "C-c C-p") nil)
+    ;; complete on dot
+    (define-key map "." 'ac-dot-complete))
+
   (setq python-check-command "flake8")
   (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
-  ;; complete on dot
-  (define-key elpy-mode-map "." 'ac-dot-complete)
 
   (defun elpy-use-ipython-pylab ()
     "Set defaults to use IPython instead of the standard interpreter."
