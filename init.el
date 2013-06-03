@@ -1447,7 +1447,11 @@
       (add-to-list 'flycheck-checkers 'go t)
       ;; remove go-goflymake from begin of list and add it to the end
       (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
-      (add-to-list 'flycheck-checkers 'go-goflymake t))))
+      (add-to-list 'flycheck-checkers 'go-goflymake t)))
+
+  (when (executable-find "errcheck")
+    (autoload 'go-errcheck "go-errcheck" nil t)
+    (define-key ptrv/go-mode-map "e" 'go-errcheck)))
 
 (defvar ptrv/go-default-namespace "github.com/ptrv")
 
@@ -1466,9 +1470,6 @@ If ARG is not nil, create package in current directory"
           (make-directory name)
           (find-file (concat (file-name-as-directory name) "main.go")))
       (error "Please insert a package name"))))
-
-(when (executable-find "errcheck")
-  (autoload 'go-errcheck "go-errcheck" nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xml
