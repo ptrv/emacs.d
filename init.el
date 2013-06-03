@@ -157,7 +157,7 @@
       completion-cycle-threshold 5
       x-select-enable-clipboard t
       ;; from https://github.com/technomancy/better-defaults
-      x-select-enable-primary t
+      x-select-enable-primary nil
       save-interprogram-paste-before-kill t
       apropos-do-all t
       mouse-yank-at-point t
