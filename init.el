@@ -1074,18 +1074,7 @@
     (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
     (define-key yas/keymap [tab] 'yas/next-field))
 
-  ;; Make windmove work in org-mode:
-  (add-hook 'org-shiftup-final-hook 'windmove-up)
-  (add-hook 'org-shiftleft-final-hook 'windmove-left)
-  (add-hook 'org-shiftdown-final-hook 'windmove-down)
-  (add-hook 'org-shiftright-final-hook 'windmove-right)
-
   (defun org-mode-init ()
-    ;; (local-set-key [(control meta return)] 'org-insert-heading)
-    ;; (local-set-key [(control shift left)] 'previous-buffer)
-    ;; (local-set-key [(control shift right)] 'next-buffer)
-    ;; (local-set-key [(meta shift right)] 'ido-switch-buffer)
-    ;; (local-set-key [(meta shift left)] 'magit-status)
     (auto-complete-mode -1)
     (turn-off-flyspell)
     (org-mode-yasnippet-workaround))
@@ -1213,17 +1202,14 @@
 
   (ptrv/after 'tex
     (add-to-list 'TeX-command-list
-                 '("latexmk"
-                   "latexmk %s"
-                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk") t)
+                 '("latexmk" "latexmk %s" TeX-run-TeX nil
+                   (latex-mode doctex-mode) :help "Run latexmk") t)
     (add-to-list 'TeX-command-list
-                 '("latexmk clean"
-                   "latexmk -c %s"
-                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -c") t)
+                 '("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
+                   (latex-mode doctex-mode) :help "Run latexmk -c") t)
     (add-to-list 'TeX-command-list
-                 '("latexmk cleanall"
-                   "latexmk -C %s"
-                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run latexmk -C") t))
+                 '("latexmk cleanall" "latexmk -C %s"removing TeX-run-TeX nil
+                   (latex-mode doctex-mode) :help "Run latexmk -C") t))
 
   (add-hook 'LaTeX-mode-hook #'(lambda () (setq TeX-command-default "latexmk")))
 
