@@ -1410,16 +1410,22 @@
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
+  (defvar ptrv/go-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "c" 'ptrv/go-run)
+      (define-key map "r" 'ptrv/go-run-buffer)
+      (define-key map "b" 'ptrv/go-build)
+      (define-key map "t" 'ptrv/go-test)
+      (define-key map "g" 'ptrv/go-chk)
+      map)
+    "Keymap for some custom go-mode fns.")
+
   (let ((map go-mode-map))
     (define-key map (kbd "M-.") 'godef-jump)
-    (define-key map (kbd "C-c C-c c") 'ptrv/go-run)
-    (define-key map (kbd "C-c C-c r") 'ptrv/go-run-buffer)
-    (define-key map (kbd "C-c C-c b") 'ptrv/go-build)
-    (define-key map (kbd "C-c C-c t") 'ptrv/go-test)
-    (define-key map (kbd "C-c C-c g") 'ptrv/go-chk)
     (define-key map (kbd "C-c i") 'go-goto-imports)
     (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
     (define-key map (kbd "C-c C-p") 'go-create-package)
+    (define-key map (kbd "C-c C-c") ptrv/go-mode-map)
     (define-key map (kbd ".") 'ptrv/ac-dot-complete))
 
   ;; flycheck support
