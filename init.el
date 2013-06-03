@@ -1363,22 +1363,22 @@
   ;;     (auto-complete '(ac-source-go))))
 
   ;; compile fucntions
-  (defun go-cmd-build ()
+  (defun ptrv/go-build ()
     "compile project"
     (interactive)
     (compile "go build"))
 
-  (defun go-cmd-test ()
+  (defun ptrv/go-test ()
     "test project"
     (interactive)
     (compile "go test -v"))
 
-  (defun go-chk ()
+  (defun ptrv/go-chk ()
     "gocheck project"
     (interactive)
     (compile "go test -gocheck.vv"))
 
-  (defun go-run ()
+  (defun ptrv/go-run ()
     "go run current package"
     (interactive)
     (let (files-list
@@ -1398,28 +1398,29 @@
       (setq files-list (s-join " " go-list-result))
       (compile (concat "go run " files-list))))
 
-  (defun go-run-buffer ()
+  (defun ptrv/go-run-buffer ()
     "go run current buffer"
     (interactive)
     (compile (concat "go run " buffer-file-name)))
 
-  (defun go-mode-init ()
+  (defun ptrv/go-mode-init ()
     (make-local-variable 'before-save-hook)
     (setq before-save-hook 'gofmt-before-save)
-    (hs-minor-mode 1)
-    ;;(flycheck-mode-on-safe)
-    (local-set-key (kbd "M-.") 'godef-jump)
-    (define-key go-mode-map (kbd "C-c C-c c") 'go-run)
-    (define-key go-mode-map (kbd "C-c C-c r") 'go-run-buffer)
-    (define-key go-mode-map (kbd "C-c C-c b") 'go-cmd-build)
-    (define-key go-mode-map (kbd "C-c C-c t") 'go-cmd-test)
-    (define-key go-mode-map (kbd "C-c C-c g") 'go-chk)
-    (define-key go-mode-map (kbd "C-c i") 'go-goto-imports)
-    (define-key go-mode-map (kbd "C-c C-r") 'go-remove-unused-imports)
-    (define-key go-mode-map (kbd "C-c C-p") 'go-create-package)
-    (define-key go-mode-map "." 'ac-dot-complete))
+    (hs-minor-mode 1))
 
-  (add-hook 'go-mode-hook 'go-mode-init)
+  (add-hook 'go-mode-hook 'ptrv/go-mode-init)
+
+  (let ((map go-mode-map))
+    (define-key map (kbd "M-.") 'godef-jump)
+    (define-key map (kbd "C-c C-c c") 'ptrv/go-run)
+    (define-key map (kbd "C-c C-c r") 'ptrv/go-run-buffer)
+    (define-key map (kbd "C-c C-c b") 'ptrv/go-build)
+    (define-key map (kbd "C-c C-c t") 'ptrv/go-test)
+    (define-key map (kbd "C-c C-c g") 'ptrv/go-chk)
+    (define-key map (kbd "C-c i") 'go-goto-imports)
+    (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
+    (define-key map (kbd "C-c C-p") 'go-create-package)
+    (define-key map "." 'ac-dot-complete))
 
   ;; flycheck support
   (add-to-list 'load-path (concat
@@ -1442,19 +1443,22 @@
       (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
       (add-to-list 'flycheck-checkers 'go-goflymake t))))
 
-(defun go-create-package (name &optional arg)
+(defvar ptrv/go-default-namespace "github.com/ptrv")
+
+(defun ptrv/go-create-package (name &optional arg)
   "Create a new sketch with NAME under GOPATH src folder.
 
 If ARG is not nil, create package in current directory"
   (interactive "sInsert new package name: \nP")
   (let ((name (remove ?\s name))
         (root-dir (concat (car (split-string (getenv "GOPATH") ":"))
-                          "/src/github.com/ptrv")))
+                          "/src/" ptrv/go-default-namespace)))
     (if (not (string-equal "" name))
         (progn
-          (unless arg (setq name (concat root-dir "/" name)))
+          (unless arg
+            (setq name (concat (file-name-as-directory root-dir) name)))
           (make-directory name)
-          (find-file (concat name "/main.go")))
+          (find-file (concat (file-name-as-directory name) "main.go")))
       (error "Please insert a package name"))))
 
 (when (executable-find "errcheck")
