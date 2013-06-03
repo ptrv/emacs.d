@@ -293,15 +293,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido-ubiquitous
 (ptrv/after 'ido-ubiquitous-autoloads
+  ;; This needs to be set before turning ido-ubiquitous on because
+  ;; function exceptions get only disabled on initialization
+  (dolist (func '(tmm-prompt erc-iswitchb))
+    (add-to-list 'ido-ubiquitous-function-exceptions func))
+
   (ido-ubiquitous-mode 1)
-  (ido-ubiquitous-disable-in erc-iswitchb)
 
   (dolist (cmd '(sh-set-shell
                  ispell-change-dictionary
                  add-dir-local-variable
                  ahg-do-command
                  sclang-dump-interface
-                 sclang-dump-full-interface))
+                 sclang-dump-full-interface
+                 kill-ring-search
+                 tmm-menubar))
     (add-to-list 'ido-ubiquitous-command-exceptions cmd))
 
   ;; Fix ido-ubiquitous for newer packages
