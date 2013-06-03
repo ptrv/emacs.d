@@ -92,6 +92,7 @@
 (depends-on "mwe-log-commands")
 (depends-on "nyan-mode")
 (depends-on "diminish")
+(depends-on "kill-ring-search")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tools

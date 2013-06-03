@@ -2215,6 +2215,9 @@ prompt for the command to use."
 (global-set-key [f8] 'delete-window)
 (global-set-key [f9] 'delete-other-windows)
 
+(ptrv/after 'kill-ring-search-autoloads
+  (global-set-key "\M-\C-y" 'kill-ring-search))
+
 ;;diff shortcuts
 (defvar ptrv/diff-map
   (let ((map (make-sparse-keymap)))
@@ -2313,7 +2316,8 @@ prompt for the command to use."
   (define-key map "r" 'revert-buffer)
   (define-key map "t" 'ptrv/eshell-or-restore)
   (define-key map "v" 'halve-other-window-height)
-  (define-key map "w" ptrv/windows-map))
+  (define-key map "w" ptrv/windows-map)
+  (define-key map "y" 'ptrv/display-yank-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defuns
@@ -2336,6 +2340,11 @@ prompt for the command to use."
               (message "Open file: %s" fav-file)
               (find-file fav-file))
       (message "No such fav :("))))
+
+(defun ptrv/display-yank-menu ()
+  "Open yank-menu popup."
+  (interactive)
+  (popup-menu 'yank-menu))
 
 ;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
 (defun comment-dwim-line (&optional arg)
