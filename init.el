@@ -922,26 +922,6 @@
   (google-this-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; projectile
-(ptrv/after 'projectile-autoloads
-  (setq projectile-known-projects-file (concat
-                                        ptrv-tmp-dir
-                                        "projectile-bookmarks.eld")
-        projectile-cache-file (concat ptrv-tmp-dir "projectile.cache"))
-
-  (projectile-global-mode)
-
-  (ptrv/after 'projectile
-    (dolist (file '(".ropeproject" "setup.py"))
-      (add-to-list 'projectile-project-root-files file t))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ffip
-(ptrv/after 'find-file-in-project
-  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
-  (define-key ptrv/file-commands-map "f" 'ffip))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
 (ptrv/with-library 'popwin
   (popwin-mode 1)
@@ -1679,6 +1659,26 @@ prompt for the command to use."
     ;; (define-key map "i" #'ptrv/find-user-init-file)
     map)
   "Keymap for file functions.")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; projectile
+(ptrv/after 'projectile-autoloads
+  (setq projectile-known-projects-file (concat
+                                        ptrv-tmp-dir
+                                        "projectile-bookmarks.eld")
+        projectile-cache-file (concat ptrv-tmp-dir "projectile.cache"))
+
+  (projectile-global-mode)
+
+  (ptrv/after 'projectile
+    (dolist (file '(".ropeproject" "setup.py"))
+      (add-to-list 'projectile-project-root-files file t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ffip
+(ptrv/after 'find-file-in-project-autoloads
+  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
+  (define-key ptrv/file-commands-map "f" 'ffip))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
