@@ -409,7 +409,7 @@
 (ac-set-trigger-key "TAB")
 
 ;; complete on dot
-(defun ac-dot-complete ()
+(defun ptrv/ac-dot-complete ()
   "Insert dot and complete code at point."
   (interactive)
   (insert ".")
@@ -1420,7 +1420,7 @@
     (define-key map (kbd "C-c i") 'go-goto-imports)
     (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
     (define-key map (kbd "C-c C-p") 'go-create-package)
-    (define-key map "." 'ac-dot-complete))
+    (define-key map (kbd ".") 'ptrv/ac-dot-complete))
 
   ;; flycheck support
   (add-to-list 'load-path (concat
@@ -2062,7 +2062,7 @@ prompt for the command to use."
     (define-key map (kbd "C-c C-n") nil)
     (define-key map (kbd "C-c C-p") nil)
     ;; complete on dot
-    (define-key map "." 'ac-dot-complete))
+    (define-key map "." 'ptrv/ac-dot-complete))
 
   (setq python-check-command "flake8")
   (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
