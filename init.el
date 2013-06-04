@@ -2124,7 +2124,7 @@ prompt for the command to use."
 ;;;; cc-mode
 (setq c-default-style '((java-mode . "java")
                         (awk-mode . "awk")
-                        (other . "stroustrup")))
+                        (other . "bsd")))
 
 ;; Hook auto-complete into clang
 (ptrv/after 'cc-mode
@@ -2144,20 +2144,21 @@ prompt for the command to use."
             (mapcar (lambda (f) (concat "-I" f))
                     (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
-    (add-hook 'c++-mode-hook
-              (lambda ()
-                (unless (string-match ".*flycheck.*" buffer-file-name)
-                  (setq ac-sources '(ac-source-clang-async))
-                  (ac-clang-launch-completion-process)))))
+    (defun ptrv/clang-complete-init ()
+      (unless (string-match ".*flycheck.*" buffer-file-name)
+        (setq ac-sources '(ac-source-clang-async))
+        (ac-clang-launch-completion-process)))
+    (add-hook 'c++-mode-hook 'ptrv/clang-complete-init))
 
-  (defun ptrv-c++-mode-init ()
-    (set (make-local-variable 'before-save-hook) nil))
-  (add-hook 'c++-mode-hook 'ptrv-c++-mode-init)
-
-  (defun set-ff-find-other-file-binding ()
+  (defun ptrv/cc-mode-init ()
+    (setq c-basic-offset 4
+          c-indent-level 4
+          c-default-style "bsd"
+          indent-tabs-mode nil)
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
-  (add-hook 'c-mode-hook 'set-ff-find-other-file-binding)
-  (add-hook 'c++-mode-hook 'set-ff-find-other-file-binding))
+
+  (add-hook 'c-mode-hook 'ptrv/cc-mode-init)
+  (add-hook 'c++-mode-hook 'ptrv/cc-mode-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; x11
