@@ -130,7 +130,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
 (setq-default fill-column 72
-              indent-tabs-mode nil)
+              indent-tabs-mode nil ; And force use of spaces
+              c-basic-offset 4     ; indents 4 chars
+              tab-width 4)         ; and 4 char wide for TAB
 
 (setq browse-url-generic-program (executable-find "google-chrome")
       browse-url-browser-function 'browse-url-generic
@@ -970,10 +972,6 @@
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
-
-(setq-default indent-tabs-mode nil ; And force use of spaces
-              c-basic-offset 4     ; indents 4 chars
-              tab-width 4)         ; and 4 char wide for TAB
 
 (custom-set-variables
  '(tab-stop-list (quote (2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))))
