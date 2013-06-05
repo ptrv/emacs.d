@@ -1033,16 +1033,29 @@
 
 (ptrv/after 'org
   (message "Org config has been loaded !!!")
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-completion-use-iswitchb nil)
-  (setq org-completion-use-ido t)
 
-  (setq org-log-done t)
+  (setq org-outline-path-complete-in-steps nil
+        org-completion-use-iswitchb nil
+        org-completion-use-ido t
+        org-log-done t
+        org-clock-into-drawer t
+        org-src-fontify-natively nil
+        org-default-notes-file "~/Dropbox/org/captures.org"
+        org-directory "~/Dropbox/org"
+        org-agenda-files '("~/Dropbox/org/newgtd.org"
+                           "~/Dropbox/org/uni.org"
+                           "~/Dropbox/org/master_thesis.org"))
 
-  (setq org-clock-into-drawer t)
-  ;;(setq org-clock-idle-time 10)
-  (setq org-src-fontify-natively nil)
-  ;; Override
+  (setq org-link-mailto-program
+        '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
+
+  (setq org-mobile-directory "~/Dropbox/MobileOrg"
+        org-mobile-files '("~/Dropbox/org/newgtd.org"
+                           "~/Dropbox/org/uni.org"
+                           "~/Dropbox/org/notes.org"
+                           "~/Dropbox/org/journal.org"
+                           "~/Dropbox/org/master_thesis.org")
+        org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
 
   ;; yasnippet workaround
   (defun yas/org-very-safe-expand ()
@@ -1062,24 +1075,6 @@
   (add-hook 'org-mode-hook 'org-mode-init)
 
   (define-key org-mode-map (kbd "C-c g") 'org-sparse-tree)
-
-  (setq org-default-notes-file "~/Dropbox/org/captures.org")
-  ;; Set to the location of your Org files on your local system
-  (setq org-directory "~/Dropbox/org")
-  ;; Set to <your Dropbox root directory>/MobileOrg.
-  (setq org-mobile-directory "~/Dropbox/MobileOrg")
-  ;; Set files to push to org-mobile-directory
-  (setq org-mobile-files (quote ("~/Dropbox/org/newgtd.org"
-                                 "~/Dropbox/org/uni.org"
-                                 "~/Dropbox/org/notes.org"
-                                 "~/Dropbox/org/journal.org"
-                                 "~/Dropbox/org/master_thesis.org")))
-  ;; Set to the files (or directory of files) you want sync'd
-  (setq org-agenda-files (quote ("~/Dropbox/org/newgtd.org"
-                                 "~/Dropbox/org/uni.org"
-                                 "~/Dropbox/org/master_thesis.org")))
-  ;; Set to the name of the file where new notes will be stored
-  (setq org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
 
   (setq org-agenda-custom-commands
         '(("P" "Projects"
@@ -1106,7 +1101,7 @@
 
   (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
 
-                                        ; Make babel results blocks lowercase
+  ;; Make babel results blocks lowercase
   (setq org-babel-results-keyword "results")
 
   (defun bh/display-inline-images ()
@@ -1130,11 +1125,7 @@
 
   ;; Use fundamental mode when editing plantuml blocks with C-c '
   (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
-  (add-to-list 'org-src-lang-modes '("sam" . sam))
-
-  ;; Open mailto links in gmail
-  (setq org-link-mailto-program
-        '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s")))
+  (add-to-list 'org-src-lang-modes '("sam" . sam)))
 
 (ptrv/after 'calendar
   (setq calendar-week-start-day 1))
