@@ -1288,6 +1288,7 @@
 ;; arch linux
 (add-to-list 'auto-mode-alist '("/PKGBUILD$" . pkgbuild-mode))
 (add-to-list 'auto-mode-alist '("\\.install$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.*rc$" . conf-unix-mode))
 
 ;; json
 (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
