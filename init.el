@@ -1660,6 +1660,8 @@ prompt for the command to use."
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
     (define-key map "i" #'ptrv/find-user-init-file)
+    (define-key map (kbd "b s") #'ptrv/byte-recompile-site-lisp)
+    (define-key map (kbd "b e") #'ptrv/byte-recompile-elpa)
     map)
   "Keymap for file functions.")
 
@@ -2394,9 +2396,13 @@ end of the line."
   (select-window (car (last (window-list)))))
 
 ;; Makes load time faster.
-(defun byte-recompile-home ()
+(defun ptrv/byte-recompile-site-lisp ()
   (interactive)
-  (byte-recompile-directory "~/.emacs.d" 0))
+  (byte-recompile-directory "~/.emacs.d/site-lisp" 0))
+
+(defun ptrv/byte-recompile-elpa ()
+  (interactive)
+  (byte-recompile-directory "~/.emacs.d/elpa" 0))
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil
