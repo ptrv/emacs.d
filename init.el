@@ -1659,7 +1659,7 @@ prompt for the command to use."
     (define-key map "R" #'ptrv/rename-current-buffer-file)
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
-    ;; (define-key map "i" #'ptrv/find-user-init-file)
+    (define-key map "i" #'ptrv/find-user-init-file)
     map)
   "Keymap for file functions.")
 
@@ -2300,7 +2300,6 @@ prompt for the command to use."
   (define-key map "B" 'org-iswitchb)
   (define-key map "C" 'org-capture)
   (define-key map "G" ptrv/gist-map)
-  (define-key map "I" 'ptrv/find-user-init-file)
   (define-key map "R" 'refresh-file)
   (define-key map "a" ptrv/ack-map)
   (define-key map "d" ptrv/diff-map)
