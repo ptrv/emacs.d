@@ -47,36 +47,30 @@
                        (call-process "hostname" nil standard-output))))
 (setq system-name ptrv-hostname)
 
-;; Add .emacs.d to load-path
-(setq dotfiles-dir (file-name-directory
-                    (or (buffer-file-name) load-file-name)))
-(add-to-list 'load-path dotfiles-dir)
-
 ;; set all dirs
 (setq
- ptrv-etc-dir      (file-name-as-directory (concat dotfiles-dir "etc"))
- ptrv-tmp-dir      (file-name-as-directory (concat dotfiles-dir "tmp"))
- ptrv-autosaves-dir(file-name-as-directory (concat ptrv-tmp-dir "autosaves"))
- ptrv-backups-dir  (file-name-as-directory (concat ptrv-tmp-dir "backups"))
- ptrv-pscratch-dir (file-name-as-directory (concat ptrv-tmp-dir "pscratch"))
- )
+ ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc"))
+ ptrv/tmp-dir      (file-name-as-directory (locate-user-emacs-file "tmp"))
+ ptrv/autosaves-dir(file-name-as-directory (concat ptrv/tmp-dir "autosaves"))
+ ptrv/backups-dir  (file-name-as-directory (concat ptrv/tmp-dir "backups"))
+ ptrv/pscratch-dir (file-name-as-directory (concat ptrv/tmp-dir "pscratch")))
 
 ;; create tmp dirs if necessary
-(make-directory ptrv-tmp-dir t)
-(make-directory ptrv-autosaves-dir t)
-(make-directory ptrv-backups-dir t)
-(make-directory ptrv-pscratch-dir t)
+(make-directory ptrv/tmp-dir t)
+(make-directory ptrv/autosaves-dir t)
+(make-directory ptrv/backups-dir t)
+(make-directory ptrv/pscratch-dir t)
 
 ;; Add every subdirectory of ~/.emacs.d/site-lisp to the load path
 (dolist
-    (project (directory-files (concat dotfiles-dir "site-lisp") t "\\w+"))
+    (project (directory-files (locate-user-emacs-file "site-lisp") t "\\w+"))
   (when (and (file-directory-p project)
              (not (string-match "_extras" project)))
     (add-to-list 'load-path project)))
 
 ;; Set paths to custom.el and loaddefs.el
-(setq autoload-file (concat dotfiles-dir "loaddefs.el"))
-(setq custom-file (concat dotfiles-dir "custom.el"))
+(setq autoload-file (locate-user-emacs-file "loaddefs.el"))
+(setq custom-file (locate-user-emacs-file "custom.el"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'cl)
@@ -104,11 +98,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
 (setq auto-save-list-file-name
-      (concat ptrv-autosaves-dir "autosave-list"))
+      (concat ptrv/autosaves-dir "autosave-list"))
 (setq auto-save-file-name-transforms
-      `((".*" ,(concat ptrv-autosaves-dir "\\1") t)))
+      `((".*" ,(concat ptrv/autosaves-dir "\\1") t)))
 (setq backup-directory-alist
-      `((".*" . ,ptrv-backups-dir)))
+      `((".*" . ,ptrv/backups-dir)))
 
 (setq backup-by-copying t
       delete-old-versions t
@@ -120,7 +114,7 @@
 ;;;; package
 (package-initialize)
 (require 'carton)
-(carton-setup dotfiles-dir)
+(carton-setup user-emacs-directory)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; PATH
@@ -164,9 +158,9 @@
       apropos-do-all t
       mouse-yank-at-point t
       ;;recentf
-      recentf-save-file (concat ptrv-tmp-dir "recentf")
+      recentf-save-file (concat ptrv/tmp-dir "recentf")
       recentf-max-saved-items 100
-      url-configuration-directory (concat ptrv-tmp-dir "url"))
+      url-configuration-directory (concat ptrv/tmp-dir "url"))
 
 (auto-insert-mode 1)
 (auto-compression-mode t)
@@ -183,12 +177,12 @@
 
 (require 'saveplace)
 (setq-default save-place t)
-(setq save-place-file (concat ptrv-tmp-dir "places"))
+(setq save-place-file (concat ptrv/tmp-dir "places"))
 
 ;; savehist keeps track of some history
 (setq savehist-additional-variables '(search ring regexp-search-ring)
       savehist-autosave-interval 60
-      savehist-file (concat ptrv-tmp-dir "savehist"))
+      savehist-file (concat ptrv/tmp-dir "savehist"))
 (savehist-mode t)
 
 ;; desktop.el
@@ -259,8 +253,8 @@
 (setq column-number-mode t)
 (global-hl-line-mode 1)
 
-(defvar ptrv-themes-dir (concat dotfiles-dir "themes"))
-(add-to-list 'load-path ptrv-themes-dir)
+(defvar ptrv/themes-dir (locate-user-emacs-file "themes"))
+(add-to-list 'load-path ptrv/themes-dir)
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
@@ -289,7 +283,7 @@
       ido-max-prospects 10
       ido-default-file-method 'selected-window
       ido-max-directory-size 100000
-      ido-save-directory-list-file (concat ptrv-tmp-dir "ido.last"))
+      ido-save-directory-list-file (concat ptrv/tmp-dir "ido.last"))
 (icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -326,7 +320,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smex
 (ptrv/after 'smex-autoloads
-  (setq smex-save-file (concat ptrv-tmp-dir "smex-items"))
+  (setq smex-save-file (concat ptrv/tmp-dir "smex-items"))
   (smex-initialize)
   (global-set-key (kbd "M-x") 'smex)
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
@@ -343,7 +337,7 @@
 (ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
   ;; (eval-when-compile (require 'eshell nil t))
-  (setq eshell-aliases-file (concat dotfiles-dir "etc/eshell_aliases"))
+  (setq eshell-aliases-file (concat ptrv/etc-dir "eshell_aliases"))
 
   (defun eshell/clear ()
     "04Dec2001 - sailor, to clear the eshell buffer."
@@ -375,7 +369,7 @@
 (ac-config-default)
 (ac-flyspell-workaround)
 
-(setq ac-comphist-file (concat ptrv-tmp-dir "ac-comphist.dat")
+(setq ac-comphist-file (concat ptrv/tmp-dir "ac-comphist.dat")
       ac-auto-show-menu t
       ac-dwim t
       ac-use-menu-map t
@@ -633,7 +627,7 @@
                   (member method '("su" "sudo"))))))))
 
 (setq tramp-backup-directory-alist backup-directory-alist
-      tramp-persistency-file-name (concat ptrv-tmp-dir "tramp"))
+      tramp-persistency-file-name (concat ptrv/tmp-dir "tramp"))
 
 (defun sudo-edit (&optional arg)
   (interactive "P")
@@ -684,7 +678,7 @@
 ;;;; gist
 (ptrv/after 'pcache-autoloads
   (defvar pcache-directory
-    (let ((dir (file-name-as-directory (concat ptrv-tmp-dir "pcache"))))
+    (let ((dir (file-name-as-directory (concat ptrv/tmp-dir "pcache"))))
       (make-directory dir t)
       dir)))
 
@@ -793,8 +787,8 @@
   (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
   (pomodoro-add-to-mode-line)
   (setq pomodoro-sound-player "/usr/bin/paplay")
-  (setq pomodoro-break-start-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
-  (setq pomodoro-work-start-sound (concat ptrv-etc-dir "sounds/alarm.wav")))
+  (setq pomodoro-break-start-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
+  (setq pomodoro-work-start-sound (concat ptrv/etc-dir "sounds/alarm.wav")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; sql-mode
@@ -820,7 +814,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tea-time
 (autoload 'tea-time "tea-time" nil t)
-(setq tea-time-sound (concat ptrv-etc-dir "sounds/alarm.wav"))
+(setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
 (cond (*is-mac*
        (setq tea-time-sound-command "afplay %s"))
       (*is-linux*
@@ -1309,7 +1303,7 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
-(setq markdown-css-path (concat ptrv-etc-dir "css/markdown.css"))
+(setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pandoc
@@ -1667,9 +1661,9 @@ prompt for the command to use."
 ;;;; projectile
 (ptrv/after 'projectile-autoloads
   (setq projectile-known-projects-file (concat
-                                        ptrv-tmp-dir
+                                        ptrv/tmp-dir
                                         "projectile-bookmarks.eld")
-        projectile-cache-file (concat ptrv-tmp-dir "projectile.cache"))
+        projectile-cache-file (concat ptrv/tmp-dir "projectile.cache"))
 
   (projectile-global-mode)
 
@@ -1954,13 +1948,13 @@ prompt for the command to use."
   (ptrv/after 'typewriter-mode
     (setq typewriter-play-command "paplay %s")
     (setq typewriter-sound-default (concat
-                                    ptrv-etc-dir
+                                    ptrv/etc-dir
                                     "sounds/9744__horn__typewriter.wav"))
     (setq typewriter-sound-end (concat
-                                ptrv-etc-dir
+                                ptrv/etc-dir
                                 "sounds/eol-bell.wav"))
     (setq typewriter-sound-return (concat
-                                   ptrv-etc-dir
+                                   ptrv/etc-dir
                                    "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2123,7 +2117,7 @@ prompt for the command to use."
   (message "cc-mode config has been loaded !!!")
   (ptrv/with-library 'auto-complete-clang-async
     (setq ac-clang-complete-executable
-          (concat dotfiles-dir "site-lisp/emacs-clang-complete-async/clang-complete"))
+          (locate-user-emacs-file "site-lisp/emacs-clang-complete-async/clang-complete"))
     (when (not (file-exists-p ac-clang-complete-executable))
       (warn (concat "The clang-complete executable doesn't exist")))
     ;; (when (not (file-exists-p clang-complete-executable))
