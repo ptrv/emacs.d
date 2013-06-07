@@ -956,8 +956,7 @@ file `PATTERNS'."
           ("*Python Doc*" :noselect t)
           ("*jedi:doc*" :noselect t)
           ("*Registers*" :noselect t)
-          ("*ielm*" :stick t)
-          )))
+          ("*ielm*" :stick t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; buffer
@@ -1225,11 +1224,9 @@ file `PATTERNS'."
 (ptrv/add-auto-mode 'shell-script-mode
   "\\.zsh-template$" "\\.zsh$")
 
-;;(add-to-list 'auto-mode-alist '("COMMIT_EDITMSG$" . diff-mode))
 (ptrv/add-auto-mode 'css-mode "\\.css$")
 (ptrv/add-auto-mode 'js2-mode "\\.js\\(on\\)?$")
 (ptrv/add-auto-mode 'nxml-mode "\\.xml$")
-
 
 (ptrv/add-auto-mode 'ruby-mode "\\.rb$" "Rakefile$")
 (ptrv/add-auto-mode 'yaml-mode
@@ -1418,8 +1415,7 @@ file `PATTERNS'."
         :command '("gofmt" source)
         :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
         :modes 'go-mode
-        :next-checkers '((no-errors . go-goflymake))
-        )
+        :next-checkers '((no-errors . go-goflymake)))
       (add-to-list 'flycheck-checkers 'go t)
       ;; remove go-goflymake from begin of list and add it to the end
       (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
