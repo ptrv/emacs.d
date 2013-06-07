@@ -40,12 +40,8 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Get hostname
-(setq ptrv-hostname (replace-regexp-in-string
-                     "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)"
-                     ""
-                     (with-output-to-string
-                       (call-process "hostname" nil standard-output))))
-(setq system-name ptrv-hostname)
+(defvar ptrv/hostname (car (process-lines "hostname")))
+(setq system-name ptrv/hostname)
 
 ;; set all dirs
 (setq
@@ -2676,7 +2672,7 @@ Create a new ielm process if required."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; welcome-message stuff
-(setq ptrv-welcome-messages
+(setq ptrv/welcome-messages
       (if (ptrv/user-first-name-p)
           (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
                 (concat "Hello " (ptrv/user-first-name) ", it's lovely to see you again. I do hope that you're well.")
@@ -2686,13 +2682,13 @@ Create a new ielm process if required."
                "Hello, it's lovely to see you again. I do hope that you're well."
                "Turn your head towards the sun and the shadows will fall behind you.")))
 
-(defun ptrv-welcome-message ()
-  (nth (random (length ptrv-welcome-messages)) ptrv-welcome-messages))
+(defun ptrv/welcome-message ()
+  (nth (random (length ptrv/welcome-messages)) ptrv/welcome-messages))
 
 (setq initial-scratch-message (concat ";;
 ;; Emacs on " system-name " [" (symbol-name system-type) "]
 ;;
-;; " (ptrv-welcome-message) "
+;; " (ptrv/welcome-message) "
 
 "))
 
