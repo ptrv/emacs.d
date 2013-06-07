@@ -23,6 +23,7 @@
   (when (fboundp mode) (funcall mode -1)))
 
 (defconst *is-mac* (eq system-type 'darwin))
+(defconst *is-cocoa-emacs* (and *is-mac* (eq system-type 'ns)))
 (defconst *is-linux* (eq system-type 'gnu/linux))
 (defconst *is-x11* (eq window-system 'x))
 (defconst *is-windows* (eq system-type 'windows-nt))
