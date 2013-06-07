@@ -1699,6 +1699,9 @@ prompt for the command to use."
 
   (add-to-list 'ac-modes 'processing-mode)
   (add-hook 'processing-mode-hook 'processing-mode-init)
+  (let ((map processing-mode-map))
+    (define-key map (kbd "C-c C-c") 'processing-sketch-run)
+    (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
 
   ;; If htmlize is installed, provide this function to copy buffer or
   ;; region to clipboard
