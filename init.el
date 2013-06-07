@@ -94,6 +94,12 @@
               "\\>[ 	']*\\(\\sw+\\)?")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face nil t))))
+(defun ptrv/add-auto-mode (mode &rest patterns)
+  "Add entries to `auto-mode-alist' to use `MODE' for all given
+file `PATTERNS'."
+  (declare (indent defun))
+  (dolist (pattern patterns)
+    (add-to-list 'auto-mode-alist (cons pattern mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
@@ -437,7 +443,7 @@
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-(add-to-list 'auto-mode-alist '("\\.el$" . emacs-lisp-mode))
+(ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
 
 (ptrv/after 'lisp-mode
   (font-lock-add-keywords 'emacs-lisp-mode ptrv-font-lock-keywords :append)
@@ -525,8 +531,7 @@
       (push-mark)
       ad-do-it)))
 
-(setq auto-mode-alist (append '(("\\.cljs$" . clojure-mode))
-                              auto-mode-alist))
+(ptrv/add-auto-mode 'clojure-mode "\\.cljs$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; 4clojure
@@ -1021,7 +1026,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(ptrv/add-auto-mode 'org-mode "\\.org\\'")
 
 (ptrv/after 'org
   (message "Org config has been loaded !!!")
@@ -1222,71 +1227,64 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
-(add-to-list 'auto-mode-alist '("\\.zsh-template$" . shell-script-mode))
-(add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
+(ptrv/add-auto-mode 'shell-script-mode
+  "\\.zsh-template$" "\\.zsh$")
 
 ;;(add-to-list 'auto-mode-alist '("COMMIT_EDITMSG$" . diff-mode))
-(add-to-list 'auto-mode-alist '("\\.css$" . css-mode))
-(add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\(on\\)?$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.xml$" . nxml-mode))
+(ptrv/add-auto-mode 'css-mode "\\.css$")
+(ptrv/add-auto-mode 'js2-mode "\\.js\\(on\\)?$")
+(ptrv/add-auto-mode 'nxml-mode "\\.xml$")
 
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+
+(ptrv/add-auto-mode 'ruby-mode "\\.rb$" "Rakefile$")
+(ptrv/add-auto-mode 'yaml-mode
+  "\\.yml$" "\\.yaml$" "\\.ya?ml$")
 
 ;; Snippets
-(add-to-list 'auto-mode-alist '("snippets" . snippet-mode))
-(add-to-list 'auto-mode-alist '("\\.yasnippet$" . snippet-mode))
+(ptrv/add-auto-mode 'snippet-mode "snippets" "\\.yasnippet$")
 
 ;; pd-mode
 (autoload 'pd-mode "pd-mode" "autoloaded" t)
-(add-to-list 'auto-mode-alist '("\\.pat$" . pd-mode))
-(add-to-list 'auto-mode-alist '("\\.pd$"  . pd-mode))
+(ptrv/add-auto-mode 'pd-mode "\\.pat$" "\\.pd$")
 
 ;; gitconfig
-(add-to-list 'auto-mode-alist '("gitconfig*" . gitconfig-mode))
+(ptrv/add-auto-mode 'gitconfig-mode "gitconfig*")
 
 ;; cmake
 (autoload 'cmake-mode "cmake-mode" "cmake-mode" t)
-(add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
-(add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
+(ptrv/add-auto-mode 'cmake-mode "CMakeLists\\.txt\\'" "\\.cmake\\'")
 
 ;; desktop-entry-mode
 (autoload 'desktop-entry-mode "desktop-entry-mode" "Desktop Entry mode" t)
-(add-to-list 'auto-mode-alist
-             '("\\.desktop\\(\\.in\\)?$" . desktop-entry-mode))
+(ptrv/add-auto-mode 'desktop-entry-mode "\\.desktop\\(\\.in\\)?$")
 (add-hook 'desktop-entry-mode-hook 'turn-on-font-lock)
 
 ;; glsl-mode
 (autoload 'glsl-mode "glsl-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
-(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
-(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
-(add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+(ptrv/add-auto-mode 'glsl-mode
+  "\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'")
 
 ;; IanniX
-(add-to-list 'auto-mode-alist '("\\.nxscript$" . js-mode))
+(ptrv/add-auto-mode 'js-mode "\\.nxscript$")
 
 ;; ChucK
 (autoload 'chuck-mode "chuck-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.ck$" . chuck-mode))
+(ptrv/add-auto-mode 'chuck-mode "\\.ck$")
 
 ;; arduino
 (autoload 'arduino-mode "arduino-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.ino\\'" . arduino-mode))
+(ptrv/add-auto-mode 'arduino-mode "\\.ino\\'")
 
 ;; arch linux
-(add-to-list 'auto-mode-alist '("/PKGBUILD$" . pkgbuild-mode))
-(add-to-list 'auto-mode-alist '("\\.install$" . shell-script-mode))
-(add-to-list 'auto-mode-alist '("\\.*rc$" . conf-unix-mode))
+(ptrv/add-auto-mode 'pkgbuild-mode "/PKGBUILD$")
+(ptrv/add-auto-mode 'shell-script-mode "\\.install$")
+(ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$$")
 
 ;; json
-(add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+(ptrv/add-auto-mode 'json-mode "\\.json$")
 
 ;; Carton
-(add-to-list 'auto-mode-alist '("/Carton$" .  emacs-lisp-mode))
+(ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$")
 
 ;;;; abbrev
 (define-abbrev-table 'global-abbrev-table
@@ -1300,8 +1298,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; markdown
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+(ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$")
 
 (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
 
@@ -1310,7 +1307,7 @@
 (ptrv/after 'pandoc-mode-autoloads
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
   (add-hook 'markdown-mode-hook 'turn-on-pandoc)
-  (add-to-list 'auto-mode-alist '("\\.text$" .  markdown-mode)))
+  (ptrv/add-auto-mode 'markdown-mode "\\.text$"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; golang
@@ -1457,7 +1454,7 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xml
-(add-to-list 'auto-mode-alist '("\\.gpx$" . nxml-mode))
+(ptrv/add-auto-mode 'nxml-mode "\\.gpx$")
 
 (ptrv/after 'nxml-mode
   ;; make nxml outline work with gpx files
@@ -1530,12 +1527,12 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; faust-mode
-(setq auto-mode-alist (cons '("\\.dsp$" . faust-mode) auto-mode-alist))
+(ptrv/add-auto-mode 'faust-mode "\\.dsp$")
 (autoload 'faust-mode "faust-mode" "FAUST editing mode." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Synth-A-Modeler mode
-(setq auto-mode-alist (cons '("\\.mdl$" . sam-mode) auto-mode-alist))
+(ptrv/add-auto-mode 'sam-mode "\\.mdl$")
 (autoload 'sam-mode "sam-mode" "Synth-A-Modeler editing mode." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1680,7 +1677,7 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
-(add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
+(ptrv/add-auto-mode 'processing-mode "\\.pde$")
 (autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
 ;;(eval-after-load 'yasnippet '(processing-snippets-initialize))
 (autoload 'processing-find-sketch "processing-mode" nil t)
