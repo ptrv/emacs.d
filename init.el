@@ -89,11 +89,16 @@
   `(when (require ,symbol nil t)
      ,@body))
 
-(defconst ptrv-font-lock-keywords
-  `((,(concat "(" (regexp-opt '("ptrv/after" "ptrv/with-library") 'words)
+(defconst ptrv/font-lock-keywords
+  `((,(concat "(" (regexp-opt '("ptrv/after"
+                                "ptrv/with-library")
+                              'words)
               "\\>[ 	']*\\(\\sw+\\)?")
      (1 font-lock-keyword-face)
-     (2 font-lock-constant-face nil t))))
+     (2 font-lock-constant-face nil t))
+    (,(concat "(" (regexp-opt '("ptrv/add-auto-mode") 'words))
+     (1 font-lock-keyword-face))))
+
 (defun ptrv/add-auto-mode (mode &rest patterns)
   "Add entries to `auto-mode-alist' to use `MODE' for all given
 file `PATTERNS'."
@@ -264,15 +269,9 @@ file `PATTERNS'."
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
-(require 'live-fontify-hex)
-(font-lock-add-keywords 'lisp-mode
-                        '((live-fontify-hex-colors)))
-(font-lock-add-keywords 'emacs-lisp-mode
-                        '((live-fontify-hex-colors)))
-(font-lock-add-keywords 'lisp-interaction-mode
-                        '((live-fontify-hex-colors)))
-(font-lock-add-keywords 'css-mode
-                        '((live-fontify-hex-colors)))
+(ptrv/with-library 'live-fontify-hex
+  (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
+    (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nyan-mode
@@ -446,8 +445,8 @@ file `PATTERNS'."
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
 
 (ptrv/after 'lisp-mode
-  (font-lock-add-keywords 'emacs-lisp-mode ptrv-font-lock-keywords :append)
-  (font-lock-add-keywords 'lisp-interaction-mode ptrv-font-lock-keywords :append)
+  (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
+    (font-lock-add-keywords mode ptrv/font-lock-keywords :append))
   (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
@@ -460,7 +459,7 @@ file `PATTERNS'."
       'elisp-slime-nav-describe-elisp-thing-at-point)))
 
 (ptrv/after 'ielm
-  (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv-font-lock-keywords :append)
+  (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv/font-lock-keywords :append)
   (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))
 
 (ptrv/after 'mic-paren-autoloads
