@@ -2188,6 +2188,8 @@ prompt for the command to use."
 (global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
+(global-set-key [f5] 'refresh-file)
+
 ;; Split Windows
 (global-set-key [f6] 'split-window-horizontally)
 (global-set-key [f7] 'split-window-vertically)
