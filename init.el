@@ -272,9 +272,9 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nyan-mode
-(autoload 'nyan-mode "nyan-mode" nil t)
-(setq nyan-bar-length 16)
-(nyan-mode 1)
+(ptrv/after 'nyan-mode-autoloads
+  (setq nyan-bar-length 16)
+  (nyan-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
@@ -815,11 +815,12 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tea-time
 (autoload 'tea-time "tea-time" nil t)
-(setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
-(cond (*is-mac*
-       (setq tea-time-sound-command "afplay %s"))
-      (*is-linux*
-       (setq tea-time-sound-command "paplay %s")))
+(ptrv/after 'tea-time
+  (setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
+  (cond (*is-mac*
+         (setq tea-time-sound-command "afplay %s"))
+        (*is-linux*
+         (setq tea-time-sound-command "paplay %s"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xah lee modes
@@ -1136,14 +1137,15 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org-present
 (autoload 'org-present "org-present" nil t)
-(add-hook 'org-present-mode-hook
-          (lambda ()
-            (org-present-big)
-            (org-display-inline-images)))
-(add-hook 'org-present-mode-quit-hook
-          (lambda ()
-            (org-present-small)
-            (org-remove-inline-images)))
+(ptrv/after 'org-present
+  (add-hook 'org-present-mode-hook
+            (lambda ()
+              (org-present-big)
+              (org-display-inline-images)))
+  (add-hook 'org-present-mode-quit-hook
+            (lambda ()
+              (org-present-small)
+              (org-remove-inline-images))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; latex
