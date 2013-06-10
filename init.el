@@ -253,8 +253,7 @@ file `PATTERNS'."
         try-expand-list
         try-expand-line
         try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol
-        ))
+        try-complete-lisp-symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; look-and-feel
@@ -844,24 +843,25 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iflipb
 (ptrv/after 'iflipb-autoloads
-  (setq iflipb-ignore-buffers '("*Ack-and-a-half*"
-                                "*Help*"
-                                "*Compile-Log*"
-                                "*Ibuffer*"
-                                "*Messages*"
-                                "*scratch*"
-                                "*Completions*"
-                                "*magit"
-                                "*Pymacs*"
-                                "*clang-complete*"
-                                "*compilation*"
-                                "*Packages*"
-                                "*file-index*"
-                                " output*"
-                                "*tramp/"
-                                "*project-status*"
-                                "SCLang:PostBuffer*"
-                                ))
+  (setq iflipb-ignore-buffers
+        '("*Ack-and-a-half*"
+          "*Help*"
+          "*Compile-Log*"
+          "*Ibuffer*"
+          "*Messages*"
+          "*scratch*"
+          "*Completions*"
+          "*magit"
+          "*Pymacs*"
+          "*clang-complete*"
+          "*compilation*"
+          "*Packages*"
+          "*file-index*"
+          " output*"
+          "*tramp/"
+          "*project-status*"
+          "SCLang:PostBuffer*"))
+
   (setq iflipb-wrap-around t)
   (ptrv/after 'iflipb-autoloads
     (global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
@@ -1744,8 +1744,9 @@ prompt for the command to use."
 
   (add-hook 'after-init-hook #'global-flycheck-mode)
 
-  (add-hook 'emacs-lisp-mode-hook #'(lambda () (flycheck-mode -1)))
-  (add-hook 'lisp-interaction-mode #'(lambda () (flycheck-mode -1)))
+  ;; disable flycheck for some modes
+  (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
+    (add-hook hook #'(lambda () (flycheck-mode -1))))
 
   (ptrv/after 'flycheck
     (setq flycheck-highlighting-mode 'lines)))
