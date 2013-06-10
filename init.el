@@ -90,7 +90,7 @@
   `((,(concat "(" (regexp-opt '("ptrv/after"
                                 "ptrv/with-library")
                               'words)
-              "\\>[ 	']*\\(\\sw+\\)?")
+              "\\>[\s\t']*\\(\\sw+\\)?")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face nil t))
     (,(concat "(" (regexp-opt '("ptrv/add-auto-mode") 'words))
