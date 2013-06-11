@@ -1152,62 +1152,56 @@ file `PATTERNS'."
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
 
-(ptrv/after 'latex
-  (message "latex config has been loaded !!!")
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
-  (add-hook 'LaTeX-mode-hook 'reftex-mode)
-  (setq reftex-plug-into-AUCTeX t)
+(ptrv/after 'tex
+  (message "TeX config has been loaded !!!")
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        TeX-source-correlate-method 'synctex
+        TeX-source-correlate-mode t)
 
-  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (setq-default TeX-master nil
+                TeX-PDF-mode t
+                TeX-command-default "latexmk")
 
-  (setq TeX-source-correlate-method 'synctex)
+  (dolist (cmd '(("latexmk" "latexmk %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk")
+                 ("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk -c")
+                 ("latexmk cleanall" "latexmk -C %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk -C")))
+    (add-to-list 'TeX-command-list cmd t))
 
-  (ptrv/after 'tex
-    (add-to-list 'TeX-command-list
-                 '("latexmk" "latexmk %s" TeX-run-TeX nil
-                   (latex-mode doctex-mode) :help "Run latexmk") t)
-    (add-to-list 'TeX-command-list
-                 '("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
-                   (latex-mode doctex-mode) :help "Run latexmk -c") t)
-    (add-to-list 'TeX-command-list
-                 '("latexmk cleanall" "latexmk -C %s"removing TeX-run-TeX nil
-                   (latex-mode doctex-mode) :help "Run latexmk -C") t))
-
-  (add-hook 'LaTeX-mode-hook #'(lambda () (setq TeX-command-default "latexmk")))
-
-  ;; clean intermediate files from latexmk
-  (dolist (it '("\\.fdb_latexmk" "\\.fls"))
-    (add-to-list 'LaTeX-clean-intermediate-suffixes it))
-
-  (defun okular-make-url () (concat
-                             "file://"
-                             (expand-file-name (funcall file "pdf" t)
-                                               (file-name-directory (TeX-master-file)))
-                             "#src:"
-                             (TeX-current-line) (buffer-file-name)))
+  ;; Replace the rotten Lacheck with Chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
 
   (cond (*is-linux*
+         (defun okular-make-url ()
+           (concat
+            "file://" (expand-file-name (funcall file "pdf" t)
+                                        (file-name-directory (TeX-master-file)))
+            "#src:" (TeX-current-line) (buffer-file-name)))
          (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
          (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular")))
-         (add-hook 'LaTeX-mode-hook
-                   (lambda ()
-                     (add-to-list 'TeX-expand-list
-                                  '("%u" okular-make-url)))))
+         (add-to-list 'TeX-expand-list '("%u" okular-make-url) t))
         (*is-mac*
          (setq TeX-view-program-selection '((output-pdf "Skim")))
          (setq TeX-view-program-list
-               '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))
+               '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b"))))))
 
+(ptrv/after 'latex
+  (message "LaTeX config has been loaded !!!")
 
-  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+  (dolist (hook '(LaTeX-math-mode
+                  reftex-mode
+                  auto-fill-mode))
+    (add-hook 'LaTeX-mode-hook hook))
 
-  (custom-set-variables
-   '(reftex-ref-style-default-list (quote ("Hyperref")))
-   ;; '(reftex-cite-format 'natbib)
-   )
+  (add-hook 'LaTeX-mode-hook (lambda ()
+                               (setq TeX-command-default "latexmk")))
+
+  ;; clean intermediate files from latexmk
+  (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
+    (add-to-list 'LaTeX-clean-intermediate-suffixes suffix))
 
   (autoload 'info-lookup-add-help "info-look" nil nil)
   (info-lookup-add-help
@@ -1218,9 +1212,17 @@ file `PATTERNS'."
                ("(latex2e)Command Index")))
 
   (require 'auto-complete-auctex)
-  (define-key LaTeX-mode-map (kbd "C-c ä") 'LaTeX-close-environment)
-  (define-key LaTeX-mode-map (kbd "C-c ü") 'TeX-next-error)
   (require 'pstricks))
+
+(ptrv/after 'reftex
+  (setq reftex-plug-into-AUCTeX t
+        ;; Recommended optimizations
+        reftex-enable-partial-scans t
+        reftex-save-parse-info t
+        reftex-use-multiple-selection-buffers t)
+
+  (custom-set-variables
+   '(reftex-ref-style-default-list (quote ("Hyperref")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
