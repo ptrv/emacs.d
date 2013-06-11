@@ -638,22 +638,21 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ibuffer
 (setq ibuffer-saved-filter-groups
-      (quote (("default"
-               ("IRC"      (mode . erc-mode))
-               ("emacs" (or (name . "^\\*scratch\\*$")
-                            (name . "^\\*Messages\\*$")
-                            (name . "^\\*Completions\\*$")
-                            (filename . ".emacs.d")
-                            (filename . ".live-packs")))
-               ("magit" (name . "\\*magit"))
-               ("dired" (mode . dired-mode))
-               ("sclang" (mode . sclang-mode))
-               ("Org" (mode . org-mode))
-               ("Help" (or (name . "\\*Help\\*")
-                           (name . "\\*Apropos\\*")
-                           (name . "\\*info\\*")))
-               ("#!-config" (filename . ".cb-config"))
-               ))))
+      '(("default"
+         ("IRC"      (mode . erc-mode))
+         ("emacs" (or (name . "^\\*scratch\\*$")
+                      (name . "^\\*Messages\\*$")
+                      (name . "^\\*Completions\\*$")
+                      (filename . ".emacs.d")
+                      (filename . ".live-packs")))
+         ("magit" (name . "\\*magit"))
+         ("dired" (mode . dired-mode))
+         ("sclang" (mode . sclang-mode))
+         ("Org" (mode . org-mode))
+         ("Help" (or (name . "\\*Help\\*")
+                     (name . "\\*Apropos\\*")
+                     (name . "\\*info\\*")))
+         ("#!-config" (filename . ".cb-config")))))
 
 (add-hook 'ibuffer-mode-hook
           (lambda ()
@@ -969,7 +968,7 @@ file `PATTERNS'."
       auto-revert-verbose nil)
 
 (custom-set-variables
- '(tab-stop-list (quote (2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))))
+ '(tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
 
 ;; Do not allow to kill the *scratch* buffer
 (defvar unkillable-scratch-buffer-erase)
@@ -1084,7 +1083,7 @@ file `PATTERNS'."
           ("D" "Daily Action List"
            ((agenda "" ((org-agenda-ndays 1)
                         (org-agenda-sorting-strategy
-                         (quote ((agenda time-up priority-down tag-up) )))
+                         '((agenda time-up priority-down tag-up)))
                         (org-deadline-warning-days 0)
                         ))))
           ))
@@ -1222,7 +1221,7 @@ file `PATTERNS'."
         reftex-use-multiple-selection-buffers t)
 
   (custom-set-variables
-   '(reftex-ref-style-default-list (quote ("Hyperref")))))
+   '(reftex-ref-style-default-list '("Hyperref"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
