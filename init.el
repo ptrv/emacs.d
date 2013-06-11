@@ -652,7 +652,8 @@ file `PATTERNS'."
          ("Help" (or (name . "\\*Help\\*")
                      (name . "\\*Apropos\\*")
                      (name . "\\*info\\*")))
-         ("#!-config" (filename . ".cb-config")))))
+         ("#!-config" (filename . ".cb-config"))
+         ("ssh" (filename . "^/ssh.*")))))
 
 (add-hook 'ibuffer-mode-hook
           (lambda ()
