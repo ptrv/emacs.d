@@ -2051,6 +2051,8 @@ prompt for the command to use."
     (define-key map (kbd "C-c C-j") nil)
     (define-key map (kbd "C-c C-n") nil)
     (define-key map (kbd "C-c C-p") nil)
+    (define-key map (kbd "C-c C-t") nil)
+    (define-key map (kbd "C-c C-t n") 'elpy-test)
     ;; complete on dot
     (define-key map "." 'ptrv/ac-dot-complete))
 
@@ -2062,8 +2064,7 @@ prompt for the command to use."
     (interactive)
     (unless (boundp 'python-python-command)
       (elpy-use-ipython)
-      (setq python-shell-interpreter-args "--pylab")))
-  )
+      (setq python-shell-interpreter-args "--pylab"))))
 
 (ptrv/after 'highlight-indentation
   (set-face-background 'highlight-indentation-face "#e3e3d3")
@@ -2075,21 +2076,21 @@ prompt for the command to use."
   (exec-path-from-shell-copy-env "PYTHONPATH")
 
   ;; pytest
-  (autoload 'pytest-all "pytest" nil t)
-  (autoload 'pytest-module "pytest" nil t)
-  (autoload 'pytest-one "pytest" nil t)
-  (autoload 'pytest-directory "pytest" nil t)
-  (setq pytest-global-name "py.test")
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-c C-a") 'pytest-all)
-              (local-set-key (kbd "C-c C-,") 'pytest-module)
-              (local-set-key (kbd "C-c C-.") 'pytest-one)
-              ;;(local-set-key (kbd "C-c C-d") 'pytest-directory)
-              ;; (local-set-key (kbd "C-c t p a") 'pytest-pdb-all)
-              ;; (local-set-key (kbd "C-c t p m") 'pytest-pdb-module)
-              ;; (local-set-key (kbd "C-c t p .") 'pytest-pdb-one)
-              ))
+  (ptrv/after 'pytest-autoloads
+    (autoload 'pytest-all "pytest" nil t)
+    (autoload 'pytest-module "pytest" nil t)
+    (autoload 'pytest-one "pytest" nil t)
+    (autoload 'pytest-directory "pytest" nil t)
+    (setq pytest-global-name "py.test")
+    (let ((map python-mode-map))
+      (define-key map (kbd "C-c C-t a") 'pytest-all)
+      (define-key map (kbd "C-c C-t m") 'pytest-module)
+      (define-key map (kbd "C-c C-t o") 'pytest-one)
+      (define-key map (kbd "C-c C-t d") 'pytest-directory)
+      (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
+      (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
+      (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one)))
+
   ;; info
   (autoload 'info-lookup-add-help "info-look" nil nil)
   (info-lookup-add-help
@@ -2099,9 +2100,9 @@ prompt for the command to use."
    '(("(python)Index" nil "")))
 
   ;; pylint
-  (autoload 'pylint "pylint")
-  (add-hook 'python-mode-hook 'pylint-add-menu-items)
-  (add-hook 'python-mode-hook 'pylint-add-key-bindings))
+  (ptrv/after 'pylint-autoloads
+    (add-hook 'python-mode-hook 'pylint-add-menu-items)
+    (add-hook 'python-mode-hook 'pylint-add-key-bindings)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; cc-mode
