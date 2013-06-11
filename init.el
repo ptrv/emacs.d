@@ -136,7 +136,7 @@ file `PATTERNS'."
               c-basic-offset 4     ; indents 4 chars
               tab-width 4)         ; and 4 char wide for TAB
 
-(setq browse-url-generic-program (executable-find "google-chrome")
+(setq browse-url-generic-program (executable-find "x-www-browser")
       browse-url-browser-function 'browse-url-generic
       initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
