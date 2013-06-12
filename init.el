@@ -779,10 +779,9 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pomodoro.el
-(ptrv/after 'pomodoro-autoloads
-  (autoload 'pomodoro-add-to-mode-line "pomodoro" t)
+(ptrv/after 'pomodoro
   (pomodoro-add-to-mode-line)
-  (setq pomodoro-sound-player "/usr/bin/paplay")
+  (setq pomodoro-sound-player "paplay")
   (setq pomodoro-break-start-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
   (setq pomodoro-work-start-sound (concat ptrv/etc-dir "sounds/alarm.wav")))
 
