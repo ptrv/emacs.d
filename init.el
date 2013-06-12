@@ -756,14 +756,10 @@ file `PATTERNS'."
 (ptrv/after 'yasnippet-autoloads
   (yas-global-mode 1)
   (ptrv/after 'yasnippet
-    (setq yas-keymap  (let ((map (make-sparse-keymap)))
-                        (define-key map [(control tab)] 'yas-next-field-or-maybe-expand)
-                        (define-key map (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
-                        (define-key map [(shift tab)]   'yas-prev-field)
-                        (define-key map [backtab]       'yas-prev-field)
-                        (define-key map (kbd "C-g")     'yas-abort-snippet)
-                        (define-key map (kbd "C-d")     'yas-skip-and-clear-or-delete-char)
-                        map))
+    (define-key yas-keymap [(tab)] nil)
+    (define-key yas-keymap (kbd "TAB") nil)
+    (define-key yas-keymap [(control tab)] 'yas-next-field-or-maybe-expand)
+    (define-key yas-keymap (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
     (setq yas-prompt-functions '(yas-ido-prompt
                                  yas-x-prompt
                                  yas-completing-prompt))
