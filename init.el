@@ -748,6 +748,11 @@ file `PATTERNS'."
   (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; git-messanger
+(ptrv/after 'git-messenger-autoloads
+  (global-set-key (kbd "C-x v p") 'git-messenger:popup-message))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; mercurial
 (require 'ahg nil t)
 

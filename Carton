@@ -19,6 +19,7 @@
 (depends-on "gitconfig-mode")
 (depends-on "git-gutter")
 (depends-on "gist")
+(depends-on "git-messenger")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; editor
