@@ -443,8 +443,8 @@ file `PATTERNS'."
 (ptrv/after 'lisp-mode
   (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
     (font-lock-add-keywords mode ptrv/font-lock-keywords :append))
-  (add-hook 'emacs-lisp-mode-hook (lambda () (elisp-slime-nav-mode t)))
-  (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+  (dolist (hook '(turn-on-elisp-slime-nav-mode turn-on-eldoc-mode))
+    (add-hook 'emacs-lisp-mode-hook hook))
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
   (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
