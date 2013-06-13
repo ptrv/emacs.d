@@ -366,52 +366,52 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; complete
-(require 'auto-complete-config)
-(ac-config-default)
-(ac-flyspell-workaround)
+(ptrv/with-library 'auto-complete-config
+  (ac-config-default)
+  (ac-flyspell-workaround)
 
-(setq ac-comphist-file (concat ptrv/tmp-dir "ac-comphist.dat")
-      ac-auto-show-menu t
-      ac-dwim t
-      ac-use-menu-map t
-      ac-quick-help-delay 0.8
-      ac-quick-help-height 60
-      ac-disable-inline t
-      ac-show-menu-immediately-on-auto-complete t
-      ac-ignore-case nil
-      ac-candidate-menu-min 0
-      ac-auto-start nil)
+  (setq ac-comphist-file (concat ptrv/tmp-dir "ac-comphist.dat")
+        ac-auto-show-menu t
+        ac-dwim t
+        ac-use-menu-map t
+        ac-quick-help-delay 0.8
+        ac-quick-help-height 60
+        ac-disable-inline t
+        ac-show-menu-immediately-on-auto-complete t
+        ac-ignore-case nil
+        ac-candidate-menu-min 0
+        ac-auto-start nil)
 
-(set-default 'ac-sources
-             '(ac-source-dictionary
-               ac-source-words-in-buffer
-               ac-source-words-in-same-mode-buffers
-               ac-source-semantic
-               ac-source-yasnippet))
+  (set-default 'ac-sources
+               '(ac-source-dictionary
+                 ac-source-words-in-buffer
+                 ac-source-words-in-same-mode-buffers
+                 ac-source-semantic
+                 ac-source-yasnippet))
 
-(dolist (mode '(magit-log-edit-mode log-edit-mode org-mode text-mode haml-mode
-                sass-mode yaml-mode csv-mode espresso-mode haskell-mode
-                html-mode nxml-mode sh-mode smarty-mode clojure-mode
-                lisp-mode textile-mode markdown-mode tuareg-mode))
-  (add-to-list 'ac-modes mode))
+  (dolist (mode '(magit-log-edit-mode log-edit-mode org-mode text-mode haml-mode
+                                      sass-mode yaml-mode csv-mode espresso-mode haskell-mode
+                                      html-mode nxml-mode sh-mode smarty-mode clojure-mode
+                                      lisp-mode textile-mode markdown-mode tuareg-mode))
+    (add-to-list 'ac-modes mode))
 
-(let ((map ac-completing-map))
-  (define-key map (kbd "C-M-n") 'ac-next)
-  (define-key map (kbd "C-M-p") 'ac-previous)
-  (define-key map "\t" 'ac-complete)
-  (define-key map (kbd "M-RET") 'ac-help)
-  ;;(define-key map "\r" 'nil)
-  (define-key map "\r" 'ac-complete))
+  (let ((map ac-completing-map))
+    (define-key map (kbd "C-M-n") 'ac-next)
+    (define-key map (kbd "C-M-p") 'ac-previous)
+    (define-key map "\t" 'ac-complete)
+    (define-key map (kbd "M-RET") 'ac-help)
+    ;;(define-key map "\r" 'nil)
+    (define-key map "\r" 'ac-complete))
 
-(ac-set-trigger-key "TAB")
+  (ac-set-trigger-key "TAB")
 
-;; complete on dot
-(defun ptrv/ac-dot-complete ()
-  "Insert dot and complete code at point."
-  (interactive)
-  (insert ".")
-  (unless (ac-cursor-on-diable-face-p)
-    (auto-complete)))
+  ;; complete on dot
+  (defun ptrv/ac-dot-complete ()
+    "Insert dot and complete code at point."
+    (interactive)
+    (insert ".")
+    (unless (ac-cursor-on-diable-face-p)
+      (auto-complete))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; paredit
