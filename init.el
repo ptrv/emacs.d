@@ -416,14 +416,9 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; paredit
 (ptrv/after 'paredit-autoloads
-  (autoload 'enable-paredit-mode "paredit"
-    "Turn on pseudo-structural editing of Lisp code."
-    t)
+  (autoload 'enable-paredit-mode "paredit" nil t)
   (dolist (x '(scheme emacs-lisp lisp clojure))
-    (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'enable-paredit-mode))
-  (ptrv/after 'paredit
-    ;; need a binding that works in the terminal
-    (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
+    (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'enable-paredit-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; rainbow-delimiters
