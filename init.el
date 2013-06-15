@@ -336,6 +336,8 @@ file `PATTERNS'."
 (ptrv/after 'cua-rect
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
+(setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ediff
 (ptrv/after 'ediff
