@@ -120,9 +120,127 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; package
+(setq package-archives
+      '(("melpa" . "http://melpa.milkbox.net/packages/")
+        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ("elpa" . "http://tromey.com/elpa/")
+        ("org" . "http://orgmode.org/elpa/")
+        ("gnu" . "http://elpa.gnu.org/packages/")))
+
 (package-initialize)
-(require 'carton)
-(carton-setup user-emacs-directory)
+
+(defadvice package-compute-transaction (before package-compute-transaction-reverse
+                                               (package-list requirements)
+                                               activate compile)
+  "reverse the requirements"
+  (setq requirements (reverse requirements))
+  (print requirements))
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar ptrv/packages
+  '(dash
+    s
+    ;;vcs
+    magit
+    ahg
+    git-commit-mode
+    gitignore-mode
+    gitconfig-mode
+    git-gutter
+    gist
+    git-messenger
+    ;; editor
+    iflipb
+    iedit
+    starter-kit-eshell
+    multiple-cursors
+    expand-region
+    move-text
+    undo-tree
+    flycheck
+    flymake-cursor
+    autopair
+    ace-jump-mode
+    key-chord
+    ;; ido
+    smex
+    ido-ubiquitous
+    idomenu
+    ;; completion
+    auto-complete
+    ac-nrepl
+    pcmpl-git
+    ;; snippets
+    dropdown-list
+    yasnippet
+    ;; lisp
+    paredit
+    rainbow-delimiters
+    mic-paren
+    nrepl-eval-sexp-fu
+    elisp-slime-nav
+    clojure-mode
+    align-cljlet
+    nrepl
+    litable
+    lexbind-mode
+    ;; markup
+    org-plus-contrib
+    markdown-mode
+    pandoc-mode
+    ;; ui
+    notify
+    color-theme
+    popwin
+    smooth-scrolling
+    ;; utilities
+    xml-rpc
+    refheap
+    pomodoro
+    edit-server
+    edit-server-htmlize
+    tea-time
+    google-this
+    htmlize
+    mwe-log-commands
+    nyan-mode
+    diminish
+    kill-ring-search
+    ;; tools
+    ag
+    ack-and-a-half
+    exec-path-from-shell
+    w3m
+    scratch
+    ;; python
+    pytest
+    pylint
+    jedi
+    elpy
+    virtualenv
+    ;; major modes
+    go-mode
+    glsl-mode
+    js2-mode
+    apache-mode
+    yaml-mode
+    cmake-mode
+    lua-mode
+    json-mode
+    gnuplot
+    pkgbuild-mode
+    ;; project
+    find-file-in-project
+    projectile
+    ;; minor-modes
+    love-minor-mode)
+  "A list of packages to ensure are installed at launch.")
+
+(dolist (p ptrv/packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; PATH
