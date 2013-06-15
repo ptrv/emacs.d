@@ -1423,11 +1423,13 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; golang
-(exec-path-from-shell-copy-env "GOROOT")
-(exec-path-from-shell-copy-env "GOPATH")
 
 (ptrv/after 'go-mode
   (message "go-mode config has been loaded !!!")
+
+  (ptrv/after 'exec-path-from-shell-autoloads
+    (exec-path-from-shell-copy-env "GOROOT")
+    (exec-path-from-shell-copy-env "GOPATH"))
 
   ;; go-lang completion
   (add-to-list 'load-path (concat
@@ -2188,7 +2190,8 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; python
 (ptrv/after 'python
-  (exec-path-from-shell-copy-env "PYTHONPATH")
+  (ptrv/after 'exec-path-from-shell-autoloads
+    (exec-path-from-shell-copy-env "PYTHONPATH"))
 
   ;; pytest
   (ptrv/after 'pytest-autoloads
