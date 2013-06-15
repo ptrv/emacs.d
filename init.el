@@ -1331,6 +1331,8 @@ file `PATTERNS'."
   (require 'pstricks))
 
 (ptrv/after 'reftex
+  (message "RefTeX config has been loaded !!!")
+
   (setq reftex-plug-into-AUCTeX t
         ;; Recommended optimizations
         reftex-enable-partial-scans t
@@ -1791,10 +1793,9 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
-(ptrv/add-auto-mode 'processing-mode "\\.pde$")
 (autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
-;;(eval-after-load 'yasnippet '(processing-snippets-initialize))
 (autoload 'processing-find-sketch "processing-mode" nil t)
+(ptrv/add-auto-mode 'processing-mode "\\.pde$")
 
 (ptrv/after 'processing-mode
   (message "Processing config has been loaded !!!")
@@ -2325,7 +2326,7 @@ prompt for the command to use."
 (global-set-key [f9] 'delete-other-windows)
 
 (ptrv/after 'kill-ring-search-autoloads
-  (global-set-key "\M-\C-y" 'kill-ring-search))
+  (global-set-key (kbd "M-C-y") 'kill-ring-search))
 
 ;;diff shortcuts
 (defvar ptrv/diff-map
@@ -2442,11 +2443,12 @@ prompt for the command to use."
 
 (defvar ptrv/favs nil)
 (defun ptrv/quickly-open-fav (char)
-  (interactive "cFav:")
+  (interactive "c")
   (let ((fav (assoc char ptrv/favs)))
-    (if fav (let ((fav-file (cdr fav)))
-              (message "Open file: %s" fav-file)
-              (find-file fav-file))
+    (if fav
+        (let ((fav-file (cdr fav)))
+          (message "Open file: %s" fav-file)
+          (find-file fav-file))
       (message "No such fav :("))))
 
 (defun ptrv/display-yank-menu ()
@@ -2625,10 +2627,9 @@ If mark is activate, duplicate region lines below."
 
 (defun exit-emacs-client ()
   "consistent exit emacsclient.
-   if not in emacs client, echo a message in minibuffer, don't exit emacs.
-   if in server mode
-      and editing file, do C-x # server-edit
-      else do C-x 5 0 delete-frame"
+   if not in emacs client, echo a message in minibuffer, don't
+   exit emacs. if in server mode and editing file, do C-x #
+   server-edit else do C-x 5 0 delete-frame"
   (interactive)
   (if server-buffer-clients
       (server-edit)
