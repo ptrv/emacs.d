@@ -865,6 +865,7 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; git-messanger
 (ptrv/after 'git-messenger-autoloads
+  (setq git-messenger:show-detail t)
   (global-set-key (kbd "C-x v p") 'git-messenger:popup-message))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
