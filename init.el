@@ -2378,7 +2378,7 @@ prompt for the command to use."
 (global-set-key (kbd "C-S-d") 'duplicate-line-or-region-below)
 (global-set-key (kbd "C-S-M-d") 'duplicate-line-below-comment)
 
-(global-set-key (kbd "<C-M-return>") 'open-line-below)
+(global-set-key (kbd "<S-return>") 'open-line-below)
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
