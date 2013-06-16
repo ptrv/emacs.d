@@ -1816,9 +1816,9 @@ prompt for the command to use."
                        ac-source-yasnippet
                        ac-source-words-in-buffer))
     (make-local-variable 'ac-user-dictionary)
-    (setq ac-user-dictionary processing-functions)
-    (setq ac-user-dictionary (append ac-user-dictionary processing-builtins))
-    (setq ac-user-dictionary (append ac-user-dictionary processing-constants)))
+    (setq ac-user-dictionary (append processing-functions
+                                     processing-builtins
+                                     processing-constants)))
 
   (add-to-list 'ac-modes 'processing-mode)
   (add-hook 'processing-mode-hook 'processing-mode-init)
