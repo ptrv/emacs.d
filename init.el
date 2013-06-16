@@ -2102,10 +2102,22 @@ prompt for the command to use."
   (setq w3m-pop-up-frames t)
   (setq w3m-pop-up-windows nil))
 
+(defun ptrv/sclang-mode-loader ()
+  (unless (featurep 'sclang)
+    (require 'sclang)
+    (sclang-mode)
+    (ptrv/sclang-mode-loader--remove)))
+(defun ptrv/sclang-mode-loader--remove ()
+  (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
+          auto-mode-alist))
+(ptrv/add-auto-mode 'ptrv/sclang-mode-loader "\\.\\(sc\\|scd\\)$")
+
 (defun ptrv/sclang ()
   (interactive)
   (if (require 'sclang nil t)
-      (sclang-start)
+      (progn
+        (sclang-start)
+        (ptrv/sclang-mode-loader--remove))
     (message "SCLang is not installed!")))
 
 (ptrv/after 'sclang
