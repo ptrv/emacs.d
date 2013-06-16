@@ -120,14 +120,12 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; package
-(setq package-archives
-      '(("melpa" . "http://melpa.milkbox.net/packages/")
-        ("marmalade" . "http://marmalade-repo.org/packages/")
-        ("elpa" . "http://tromey.com/elpa/")
-        ("org" . "http://orgmode.org/elpa/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
-
 (package-initialize)
+(dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
+                  ("marmalade" . "http://marmalade-repo.org/packages/")
+                  ("elpa" . "http://tromey.com/elpa/")
+                  ("org" . "http://orgmode.org/elpa/")))
+  (add-to-list 'package-archives source t))
 
 (defadvice package-compute-transaction (before package-compute-transaction-reverse
                                                (package-list requirements)
