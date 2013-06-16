@@ -1410,7 +1410,7 @@ file `PATTERNS'."
 ;; arch linux
 (ptrv/add-auto-mode 'pkgbuild-mode "/PKGBUILD$")
 (ptrv/add-auto-mode 'shell-script-mode "\\.install$")
-(ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$$")
+(ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$")
 
 ;; json
 (ptrv/add-auto-mode 'json-mode "\\.json$")
