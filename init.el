@@ -241,8 +241,8 @@ file `PATTERNS'."
     (package-install p)))
 
 ;; from carton.el and modified
-(defun ptrv/update-packages ()
-  "Update packages."
+(defun ptrv/package-upgrade ()
+  "Upgrade packages."
   (interactive)
   (with-temp-buffer
     (package-refresh-contents)
@@ -250,14 +250,15 @@ file `PATTERNS'."
     (package-menu--generate nil t) ;; WTF ELPA, really???
     (let ((upgrades (package-menu--find-upgrades)))
       (dolist (upgrade upgrades)
-        (let* ((name (car upgrade))
-               (new-version (cdr upgrade))
-               (old-version (package-desc-vers (cdr (assq name package-alist)))))
+        (let ((name (car upgrade)))
           (package-install name)))
       ;; Delete obsolete packages
       (dolist (pkg package-obsolete-alist)
         (package-delete (symbol-name (car pkg))
-                        (package-version-join (caadr pkg)))))))
+                        (package-version-join (caadr pkg))))
+      (message "%d package%s has been upgraded."
+               (length upgrades)
+               (if (= (length upgrades) 1) "" "s")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; PATH
