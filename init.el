@@ -1819,7 +1819,10 @@ prompt for the command to use."
     (processing-snippets-initialize))
 
   (cond (*is-mac*
-         (setq processing-location "processing-java"))
+         (setq processing-location "/usr/bin/processing-java")
+         (setq processing-application-dir
+               "/Applications/Processing.app/Contents/Resources/Java")
+         (setq processing-sketch-dir "~/Documents/Processing"))
         (*is-linux*
          (setq processing-location "~/applications/processing-2.0/processing-java")
          (setq processing-application-dir "~/applications/processing-2.0")
