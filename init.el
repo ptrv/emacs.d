@@ -23,7 +23,7 @@
   (when (fboundp mode) (funcall mode -1)))
 
 (defconst *is-mac* (eq system-type 'darwin))
-(defconst *is-cocoa-emacs* (and *is-mac* (eq system-type 'ns)))
+(defconst *is-cocoa-emacs* (and *is-mac* (eq window-system 'ns)))
 (defconst *is-linux* (eq system-type 'gnu/linux))
 (defconst *is-x11* (eq window-system 'x))
 (defconst *is-windows* (eq system-type 'windows-nt))
@@ -2014,11 +2014,10 @@ prompt for the command to use."
  (setq mac-command-modifier 'meta)
  (setq mac-option-modifier nil)
 
- (if (window-system)
-     (progn
-       (add-to-list 'default-frame-alist '(font . "Inconsolata-16"))
-       (set-frame-size (selected-frame) 120 52)
-       (set-frame-position (selected-frame) 100 24)))
+ (when *is-cocoa-emacs*
+     (set-frame-font "Inconsolata-16" nil t)
+     (set-frame-size (selected-frame) 110 46)
+     (set-frame-position (selected-frame) 370 24))
 
  (setq default-input-method "MacOSX")
 
