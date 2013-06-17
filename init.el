@@ -1280,8 +1280,8 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; latex
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
+(load "auctex.el" 'noerror t t)
+(load "preview-latex.el" 'noerror t t)
 
 (ptrv/after 'tex
   (message "TeX config has been loaded !!!")
