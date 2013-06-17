@@ -474,8 +474,6 @@ file `PATTERNS'."
 ;;;; Eshell
 (ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
-  ;; (eval-when-compile (require 'eshell nil t))
-  (setq eshell-aliases-file (concat ptrv/etc-dir "eshell_aliases"))
 
   (defun eshell/clear ()
     "04Dec2001 - sailor, to clear the eshell buffer."
