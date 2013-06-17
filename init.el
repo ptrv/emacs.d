@@ -23,7 +23,7 @@
   (when (fboundp mode) (funcall mode -1)))
 
 (defconst *is-mac* (eq system-type 'darwin))
-(defconst *is-cocoa-emacs* (and *is-mac* (eq system-type 'ns)))
+(defconst *is-cocoa-emacs* (and *is-mac* (eq window-system 'ns)))
 (defconst *is-linux* (eq system-type 'gnu/linux))
 (defconst *is-x11* (eq window-system 'x))
 (defconst *is-windows* (eq system-type 'windows-nt))
@@ -475,8 +475,6 @@ file `PATTERNS'."
 ;;;; Eshell
 (ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
-  ;; (eval-when-compile (require 'eshell nil t))
-  (setq eshell-aliases-file (concat ptrv/etc-dir "eshell_aliases"))
 
   (defun eshell/clear ()
     "04Dec2001 - sailor, to clear the eshell buffer."
@@ -1283,8 +1281,8 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; latex
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
+(load "auctex.el" 'noerror t t)
+(load "preview-latex.el" 'noerror t t)
 
 (ptrv/after 'tex
   (message "TeX config has been loaded !!!")
@@ -1822,7 +1820,10 @@ prompt for the command to use."
     (processing-snippets-initialize))
 
   (cond (*is-mac*
-         (setq processing-location "processing-java"))
+         (setq processing-location "/usr/bin/processing-java")
+         (setq processing-application-dir
+               "/Applications/Processing.app/Contents/Resources/Java")
+         (setq processing-sketch-dir "~/Documents/Processing"))
         (*is-linux*
          (setq processing-location "~/applications/processing-2.0/processing-java")
          (setq processing-application-dir "~/applications/processing-2.0")
@@ -2017,11 +2018,10 @@ prompt for the command to use."
  (setq mac-command-modifier 'meta)
  (setq mac-option-modifier nil)
 
- (if (window-system)
-     (progn
-       (add-to-list 'default-frame-alist '(font . "Inconsolata-16"))
-       (set-frame-size (selected-frame) 120 52)
-       (set-frame-position (selected-frame) 100 24)))
+ (when *is-cocoa-emacs*
+     (set-frame-font "Inconsolata-16" nil t)
+     (set-frame-size (selected-frame) 110 46)
+     (set-frame-position (selected-frame) 370 24))
 
  (setq default-input-method "MacOSX")
 

@@ -5,6 +5,7 @@ tmp
 tramp
 url/cookies
 .org-id-locations
+eshell/history
 
 # manually installed stable org-mode
 site-lisp/_extras/org-*
