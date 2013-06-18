@@ -1540,8 +1540,10 @@ file `PATTERNS'."
     (define-key map (kbd "C-c i") 'go-goto-imports)
     (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
     (define-key map (kbd "C-c C-p") 'go-create-package)
-    (define-key map (kbd "C-c C-c") ptrv/go-mode-map)
-    (define-key map (kbd ".") 'ptrv/ac-dot-complete))
+    (define-key map (kbd "C-c C-c") ptrv/go-mode-map))
+
+  (ptrv/after 'auto-complete-config
+    (define-key go-mode-map (kbd ".") 'ptrv/ac-dot-complete))
 
   ;; flycheck support
   (add-to-list 'load-path (concat
@@ -2202,9 +2204,10 @@ prompt for the command to use."
     (define-key map (kbd "C-c C-n") nil)
     (define-key map (kbd "C-c C-p") nil)
     (define-key map (kbd "C-c C-t") nil)
-    (define-key map (kbd "C-c C-t n") 'elpy-test)
-    ;; complete on dot
-    (define-key map "." 'ptrv/ac-dot-complete))
+    (define-key map (kbd "C-c C-t n") 'elpy-test))
+
+  (ptrv/after 'auto-complete-config
+    (define-key elpy-mode-map "." 'ptrv/ac-dot-complete))
 
   (setq python-check-command "flake8")
   (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
