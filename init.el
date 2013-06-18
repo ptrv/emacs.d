@@ -475,6 +475,7 @@ file `PATTERNS'."
 ;;;; Eshell
 (ptrv/after 'eshell
   (message "Eshell config has been loaded !!!")
+  (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
 
   (defun eshell/clear ()
     "04Dec2001 - sailor, to clear the eshell buffer."
