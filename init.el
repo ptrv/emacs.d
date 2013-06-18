@@ -2449,6 +2449,9 @@ prompt for the command to use."
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
 (global-set-key (kbd "C-x r v") 'ptrv/list-registers)
 
+(global-set-key (kbd "C-M-=") 'increment-number-at-point)
+(global-set-key (kbd "C-M--") 'decrement-number-at-point)
+
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
   (define-key map "A" 'org-agenda)
@@ -2823,6 +2826,22 @@ Create a new ielm process if required."
   (interactive)
   (pop-to-buffer (get-buffer-create "*ielm*"))
   (ielm))
+
+;;http://www.emacswiki.org/emacs/IncrementNumber
+(defun ptrv/change-number-at-point (change)
+  (save-excursion
+    (save-match-data
+      (or (looking-at "[0123456789]")
+          (error "No number at point"))
+      (replace-match
+       (number-to-string
+        (mod (funcall change (string-to-number (match-string 0))) 10))))))
+(defun increment-number-at-point ()
+  (interactive)
+  (ptrv/change-number-at-point '1+))
+(defun decrement-number-at-point ()
+  (interactive)
+  (ptrv/change-number-at-point '1-))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; server
