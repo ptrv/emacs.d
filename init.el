@@ -146,7 +146,6 @@ file `PATTERNS'."
     git-commit-mode
     gitignore-mode
     gitconfig-mode
-    git-gutter
     gist
     git-messenger
     ;; editor
@@ -827,17 +826,6 @@ file `PATTERNS'."
     (define-key map "l" #'gist-list)
     map)
   "Keymap for Gists.")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; git-gutter
-(ptrv/after git-gutter-autoloads
-  (setq git-gutter:window-width 2)
-  ;;(global-git-gutter-mode t)
-  (setq git-gutter:lighter " G-+")
-  (setq git-gutter:modified-sign "~ ")
-  (setq git-gutter:added-sign "+ ")
-  (setq git-gutter:deleted-sign "- ")
-  (setq git-gutter:unchanged-sign "  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; magit
