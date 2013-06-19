@@ -96,6 +96,13 @@
     (,(concat "(" (regexp-opt '("ptrv/add-auto-mode") 'words))
      (1 font-lock-keyword-face))))
 
+(ptrv/after lisp-mode
+  (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
+    (font-lock-add-keywords mode ptrv/font-lock-keywords :append)))
+(ptrv/after ielm
+  (font-lock-add-keywords 'inferior-emacs-lisp-mode
+                          ptrv/font-lock-keywords :append))
+
 (defun ptrv/add-auto-mode (mode &rest patterns)
   "Add entries to `auto-mode-alist' to use `MODE' for all given
 file `PATTERNS'."
@@ -550,17 +557,11 @@ file `PATTERNS'."
       (auto-complete))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; paredit
-(ptrv/after paredit-autoloads
-  (autoload 'enable-paredit-mode "paredit" nil t)
-  (dolist (x '(scheme emacs-lisp lisp clojure))
-    (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'enable-paredit-mode)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; rainbow-delimiters
-(ptrv/after rainbow-delimiters-autoloads
-  (dolist (x '(scheme emacs-lisp lisp clojure))
-    (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-delimiters-mode)))
+;;;; lisp
+(autoload 'enable-paredit-mode "paredit" nil t)
+(defvar ptrv/lisp-common-modes
+  '(enable-paredit-mode
+    rainbow-delimiters-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elisp
@@ -571,12 +572,16 @@ file `PATTERNS'."
 
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
 
+(defvar ptrv/emacs-lisp-common-modes
+  (append
+   '(turn-on-elisp-slime-nav-mode
+     turn-on-eldoc-mode)
+   ptrv/lisp-common-modes)
+  "Common modes for Emacs Lisp editing.")
 (ptrv/after lisp-mode
-  (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
-    (font-lock-add-keywords mode ptrv/font-lock-keywords :append))
-  (dolist (hook '(turn-on-elisp-slime-nav-mode turn-on-eldoc-mode))
-    (add-hook 'emacs-lisp-mode-hook hook))
-  (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+  (dolist (mode ptrv/emacs-lisp-common-modes)
+    (add-hook 'emacs-lisp-mode-hook mode)
+    (add-hook 'lisp-interaction-mode-hook mode))
   (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
   (define-key lisp-mode-shared-map (kbd "C-c C-e") 'eval-and-replace)
@@ -586,8 +591,8 @@ file `PATTERNS'."
       'elisp-slime-nav-describe-elisp-thing-at-point)))
 
 (ptrv/after ielm
-  (font-lock-add-keywords 'inferior-emacs-lisp-mode ptrv/font-lock-keywords :append)
-  (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode))
+  (dolist (mode ptrv/emacs-lisp-common-modes)
+    (add-hook 'ielm-mode-hook mode)))
 
 (ptrv/after mic-paren-autoloads
   (paren-activate))
@@ -607,6 +612,9 @@ file `PATTERNS'."
 
 (ptrv/after clojure-mode
   (message "clojure config has been loaded !!!")
+
+  (dolist (mode ptrv/lisp-common-modes)
+    (add-hook clojure-mode-hook mode))
 
   (font-lock-add-keywords
    'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
