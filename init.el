@@ -250,7 +250,6 @@ file `PATTERNS'."
     ;; major modes
     go-mode
     glsl-mode
-    js2-mode
     apache-mode
     yaml-mode
     cmake-mode
