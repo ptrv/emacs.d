@@ -70,15 +70,35 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'cl)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; macros
-(defmacro ptrv/after (mode &rest body)
-  "`eval-after-load' MODE evaluate BODY."
-  (declare (indent defun))
-  `(eval-after-load ',mode
-     '(progn ,@body)))
+(unless (fboundp 'with-eval-after-load)
+  (defmacro with-eval-after-load (file &rest body)
+    "Execute BODY after FILE is loaded.
+
+Forward compatibility wrapper."
+    `(eval-after-load ,file
+       `(funcall (function ,(lambda () ,@body))))))
+
+(defmacro ptrv/after (feature &rest forms)
+  "After FEATURE is loaded, evaluate FORMS.
+
+FORMS is byte compiled.
+
+FEATURE may be a named feature or a file name, see
+`eval-after-load' for details."
+  (declare (indent 1) (debug t))
+  ;; Byte compile the body.  If the feature is not available, ignore warnings.
+  ;; Taken from
+  ;; http://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg01262.html
+  `(,(if (or (not (boundp 'byte-compile-current-file))
+             (not byte-compile-current-file)
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         'progn
+       (message "ptrv/after: cannot find %s" feature)
+       'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms)))
 
 (defmacro ptrv/with-library (feature &rest body)
   "Evaluate BODY only if require SYMBOL is successful."
@@ -93,7 +113,9 @@
               "\\s-+\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face nil t))
-    (,(concat "(" (regexp-opt '("ptrv/add-auto-mode") 'words))
+    (,(concat "(" (regexp-opt '("ptrv/add-auto-mode"
+                                "with-eval-after-load")
+                              'symbols))
      (1 font-lock-keyword-face))))
 
 (ptrv/after lisp-mode
@@ -212,6 +234,7 @@ file `PATTERNS'."
     nyan-mode
     diminish
     kill-ring-search
+    auto-compile
     ;; tools
     ag
     ack-and-a-half
@@ -356,7 +379,7 @@ file `PATTERNS'."
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
 ;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
-(ptrv/after cua-rect
+(ptrv/after cua-mode
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
@@ -564,7 +587,6 @@ file `PATTERNS'."
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
-
 (defvar ptrv/emacs-lisp-common-modes
   (append
    '(turn-on-elisp-slime-nav-mode
@@ -575,7 +597,8 @@ file `PATTERNS'."
   (dolist (mode ptrv/emacs-lisp-common-modes)
     (add-hook 'emacs-lisp-mode-hook mode)
     (add-hook 'lisp-interaction-mode-hook mode))
-  (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
+  (define-key lisp-mode-shared-map (kbd "RET")
+    'reindent-then-newline-and-indent)
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
   (define-key lisp-mode-shared-map (kbd "C-c C-e") 'eval-and-replace)
 
@@ -583,7 +606,8 @@ file `PATTERNS'."
     (define-key lisp-mode-shared-map (kbd "M-RET")
       'elisp-slime-nav-describe-elisp-thing-at-point))
 
-  (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
+  (dolist (mode '(lexbind-mode auto-compile-mode))
+    (add-hook 'emacs-lisp-mode-hook mode)))
 
 (ptrv/after ielm
   (dolist (mode ptrv/emacs-lisp-common-modes)
@@ -604,7 +628,7 @@ file `PATTERNS'."
   (message "clojure config has been loaded !!!")
 
   (dolist (mode ptrv/lisp-common-modes)
-    (add-hook clojure-mode-hook mode))
+    (add-hook 'clojure-mode-hook mode))
 
   (font-lock-add-keywords
    'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
@@ -699,24 +723,6 @@ file `PATTERNS'."
   (defun live-nrepl-set-print-length ()
     (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
   (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
-
-  ;; Region discovery fix
-  (defun nrepl-region-for-expression-at-point ()
-    "Return the start and end position of defun at point."
-    (when (and (live-paredit-top-level-p)
-               (save-excursion
-                 (ignore-errors (forward-char))
-                 (live-paredit-top-level-p)))
-      (error "Not in a form"))
-
-    (save-excursion
-      (save-match-data
-        (ignore-errors (live-paredit-forward-down))
-        (paredit-forward-up)
-        (while (ignore-errors (paredit-forward-up) t))
-        (let ((end (point)))
-          (backward-sexp)
-          (list (point) end)))))
 
   (when *is-windows*
     (defun live-windows-hide-eol ()
@@ -1156,19 +1162,20 @@ file `PATTERNS'."
         org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
 
   ;; yasnippet workaround
-  (defun yas/org-very-safe-expand ()
-    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+  (ptrv/after yasnipptet
+    (defun yas/org-very-safe-expand ()
+      (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
 
-  (defun org-mode-yasnippet-workaround ()
-    (make-variable-buffer-local 'yas/trigger-key)
-    (setq yas/trigger-key [tab])
-    (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-    (define-key yas/keymap [tab] 'yas/next-field))
+    (defun org-mode-yasnippet-workaround ()
+      (make-variable-buffer-local 'yas/trigger-key)
+      (setq yas-trigger-key [tab])
+      (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+      (define-key yas-keymap [tab] 'yas-next-field))
+    (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround))
 
   (defun org-mode-init ()
     (auto-complete-mode -1)
-    (turn-off-flyspell)
-    (org-mode-yasnippet-workaround))
+    (turn-off-flyspell))
 
   (add-hook 'org-mode-hook 'org-mode-init)
 
@@ -1222,14 +1229,14 @@ file `PATTERNS'."
 
   ;; Use fundamental mode when editing plantuml blocks with C-c '
   (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
-  (add-to-list 'org-src-lang-modes '("sam" . sam)))
+  (add-to-list 'org-src-lang-modes '("sam" . sam))
+
+  ;; org publish projects file
+  (ptrv/after ox
+    (load "~/.org-publish-projects.el" 'noerror)))
 
 (ptrv/after calendar
   (setq calendar-week-start-day 1))
-
-;; org publish projects file
-(ptrv/after ox
-  (load "~/.org-publish-projects.el" 'noerror))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org2blog
@@ -1978,39 +1985,40 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; osx
 (when *is-mac*
- (setq mac-option-key-is-meta nil)
- (setq mac-command-key-is-meta t)
- (setq mac-command-modifier 'meta)
- (setq mac-option-modifier nil)
+  (ptrv/after ns-win
+    (setq mac-option-key-is-meta nil)
+    (setq mac-command-key-is-meta t)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier nil))
 
- (when *is-cocoa-emacs*
-     (set-frame-font "Inconsolata-16" nil t)
-     (set-frame-size (selected-frame) 110 46)
-     (set-frame-position (selected-frame) 370 24))
+  (when *is-cocoa-emacs*
+    (set-frame-font "Inconsolata-16" nil t)
+    (set-frame-size (selected-frame) 110 46)
+    (set-frame-position (selected-frame) 370 24))
 
- (setq default-input-method "MacOSX")
+  (setq default-input-method "MacOSX")
 
- ;; Make cut and paste work with the OS X clipboard
+  ;; Make cut and paste work with the OS X clipboard
 
- (defun ptrv/copy-from-osx ()
-   (shell-command-to-string "pbpaste"))
+  (defun ptrv/copy-from-osx ()
+    (shell-command-to-string "pbpaste"))
 
- (defun ptrv/paste-to-osx (text &optional push)
-   (let ((process-connection-type nil))
-     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-       (process-send-string proc text)
-       (process-send-eof proc))))
+  (defun ptrv/paste-to-osx (text &optional push)
+    (let ((process-connection-type nil))
+      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+        (process-send-string proc text)
+        (process-send-eof proc))))
 
- (when (not window-system)
-   (setq interprogram-cut-function 'ptrv/paste-to-osx)
-   (setq interprogram-paste-function 'ptrv/copy-from-osx))
+  (when (not window-system)
+    (setq interprogram-cut-function 'ptrv/paste-to-osx)
+    (setq interprogram-paste-function 'ptrv/copy-from-osx))
 
- ;; Work around a bug on OS X where system-name is a fully qualified
- ;; domain name
- (setq system-name (car (split-string system-name "\\.")))
+  ;; Work around a bug on OS X where system-name is a fully qualified
+  ;; domain name
+  (setq system-name (car (split-string system-name "\\.")))
 
- ;; Ignore .DS_Store files with ido mode
- (add-to-list 'ido-ignore-files "\\.DS_Store"))
+  ;; Ignore .DS_Store files with ido mode
+  (add-to-list 'ido-ignore-files "\\.DS_Store"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; linux
@@ -2071,8 +2079,9 @@ prompt for the command to use."
 (defun ptrv/sclang-mode-loader ()
   (unless (featurep 'sclang)
     (require 'sclang)
-    (sclang-mode)
-    (ptrv/sclang-mode-loader--remove)))
+    (ptrv/after sclang
+      (sclang-mode)
+      (ptrv/sclang-mode-loader--remove))))
 (defun ptrv/sclang-mode-loader--remove ()
   (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
           auto-mode-alist))
@@ -2082,7 +2091,8 @@ prompt for the command to use."
   (interactive)
   (if (require 'sclang nil t)
       (progn
-        (sclang-start)
+        (ptrv/after sclang-interp
+          (sclang-start))
         (ptrv/sclang-mode-loader--remove))
     (message "SCLang is not installed!")))
 
@@ -2255,7 +2265,7 @@ prompt for the command to use."
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
-          c-indent-level 4
+          ;;c-indent-level 4
           c-default-style "bsd"
           indent-tabs-mode nil)
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
