@@ -80,10 +80,10 @@
   `(eval-after-load ',mode
      '(progn ,@body)))
 
-(defmacro ptrv/with-library (symbol &rest body)
+(defmacro ptrv/with-library (feature &rest body)
   "Evaluate BODY only if require SYMBOL is successful."
   (declare (indent defun))
-  `(when (require ,symbol nil t)
+  `(when (require ',feature nil t)
      ,@body))
 
 (defconst ptrv/font-lock-keywords
@@ -409,7 +409,7 @@ file `PATTERNS'."
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
-(ptrv/with-library 'live-fontify-hex
+(ptrv/with-library live-fontify-hex
   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
@@ -509,7 +509,7 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; complete
-(ptrv/with-library 'auto-complete-config
+(ptrv/with-library auto-complete-config
   (ac-config-default)
   (ac-flyspell-workaround)
 
@@ -801,7 +801,7 @@ file `PATTERNS'."
 
 (setq ibuffer-show-empty-filter-groups nil)
 
-(ptrv/with-library 'ibuffer-git
+(ptrv/with-library ibuffer-git
   (setq ibuffer-formats
         '((mark modified read-only git-status-mini " "
                 (name 18 18 :left :elide)
@@ -897,7 +897,7 @@ file `PATTERNS'."
     (setq yas-prompt-functions '(yas-ido-prompt
                                  yas-x-prompt
                                  yas-completing-prompt))
-    (ptrv/with-library 'dropdown-list
+    (ptrv/with-library dropdown-list
       (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -907,7 +907,7 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; insert-time.el
-(ptrv/with-library 'insert-time
+(ptrv/with-library insert-time
   (setq insert-date-format "%Y-%m-%d")
   (setq insert-time-format "%H:%M:%S"))
 
@@ -1050,7 +1050,7 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
-(ptrv/with-library 'popwin
+(ptrv/with-library popwin
   (popwin-mode 1)
   (global-set-key (kbd "C-z") popwin:keymap)
 
@@ -1258,7 +1258,7 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; org2blog
-(ptrv/with-library 'org2blog-autoloads
+(ptrv/with-library org2blog-autoloads
   (ptrv/after org2blog
     (ptrv/after my-secrets
       (load "~/.org-blogs.el" 'noerror))))
@@ -1452,7 +1452,7 @@ file `PATTERNS'."
                            (car (split-string (getenv "GOPATH") ":"))
                            "/src/github.com/nsf/gocode/emacs"))
 
-  (ptrv/with-library 'go-autocomplete
+  (ptrv/with-library go-autocomplete
     (defface ac-go-mode-candidate-face
       '((t (:background "lightgray" :foreground "navy")))
       "Face for go-autocomplete candidate"
@@ -1546,7 +1546,7 @@ file `PATTERNS'."
                            (car (split-string (getenv "GOPATH") ":"))
                            "/src/github.com/dougm/goflymake"))
 
-  (ptrv/with-library 'go-flycheck
+  (ptrv/with-library go-flycheck
     (setq goflymake-debug nil)
 
     (ptrv/after flycheck
@@ -2270,7 +2270,7 @@ prompt for the command to use."
 ;; Hook auto-complete into clang
 (ptrv/after cc-mode
   (message "cc-mode config has been loaded !!!")
-  (ptrv/with-library 'auto-complete-clang-async
+  (ptrv/with-library auto-complete-clang-async
     (setq ac-clang-complete-executable
           (locate-user-emacs-file "site-lisp/emacs-clang-complete-async/clang-complete"))
     (when (not (file-exists-p ac-clang-complete-executable))
