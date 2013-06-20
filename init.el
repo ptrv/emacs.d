@@ -268,8 +268,7 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; PATH
-(ptrv/after exec-path-from-shell-autoloads
-  (exec-path-from-shell-initialize))
+(exec-path-from-shell-initialize)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; builtins
@@ -415,9 +414,8 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nyan-mode
-(ptrv/after nyan-mode-autoloads
-  (setq nyan-bar-length 16)
-  (nyan-mode 1))
+(setq nyan-bar-length 16)
+(nyan-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
@@ -433,13 +431,9 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido-ubiquitous
-(ptrv/after ido-ubiquitous-autoloads
-  ;; This needs to be set before turning ido-ubiquitous on because
-  ;; function exceptions get only disabled on initialization
+(ptrv/after ido-ubiquitous
   (dolist (func '(tmm-prompt erc-iswitchb))
-    (add-to-list 'ido-ubiquitous-function-exceptions func))
-
-  (ido-ubiquitous-mode 1)
+    (ido-ubiquitous-disable-in func))
 
   (dolist (cmd '(sh-set-shell
                  ispell-change-dictionary
@@ -461,21 +455,20 @@ file `PATTERNS'."
   ;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
   ;; (ido-ubiquitous-use-new-completing-read yas-expand 'yasnippet)
   (ido-ubiquitous-use-new-completing-read yas-visit-snippet-file 'yasnippet))
+(ido-ubiquitous-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smex
-(ptrv/after smex-autoloads
-  (setq smex-save-file (concat ptrv/tmp-dir "smex-items"))
-  (smex-initialize)
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  ;; This is your old M-x.
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(ptrv/after smex
+  (setq smex-save-file (concat ptrv/tmp-dir "smex-items")))
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; idomenu
-(ptrv/after idomenu-autoloads
-  (global-set-key (kbd "C-x C-i") 'idomenu))
+(global-set-key (kbd "C-x C-i") 'idomenu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Eshell
@@ -588,22 +581,19 @@ file `PATTERNS'."
 
   (ptrv/after elisp-slime-nav
     (define-key lisp-mode-shared-map (kbd "M-RET")
-      'elisp-slime-nav-describe-elisp-thing-at-point)))
+      'elisp-slime-nav-describe-elisp-thing-at-point))
+
+  (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
 
 (ptrv/after ielm
   (dolist (mode ptrv/emacs-lisp-common-modes)
     (add-hook 'ielm-mode-hook mode)))
 
-(ptrv/after mic-paren-autoloads
-  (paren-activate))
+(paren-activate)
 
-(ptrv/after nrepl-eval-sexp-fu-autoloads
-  (require 'highlight)
-  (require 'nrepl-eval-sexp-fu)
-  (setq nrepl-eval-sexp-fu-flash-duration 0.5))
-
-(ptrv/after lexbind-mode-autoloads
-  (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
+(require 'highlight)
+(require 'nrepl-eval-sexp-fu)
+(setq nrepl-eval-sexp-fu-flash-duration 0.5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clojure
@@ -673,75 +663,73 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nrepl
-(ptrv/after nrepl-autoloads
-  (setq nrepl-popup-stacktraces nil
-        nrepl-popup-stacktraces-in-repl nil
-        nrepl-port "4555")
+(setq nrepl-popup-stacktraces nil
+      nrepl-popup-stacktraces-in-repl nil
+      nrepl-port "4555")
 
-  (add-to-list 'same-window-buffer-names "*nrepl*")
+(add-to-list 'same-window-buffer-names "*nrepl*")
 
-  (ptrv/after nrepl
-    (add-hook 'nrepl-interaction-mode-hook
-              (lambda ()
-                (nrepl-turn-on-eldoc-mode)
-                (enable-paredit-mode)))
+(ptrv/after nrepl
+  (add-hook 'nrepl-interaction-mode-hook
+            (lambda ()
+              (nrepl-turn-on-eldoc-mode)
+              (enable-paredit-mode)))
 
-    (add-hook 'nrepl-mode-hook
-              (lambda ()
-                (nrepl-turn-on-eldoc-mode)
-                (enable-paredit-mode)
-                (define-key nrepl-mode-map
-                  (kbd "{") 'paredit-open-curly)
-                (define-key nrepl-mode-map
-                  (kbd "}") 'paredit-close-curly)))
+  (add-hook 'nrepl-mode-hook
+            (lambda ()
+              (nrepl-turn-on-eldoc-mode)
+              (enable-paredit-mode)
+              (define-key nrepl-mode-map
+                (kbd "{") 'paredit-open-curly)
+              (define-key nrepl-mode-map
+                (kbd "}") 'paredit-close-curly)))
 
-    ;; Show documentation/information with M-RET
-    (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
-    (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
+  ;; Show documentation/information with M-RET
+  (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
+  (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
-    ;;Auto Complete
-    (ptrv/after ac-nrepl-autoloads
-      (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-      (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup))
+  ;;Auto Complete
+  (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+  (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
 
-    (ptrv/after auto-complete
-      (add-to-list 'ac-modes 'nrepl-mode))
+  (ptrv/after auto-complete
+    (add-to-list 'ac-modes 'nrepl-mode))
 
-    ;; specify the print length to be 100 to stop infinite sequences killing things.
-    (defun live-nrepl-set-print-length ()
-      (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
-    (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
+  ;; specify the print length to be 100 to stop infinite sequences killing things.
+  (defun live-nrepl-set-print-length ()
+    (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
+  (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
 
-    ;; Region discovery fix
-    (defun nrepl-region-for-expression-at-point ()
-      "Return the start and end position of defun at point."
-      (when (and (live-paredit-top-level-p)
-                 (save-excursion
-                   (ignore-errors (forward-char))
-                   (live-paredit-top-level-p)))
-        (error "Not in a form"))
+  ;; Region discovery fix
+  (defun nrepl-region-for-expression-at-point ()
+    "Return the start and end position of defun at point."
+    (when (and (live-paredit-top-level-p)
+               (save-excursion
+                 (ignore-errors (forward-char))
+                 (live-paredit-top-level-p)))
+      (error "Not in a form"))
 
-      (save-excursion
-        (save-match-data
-          (ignore-errors (live-paredit-forward-down))
-          (paredit-forward-up)
-          (while (ignore-errors (paredit-forward-up) t))
-          (let ((end (point)))
-            (backward-sexp)
-            (list (point) end)))))
+    (save-excursion
+      (save-match-data
+        (ignore-errors (live-paredit-forward-down))
+        (paredit-forward-up)
+        (while (ignore-errors (paredit-forward-up) t))
+        (let ((end (point)))
+          (backward-sexp)
+          (list (point) end)))))
 
-    (when *is-windows*
-      (defun live-windows-hide-eol ()
-        "Do not show ^M in files containing mixed UNIX and DOS line endings."
-        (interactive)
-        (setq buffer-display-table (make-display-table))
-        (aset buffer-display-table ?\^M []))
-      (add-hook 'nrepl-mode-hook 'live-windows-hide-eol)
+  (when *is-windows*
+    (defun live-windows-hide-eol ()
+      "Do not show ^M in files containing mixed UNIX and DOS line endings."
+      (interactive)
+      (setq buffer-display-table (make-display-table))
+      (aset buffer-display-table ?\^M []))
+    (add-hook 'nrepl-mode-hook 'live-windows-hide-eol)
 
-      ;; Windows M-. navigation fix
-      (defun nrepl-jump-to-def (var)
-        "Jump to the definition of the var at point."
-        (let ((form (format "((clojure.core/juxt
+    ;; Windows M-. navigation fix
+    (defun nrepl-jump-to-def (var)
+      "Jump to the definition of the var at point."
+      (let ((form (format "((clojure.core/juxt
                          (comp (fn [s] (if (clojure.core/re-find #\"[Ww]indows\" (System/getProperty \"os.name\"))
                                            (.replace s \"file:/\" \"file:\")
                                            s))
@@ -749,11 +737,11 @@ file `PATTERNS'."
                                clojure.java.io/resource :file)
                          (comp clojure.core/str clojure.java.io/file :file) :line)
                         (clojure.core/meta (clojure.core/ns-resolve '%s '%s)))"
-                            (nrepl-current-ns) var)))
-          (nrepl-send-string form
-                             (nrepl-jump-to-def-handler (current-buffer))
-                             (nrepl-current-ns)
-                             (nrepl-current-tooling-session)))))))
+                          (nrepl-current-ns) var)))
+        (nrepl-send-string form
+                           (nrepl-jump-to-def-handler (current-buffer))
+                           (nrepl-current-ns)
+                           (nrepl-current-tooling-session))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tramp
@@ -815,11 +803,10 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gist
-(ptrv/after pcache-autoloads
-  (defvar pcache-directory
-    (let ((dir (file-name-as-directory (concat ptrv/tmp-dir "pcache"))))
-      (make-directory dir t)
-      dir)))
+(defvar pcache-directory
+  (let ((dir (file-name-as-directory (concat ptrv/tmp-dir "pcache"))))
+    (make-directory dir t)
+    dir))
 
 (ptrv/after gist
   (setq gist-view-gist t)
@@ -877,9 +864,9 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; git-messanger
-(ptrv/after git-messenger-autoloads
-  (setq git-messenger:show-detail t)
-  (global-set-key (kbd "C-x v p") 'git-messenger:popup-message))
+(ptrv/after git-messenger
+  (setq git-messenger:show-detail t))
+(global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; mercurial
@@ -887,23 +874,21 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; yasnippet
-(ptrv/after yasnippet-autoloads
-  (yas-global-mode 1)
-  (ptrv/after yasnippet
-    (define-key yas-keymap [(tab)] nil)
-    (define-key yas-keymap (kbd "TAB") nil)
-    (define-key yas-keymap [(control tab)] 'yas-next-field-or-maybe-expand)
-    (define-key yas-keymap (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
-    (setq yas-prompt-functions '(yas-ido-prompt
-                                 yas-x-prompt
-                                 yas-completing-prompt))
-    (ptrv/with-library dropdown-list
-      (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
+(yas-global-mode 1)
+(ptrv/after yasnippet
+  (define-key yas-keymap [(tab)] nil)
+  (define-key yas-keymap (kbd "TAB") nil)
+  (define-key yas-keymap [(control tab)] 'yas-next-field-or-maybe-expand)
+  (define-key yas-keymap (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
+  (setq yas-prompt-functions '(yas-ido-prompt
+                               yas-x-prompt
+                               yas-completing-prompt))
+  (ptrv/with-library dropdown-list
+    (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; undo-tree
-(ptrv/after undo-tree-autoloads
-  (global-undo-tree-mode))
+(global-undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; insert-time.el
@@ -971,41 +956,38 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iflipb
-(ptrv/after iflipb-autoloads
-  (setq iflipb-ignore-buffers
-        '("*Ack-and-a-half*"
-          "*Help*"
-          "*Compile-Log*"
-          "*Ibuffer*"
-          "*Messages*"
-          "*scratch*"
-          "*Completions*"
-          "*magit"
-          "*Pymacs*"
-          "*clang-complete*"
-          "*compilation*"
-          "*Packages*"
-          "*file-index*"
-          " output*"
-          "*tramp/"
-          "*project-status*"
-          "SCLang:PostBuffer*"))
+(setq iflipb-ignore-buffers
+      '("*Ack-and-a-half*"
+        "*Help*"
+        "*Compile-Log*"
+        "*Ibuffer*"
+        "*Messages*"
+        "*scratch*"
+        "*Completions*"
+        "*magit"
+        "*Pymacs*"
+        "*clang-complete*"
+        "*compilation*"
+        "*Packages*"
+        "*file-index*"
+        " output*"
+        "*tramp/"
+        "*project-status*"
+        "SCLang:PostBuffer*"))
 
-  (setq iflipb-wrap-around t)
-  (ptrv/after iflipb-autoloads
-    (global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
-    (global-set-key (kbd "C-<prior>") 'iflipb-previous-buffer)
-    (global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
-    (global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)))
+(setq iflipb-wrap-around t)
+(global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
+(global-set-key (kbd "C-<prior>") 'iflipb-previous-buffer)
+(global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
+(global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Ack and Ag
 ;; ack-and-a-half
-(ptrv/after ack-and-a-half-autoloads
-  (defalias 'ack 'ack-and-a-half)
-  (defalias 'ack-same 'ack-and-a-half-same)
-  (defalias 'ack-find-file 'ack-and-a-half-find-file)
-  (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
+(defalias 'ack 'ack-and-a-half)
+(defalias 'ack-same 'ack-and-a-half-same)
+(defalias 'ack-find-file 'ack-and-a-half-find-file)
+(defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
 
 (defvar ptrv/ack-map
   (let ((map (make-sparse-keymap)))
@@ -1017,36 +999,30 @@ file `PATTERNS'."
   "Keymap for Ack.")
 
 ;; the silver searcher
-(ptrv/after ag-autoloads
-  (setq ag-highlight-search t))
+(setq ag-highlight-search t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
-(ptrv/after edit-server-autoloads
-  (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-  (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
-  (edit-server-start)
-  (setq edit-server-url-major-mode-alist
-        '(("github\\.com" . gfm-mode))))
-
+(ptrv/after edit-server
+  (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))))
+(add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
+(add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
+(edit-server-start)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iedit
-(ptrv/after iedit-autoloads
-  (setq iedit-toggle-key-default (kbd "C-;"))
-  (define-key global-map iedit-toggle-key-default 'iedit-mode)
-  (define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
-  (define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
-  (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function))
+(setq iedit-toggle-key-default (kbd "C-;"))
+(define-key global-map iedit-toggle-key-default 'iedit-mode)
+(define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
+(define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
+(define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smooth-scrolling
-(ptrv/after smooth-scrolling-autoloads
-  (setq smooth-scroll-margin 5))
+(setq smooth-scroll-margin 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; google-this
-(ptrv/after google-this-autoloads
-  (google-this-mode 1))
+(google-this-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; popwin
@@ -1242,8 +1218,7 @@ file `PATTERNS'."
      (ditaa . t)
      (dot . t)
      (plantuml . t)
-     (gnuplot . t)
-     ))
+     (gnuplot . t)))
 
   ;; Use fundamental mode when editing plantuml blocks with C-c '
   (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
@@ -1432,10 +1407,9 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; pandoc
-(ptrv/after pandoc-mode-autoloads
-  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-  (add-hook 'markdown-mode-hook 'turn-on-pandoc)
-  (ptrv/add-auto-mode 'markdown-mode "\\.text$"))
+(add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+(add-hook 'markdown-mode-hook 'turn-on-pandoc)
+(ptrv/add-auto-mode 'markdown-mode "\\.text$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; golang
@@ -1443,9 +1417,8 @@ file `PATTERNS'."
 (ptrv/after go-mode
   (message "go-mode config has been loaded !!!")
 
-  (ptrv/after exec-path-from-shell-autoloads
-    (exec-path-from-shell-copy-env "GOROOT")
-    (exec-path-from-shell-copy-env "GOPATH"))
+  (exec-path-from-shell-copy-env "GOROOT")
+  (exec-path-from-shell-copy-env "GOPATH")
 
   ;; go-lang completion
   (add-to-list 'load-path (concat
@@ -1786,24 +1759,20 @@ prompt for the command to use."
   "Keymap for file functions.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; projectile
-(ptrv/after projectile-autoloads
-  (setq projectile-known-projects-file (concat
-                                        ptrv/tmp-dir
-                                        "projectile-bookmarks.eld")
-        projectile-cache-file (concat ptrv/tmp-dir "projectile.cache"))
-
-  (projectile-global-mode)
-
-  (ptrv/after projectile
-    (dolist (file '(".ropeproject" "setup.py"))
-      (add-to-list 'projectile-project-root-files file t))))
+;;;; projectil
+(ptrv/after projectile
+  (dolist (file '(".ropeproject" "setup.py"))
+    (add-to-list 'projectile-project-root-files file t)))
+(setq projectile-known-projects-file (concat
+                                      ptrv/tmp-dir
+                                      "projectile-bookmarks.eld")
+      projectile-cache-file (concat ptrv/tmp-dir "projectile.cache"))
+(projectile-global-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffip
-(ptrv/after find-file-in-project-autoloads
-  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
-  (define-key ptrv/file-commands-map "f" 'ffip))
+(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
+(define-key ptrv/file-commands-map "f" 'ffip)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; processing
@@ -1874,21 +1843,20 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; flycheck
-(ptrv/after flycheck-autoloads
-  (unless (and (>= emacs-major-version 24)
-               (>= emacs-minor-version 3))
-    (add-to-list 'debug-ignored-errors "\\`No more Flycheck errors\\'")
-    (add-to-list 'debug-ignored-errors "\\`Flycheck mode disabled\\'")
-    (add-to-list 'debug-ignored-errors "\\`Configured syntax checker .* cannot be used\\'"))
+(unless (and (>= emacs-major-version 24)
+             (>= emacs-minor-version 3))
+  (add-to-list 'debug-ignored-errors "\\`No more Flycheck errors\\'")
+  (add-to-list 'debug-ignored-errors "\\`Flycheck mode disabled\\'")
+  (add-to-list 'debug-ignored-errors "\\`Configured syntax checker .* cannot be used\\'"))
 
-  (add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
-  ;; disable flycheck for some modes
-  (dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook #'(lambda () (flycheck-mode -1))))
+;; disable flycheck for some modes
+(dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
+  (add-hook hook #'(lambda () (flycheck-mode -1))))
 
-  (ptrv/after flycheck
-    (setq flycheck-highlighting-mode 'lines)))
+(ptrv/after flycheck
+  (setq flycheck-highlighting-mode 'lines))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; flymake
@@ -1967,35 +1935,33 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; autopair
-(ptrv/after autopair-autoloads
-  (autopair-global-mode 1)
+(autopair-global-mode 1)
 
-  (defadvice enable-paredit-mode (before disable-autopair activate)
-    (setq autopair-dont-activate t)
-    (autopair-mode -1))
+(defadvice enable-paredit-mode (before disable-autopair activate)
+  (setq autopair-dont-activate t)
+  (autopair-mode -1))
 
-  (add-hook 'python-mode-hook
-            #'(lambda ()
-                (setq autopair-handle-action-fns
-                      (list #'autopair-default-handle-action
-                            #'autopair-python-triple-quote-action)))))
+(add-hook 'python-mode-hook
+          #'(lambda ()
+              (setq autopair-handle-action-fns
+                    (list #'autopair-default-handle-action
+                          #'autopair-python-triple-quote-action))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; clean-mode-line
-(ptrv/after diminish-autoloads
-  (ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
-  (ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
-  (ptrv/after paredit (diminish 'paredit-mode " Φ"))
-  (ptrv/after eldoc (diminish 'eldoc-mode))
-  (ptrv/after abbrev (diminish 'abbrev-mode))
-  (ptrv/after undo-tree (diminish 'undo-tree-mode " τ"))
-  (ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
-  (ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ"))
-  (ptrv/after simple (diminish 'auto-fill-function " φ"))
-  (ptrv/after autopair (diminish 'autopair-mode))
-  (ptrv/after projectile (diminish 'projectile-mode))
-  (ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
-  (ptrv/after google-this (diminish 'google-this-mode)))
+(ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
+(ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
+(ptrv/after paredit (diminish 'paredit-mode " Φ"))
+(ptrv/after eldoc (diminish 'eldoc-mode))
+(ptrv/after abbrev (diminish 'abbrev-mode))
+(ptrv/after undo-tree (diminish 'undo-tree-mode " τ"))
+(ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
+(ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ"))
+(ptrv/after simple (diminish 'auto-fill-function " φ"))
+(ptrv/after autopair (diminish 'autopair-mode))
+(ptrv/after projectile (diminish 'projectile-mode))
+(ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
+(ptrv/after google-this (diminish 'google-this-mode))
 
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -2182,16 +2148,15 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elpy
 (ptrv/after python
-  (ptrv/after elpy-autoloads
-    (setq elpy-default-minor-modes '(eldoc-mode
-                                     highlight-indentation-mode
-                                     yas-minor-mode
-                                     auto-complete-mode))
-    (elpy-enable t)
+  (setq elpy-default-minor-modes '(eldoc-mode
+                                   highlight-indentation-mode
+                                   yas-minor-mode
+                                   auto-complete-mode))
+  (elpy-enable t)
 
-    (add-hook 'elpy-mode-hook #'(lambda ()
-                                  (when (file-remote-p (buffer-file-name))
-                                    (elpy-disable))))))
+  (add-hook 'elpy-mode-hook #'(lambda ()
+                                (when (file-remote-p (buffer-file-name))
+                                  (elpy-disable)))))
 
 (ptrv/after elpy
   (let ((map elpy-mode-map))
@@ -2229,24 +2194,22 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; python
 (ptrv/after python
-  (ptrv/after exec-path-from-shell-autoloads
-    (exec-path-from-shell-copy-env "PYTHONPATH"))
+  (exec-path-from-shell-copy-env "PYTHONPATH")
 
   ;; pytest
-  (ptrv/after pytest-autoloads
-    (autoload 'pytest-all "pytest" nil t)
-    (autoload 'pytest-module "pytest" nil t)
-    (autoload 'pytest-one "pytest" nil t)
-    (autoload 'pytest-directory "pytest" nil t)
-    (setq pytest-global-name "py.test")
-    (let ((map python-mode-map))
-      (define-key map (kbd "C-c C-t a") 'pytest-all)
-      (define-key map (kbd "C-c C-t m") 'pytest-module)
-      (define-key map (kbd "C-c C-t o") 'pytest-one)
-      (define-key map (kbd "C-c C-t d") 'pytest-directory)
-      (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
-      (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
-      (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one)))
+  (autoload 'pytest-all "pytest" nil t)
+  (autoload 'pytest-module "pytest" nil t)
+  (autoload 'pytest-one "pytest" nil t)
+  (autoload 'pytest-directory "pytest" nil t)
+  (setq pytest-global-name "py.test")
+  (let ((map python-mode-map))
+    (define-key map (kbd "C-c C-t a") 'pytest-all)
+    (define-key map (kbd "C-c C-t m") 'pytest-module)
+    (define-key map (kbd "C-c C-t o") 'pytest-one)
+    (define-key map (kbd "C-c C-t d") 'pytest-directory)
+    (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
+    (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
+    (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one))
 
   ;; info
   (autoload 'info-lookup-add-help "info-look" nil nil)
@@ -2257,9 +2220,8 @@ prompt for the command to use."
    '(("(python)Index" nil "")))
 
   ;; pylint
-  (ptrv/after pylint-autoloads
-    (add-hook 'python-mode-hook 'pylint-add-menu-items)
-    (add-hook 'python-mode-hook 'pylint-add-key-bindings)))
+  (add-hook 'python-mode-hook 'pylint-add-menu-items)
+  (add-hook 'python-mode-hook 'pylint-add-key-bindings))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; cc-mode
@@ -2324,30 +2286,26 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; multiple-cursors
-(ptrv/after multiple-cursors-autoloads
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; expand-region
-(ptrv/after expand-region-autoloads
-  (global-set-key (kbd "C-=") 'er/expand-region))
+(global-set-key (kbd "C-=") 'er/expand-region)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; key-chord
-(ptrv/after key-chord-autoloads
-  (key-chord-mode 1)
-  (key-chord-define-global "JJ" 'switch-to-previous-buffer)
-  (key-chord-define-global "KK" 'winner-undo)
-  (key-chord-define-global "LL" 'winner-redo)
-  (key-chord-define-global "BB" 'ido-switch-buffer))
+(key-chord-mode 1)
+(key-chord-define-global "JJ" 'switch-to-previous-buffer)
+(key-chord-define-global "KK" 'winner-undo)
+(key-chord-define-global "LL" 'winner-redo)
+(key-chord-define-global "BB" 'ido-switch-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Ace jump mode
-(ptrv/after ace-jump-mode-autoloads
-  (global-set-key (kbd "C-o") 'ace-jump-mode))
+(global-set-key (kbd "C-o") 'ace-jump-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; bindings
@@ -2362,8 +2320,7 @@ prompt for the command to use."
 (global-set-key [f8] 'delete-window)
 (global-set-key [f9] 'delete-other-windows)
 
-(ptrv/after kill-ring-search-autoloads
-  (global-set-key (kbd "M-C-y") 'kill-ring-search))
+(global-set-key (kbd "M-C-y") 'kill-ring-search)
 
 ;;diff shortcuts
 (defvar ptrv/diff-map
