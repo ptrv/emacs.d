@@ -2252,7 +2252,7 @@ prompt for the command to use."
     ;; Add Qt4 includes to load path if installed
 
     (when (file-exists-p "/usr/include/qt4")
-      (setq ac-clang-flags
+      (setq ac-clang-cflags
             (mapcar (lambda (f) (concat "-I" f))
                     (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
