@@ -716,8 +716,8 @@ file `PATTERNS'."
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
   ;;Auto Complete
-  (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-  (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
+  (dolist (hook '(nrepl-mode-hook nrepl-interaction-mode-hook))
+    (add-hook hook 'ac-nrepl-setup))
 
   (ptrv/after auto-complete
     (add-to-list 'ac-modes 'nrepl-mode))
@@ -2261,7 +2261,8 @@ prompt for the command to use."
       (unless (string-match ".*flycheck.*" buffer-file-name)
         (setq ac-sources '(ac-source-clang-async))
         (ac-clang-launch-completion-process)))
-    (add-hook 'c++-mode-hook 'ptrv/clang-complete-init))
+    (dolist (hook '(c-mode-hook c++-mode-hook))
+      (add-hook hook 'ptrv/clang-complete-init)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
@@ -2270,8 +2271,8 @@ prompt for the command to use."
           indent-tabs-mode nil)
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
-  (add-hook 'c-mode-hook 'ptrv/cc-mode-init)
-  (add-hook 'c++-mode-hook 'ptrv/cc-mode-init))
+  (dolist (hook '(c-mode-hook c++-mode-hook))
+    (add-hook hook 'ptrv/cc-mode-init)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; x11
