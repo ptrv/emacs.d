@@ -149,19 +149,22 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; package
-(package-initialize)
+(require 'package)
+(defadvice package-compute-transaction
+  (before
+   package-compute-transaction-reverse (package-list requirements)
+   activate compile)
+  "reverse the requirements"
+  (setq requirements (reverse requirements))
+  (print requirements))
+
 (dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
                   ("marmalade" . "http://marmalade-repo.org/packages/")
                   ("elpa" . "http://tromey.com/elpa/")
                   ("org" . "http://orgmode.org/elpa/")))
   (add-to-list 'package-archives source t))
 
-(defadvice package-compute-transaction (before package-compute-transaction-reverse
-                                               (package-list requirements)
-                                               activate compile)
-  "reverse the requirements"
-  (setq requirements (reverse requirements))
-  (print requirements))
+(package-initialize)
 
 (when (not package-archive-contents)
   (package-refresh-contents))
