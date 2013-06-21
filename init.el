@@ -1066,7 +1066,6 @@ file `PATTERNS'."
           ("*nrepl-src*" :height 20 :stick t)
           ("*Kill Ring*" :height 30)
           ("*project-status*" :noselect t)
-          ("*Compile-Log*" :height 20 :stick t)
           ("*pytest*" :noselect t)
           ("*Python*" :stick t)
           ("*Python Doc*" :noselect t)
