@@ -2089,7 +2089,7 @@ prompt for the command to use."
   (interactive)
   (if (require 'sclang nil t)
       (progn
-        (ptrv/after sclang-interp
+        (ptrv/after sclang
           (sclang-start))
         (ptrv/sclang-mode-loader--remove))
     (message "SCLang is not installed!")))
