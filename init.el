@@ -1288,7 +1288,7 @@ file `PATTERNS'."
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
 
   (cond (*is-linux*
-         (add-to-list 'TeX-expand-list '("%C" (lambda nil (buffer-file-name))) t)
+         (add-to-list 'TeX-expand-list '("%C" (lambda () (buffer-file-name))) t)
          (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
          (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
         (*is-mac*
