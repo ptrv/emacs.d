@@ -1348,7 +1348,7 @@ file `PATTERNS'."
   "\\.yml$" "\\.yaml$" "\\.ya?ml$")
 
 ;; Snippets
-(ptrv/add-auto-mode 'snippet-mode "snippets" "\\.yasnippet$")
+(ptrv/add-auto-mode 'snippet-mode "snippets/" "\\.yasnippet$")
 
 ;; pd-mode
 (autoload 'pd-mode "pd-mode" "autoloaded" t)
