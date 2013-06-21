@@ -2132,25 +2132,29 @@ prompt for the command to use."
 
   (add-hook 'sclang-mode-hook 'supercollider-init)
 
-  (ptrv/after sclang
-    (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
-    ;; Raise all supercollider windows.
-    (define-key sclang-mode-map (kbd "C-c F")
-      (lambda ()
-        (interactive)
-        (sclang-eval-string "Window.allWindows.do(_.front);")))
-    (define-key sclang-server-key-map [?l]
-      (lambda ()
-        (interactive)
-        (sclang-eval-string "Server.default.meter;")))
-    (define-key sclang-server-key-map [?s]
-      (lambda ()
-        (interactive)
-        (sclang-eval-string "Server.default.scope(numChannels: 2);")))
-    (define-key sclang-server-key-map [?h]
-      (lambda ()
-        (interactive)
-        (sclang-eval-string "HelperWindow.new;")))))
+  (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
+  ;; Raise all supercollider windows.
+  (define-key sclang-mode-map (kbd "C-c F")
+    (lambda ()
+      (interactive)
+      (sclang-eval-string "Window.allWindows.do(_.front);")))
+  (define-key sclang-server-key-map [?l]
+    (lambda ()
+      (interactive)
+      (sclang-eval-string "Server.default.meter;")))
+  (define-key sclang-server-key-map [?s]
+    (lambda ()
+      (interactive)
+      (sclang-eval-string "Server.default.scope(numChannels: 2);")))
+  (define-key sclang-server-key-map [?h]
+    (lambda ()
+      (interactive)
+      (sclang-eval-string "HelperWindow.new;")))
+
+  ;; snippets
+  (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
+  (ptrv/after yasnippet
+    (sclang-snippets-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; elpy
