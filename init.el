@@ -1164,15 +1164,12 @@ file `PATTERNS'."
         org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
 
   ;; yasnippet workaround
-  (ptrv/after yasnipptet
-    (defun yas/org-very-safe-expand ()
+  (ptrv/after yasnippet
+    (defun yas-org-very-safe-expand ()
       (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
 
     (defun org-mode-yasnippet-workaround ()
-      (make-variable-buffer-local 'yas/trigger-key)
-      (setq yas-trigger-key [tab])
-      (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-      (define-key yas-keymap [tab] 'yas-next-field))
+      (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
     (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround))
 
   (defun org-mode-init ()
