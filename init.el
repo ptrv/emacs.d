@@ -485,6 +485,7 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; smex
 (global-set-key (kbd "M-x") 'smex)
+(autoload 'smex-major-mode-commands "smex" nil t)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (ptrv/after smex
   (setq smex-save-file (concat ptrv/tmp-dir "smex-items")))
