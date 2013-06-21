@@ -2251,11 +2251,10 @@ prompt for the command to use."
     ;;   (warn (concat "The clang-complete executable doesn't exist - please run "
     ;;                 dotfiles-dir "setup.sh to compile it.")))
     ;; Add Qt4 includes to load path if installed
-
     (when (file-exists-p "/usr/include/qt4")
-      (setq ac-clang-cflags
-            (mapcar (lambda (f) (concat "-I" f))
-                    (directory-files "/usr/include/qt4" t "Qt\\w+"))))
+      (setq-default ac-clang-cflags
+                    (mapcar (lambda (f) (concat "-I" f))
+                            (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
     (defun ptrv/clang-complete-init ()
       (unless (string-match ".*flycheck.*" buffer-file-name)
