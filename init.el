@@ -1237,6 +1237,9 @@ file `PATTERNS'."
   (ptrv/after ox
     (load "~/.org-publish-projects.el" 'noerror)))
 
+;; autoload org-bookmark-jump-unhide to fix compile warning
+(autoload 'org-bookmark-jump-unhide "org" nil nil)
+
 (ptrv/after calendar
   (setq calendar-week-start-day 1))
 
@@ -1620,9 +1623,9 @@ If ARG is not nil, create package in current directory"
     (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
                                     "324" "329" "332" "333" "353" "477"))))
 
+(make-variable-buffer-local 'erc-fill-column)
 (ptrv/after erc
   ;;change wrap width when window is resized
-  (make-variable-buffer-local 'erc-fill-column)
   (add-hook 'window-configuration-change-hook
             '(lambda ()
                (save-excursion
