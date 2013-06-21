@@ -1289,14 +1289,9 @@ file `PATTERNS'."
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
 
   (cond (*is-linux*
-         (defun okular-make-url ()
-           (concat
-            "file://" (expand-file-name (funcall file "pdf" t)
-                                        (file-name-directory (TeX-master-file)))
-            "#src:" (TeX-current-line) (buffer-file-name)))
-         (setq TeX-view-program-list '(("Okular" "okular --unique %u")))
-         (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular")))
-         (add-to-list 'TeX-expand-list '("%u" okular-make-url) t))
+         (add-to-list 'TeX-expand-list '("%C" (lambda nil (buffer-file-name))) t)
+         (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
+         (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
         (*is-mac*
          (setq TeX-view-program-selection '((output-pdf "Skim")))
          (setq TeX-view-program-list
