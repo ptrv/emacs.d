@@ -108,13 +108,13 @@ FEATURE may be a named feature or a file name, see
 
 (defconst ptrv/font-lock-keywords
   `((,(concat "(" (regexp-opt '("ptrv/after"
-                                "ptrv/with-library")
+                                "ptrv/with-library"
+                                "ptrv/add-auto-mode")
                               'symbols)
-              "\\s-+\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
+              "\\>[ \t']*\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
      (1 font-lock-keyword-face)
-     (2 font-lock-constant-face nil t))
-    (,(concat "(" (regexp-opt '("ptrv/add-auto-mode"
-                                "with-eval-after-load")
+     (2 font-lock-constant-face))
+    (,(concat "(" (regexp-opt '("with-eval-after-load")
                               'symbols))
      (1 font-lock-keyword-face))))
 
