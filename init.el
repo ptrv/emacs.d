@@ -2676,8 +2676,9 @@ If mark is activate, duplicate region lines below."
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
   (interactive)
-  (let ((line-numbers-off-p (or (not (boundp 'linum-mode))
-                                (not linum-mode))))
+  (let ((line-numbers-off-p (if (boundp 'linum-mode)
+                                (not linum-mode)
+                              t)))
     (unwind-protect
         (progn
           (when line-numbers-off-p
