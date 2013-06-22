@@ -1757,9 +1757,10 @@ prompt for the command to use."
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
     (define-key map "i" #'ptrv/find-user-init-file)
-    (define-key map "I" #'ptrv/byte-recompile-init)
+    (define-key map (kbd "b i") #'ptrv/byte-recompile-init)
     (define-key map (kbd "b s") #'ptrv/byte-recompile-site-lisp)
     (define-key map (kbd "b e") #'ptrv/byte-recompile-elpa)
+    (define-key map (kbd "b h") #'ptrv/byte-recompile-home)
     map)
   "Keymap for file functions.")
 
