@@ -2677,12 +2677,15 @@ If mark is activate, duplicate region lines below."
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
   (interactive)
-  (unwind-protect
-      (progn
-        (linum-mode 1)
-        (goto-char (point-min))
-        (forward-line (1- (read-number "Goto line: "))))
-    (linum-mode -1)))
+  (let ((line-numbers-off-p (or (not (boundp 'linum-mode))
+                                (not linum-mode))))
+    (unwind-protect
+        (progn
+          (when line-numbers-off-p
+            (linum-mode 1))
+          (call-interactively 'goto-line))
+      (when line-numbers-off-p
+        (linum-mode -1)))))
 
 (defun toggle-window-split ()
   (interactive)
