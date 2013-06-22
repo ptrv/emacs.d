@@ -1701,8 +1701,12 @@ prompt for the command to use."
   (let ((command (unless arg (ptrv/get-standard-open-command))))
     (unless command
       (setq command (read-shell-command "Open current file with: ")))
-    (shell-command (concat command " "
-                           (shell-quote-argument (buffer-file-name))))))
+    (cond
+     (*is-linux*
+      (let ((process-connection-type nil))
+        (start-process "" nil command (shell-quote-argument (buffer-file-name)))))
+     (*is-mac*
+      (shell-command (concat command " " (shell-quote-argument (buffer-file-name))))))))
 
 ;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
 (defun ptrv/copy-file-name-to-clipboard ()
