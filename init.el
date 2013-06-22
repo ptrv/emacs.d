@@ -381,7 +381,7 @@ file `PATTERNS'."
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
 ;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
-(ptrv/after cua-mode
+(ptrv/after cua-base
   (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
