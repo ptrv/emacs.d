@@ -1708,6 +1708,20 @@ prompt for the command to use."
      (*is-mac*
       (shell-command (concat command " " (shell-quote-argument (buffer-file-name))))))))
 
+(defun ptrv/launch-directory ()
+  "Open parent directory in external file manager."
+  (interactive)
+  (let ((command (ptrv/get-standard-open-command))
+        (dir (if (buffer-file-name)
+                 (file-name-directory (buffer-file-name))
+                (expand-file-name default-directory))))
+    (cond
+     (*is-linux*
+      (let ((process-connection-type nil))
+        (start-process "" nil command dir)))
+     (*is-mac*
+      (shell-command (concat command " " dir))))))
+
 ;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
 (defun ptrv/copy-file-name-to-clipboard ()
   "Copy the current buffer file name to the clipboard."
@@ -1757,6 +1771,7 @@ prompt for the command to use."
 (defvar ptrv/file-commands-map
   (let ((map (make-sparse-keymap)))
     (define-key map "o" #'ptrv/open-with)
+    (define-key map "d" #'ptrv/launch-directory)
     (define-key map "R" #'ptrv/rename-current-buffer-file)
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
