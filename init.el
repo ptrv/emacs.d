@@ -1757,6 +1757,7 @@ prompt for the command to use."
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
     (define-key map "i" #'ptrv/find-user-init-file)
+    (define-key map "I" #'ptrv/byte-recompile-init)
     (define-key map (kbd "b s") #'ptrv/byte-recompile-site-lisp)
     (define-key map (kbd "b e") #'ptrv/byte-recompile-elpa)
     map)
@@ -2516,14 +2517,22 @@ end of the line."
   (rotate-windows-helper (window-list) (window-buffer (car (window-list))))
   (select-window (car (last (window-list)))))
 
-;; Makes load time faster.
 (defun ptrv/byte-recompile-site-lisp ()
   (interactive)
-  (byte-recompile-directory "~/.emacs.d/site-lisp" 0))
+  (byte-recompile-directory (locate-user-emacs-file "site-lisp") 0))
 
 (defun ptrv/byte-recompile-elpa ()
   (interactive)
-  (byte-recompile-directory "~/.emacs.d/elpa" 0))
+  (when (boundp 'package-user-dir)
+    (byte-recompile-directory package-user-dir 0)))
+
+(defun ptrv/byte-recompile-init ()
+  (interactive)
+  (byte-recompile-file (locate-user-emacs-file "init.el") t 0))
+
+(defun ptrv/byte-recompile-home ()
+  (interactive)
+  (byte-recompile-directory user-emacs-directory 0))
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil
