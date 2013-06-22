@@ -2016,7 +2016,16 @@ prompt for the command to use."
   (setq system-name (car (split-string system-name "\\.")))
 
   ;; Ignore .DS_Store files with ido mode
-  (add-to-list 'ido-ignore-files "\\.DS_Store"))
+  (add-to-list 'ido-ignore-files "\\.DS_Store")
+
+  ;;GNU ls and find
+  (let ((gls (executable-find "gls"))
+        (gfind (executable-find "gfind")))
+    (if gls
+        (setq insert-directory-program gls)
+      (message "GNU coreutils not found. Install coreutils with homebrew."))
+    (when gfind
+      (setq find-program gfind))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; linux
