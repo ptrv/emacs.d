@@ -2254,24 +2254,23 @@ prompt for the command to use."
 ;; Hook auto-complete into clang
 (ptrv/after cc-mode
   (message "cc-mode config has been loaded !!!")
-  (when *is-linux*
-    (ptrv/with-library auto-complete-clang-async
-      (setq ac-clang-complete-executable
-            (locate-user-emacs-file "site-lisp/emacs-clang-complete-async/clang-complete"))
-      (when (not (file-exists-p ac-clang-complete-executable))
-        (warn "The clang-complete executable doesn't exist"))
-      ;; Add Qt4 includes to load path if installed
-      (when (file-exists-p "/usr/include/qt4")
-        (setq-default ac-clang-cflags
-                      (mapcar (lambda (f) (concat "-I" f))
-                              (directory-files "/usr/include/qt4" t "Qt\\w+"))))
+  (ptrv/with-library auto-complete-clang-async
+    (setq ac-clang-complete-executable
+          (locate-user-emacs-file "site-lisp/emacs-clang-complete-async/clang-complete"))
+    (when (not (file-exists-p ac-clang-complete-executable))
+      (warn "The clang-complete executable doesn't exist"))
+    ;; Add Qt4 includes to load path if installed
+    (when (file-exists-p "/usr/include/qt4")
+      (setq-default ac-clang-cflags
+                    (mapcar (lambda (f) (concat "-I" f))
+                            (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
-      (defun ptrv/clang-complete-init ()
-        (unless (string-match ".*flycheck.*" buffer-file-name)
-          (setq ac-sources '(ac-source-clang-async))
-          (ac-clang-launch-completion-process)))
-      (dolist (hook '(c-mode-hook c++-mode-hook))
-        (add-hook hook 'ptrv/clang-complete-init))))
+    (defun ptrv/clang-complete-init ()
+      (unless (string-match ".*flycheck.*" buffer-file-name)
+        (setq ac-sources '(ac-source-clang-async))
+        (ac-clang-launch-completion-process)))
+    (dolist (hook '(c-mode-hook c++-mode-hook))
+      (add-hook hook 'ptrv/clang-complete-init)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
