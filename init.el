@@ -1082,8 +1082,9 @@ file `PATTERNS'."
 (setq global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
 
-(custom-set-variables
- '(tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
+(customize-set-variable
+ 'tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
+                    68 72 76 80 84 88 92 96 100 104 108 112 116 120))
 
 ;; Do not allow to kill the *scratch* buffer
 (defvar unkillable-scratch-buffer-erase)
@@ -1332,8 +1333,8 @@ file `PATTERNS'."
         reftex-save-parse-info t
         reftex-use-multiple-selection-buffers t)
 
-  (custom-set-variables
-   '(reftex-ref-style-default-list '("Hyperref"))))
+  (customize-set-variable
+   'reftex-ref-style-default-list '("Hyperref")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
