@@ -380,8 +380,7 @@ file `PATTERNS'."
 (add-hook 'before-save-hook 'ptrv/cleanup-whitespace)
 
 ;; disabled commands
-(put 'downcase-region 'disabled nil)
-(put 'updacase-region 'disabled nil)
+(setq disabled-command-function nil)
 
 ;;enable cua-mode for rectangular selections
 ;; (cua-mode 1)
