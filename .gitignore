@@ -10,3 +10,4 @@ eshell/lastdir
 
 # manually installed stable org-mode
 site-lisp/_extras/org-*
+/locals.el

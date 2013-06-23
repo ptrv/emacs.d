@@ -2868,13 +2868,13 @@ Create a new ielm process if required."
   (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; local settings
-(load "~/.emacs-locals.el" 'noerror)
-(require 'my-secrets)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; custom settings
 (load custom-file 'noerror)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; local settings
+(load (locate-user-emacs-file "locals.el") 'noerror)
+(require 'my-secrets)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; welcome-message stuff
