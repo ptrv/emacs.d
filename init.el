@@ -336,17 +336,18 @@ file `PATTERNS'."
       save-interprogram-paste-before-kill t
       apropos-do-all t
       mouse-yank-at-point t
-      ;;recentf
-      recentf-save-file (concat ptrv/tmp-dir "recentf")
-      recentf-max-saved-items 100
       url-configuration-directory (concat ptrv/tmp-dir "url"))
 
 (auto-insert-mode 1)
 (auto-compression-mode t)
 (show-paren-mode 1)
-(recentf-mode t)
 (winner-mode 1)
 (windmove-default-keybindings 'super)
+
+(ptrv/after recentf
+  (setq recentf-save-file (concat ptrv/tmp-dir "recentf")
+        recentf-max-saved-items 100))
+(recentf-mode t)
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward
@@ -449,14 +450,15 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ido
+(ptrv/after ido
+  (setq ido-enable-prefix nil
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-max-prospects 10
+        ido-default-file-method 'selected-window
+        ido-max-directory-size 100000
+        ido-save-directory-list-file (concat ptrv/tmp-dir "ido.last")))
 (ido-mode t)
-(setq ido-enable-prefix nil
-      ido-enable-flex-matching t
-      ido-create-new-buffer 'always
-      ido-max-prospects 10
-      ido-default-file-method 'selected-window
-      ido-max-directory-size 100000
-      ido-save-directory-list-file (concat ptrv/tmp-dir "ido.last"))
 (icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -695,13 +697,13 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; nrepl
-(setq nrepl-popup-stacktraces nil
-      nrepl-popup-stacktraces-in-repl nil
-      nrepl-port "4555")
-
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
 (ptrv/after nrepl
+  (setq nrepl-popup-stacktraces nil
+        nrepl-popup-stacktraces-in-repl nil
+        nrepl-port "4555")
+
   (add-hook 'nrepl-interaction-mode-hook
             (lambda ()
               (nrepl-turn-on-eldoc-mode)
