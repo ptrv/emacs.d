@@ -301,7 +301,13 @@ file `PATTERNS'."
               c-basic-offset 4     ; indents 4 chars
               tab-width 4)         ; and 4 char wide for TAB
 
-(setq browse-url-generic-program (executable-find "x-www-browser")
+(defun ptrv/get-default-url-program ()
+  "Get default program to handle urls."
+  (cond
+   (*is-mac* (executable-find "open"))
+   (*is-linux* (executable-find "x-www-browser"))))
+
+(setq browse-url-generic-program (ptrv/get-default-url-program)
       browse-url-browser-function 'browse-url-generic
       initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
