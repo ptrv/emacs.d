@@ -2330,7 +2330,9 @@ prompt for the command to use."
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
   (dolist (hook '(c-mode-hook c++-mode-hook))
-    (add-hook hook 'ptrv/cc-mode-init)))
+    (add-hook hook 'ptrv/cc-mode-init))
+
+  (add-hook 'c-mode-common-hook 'linum-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; x11
