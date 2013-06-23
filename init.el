@@ -846,12 +846,14 @@ file `PATTERNS'."
     (window-configuration-to-register :magit-fullscreen)
     ad-do-it
     (delete-other-windows))
-  (defun magit-quit-session ()
+  (defun magit-quit-session (&optional kill-buffer)
     "Restores the previous window configuration and kills the magit buffer"
-    (interactive)
-    (kill-buffer)
+    (interactive "P")
+    (if kill-buffer
+        (kill-buffer)
+      (bury-buffer))
     (jump-to-register :magit-fullscreen))
-  (define-key magit-status-mode-map (kbd "Q") 'magit-quit-session)
+  (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
 
   (defun magit-toggle-whitespace ()
     (interactive)
