@@ -392,6 +392,12 @@ file `PATTERNS'."
 
 (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
 
+(defun ptrv/get-default-sound-command ()
+  "Get default command for playing sound files."
+  (cond
+   (*is-mac* (executable-find "afplay"))
+   (*is-linux* (executable-find "paplay"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ediff
 (ptrv/after ediff
@@ -918,7 +924,7 @@ file `PATTERNS'."
 ;;;; pomodoro.el
 (ptrv/after pomodoro
   (pomodoro-add-to-mode-line)
-  (setq pomodoro-sound-player "paplay")
+  (setq pomodoro-sound-player (ptrv/get-default-sound-command))
   (setq pomodoro-break-start-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
   (setq pomodoro-work-start-sound (concat ptrv/etc-dir "sounds/alarm.wav")))
 
@@ -948,10 +954,8 @@ file `PATTERNS'."
 (autoload 'tea-time "tea-time" nil t)
 (ptrv/after tea-time
   (setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
-  (cond (*is-mac*
-         (setq tea-time-sound-command "afplay %s"))
-        (*is-linux*
-         (setq tea-time-sound-command "paplay %s"))))
+  (setq tea-time-sound-command (concat
+                                (ptrv/get-default-sound-command) " %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; xah lee modes
@@ -2103,7 +2107,9 @@ prompt for the command to use."
   ;; typeriter-mode
   (autoload 'typewriter-mode "typewriter-mode" nil t)
   (ptrv/after typewriter-mode
-    (setq typewriter-play-command "paplay %s")
+    (setq typewriter-play-command (concat
+                                   (ptrv/get-default-sound-command)
+                                   " %s"))
     (setq typewriter-sound-default (concat
                                     ptrv/etc-dir
                                     "sounds/9744__horn__typewriter.wav"))
