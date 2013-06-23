@@ -1696,17 +1696,30 @@ point reaches the beginning or end of the buffer, stop there."
 Use the standard program to open the file.  With prefix ARG,
 prompt for the command to use."
   (interactive "P")
-  (unless (buffer-file-name)
-    (user-error "This buffer is not visiting a file"))
-  (let ((command (unless arg (ptrv/get-standard-open-command))))
-    (unless command
-      (setq command (read-shell-command "Open current file with: ")))
-    (cond
-     (*is-linux*
-      (let ((process-connection-type nil))
-        (start-process "" nil command (shell-quote-argument (buffer-file-name)))))
-     (*is-mac*
-      (shell-command (concat command " " (shell-quote-argument (buffer-file-name))))))))
+  (let* ((file-list (if (eq major-mode 'dired-mode)
+                        (let ((marked-files (dired-get-marked-files)))
+                          (if marked-files
+                              marked-files
+                            (directory-file-name (dired-current-directory))))
+                      (list (buffer-file-name))))
+         (doIt (if (<= (length file-list) 5)
+                   t
+                 (y-or-n-p "Open more than 5 files?"))))
+    (when doIt
+      (unless (car file-list)
+        (user-error "This buffer is not visiting a file"))
+      (let ((command (unless arg (ptrv/get-standard-open-command))))
+        (unless command
+          (setq command (read-shell-command "Open current file with: ")))
+        (let ((open-fn (lambda (file-path)
+                         (cond
+                          (*is-linux*
+                           (let ((process-connection-type nil))
+                             (start-process "" nil command (shell-quote-argument file-path))))
+                          (*is-mac*
+                           (shell-command
+                            (concat command " " (shell-quote-argument file-path))))))))
+          (mapc open-fn file-list))))))
 
 (defun ptrv/launch-directory ()
   "Open parent directory in external file manager."
