@@ -775,8 +775,9 @@ file `PATTERNS'."
                 (when (stringp method)
                   (member method '("su" "sudo"))))))))
 
-(setq tramp-backup-directory-alist backup-directory-alist
-      tramp-persistency-file-name (concat ptrv/tmp-dir "tramp"))
+(ptrv/after tramp
+  (setq tramp-backup-directory-alist backup-directory-alist
+        tramp-persistency-file-name (concat ptrv/tmp-dir "tramp")))
 
 (defun sudo-edit (&optional arg)
   (interactive "P")
@@ -978,26 +979,27 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; iflipb
-(setq iflipb-ignore-buffers
-      '("*Ack-and-a-half*"
-        "*Help*"
-        "*Compile-Log*"
-        "*Ibuffer*"
-        "*Messages*"
-        "*scratch*"
-        "*Completions*"
-        "*magit"
-        "*Pymacs*"
-        "*clang-complete*"
-        "*compilation*"
-        "*Packages*"
-        "*file-index*"
-        " output*"
-        "*tramp/"
-        "*project-status*"
-        "SCLang:PostBuffer*"))
+(ptrv/after iflipb
+  (setq iflipb-ignore-buffers
+        '("*Ack-and-a-half*"
+          "*Help*"
+          "*Compile-Log*"
+          "*Ibuffer*"
+          "*Messages*"
+          "*scratch*"
+          "*Completions*"
+          "*magit"
+          "*Pymacs*"
+          "*clang-complete*"
+          "*compilation*"
+          "*Packages*"
+          "*file-index*"
+          " output*"
+          "*tramp/"
+          "*project-status*"
+          "SCLang:PostBuffer*"))
+  (setq iflipb-wrap-around t))
 
-(setq iflipb-wrap-around t)
 (global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
 (global-set-key (kbd "C-<prior>") 'iflipb-previous-buffer)
 (global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
@@ -1021,7 +1023,8 @@ file `PATTERNS'."
   "Keymap for Ack.")
 
 ;; the silver searcher
-(setq ag-highlight-search t)
+(ptrv/after ag
+  (setq ag-highlight-search t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; edit-server
