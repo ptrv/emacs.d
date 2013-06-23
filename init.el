@@ -2890,7 +2890,8 @@ Create a new ielm process if required."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; local settings
 (load (locate-user-emacs-file "locals.el") 'noerror)
-(require 'my-secrets)
+(unless (require 'my-secrets "~/.secrets.gpg" t)
+  (warn "Could not load secrets file!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; welcome-message stuff
