@@ -2203,6 +2203,8 @@ prompt for the command to use."
     (lambda ()
       (interactive)
       (sclang-eval-string "HelperWindow.new;")))
+  (define-key sclang-mode-map (kbd "s-.") 'sclang-main-stop)
+  (define-key sclang-mode-map (kbd "<s-return>") 'sclang-eval-region-or-line)
 
   ;; snippets
   (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
