@@ -1094,9 +1094,11 @@ file `PATTERNS'."
 (setq global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
 
-(customize-set-variable
- 'tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
-                    68 72 76 80 84 88 92 96 100 104 108 112 116 120))
+(setq tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
+                        68 72 76 80 84 88 92 96 100 104 108 112 116 120))
+;; (customize-set-variable
+;;  'tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
+;;                     68 72 76 80 84 88 92 96 100 104 108 112 116 120))
 
 ;; Do not allow to kill the *scratch* buffer
 (defvar unkillable-scratch-buffer-erase)
@@ -1345,8 +1347,7 @@ file `PATTERNS'."
         reftex-save-parse-info t
         reftex-use-multiple-selection-buffers t)
 
-  (customize-set-variable
-   'reftex-ref-style-default-list '("Hyperref")))
+  (setq reftex-ref-style-default-list '("Hyperref")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; filetypes
@@ -1811,7 +1812,7 @@ prompt for the command to use."
   "Keymap for file functions.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; projectil
+;;;; projectile
 (ptrv/after projectile
   (dolist (file '(".ropeproject" "setup.py"))
     (add-to-list 'projectile-project-root-files file t)))
@@ -1936,12 +1937,12 @@ prompt for the command to use."
         (define-key map [(shift mouse-2)] 'hs-mouse-toggle-hiding)
         map))
 
+;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
+(setq hs-isearch-open t)
+
 ;; (global-set-key (kbd "<f11>") 'toggle-fold)
 (global-set-key (kbd "<f11>") 'hs-toggle-hiding)
 (global-set-key (kbd "S-<f11>") 'toggle-fold-all)
-
-;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
-(setq hs-isearch-open t)
 
 (defvar hs-hide-all nil "Current state of hideshow for toggling all.")
 (make-local-variable 'hs-hide-all)
