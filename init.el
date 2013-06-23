@@ -45,12 +45,11 @@
 (setq system-name ptrv/hostname)
 
 ;; set all dirs
-(setq
- ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc"))
- ptrv/tmp-dir      (file-name-as-directory (locate-user-emacs-file "tmp"))
- ptrv/autosaves-dir(file-name-as-directory (concat ptrv/tmp-dir "autosaves"))
- ptrv/backups-dir  (file-name-as-directory (concat ptrv/tmp-dir "backups"))
- ptrv/pscratch-dir (file-name-as-directory (concat ptrv/tmp-dir "pscratch")))
+(defvar ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc")))
+(defvar ptrv/tmp-dir      (file-name-as-directory (locate-user-emacs-file "tmp")))
+(defvar ptrv/autosaves-dir(file-name-as-directory (concat ptrv/tmp-dir "autosaves")))
+(defvar ptrv/backups-dir  (file-name-as-directory (concat ptrv/tmp-dir "backups")))
+(defvar ptrv/pscratch-dir (file-name-as-directory (concat ptrv/tmp-dir "pscratch")))
 
 ;; create tmp dirs if necessary
 (make-directory ptrv/tmp-dir t)
@@ -2878,15 +2877,14 @@ Create a new ielm process if required."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; welcome-message stuff
-(setq ptrv/welcome-messages
-      (if (ptrv/user-first-name-p)
-          (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
-                (concat "Hello " (ptrv/user-first-name) ", it's lovely to see you again. I do hope that you're well.")
-                (concat (ptrv/user-first-name) ", turn your head towards the sun and the shadows will fall behind you.")
-                )
-        (list  "Hello, somewhere in the world the sun is shining for you right now."
-               "Hello, it's lovely to see you again. I do hope that you're well."
-               "Turn your head towards the sun and the shadows will fall behind you.")))
+(defvar ptrv/welcome-messages
+  (if (ptrv/user-first-name-p)
+      (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
+            (concat "Hello " (ptrv/user-first-name) ", it's lovely to see you again. I do hope that you're well.")
+            (concat (ptrv/user-first-name) ", turn your head towards the sun and the shadows will fall behind you."))
+    (list  "Hello, somewhere in the world the sun is shining for you right now."
+           "Hello, it's lovely to see you again. I do hope that you're well."
+           "Turn your head towards the sun and the shadows will fall behind you.")))
 
 (defun ptrv/welcome-message ()
   (nth (random (length ptrv/welcome-messages)) ptrv/welcome-messages))
