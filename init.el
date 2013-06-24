@@ -695,9 +695,10 @@ file `PATTERNS'."
   (add-hook 'clojure-mode-hook (lambda () (flycheck-mode -1)))
 
   ;; push-mark when switching to nrepl via C-c C-z
-  (defadvice nrepl-switch-to-repl-buffer (around
-                                          nrepl-switch-to-repl-buffer-with-mark
-                                          activate)
+  (defadvice nrepl-switch-to-repl-buffer
+    (around
+     nrepl-switch-to-repl-buffer-with-mark
+     activate)
     (with-current-buffer (current-buffer)
       (push-mark)
       ad-do-it)))
@@ -1148,8 +1149,10 @@ file `PATTERNS'."
 
 ;; fix whitespace-cleanup
 ;; http://stackoverflow.com/a/12958498/464831
-(defadvice whitespace-cleanup (around whitespace-cleanup-indent-tab
-                                      activate)
+(defadvice whitespace-cleanup
+  (around
+   whitespace-cleanup-indent-tab
+   activate)
   "Fix whitespace-cleanup indent-tabs-mode bug"
   (let ((whitespace-indent-tabs-mode indent-tabs-mode)
         (whitespace-tab-width tab-width))
@@ -1983,15 +1986,21 @@ prompt for the command to use."
       (call-interactively fold-fun)
     (hs-toggle-hiding)))
 
-(defadvice goto-line (after expand-after-goto-line
-                            activate compile)
-  "hideshow-expand affected block when using goto-line in a collapsed buffer"
+(defadvice goto-line
+  (after
+   expand-after-goto-line
+   activate compile)
+  "hideshow-expand affected block when using goto-line in a
+collapsed buffer"
   (save-excursion
     (hs-show-block)))
 
-(defadvice goto-line-with-feedback (after expand-after-goto-line-with-feedback
-                                          activate compile)
-  "hideshow-expand affected block when using goto-line in a collapsed buffer"
+(defadvice goto-line-with-feedback
+  (after
+   expand-after-goto-line-with-feedback
+   activate compile)
+  "hideshow-expand affected block when using goto-line in a
+collapsed buffer"
   (save-excursion
     (hs-show-block)))
 
