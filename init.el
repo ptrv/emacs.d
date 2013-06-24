@@ -1714,6 +1714,8 @@ point reaches the beginning or end of the buffer, stop there."
 ;;(global-subword-mode 1)
 (add-hook 'prog-mode-hook 'subword-mode)
 
+(delete-selection-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; move-text
 (move-text-default-bindings)
