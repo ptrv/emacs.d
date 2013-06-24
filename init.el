@@ -113,7 +113,8 @@ FEATURE may be a named feature or a file name, see
               "\\>[ \t']*\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face))
-    (,(concat "(" (regexp-opt '("with-eval-after-load")
+    (,(concat "(" (regexp-opt '("with-eval-after-load"
+                                "ptrv/expose")
                               'symbols))
      (1 font-lock-keyword-face))))
 
@@ -130,6 +131,13 @@ file `PATTERNS'."
   (declare (indent defun))
   (dolist (pattern patterns)
     (add-to-list 'auto-mode-alist (cons pattern mode))))
+
+(defun ptrv/expose (function)
+  "Return an interactive version of FUNCTION."
+  (lexical-let ((lex-func function))
+    (lambda ()
+      (interactive)
+      (funcall lex-func))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; backup
