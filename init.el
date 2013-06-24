@@ -236,7 +236,7 @@ file `PATTERNS'."
     nyan-mode
     diminish
     kill-ring-search
-    auto-compile
+    ;;auto-compile
     ;; tools
     ag
     ack-and-a-half
@@ -621,8 +621,16 @@ file `PATTERNS'."
     (define-key lisp-mode-shared-map (kbd "M-RET")
       'elisp-slime-nav-describe-elisp-thing-at-point))
 
-  (dolist (mode '(lexbind-mode auto-compile-mode))
-    (add-hook 'emacs-lisp-mode-hook mode)))
+  (dolist (mode '(lexbind-mode ptrv/remove-elc-on-save))
+    (add-hook 'emacs-lisp-mode-hook mode))
+
+  (defun ptrv/remove-elc-on-save ()
+    "If you’re saving an elisp file, likely the .elc is no longer valid."
+    (make-local-variable 'after-save-hook)
+    (add-hook 'after-save-hook
+              (lambda ()
+                (if (file-exists-p (concat buffer-file-name "c"))
+                    (delete-file (concat buffer-file-name "c")))))))
 
 (ptrv/after ielm
   (dolist (mode ptrv/emacs-lisp-common-modes)
