@@ -884,6 +884,8 @@ file `PATTERNS'."
       (bury-buffer))
     (jump-to-register :magit-fullscreen))
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+  (define-key magit-status-mode-map (kbd "Q")
+    (ptrv/expose (apply-partially #'magit-quit-session t)))
 
   (defun magit-toggle-whitespace ()
     (interactive)
