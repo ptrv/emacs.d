@@ -1810,6 +1810,7 @@ prompt for the command to use."
     (define-key map (kbd "b s") #'ptrv/byte-recompile-site-lisp)
     (define-key map (kbd "b e") #'ptrv/byte-recompile-elpa)
     (define-key map (kbd "b h") #'ptrv/byte-recompile-home)
+    (define-key map (kbd "b b") #'emacs-lisp-byte-compile-and-load)
     map)
   "Keymap for file functions.")
 
