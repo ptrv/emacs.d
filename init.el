@@ -2019,7 +2019,7 @@ collapsed buffer"
                           #'autopair-python-triple-quote-action))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; clean-mode-line
+;;;; diminish
 (ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
 (ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
 (ptrv/after paredit (diminish 'paredit-mode " Φ"))
