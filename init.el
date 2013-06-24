@@ -850,7 +850,7 @@ file `PATTERNS'."
 (ptrv/after gist
   (setq gist-view-gist t)
   (dolist (mode '((processing-mode . "pde")
-                  (conf-mode . "desktop")))
+                  (desktop-entry-mode . "desktop")))
     (add-to-list 'gist-supported-modes-alist mode)))
 
 ;; A key map for Gisting
