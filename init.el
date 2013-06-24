@@ -2312,10 +2312,10 @@ prompt for the command to use."
     (when (not (file-exists-p ac-clang-complete-executable))
       (warn "The clang-complete executable doesn't exist"))
     ;; Add Qt4 includes to load path if installed
-    (when (file-exists-p "/usr/include/qt4")
-      (setq-default ac-clang-cflags
-                    (mapcar (lambda (f) (concat "-I" f))
-                            (directory-files "/usr/include/qt4" t "Qt\\w+"))))
+    ;; (when (file-exists-p "/usr/include/qt4")
+    ;;   (setq-default ac-clang-cflags
+    ;;                 (mapcar (lambda (f) (concat "-I" f))
+    ;;                         (directory-files "/usr/include/qt4" t "Qt\\w+"))))
 
     (defun ptrv/clang-complete-init ()
       (unless (string-match ".*flycheck.*" buffer-file-name)
