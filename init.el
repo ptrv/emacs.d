@@ -2490,7 +2490,6 @@ prompt for the command to use."
   (define-key map "d" ptrv/diff-map)
   (define-key map "f" ptrv/file-commands-map)
   (define-key map "g" 'magit-status)
-  (define-key map "j" 'ptrv/quickly-open-fav)
   (define-key map "l" 'org-store-link)
   (define-key map "q" 'exit-emacs-client)
   (define-key map "r" 'revert-buffer)
@@ -2511,16 +2510,6 @@ prompt for the command to use."
 (defun refresh-file ()
   (interactive)
   (revert-buffer t t nil))
-
-(defvar ptrv/favs nil)
-(defun ptrv/quickly-open-fav (char)
-  (interactive "c")
-  (let ((fav (assoc char ptrv/favs)))
-    (if fav
-        (let ((fav-file (cdr fav)))
-          (message "Open file: %s" fav-file)
-          (find-file fav-file))
-      (message "No such fav :("))))
 
 (defun ptrv/display-yank-menu ()
   "Open yank-menu popup."
