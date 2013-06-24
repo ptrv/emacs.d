@@ -1162,13 +1162,11 @@ See `xmsi-mode'."
               (princ (concat (car tt) " " (car (cdr tt)) "\n")) )
             mylistSorted) ) ) )
 
-(defvar xmsi-keymap nil "Keymap for xmsi-math-symbols-input mode.")
-
-(progn
-  (setq xmsi-keymap (make-sparse-keymap))
-
-  (define-key xmsi-keymap (kbd "S-SPC") 'xmsi-change-to-symbol)
-  )
+(defvar xmsi-keymap
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "S-SPC") 'xmsi-change-to-symbol)
+    map)
+  "Keymap for xmsi-math-symbols-input mode.")
 
 (defun xmsi-abbr-to-symbol (inputString)
   "Returns a char corresponding to inputString."
