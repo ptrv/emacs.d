@@ -2539,7 +2539,7 @@ collapsed buffer"
 
 (defun refresh-file ()
   (interactive)
-  (revert-buffer t t nil))
+  (revert-buffer nil t))
 
 (defun ptrv/display-yank-menu ()
   "Open yank-menu popup."
