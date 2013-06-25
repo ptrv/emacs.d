@@ -620,10 +620,12 @@ file `PATTERNS'."
   (dolist (mode ptrv/emacs-lisp-common-modes)
     (add-hook 'emacs-lisp-mode-hook mode)
     (add-hook 'lisp-interaction-mode-hook mode))
-  (define-key lisp-mode-shared-map (kbd "RET")
-    'reindent-then-newline-and-indent)
+
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
-  (define-key lisp-mode-shared-map (kbd "C-c C-e") 'eval-and-replace)
+  (let ((map lisp-mode-shared-map))
+    (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
+    (define-key map (kbd "C-c C-e") 'eval-and-replace)
+    (define-key map (kbd "C-c C-p") 'eval-print-last-sexp))
 
   (ptrv/after elisp-slime-nav
     (define-key lisp-mode-shared-map (kbd "M-RET")
