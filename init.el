@@ -456,6 +456,35 @@ file `PATTERNS'."
   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
+(defvar todo-comment-face 'todo-comment-face)
+(defvar headline-face 'headline-face)
+
+;; Fontifying todo items outside of org-mode
+(defface todo-comment-face
+  '((t (:background "grey95"
+         :foreground "#cd0000"
+         :weight bold
+         :bold t)))
+  "Face for TODO in code buffers."
+  :group 'org-faces)
+(defface headline-face
+  '((t (:foreground "#006400"
+        :background "grey95"
+        :weight bold
+        :bold t)))
+  "Face for headlines."
+  :group 'org-faces)
+(defun fontify-todo ()
+  (font-lock-add-keywords
+   nil '((";;.*\\(TODO\\|FIXME\\)"
+          (1 todo-comment-face t)
+          ;;(1 font-lock-warning-face t)
+          ))))
+(defun fontify-headline ()
+  (font-lock-add-keywords
+   nil '(("^;;;; [* ]*\\(.*\\)\\>"
+          (1 headline-face t)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * nyan-mode
 (setq nyan-bar-length 16)
@@ -631,7 +660,10 @@ file `PATTERNS'."
     (define-key lisp-mode-shared-map (kbd "M-RET")
       'elisp-slime-nav-describe-elisp-thing-at-point))
 
-  (dolist (mode '(lexbind-mode ptrv/remove-elc-on-save))
+  (dolist (mode '(lexbind-mode
+                  ptrv/remove-elc-on-save
+                  fontify-todo
+                  fontify-headline))
     (add-hook 'emacs-lisp-mode-hook mode))
 
   (defun ptrv/remove-elc-on-save ()
