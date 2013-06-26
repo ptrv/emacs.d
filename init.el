@@ -1188,7 +1188,7 @@ file `PATTERNS'."
         org-src-fontify-natively nil
         org-default-notes-file "~/Dropbox/org/captures.org"
         org-directory "~/Dropbox/org"
-        org-agenda-files '("~/Dropbox/org/newgtd.org"
+        org-agenda-files '("~/Dropbox/org/ptrv.org"
                            "~/Dropbox/org/uni.org"
                            "~/Dropbox/org/master_thesis.org"))
 
@@ -1196,7 +1196,7 @@ file `PATTERNS'."
         '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
 
   (setq org-mobile-directory "~/Dropbox/MobileOrg"
-        org-mobile-files '("~/Dropbox/org/newgtd.org"
+        org-mobile-files '("~/Dropbox/org/ptrv.org"
                            "~/Dropbox/org/uni.org"
                            "~/Dropbox/org/notes.org"
                            "~/Dropbox/org/journal.org"
