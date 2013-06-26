@@ -1,7 +1,7 @@
 ;;; init.el --- ptrv init file
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; basic init stuff
+;;;; * basic init stuff
 (setq initial-scratch-message ";;
 ;; I'm sorry, Emacs failed to start correctly.
 ;; Hopefully the issue will be simple to resolve.
@@ -69,7 +69,7 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; macros
+;;;; * macros
 (unless (fboundp 'with-eval-after-load)
   (defmacro with-eval-after-load (file &rest body)
     "Execute BODY after FILE is loaded.
@@ -140,7 +140,7 @@ file `PATTERNS'."
       (funcall lex-func))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; backup
+;;;; * backup
 (setq auto-save-list-file-name
       (concat ptrv/autosaves-dir "autosave-list"))
 (setq auto-save-file-name-transforms
@@ -155,7 +155,7 @@ file `PATTERNS'."
       version-control t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; package
+;;;; * package
 (require 'package)
 (defadvice package-compute-transaction
   (before
@@ -299,11 +299,11 @@ file `PATTERNS'."
                (if (= (length upgrades) 1) "" "s")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; PATH
+;;;; * PATH
 (exec-path-from-shell-initialize)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; builtins
+;;;; * builtins
 (setq-default fill-column 72
               indent-tabs-mode nil ; And force use of spaces
               c-basic-offset 4     ; indents 4 chars
@@ -406,13 +406,13 @@ file `PATTERNS'."
    (*is-linux* (executable-find "paplay"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ediff
+;;;; * ediff
 (ptrv/after ediff
   (setq ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; spelling
+;;;; * spelling
 (ptrv/after ispell
   (setq ispell-program-name "aspell" ; use aspell instead of ispell
         ;; ispell-extra-args '("--sug-mode=ultra")
@@ -428,7 +428,7 @@ file `PATTERNS'."
   (define-key flyspell-mode-map (kbd "C-.") 'ispell-word))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; hippie-expand
+;;;; * hippie-expand
 ;; http://trey-jackson.blogspot.de/2007/12/emacs-tip-5-hippie-expand.html
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -443,7 +443,7 @@ file `PATTERNS'."
         try-complete-lisp-symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; look-and-feel
+;;;; * look-and-feel
 (setq column-number-mode t)
 (global-hl-line-mode 1)
 
@@ -457,12 +457,12 @@ file `PATTERNS'."
     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; nyan-mode
+;;;; * nyan-mode
 (setq nyan-bar-length 16)
 (nyan-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ido
+;;;; * ido
 (ptrv/after ido
   (setq ido-enable-prefix nil
         ido-enable-flex-matching t
@@ -475,7 +475,7 @@ file `PATTERNS'."
 (icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ido-ubiquitous
+;;;; * ido-ubiquitous
 (ptrv/after ido-ubiquitous
   (dolist (func '(tmm-prompt erc-iswitchb))
     (ido-ubiquitous-disable-in func))
@@ -503,7 +503,7 @@ file `PATTERNS'."
 (ido-ubiquitous-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; smex
+;;;; * smex
 (global-set-key (kbd "M-x") 'smex)
 (autoload 'smex-major-mode-commands "smex" nil t)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
@@ -513,11 +513,11 @@ file `PATTERNS'."
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; idomenu
+;;;; * idomenu
 (global-set-key (kbd "C-x C-i") 'idomenu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Eshell
+;;;; * Eshell
 (ptrv/after eshell
   (message "Eshell config has been loaded !!!")
   (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
@@ -547,7 +547,7 @@ file `PATTERNS'."
 (global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; complete
+;;;; * complete
 (ptrv/with-library auto-complete-config
   (ac-config-default)
   (ac-flyspell-workaround)
@@ -596,17 +596,17 @@ file `PATTERNS'."
       (auto-complete))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; lisp
+;;;; * lisp
 (autoload 'enable-paredit-mode "paredit" nil t)
 (defvar ptrv/lisp-common-modes
   '(enable-paredit-mode
     rainbow-delimiters-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; elisp
+;;;; * elisp
 (defun imenu-elisp-sections ()
   (setq imenu-prev-index-position-function nil)
-  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
+  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
@@ -653,7 +653,7 @@ file `PATTERNS'."
 (setq nrepl-eval-sexp-fu-flash-duration 0.5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; clojure
+;;;; * clojure
 (ptrv/after find-file-in-project
   (add-to-list 'ffip-patterns "*.clj"))
 
@@ -716,11 +716,11 @@ file `PATTERNS'."
 (ptrv/add-auto-mode 'clojure-mode "\\.cljs$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; 4clojure
+;;;; * 4clojure
 (autoload '4clojure-problem "four-clj" nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; nrepl
+;;;; * nrepl
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
 (ptrv/after nrepl
@@ -784,7 +784,7 @@ file `PATTERNS'."
                            (nrepl-current-tooling-session))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; tramp
+;;;; * tramp
 (setq backup-enable-predicate
       (lambda (name)
         (and (normal-backup-enable-predicate name)
@@ -804,7 +804,7 @@ file `PATTERNS'."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ibuffer
+;;;; * ibuffer
 (setq ibuffer-saved-filter-groups
       '(("default"
          ("IRC"      (mode . erc-mode))
@@ -843,7 +843,7 @@ file `PATTERNS'."
                 " " filename-and-process))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; gist
+;;;; * gist
 (defvar pcache-directory
   (let ((dir (file-name-as-directory (concat ptrv/tmp-dir "pcache"))))
     (make-directory dir t)
@@ -864,7 +864,7 @@ file `PATTERNS'."
   "Keymap for Gists.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; magit
+;;;; * magit
 ;; newline after 72 chars in magit-log-edit-mode
 (ptrv/after magit
   (add-hook 'magit-log-edit-mode-hook
@@ -908,17 +908,17 @@ file `PATTERNS'."
   (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; git-messanger
+;;;; * git-messanger
 (ptrv/after git-messenger
   (setq git-messenger:show-detail t))
 (global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; mercurial
+;;;; * mercurial
 (require 'ahg nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; yasnippet
+;;;; * yasnippet
 (yas-global-mode 1)
 (ptrv/after yasnippet
   (define-key yas-keymap [(tab)] nil)
@@ -932,17 +932,17 @@ file `PATTERNS'."
     (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; undo-tree
+;;;; * undo-tree
 (global-undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; insert-time.el
+;;;; * insert-time.el
 (ptrv/with-library insert-time
   (setq insert-date-format "%Y-%m-%d")
   (setq insert-time-format "%H:%M:%S"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; pomodoro.el
+;;;; * pomodoro.el
 (ptrv/after pomodoro
   (pomodoro-add-to-mode-line)
   (setq pomodoro-sound-player (ptrv/get-default-sound-command))
@@ -950,7 +950,7 @@ file `PATTERNS'."
   (setq pomodoro-work-start-sound (concat ptrv/etc-dir "sounds/alarm.wav")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; sql-mode
+;;;; * sql-mode
 ;; switch between sqlite3 and spatialite excutable
 (ptrv/after sql
   (defun sql-switch-spatialite-sqlite ()
@@ -967,11 +967,11 @@ file `PATTERNS'."
   (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; smart-operator
+;;;; * smart-operator
 (autoload 'smart-operator-mode "smart-operator" nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; tea-time
+;;;; * tea-time
 (autoload 'tea-time "tea-time" nil t)
 (ptrv/after tea-time
   (setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
@@ -979,7 +979,7 @@ file `PATTERNS'."
                                 (ptrv/get-default-sound-command) " %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; xah lee modes
+;;;; * xah lee modes
 (autoload 'xmsi-mode "xmsi-math-symbols-input"
   "Load xmsi minor mode for inputting math/Unicode symbols." t)
 (ptrv/after xmsi-math-symbols-input
@@ -997,7 +997,7 @@ file `PATTERNS'."
                  "%b"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; iflipb
+;;;; * iflipb
 (ptrv/after iflipb
   (setq iflipb-ignore-buffers
         '("*Ack-and-a-half*"
@@ -1025,7 +1025,7 @@ file `PATTERNS'."
 (global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Ack and Ag
+;;;; * Ack and Ag
 ;; ack-and-a-half
 (defalias 'ack 'ack-and-a-half)
 (defalias 'ack-same 'ack-and-a-half-same)
@@ -1046,14 +1046,14 @@ file `PATTERNS'."
   (setq ag-highlight-search t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; edit-server
+;;;; * edit-server
 (ptrv/after edit-server
   (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))))
 (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
 (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
 (edit-server-start)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; iedit
+;;;; * iedit
 (setq iedit-toggle-key-default (kbd "C-;"))
 (define-key global-map iedit-toggle-key-default 'iedit-mode)
 (define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
@@ -1061,15 +1061,15 @@ file `PATTERNS'."
 (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; smooth-scrolling
+;;;; * smooth-scrolling
 (setq smooth-scroll-margin 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; google-this
+;;;; * google-this
 (google-this-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; popwin
+;;;; * popwin
 (ptrv/with-library popwin
   (popwin-mode 1)
   (global-set-key (kbd "C-z") popwin:keymap)
@@ -1109,7 +1109,7 @@ file `PATTERNS'."
           ("*ielm*" :stick t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; buffer
+;;;; * buffer
 (global-auto-revert-mode t)
 
 ;; Also auto refresh dired, but be quiet about it
@@ -1174,7 +1174,7 @@ file `PATTERNS'."
 (global-set-key [remap list-buffers] 'ibuffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; org
+;;;; * org
 (ptrv/add-auto-mode 'org-mode "\\.org\\'")
 
 (ptrv/after org
@@ -1281,14 +1281,14 @@ file `PATTERNS'."
   (setq calendar-week-start-day 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; org2blog
+;;;; * org2blog
 (ptrv/with-library org2blog-autoloads
   (ptrv/after org2blog
     (ptrv/after my-secrets
       (load "~/.org-blogs.el" 'noerror))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; org-present
+;;;; * org-present
 (autoload 'org-present "org-present" nil t)
 (ptrv/after org-present
   (add-hook 'org-present-mode-hook
@@ -1301,7 +1301,7 @@ file `PATTERNS'."
               (org-remove-inline-images))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; latex
+;;;; * latex
 (load "auctex.el" 'noerror t t)
 (load "preview-latex.el" 'noerror t t)
 
@@ -1374,7 +1374,7 @@ file `PATTERNS'."
   (setq reftex-ref-style-default-list '("Hyperref")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; filetypes
+;;;; * filetypes
 (ptrv/add-auto-mode 'shell-script-mode
   "\\.zsh-template$" "\\.zsh$")
 
@@ -1432,7 +1432,7 @@ file `PATTERNS'."
 ;; Carton
 (ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$")
 
-;;;; abbrev
+;;;; * abbrev
 (define-abbrev-table 'global-abbrev-table
   '(
     ;; typo corrections
@@ -1443,19 +1443,19 @@ file `PATTERNS'."
 (setq-default abbrev-mode t)            ; turn on abbrev mode globally
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; markdown
+;;;; * markdown
 (ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$")
 
 (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; pandoc
+;;;; * pandoc
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 (add-hook 'markdown-mode-hook 'turn-on-pandoc)
 (ptrv/add-auto-mode 'markdown-mode "\\.text$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; golang
+;;;; * golang
 
 (ptrv/after go-mode
   (message "go-mode config has been loaded !!!")
@@ -1600,7 +1600,7 @@ If ARG is not nil, create package in current directory"
       (error "Please insert a package name"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; xml
+;;;; * xml
 (ptrv/add-auto-mode 'nxml-mode "\\.gpx$")
 
 (ptrv/after nxml-mode
@@ -1619,7 +1619,7 @@ If ARG is not nil, create package in current directory"
         nxml-sexp-element-flag t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; erc
+;;;; * erc
 (ptrv/after my-secrets
   (defun erc-connect ()
     "Start up erc and connect to freedonde"
@@ -1673,17 +1673,17 @@ If ARG is not nil, create package in current directory"
                         (setq erc-fill-column (- (window-width w) 2))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; faust-mode
+;;;; * faust-mode
 (ptrv/add-auto-mode 'faust-mode "\\.dsp$")
 (autoload 'faust-mode "faust-mode" "FAUST editing mode." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Synth-A-Modeler mode
+;;;; * Synth-A-Modeler mode
 (ptrv/add-auto-mode 'sam-mode "\\.mdl$")
 (autoload 'sam-mode "sam-mode" "Synth-A-Modeler editing mode." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; editing
+;;;; * editing
 (setq sentence-end-double-space nil)
 
 (defun smarter-move-beginning-of-line (arg)
@@ -1719,11 +1719,11 @@ point reaches the beginning or end of the buffer, stop there."
 (delete-selection-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; move-text
+;;;; * move-text
 (move-text-default-bindings)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; file commands
+;;;; * file commands
 (defun ptrv/get-standard-open-command ()
   "Get the standard command to open a file."
   (cond
@@ -1838,7 +1838,7 @@ prompt for the command to use."
   "Keymap for file functions.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; projectile
+;;;; * projectile
 (ptrv/after projectile
   (dolist (file '(".ropeproject" "setup.py"))
     (add-to-list 'projectile-project-root-files file t)))
@@ -1849,12 +1849,12 @@ prompt for the command to use."
 (projectile-global-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ffip
+;;;; * ffip
 (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
 (define-key ptrv/file-commands-map "f" 'ffip)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; processing
+;;;; * processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
 (autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
 (autoload 'processing-find-sketch "processing-mode" nil t)
@@ -1921,7 +1921,7 @@ prompt for the command to use."
                          :help "Copy buffer or region as HTML to clipboard"])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; flycheck
+;;;; * flycheck
 (unless (and (>= emacs-major-version 24)
              (>= emacs-minor-version 3))
   (add-to-list 'debug-ignored-errors "\\`No more Flycheck errors\\'")
@@ -1938,7 +1938,7 @@ prompt for the command to use."
   (setq flycheck-highlighting-mode 'lines))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; flymake
+;;;; * flymake
 (defvar flymake-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "M-n") 'flymake-goto-next-error)
@@ -1947,7 +1947,7 @@ prompt for the command to use."
 (add-to-list 'minor-mode-map-alist `(flymake-mode . ,flymake-mode-map) t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; hideshow
+;;;; * hideshow
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 (dolist (x '(emacs-lisp lisp java perl sh python))
   (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'hs-minor-mode))
@@ -2019,7 +2019,7 @@ collapsed buffer"
     (hs-show-block)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; autopair
+;;;; * autopair
 (autopair-global-mode 1)
 
 (defadvice enable-paredit-mode (before disable-autopair activate)
@@ -2033,7 +2033,7 @@ collapsed buffer"
                           #'autopair-python-triple-quote-action))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; diminish
+;;;; * diminish
 (ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
 (ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
 (ptrv/after paredit (diminish 'paredit-mode " Φ"))
@@ -2061,7 +2061,7 @@ collapsed buffer"
 (rename-modeline "processing-mode" processing-mode "P5")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; osx
+;;;; * osx
 (when *is-mac*
   (ptrv/after ns-win
     (setq mac-option-key-is-meta nil)
@@ -2108,7 +2108,7 @@ collapsed buffer"
       (setq find-program gfind))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; linux
+;;;; * linux
 (when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
   (ptrv/after eshell
@@ -2154,7 +2154,7 @@ collapsed buffer"
                                    "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; superollider
+;;;; * superollider
 (ptrv/after w3m
   (define-key w3m-mode-map [left] 'backward-char)
   (define-key w3m-mode-map [right] 'forward-char)
@@ -2251,7 +2251,7 @@ collapsed buffer"
     (sclang-snippets-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; elpy
+;;;; * elpy
 (ptrv/after python
   (setq elpy-default-minor-modes '(eldoc-mode
                                    highlight-indentation-mode
@@ -2297,7 +2297,7 @@ collapsed buffer"
   (set-face-background 'highlight-indentation-current-column-face "#c3b3b3"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; python
+;;;; * python
 (ptrv/after python
   (exec-path-from-shell-copy-env "PYTHONPATH")
 
@@ -2329,7 +2329,7 @@ collapsed buffer"
   (add-hook 'python-mode-hook 'pylint-add-key-bindings))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; cc-mode
+;;;; * cc-mode
 (setq c-default-style '((java-mode . "java")
                         (awk-mode . "awk")
                         (other . "bsd")))
@@ -2368,7 +2368,7 @@ collapsed buffer"
   (add-hook 'c-mode-common-hook 'linum-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; x11
+;;;; * x11
 (when *is-x11*
   ;; Maximise the Emacs window
   (defun toggle-fullscreen ()
@@ -2389,18 +2389,18 @@ collapsed buffer"
          (set-frame-position (selected-frame) 500 30))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; multiple-cursors
+;;;; * multiple-cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; expand-region
+;;;; * expand-region
 (global-set-key (kbd "C-=") 'er/expand-region)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; key-chord
+;;;; * key-chord
 (key-chord-mode 1)
 (key-chord-define-global "JJ" 'switch-to-previous-buffer)
 (key-chord-define-global "KK" 'winner-undo)
@@ -2408,11 +2408,11 @@ collapsed buffer"
 (key-chord-define-global "BB" 'ido-switch-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Ace jump mode
+;;;; * Ace jump mode
 (global-set-key (kbd "C-o") 'ace-jump-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; bindings
+;;;; * bindings
 (global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
@@ -2529,7 +2529,7 @@ collapsed buffer"
   (define-key map "y" 'ptrv/display-yank-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; defuns
+;;;; * defuns
 (defun ptrv/ido-recentf-open ()
   "Find a recent file using ido."
   (interactive)
@@ -2902,23 +2902,23 @@ Create a new ielm process if required."
   (ptrv/change-number-at-point '1-))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; server
+;;;; * server
 (require 'server)
 (unless (server-running-p)
   (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; custom settings
+;;;; * custom settings
 (load custom-file 'noerror)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; local settings
+;;;; * local settings
 (load (locate-user-emacs-file "locals.el") 'noerror)
 (unless (require 'my-secrets "~/.secrets.gpg" t)
   (warn "Could not load secrets file!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; welcome-message stuff
+;;;; * welcome-message stuff
 (defvar ptrv/welcome-messages
   (if (ptrv/user-first-name-p)
       (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
@@ -2941,3 +2941,8 @@ Create a new ielm process if required."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; init.el ends here
+
+;; Local Variables:
+;; eval: (orgstruct-mode 1)
+;; orgstruct-heading-prefix-regexp: ";;;; "
+;; End:
