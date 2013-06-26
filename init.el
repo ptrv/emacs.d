@@ -654,11 +654,8 @@ file `PATTERNS'."
   (let ((map lisp-mode-shared-map))
     (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
     (define-key map (kbd "C-c C-e") 'eval-and-replace)
-    (define-key map (kbd "C-c C-p") 'eval-print-last-sexp))
-
-  (ptrv/after elisp-slime-nav
-    (define-key lisp-mode-shared-map (kbd "M-RET")
-      'elisp-slime-nav-describe-elisp-thing-at-point))
+    (define-key map (kbd "C-c C-p") 'eval-print-last-sexp)
+    (define-key map (kbd "M-RET") 'ptrv/lisp-describe-thing-at-point))
 
   (dolist (mode '(lexbind-mode
                   ptrv/remove-elc-on-save
@@ -2934,6 +2931,27 @@ Create a new ielm process if required."
 (defun decrement-number-at-point ()
   (interactive)
   (ptrv/change-number-at-point '1-))
+
+(defun ptrv/lisp-describe-thing-at-point ()
+  "Show the documentation of the Elisp function and variable near point.
+   This checks in turn:
+     -- for a function name where point is
+     -- for a variable name where point is
+     -- for a surrounding function call"
+  (interactive)
+  ;; sigh, function-at-point is too clever.  we want only the first half.
+  (let ((sym (ignore-errors
+               (with-syntax-table emacs-lisp-mode-syntax-table
+                 (save-excursion
+                   (or (not (zerop (skip-syntax-backward "_w")))
+                       (eq (char-syntax (char-after (point))) ?w)
+                       (eq (char-syntax (char-after (point))) ?_)
+                       (forward-sexp -1))
+                   (skip-chars-forward "`'")
+                   (let ((obj (read (current-buffer))))
+                     (and (symbolp obj) (fboundp obj) obj)))))))
+    (if sym (describe-function sym)
+      (describe-variable (variable-at-point)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
