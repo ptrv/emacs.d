@@ -2096,15 +2096,17 @@ collapsed buffer"
 ;;;; * osx
 (when *is-mac*
   (ptrv/after ns-win
-    (setq mac-option-key-is-meta nil)
-    (setq mac-command-key-is-meta t)
-    (setq mac-command-modifier 'meta)
-    (setq mac-option-modifier nil))
+    (setq mac-option-key-is-meta nil
+          mac-command-key-is-meta t
+          mac-command-modifier 'meta
+          mac-option-modifier nil
+          mac-function-modifier 'hyper
+          mac-right-command-modifier 'super))
 
   (when *is-cocoa-emacs*
     (set-frame-font "Inconsolata-16" nil t)
-    (set-frame-size (selected-frame) 110 46)
-    (set-frame-position (selected-frame) 370 24))
+    (set-frame-size (selected-frame) 110 53)
+    (set-frame-position (selected-frame) 520 24))
 
   (setq default-input-method "MacOSX")
 
