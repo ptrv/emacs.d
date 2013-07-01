@@ -1264,9 +1264,13 @@ file `PATTERNS'."
            ((agenda "" ((org-agenda-ndays 1)
                         (org-agenda-sorting-strategy
                          '((agenda time-up priority-down tag-up)))
-                        (org-deadline-warning-days 0)
-                        ))))
-          ))
+                        (org-deadline-warning-days 0)))))))
+
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline (concat org-directory "/ptrv.org") "TASKS")
+           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines-after 1)
+          ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines-after 1)))
 
   (setq org-ditaa-jar-path "~/applications/ditaa.jar")
   (setq org-plantuml-jar-path "~/applications/plantuml.jar")
