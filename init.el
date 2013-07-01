@@ -2305,7 +2305,6 @@ collapsed buffer"
   (ptrv/after auto-complete-config
     (define-key elpy-mode-map "." 'ptrv/ac-dot-complete))
 
-  (setq python-check-command "flake8")
   (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
 
   (let ((elpy-snippets (concat (file-name-directory (locate-library "elpy"))
@@ -2330,6 +2329,8 @@ collapsed buffer"
 ;;;; * python
 (ptrv/after python
   (exec-path-from-shell-copy-env "PYTHONPATH")
+
+  (setq python-check-command "flake8")
 
   ;; pytest
   (autoload 'pytest-all "pytest" nil t)
