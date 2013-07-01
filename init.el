@@ -2287,11 +2287,12 @@ collapsed buffer"
                                    highlight-indentation-mode
                                    yas-minor-mode
                                    auto-complete-mode))
-  (elpy-enable t)
 
-  (add-hook 'elpy-mode-hook #'(lambda ()
-                                (when (file-remote-p (buffer-file-name))
-                                  (elpy-disable)))))
+  (defun elpy-enable-maybe ()
+    (when (and (buffer-file-name)
+               (not (file-remote-p (buffer-file-name))))
+      (elpy-mode)))
+  (add-hook 'python-mode-hook 'elpy-enable-maybe))
 
 (ptrv/after elpy
   (let ((map elpy-mode-map))
