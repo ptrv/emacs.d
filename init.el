@@ -2961,10 +2961,6 @@ Create a new ielm process if required."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
 (load custom-file 'noerror)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * local settings
-(load (locate-user-emacs-file "locals.el") 'noerror)
 (unless (require 'my-secrets "~/.secrets.gpg" t)
   (warn "Could not load secrets file!"))
 
