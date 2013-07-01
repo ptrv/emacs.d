@@ -534,10 +534,9 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smex
 (global-set-key (kbd "M-x") 'smex)
-(autoload 'smex-major-mode-commands "smex" nil t)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (ptrv/after smex
-  (setq smex-save-file (concat ptrv/tmp-dir "smex-items")))
+  (setq smex-save-file (concat ptrv/tmp-dir "smex-items"))
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands))
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
