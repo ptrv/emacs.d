@@ -2547,11 +2547,11 @@ collapsed buffer"
 
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
-  (define-key map "A" 'org-agenda)
-  (define-key map "B" 'org-iswitchb)
-  (define-key map "C" 'org-capture)
   (define-key map "G" ptrv/gist-map)
   (define-key map "R" 'refresh-file)
+  (define-key map "a" 'org-agenda)
+  (define-key map "b" 'org-iswitchb)
+  (define-key map "c" 'org-capture)
   (define-key map "d" ptrv/diff-map)
   (define-key map "f" ptrv/file-commands-map)
   (define-key map "g" 'magit-status)
