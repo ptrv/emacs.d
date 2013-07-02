@@ -1609,10 +1609,7 @@ file `PATTERNS'."
         :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
         :modes 'go-mode
         :next-checkers '((no-errors . go-goflymake)))
-      (add-to-list 'flycheck-checkers 'go t)
-      ;; remove go-goflymake from begin of list and add it to the end
-      (setq flycheck-checkers (remove 'go-goflymake flycheck-checkers))
-      (add-to-list 'flycheck-checkers 'go-goflymake t)))
+      (add-to-list 'flycheck-checkers 'go)))
 
   (when (executable-find "errcheck")
     (autoload 'go-errcheck "go-errcheck" nil t)
