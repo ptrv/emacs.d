@@ -2228,35 +2228,16 @@ collapsed buffer"
         sclang-runtime-directory "~/scwork/"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-  (defun sclang-mode-untabify ()
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward "[ \t]+$" nil t)
-        (delete-region (match-beginning 0) (match-end 0)))
-      (goto-char (point-min))
-      (if (search-forward "\t" nil t)
-          (untabify (1- (point)) (point-max))))
-    nil)
-
-  (defun supercollider-init ()
+  (ptrv/after auto-complete
     (add-to-list 'ac-modes 'sclang-mode)
-    (make-local-variable 'ac-user-dictionary-files)
-    (add-to-list 'ac-user-dictionary-files "~/.sc_completion")
+    (defun ptrv/ac-sclang-init ()
+      (make-local-variable 'ac-user-dictionary-files)
+      (add-to-list 'ac-user-dictionary-files "~/.sc_completion"))
+    (add-hook 'sclang-mode-hook 'ptrv/ac-sclang-init))
 
-    ;; (add-to-list 'ac-user-dictionary-files
-    ;;              "~/.local/share/SuperCollider/sclang_completion_dict")
-    (yas-minor-mode 1)
-    (make-local-variable 'write-contents-hooks)
-    (add-hook 'write-contents-hooks 'sclang-mode-untabify)
-
-    ;; set buffer local keymap to set TAB for jumping to next button in
-    ;; post window when using ext-scel's collapsible post window text.
-    (when (string= (buffer-name) sclang-post-buffer)
-      (use-local-map (copy-keymap sclang-mode-map))
-      (local-set-key [?\t] 'forward-button)
-      (local-set-key [backtab] 'backward-button)))
-
-  (add-hook 'sclang-mode-hook 'supercollider-init)
+  (defun ptrv/sclang-init ()
+    (setq indent-tabs-mode nil))
+  (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
 
   (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
   ;; Raise all supercollider windows.
