@@ -1569,9 +1569,8 @@ file `PATTERNS'."
     (compile (concat "go run " buffer-file-name)))
 
   (defun ptrv/go-mode-init ()
-    (make-local-variable 'before-save-hook)
-    (setq before-save-hook 'gofmt-before-save)
-    (hs-minor-mode 1))
+    (add-hook 'before-save-hook 'gofmt-before-save nil :local)
+    (hs-minor-mode +1))
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
