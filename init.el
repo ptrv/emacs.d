@@ -58,8 +58,7 @@
 (make-directory ptrv/pscratch-dir t)
 
 ;; Add every subdirectory of ~/.emacs.d/site-lisp to the load path
-(dolist
-    (project (directory-files (locate-user-emacs-file "site-lisp") t "\\w+"))
+(dolist (project (directory-files (locate-user-emacs-file "site-lisp") t "\\w+"))
   (when (and (file-directory-p project)
              (not (string-match "_extras" project)))
     (add-to-list 'load-path project)))
@@ -1022,11 +1021,13 @@ file `PATTERNS'."
 (autoload 'xub-mode "xub-mode" "Load xub-mode for browsing Unicode." t)
 (defalias 'unicode-browser 'xub-mode)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * frames
 ;; display visited file's path as frame title
 (setq frame-title-format
-      '((:eval (if (buffer-file-name)
-                   (abbreviate-file-name (buffer-file-name))
-                 "%b"))))
+      '(:eval (if (buffer-file-name)
+                  (abbreviate-file-name (buffer-file-name))
+                "%b")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
@@ -1645,8 +1646,7 @@ If ARG is not nil, create package in current directory"
       (make-local-variable 'nxml-section-element-name-regexp)
       (setq nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
       (make-local-variable 'nxml-heading-element-name-regexp)
-      (setq nxml-heading-element-name-regexp "name\\|time")
-      ))
+      (setq nxml-heading-element-name-regexp "name\\|time")))
   (add-hook 'nxml-mode-hook 'gpx-setup)
 
   (setq nxml-slash-auto-complete-flag t
@@ -1920,8 +1920,8 @@ prompt for the command to use."
                                      processing-builtins
                                      processing-constants)))
 
-  (add-to-list 'ac-modes 'processing-mode)
   (add-hook 'processing-mode-hook 'processing-mode-init)
+  (add-to-list 'ac-modes 'processing-mode)
   (let ((map processing-mode-map))
     (define-key map (kbd "C-c C-c") 'processing-sketch-run)
     (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
