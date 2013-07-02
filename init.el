@@ -1057,7 +1057,7 @@ file `PATTERNS'."
 (global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * Ack and Ag
+;;;; * search
 ;; ack-and-a-half
 (defalias 'ack 'ack-and-a-half)
 (defalias 'ack-same 'ack-and-a-half-same)
@@ -1070,8 +1070,10 @@ file `PATTERNS'."
     (define-key map (kbd "s") #'ack-and-a-half-same)
     (define-key map (kbd "g") #'ag)
     (define-key map (kbd "r") #'ag-regexp)
+    (define-key map (kbd "o") #'occur)
+    (define-key map (kbd "O") #'multi-occur)
     map)
-  "Keymap for Ack.")
+  "Keymap for searching.")
 
 ;; the silver searcher
 (ptrv/after ag
