@@ -1643,9 +1643,9 @@ If ARG is not nil, create package in current directory"
   (defun gpx-setup ()
     (when (and (stringp buffer-file-name)
                (string-match "\\.gpx\\'" buffer-file-name))
-      (make-local-variable 'nxml-section-element-name-regexp)
+      (ptrv/set-variables-local '(nxml-section-element-name-regexp
+                                  nxml-heading-element-name-regexp))
       (setq nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
-      (make-local-variable 'nxml-heading-element-name-regexp)
       (setq nxml-heading-element-name-regexp "name\\|time")))
   (add-hook 'nxml-mode-hook 'gpx-setup)
 
@@ -1911,11 +1911,11 @@ prompt for the command to use."
          (setq processing-sketch-dir "~/processing_sketches_v2")))
 
   (defun processing-mode-init ()
-    (make-local-variable 'ac-sources)
+    (ptrv/set-variables-local '(ac-sources
+                                ac-user-dictionary))
     (setq ac-sources '(ac-source-dictionary
                        ac-source-yasnippet
                        ac-source-words-in-buffer))
-    (make-local-variable 'ac-user-dictionary)
     (setq ac-user-dictionary (append processing-functions
                                      processing-builtins
                                      processing-constants)))
@@ -2004,8 +2004,11 @@ prompt for the command to use."
 (global-set-key (kbd "<f11>") 'hs-toggle-hiding)
 (global-set-key (kbd "S-<f11>") 'toggle-fold-all)
 
-(defvar hs-hide-all nil "Current state of hideshow for toggling all.")
-(make-local-variable 'hs-hide-all)
+(defvar hs-hide-all nil
+  "Current state of hideshow for toggling all.")
+(defun ptrv/hideshow-init ()
+  (ptrv/set-variables-local '(hs-hide-all)))
+(add-hook 'hs-minor-mode-hook 'ptrv/hideshow-init)
 
 (defun hs-toggle-hiding-all ()
   "Toggle hideshow all."
@@ -2234,7 +2237,7 @@ collapsed buffer"
   (ptrv/after auto-complete
     (add-to-list 'ac-modes 'sclang-mode)
     (defun ptrv/ac-sclang-init ()
-      (make-local-variable 'ac-user-dictionary-files)
+      (ptrv/set-variables-local '(ac-user-dictionary-files))
       (add-to-list 'ac-user-dictionary-files "~/.sc_completion"))
     (add-hook 'sclang-mode-hook 'ptrv/ac-sclang-init))
 
@@ -2941,6 +2944,12 @@ Create a new ielm process if required."
                      (and (symbolp obj) (fboundp obj) obj)))))))
     (if sym (describe-function sym)
       (describe-variable (variable-at-point)))))
+
+(defun ptrv/set-variables-local (var-list)
+  "Make all variables in VAR-LIST local."
+  (unless (listp var-list)
+    (error "You have to pass a list to this function"))
+  (mapc (lambda (x) (make-local-variable x)) var-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
