@@ -231,6 +231,7 @@ file `PATTERNS'."
     color-theme
     popwin
     smooth-scrolling
+    rainbow-mode
     ;; utilities
     xml-rpc
     refheap
@@ -452,9 +453,12 @@ file `PATTERNS'."
 (autoload 'color-theme-gandalf-ptrv "gandalf-ptrv" nil nil)
 (color-theme-gandalf-ptrv)
 
-(ptrv/with-library live-fontify-hex
-  (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
-    (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
+;; (ptrv/with-library live-fontify-hex
+;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
+;;     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
+
+(dolist (x '(lisp emacs-lisp lisp-interaction css))
+  (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-mode))
 
 (defvar todo-comment-face 'todo-comment-face)
 (defvar headline-face 'headline-face)
@@ -2079,6 +2083,7 @@ collapsed buffer"
 (ptrv/after projectile (diminish 'projectile-mode))
 (ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
 (ptrv/after google-this (diminish 'google-this-mode))
+(ptrv/after rainbow-mode (diminish 'rainbow-mode))
 
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
