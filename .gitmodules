@@ -53,10 +53,6 @@
 	path = site-lisp/flycheck-go-alt
 	url = https://gist.github.com/5414276.git
     ignore = untracked
-[submodule "site-lisp/metaweblog"]
-	path = site-lisp/metaweblog
-	url = https://github.com/punchagan/metaweblog.el.git
-    ignore = untracked
 [submodule "site-lisp/go-errcheck"]
 	path = site-lisp/go-errcheck
 	url = https://github.com/dominikh/go-errcheck.el.git
