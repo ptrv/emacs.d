@@ -1327,19 +1327,6 @@ file `PATTERNS'."
       (load "~/.org-blogs.el" 'noerror))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * org-present
-(autoload 'org-present "org-present" nil t)
-(ptrv/after org-present
-  (add-hook 'org-present-mode-hook
-            (lambda ()
-              (org-present-big)
-              (org-display-inline-images)))
-  (add-hook 'org-present-mode-quit-hook
-            (lambda ()
-              (org-present-small)
-              (org-remove-inline-images))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * latex
 (load "auctex.el" 'noerror t t)
 (load "preview-latex.el" 'noerror t t)

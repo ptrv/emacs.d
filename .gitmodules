@@ -38,10 +38,6 @@
 	path = site-lisp/4clj-el
 	url = https://github.com/dcluna/4clj-el.git
     ignore = untracked
-[submodule "site-lisp/org-present"]
-	path = site-lisp/org-present
-	url = https://github.com/rlister/org-present.git
-    ignore = untracked
 [submodule "site-lisp/emacs-clang-complete-async"]
 	path = site-lisp/emacs-clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
