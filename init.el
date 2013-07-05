@@ -1545,14 +1545,14 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * markdown
 (ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$")
 
-(ptrv/after markdown
+(ptrv/after markdown-mode
   (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
-
   (sp-with-modes '(markdown-mode gfm-mode)
     (sp-local-pair "*" "*" :bind "C-*")
     (sp-local-pair "`" "`")
     (sp-local-tag "s" "```scheme" "```")
     (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
