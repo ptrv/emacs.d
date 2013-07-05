@@ -196,7 +196,6 @@ file `PATTERNS'."
     undo-tree
     flycheck
     flymake-cursor
-    autopair
     ace-jump-mode
     key-chord
     ;; ido
@@ -211,9 +210,7 @@ file `PATTERNS'."
     dropdown-list
     yasnippet
     ;; lisp
-    paredit
     rainbow-delimiters
-    mic-paren
     elisp-slime-nav
     clojure-mode
     align-cljlet
@@ -243,7 +240,6 @@ file `PATTERNS'."
     nyan-mode
     diminish
     kill-ring-search
-    ;;auto-compile
     ;; tools
     ag
     ack-and-a-half
@@ -347,7 +343,6 @@ file `PATTERNS'."
 
 (auto-insert-mode 1)
 (auto-compression-mode t)
-(show-paren-mode 1)
 (winner-mode 1)
 (windmove-default-keybindings 'super)
 
@@ -392,9 +387,6 @@ file `PATTERNS'."
 ;;enable cua-mode for rectangular selections
 ;; (cua-mode 1)
 (setq cua-enable-cua-keys nil)
-;; autopair-newline interferes with cua-rotate-rectangle (default binding "\r")
-(ptrv/after cua-base
-  (define-key cua--rectangle-keymap (kbd "M-<return>") 'cua-rotate-rectangle))
 
 (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
 
@@ -626,11 +618,92 @@ file `PATTERNS'."
       (auto-complete))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * smartparens
+(require 'smartparens-config)
+(smartparens-global-mode +1)
+(show-smartparens-global-mode)
+
+(defun sp-current-indentation ()
+  "Get the indentation offset of the current line."
+  (save-excursion
+    (back-to-indentation)
+    (current-column)))
+
+(defun sp-reindent-defun (arg)
+  "Reindent the current function.
+
+If point is inside a string or comment, fill the current
+paragraph instead, and with ARG, justify as well.
+
+Otherwise, reindent the current function, and adjust the position
+of the point."
+  (interactive "P")
+  (if (sp-point-in-string-or-comment)
+      (fill-paragraph arg)
+    (let ((column (current-column))
+          (indentation (sp-current-indentation)))
+      (save-excursion
+        (end-of-defun)
+        (beginning-of-defun)
+        (indent-sexp))
+      (let* ((indentation* (sp-current-indentation))
+             (offset
+              (cond
+               ;; Point was in code, so move it along with the re-indented code
+               ((>= column indentation)
+                (+ column (- indentation* indentation)))
+               ;; Point was indentation, but would be in code now, so move to
+               ;; the beginning of indentation
+               ((<= indentation* column) indentation*)
+               ;; Point was in indentation, and still is, so leave it there
+               (:else column))))
+        (goto-char (+ (line-beginning-position) offset))))))
+
+;; Improve Smartparens support for Lisp editing
+(defvar ptrv/smartparens-lisp-mode-map
+  (let ((map (make-sparse-keymap)))
+    (sp-use-paredit-bindings)
+    (set-keymap-parent map smartparens-mode-map)
+    ;; deleting and killing
+    (define-key map (kbd "C-M-k") 'sp-kill-sexp)
+    (define-key map (kbd "C-M-w") 'sp-copy-sexp)
+    ;; depth changing
+    (define-key map (kbd "M-?") 'sp-convolute-sexp)
+    ;; misc
+    (define-key map (kbd "M-J") 'sp-join-sexp)
+    (define-key map (kbd "C-M-t") 'sp-transpose-sexp)
+    (define-key map ")" 'sp-up-sexp)
+    (define-key map (kbd "C-d") 'sp-delete-char)
+    (define-key map (kbd "DEL") 'sp-backward-delete-char)
+    (define-key map (kbd "M-d") 'sp-kill-word)
+    (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
+    (define-key map (kbd "M-q") 'sp-reindent-defun)
+    map)
+  "Keymap for Smartparens bindings in Lisp modes.")
+
+(defun ptrv/use-smartparens-lisp-mode-map ()
+  "Use Lisp specific Smartparens bindings in the current buffer.
+
+Replace `smartparens-mode-map' with
+`ptrv/smartparens-lisp-mode-map' in the current buffer."
+  (add-to-list 'minor-mode-overriding-map-alist
+               (cons 'smartparens-mode ptrv/smartparens-lisp-mode-map)))
+
+(defun ptrv/smartparens-setup-lisp-modes (modes)
+  "Setup Smartparens Lisp support in MODES.
+
+Add Lisp pairs and tags to MODES, and use the a special, more strict
+keymap `ptrv/smartparens-lisp-mode-map'."
+  (let ((modes (if (symbolp modes) (list modes) modes)))
+    (sp-local-pair modes "(" nil :bind "M-(")
+    (dolist (mode modes)
+      (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+        (add-hook hook #'ptrv/use-smartparens-lisp-mode-map)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lisp
-(autoload 'enable-paredit-mode "paredit" nil t)
 (defvar ptrv/lisp-common-modes
-  '(enable-paredit-mode
-    rainbow-delimiters-mode))
+  '(rainbow-delimiters-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
@@ -650,6 +723,10 @@ file `PATTERNS'."
   (dolist (mode ptrv/emacs-lisp-common-modes)
     (add-hook 'emacs-lisp-mode-hook mode)
     (add-hook 'lisp-interaction-mode-hook mode))
+
+  ;; Smartparens support for Emacs Lisp editing
+  (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
+                                       lisp-interaction-mode))
 
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
   (let ((map lisp-mode-shared-map))
@@ -674,10 +751,8 @@ file `PATTERNS'."
 
 (ptrv/after ielm
   (dolist (mode ptrv/emacs-lisp-common-modes)
-    (add-hook 'ielm-mode-hook mode)))
-
-(paren-activate)
-
+    (add-hook 'ielm-mode-hook mode))
+  (ptrv/smartparens-setup-lisp-modes 'inferior-emacs-lisp-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
@@ -689,6 +764,7 @@ file `PATTERNS'."
 
   (dolist (mode ptrv/lisp-common-modes)
     (add-hook 'clojure-mode-hook mode))
+  (ptrv/smartparens-setup-lisp-modes 'clojure-mode)
 
   (font-lock-add-keywords
    'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
@@ -755,19 +831,12 @@ file `PATTERNS'."
         nrepl-popup-stacktraces-in-repl nil
         nrepl-port "4555")
 
-  (add-hook 'nrepl-interaction-mode-hook
-            (lambda ()
-              (nrepl-turn-on-eldoc-mode)
-              (enable-paredit-mode)))
+  (dolist (mode '(nrepl-mode nrepl-interaction-mode))
+    (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+      (add-hook hook 'nrepl-turn-on-eldoc-mode)))
 
-  (add-hook 'nrepl-mode-hook
-            (lambda ()
-              (nrepl-turn-on-eldoc-mode)
-              (enable-paredit-mode)
-              (define-key nrepl-mode-map
-                (kbd "{") 'paredit-open-curly)
-              (define-key nrepl-mode-map
-                (kbd "}") 'paredit-close-curly)))
+  (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
+                                       nrepl-interaction-mode))
 
   ;; Show documentation/information with M-RET
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
@@ -1305,6 +1374,10 @@ file `PATTERNS'."
   (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
   (add-to-list 'org-src-lang-modes '("sam" . sam))
 
+  ;; smartparens
+  (dolist (it '("*" "/" "=" "~"))
+    (sp-local-pair 'org-mode it it))
+
   ;; org publish projects file
   (ptrv/after ox
     (load "~/.org-publish-projects.el" 'noerror)))
@@ -1382,7 +1455,10 @@ file `PATTERNS'."
                ("(latex2e)Command Index")))
 
   (require 'auto-complete-auctex)
-  (require 'pstricks))
+  (require 'pstricks)
+
+  ;; smartparens LaTeX
+  (require 'smartparens-latex))
 
 (ptrv/after reftex
   (message "RefTeX config has been loaded !!!")
@@ -1468,8 +1544,14 @@ file `PATTERNS'."
 ;;;; * markdown
 (ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$")
 
-(setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
+(ptrv/after markdown
+  (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
 
+  (sp-with-modes '(markdown-mode gfm-mode)
+    (sp-local-pair "*" "*" :bind "C-*")
+    (sp-local-pair "`" "`")
+    (sp-local-tag "s" "```scheme" "```")
+    (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
@@ -2009,31 +2091,15 @@ goto-line-with-feedback in a collapsed buffer"
       (hs-show-block))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * autopair
-(autopair-global-mode 1)
-
-(defadvice enable-paredit-mode (before disable-autopair activate)
-  (setq autopair-dont-activate t)
-  (autopair-mode -1))
-
-(add-hook 'python-mode-hook
-          #'(lambda ()
-              (setq autopair-handle-action-fns
-                    (list #'autopair-default-handle-action
-                          #'autopair-python-triple-quote-action))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
 (ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
 (ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
-(ptrv/after paredit (diminish 'paredit-mode " Φ"))
 (ptrv/after eldoc (diminish 'eldoc-mode))
 (ptrv/after abbrev (diminish 'abbrev-mode))
 (ptrv/after undo-tree (diminish 'undo-tree-mode " τ"))
 (ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
 (ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ"))
 (ptrv/after simple (diminish 'auto-fill-function " φ"))
-(ptrv/after autopair (diminish 'autopair-mode))
 (ptrv/after projectile (diminish 'projectile-mode))
 (ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
 (ptrv/after google-this (diminish 'google-this-mode))
@@ -2818,13 +2884,13 @@ If mark is activate, duplicate region lines below."
 (defun ptrv/user-first-name-p ()
   (not (string-equal "" (ptrv/user-first-name))))
 
-;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
-(defun conditionally-enable-paredit-mode ()
-  "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
-  (if (eq this-command 'eval-expression)
-      (enable-paredit-mode)))
+;; ;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
+;; (defun conditionally-enable-paredit-mode ()
+;;   "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
+;;   (if (eq this-command 'eval-expression)
+;;       (enable-paredit-mode)))
 
-(add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
+;; (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
 (defun kill-other-buffers ()
