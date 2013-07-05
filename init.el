@@ -2052,6 +2052,17 @@ prompt for the command to use."
   (add-hook (intern (format "%s-hook" (symbol-name x))) 'hs-minor-mode))
 
 (ptrv/after hideshow
+  (defvar ptrv/hs-minor-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "C-c @ h")   'hs-hide-block)
+      (define-key map (kbd "C-c @ H")   'hs-show-block)
+      (define-key map (kbd "C-c @ s")   'hs-hide-all)
+      (define-key map (kbd "C-c @ S")   'hs-show-all)
+      (define-key map (kbd "C-c @ l")   'hs-hide-level)
+      (define-key map (kbd "C-c @ c")   'hs-toggle-hiding)
+      (define-key map [(shift mouse-2)] 'hs-mouse-toggle-hiding)
+      map))
+
   ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
   (setq hs-isearch-open t)
 
@@ -2061,7 +2072,9 @@ prompt for the command to use."
   (defvar hs-hide-all nil
     "Current state of hideshow for toggling all.")
   (defun ptrv/hideshow-init ()
-    (ptrv/set-variables-local '(hs-hide-all)))
+    (ptrv/set-variables-local '(hs-hide-all))
+    (add-to-list 'minor-mode-overriding-map-alist
+                 (cons 'hs-minor-mode-map ptrv/hs-minor-mode-map)))
   (add-hook 'hs-minor-mode-hook 'ptrv/hideshow-init)
 
   (defun hs-toggle-hiding-all ()
