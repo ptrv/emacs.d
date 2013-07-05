@@ -448,8 +448,8 @@ file `PATTERNS'."
 ;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
 ;;     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
-(dolist (x '(lisp emacs-lisp lisp-interaction css))
-  (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'rainbow-mode))
+(dolist (x '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
+  (add-hook (intern (format "%s-hook" (symbol-name x))) 'rainbow-mode))
 
 (defvar todo-comment-face 'todo-comment-face)
 (defvar headline-face 'headline-face)
@@ -472,9 +472,7 @@ file `PATTERNS'."
 (defun fontify-todo ()
   (font-lock-add-keywords
    nil '((";;.*\\(TODO\\|FIXME\\)"
-          (1 todo-comment-face t)
-          ;;(1 font-lock-warning-face t)
-          ))))
+          (1 todo-comment-face t)))))
 (defun fontify-headline ()
   (font-lock-add-keywords
    nil '(("^;;;; [* ]*\\(.*\\)\\>"
@@ -2048,9 +2046,10 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
-(add-hook 'c-mode-common-hook 'hs-minor-mode)
-(dolist (x '(emacs-lisp lisp java perl sh python))
-  (add-hook (intern (concat (symbol-name x) "-mode-hook")) 'hs-minor-mode))
+(dolist (x '(emacs-lisp-mode
+             lisp-mode c-mode-common
+             perl-mode sh-mode python-mode))
+  (add-hook (intern (format "%s-hook" (symbol-name x))) 'hs-minor-mode))
 
 (ptrv/after hideshow
   ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
