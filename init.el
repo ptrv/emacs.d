@@ -661,8 +661,9 @@ of the point."
 ;; Improve Smartparens support for Lisp editing
 (defvar ptrv/smartparens-lisp-mode-map
   (let ((map (make-sparse-keymap)))
-    (sp-use-paredit-bindings)
     (set-keymap-parent map smartparens-mode-map)
+    (dolist (x sp-paredit-bindings)
+      (define-key map (read-kbd-macro (car x)) (cdr x)))
     ;; deleting and killing
     (define-key map (kbd "C-M-k") 'sp-kill-sexp)
     (define-key map (kbd "C-M-w") 'sp-copy-sexp)
