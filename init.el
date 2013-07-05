@@ -214,7 +214,6 @@ file `PATTERNS'."
     paredit
     rainbow-delimiters
     mic-paren
-    nrepl-eval-sexp-fu
     elisp-slime-nav
     clojure-mode
     align-cljlet
@@ -679,9 +678,6 @@ file `PATTERNS'."
 
 (paren-activate)
 
-(require 'highlight)
-(require 'nrepl-eval-sexp-fu)
-(setq nrepl-eval-sexp-fu-flash-duration 0.5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
