@@ -266,7 +266,8 @@ file `PATTERNS'."
     find-file-in-project
     projectile
     ;; minor-modes
-    love-minor-mode)
+    love-minor-mode
+    go-errcheck)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p ptrv/packages)
