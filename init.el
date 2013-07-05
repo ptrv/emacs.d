@@ -2898,13 +2898,14 @@ If mark is activate, duplicate region lines below."
 (defun ptrv/user-first-name-p ()
   (not (string-equal "" (ptrv/user-first-name))))
 
-;; ;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
-;; (defun conditionally-enable-paredit-mode ()
-;;   "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
-;;   (if (eq this-command 'eval-expression)
-;;       (enable-paredit-mode)))
+;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
+(defun enable-smartparens-lisp-map-maybe ()
+  "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
+  (when (eq this-command 'eval-expression)
+    (smartparens-mode)
+    (ptrv/use-smartparens-lisp-mode-map)))
 
-;; (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
+(add-hook 'minibuffer-setup-hook 'enable-smartparens-lisp-map-maybe)
 
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
 (defun kill-other-buffers ()
