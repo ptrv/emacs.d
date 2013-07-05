@@ -187,6 +187,7 @@ file `PATTERNS'."
     gist
     git-messenger
     ;; editor
+    smartparens
     iflipb
     iedit
     starter-kit-eshell
