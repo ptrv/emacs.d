@@ -1805,6 +1805,8 @@ prompt for the command to use."
     map)
   "Keymap for file functions.")
 
+(ptrv/after dired (require 'dired-x))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * projectile
 (ptrv/after projectile
