@@ -1670,12 +1670,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (setq goflymake-debug nil)
 
     (ptrv/after flycheck
-      (flycheck-declare-checker go
+      (flycheck-define-checker go
         "A Go syntax and style checker using the gofmt utility. "
-        :command '("gofmt" source)
-        :error-patterns '(("^\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:.*\\)$" error))
-        :modes 'go-mode
-        :next-checkers '((no-errors . go-goflymake)))
+        :command ("gofmt" source)
+        :error-patterns ((error line-start
+                                (file-name) ":"
+                                line ":" column ": "
+                                (message) line-end))
+        :modes go-mode
+        :next-checkers ((no-errors . go-goflymake)))
       (add-to-list 'flycheck-checkers 'go)))
 
   (when (executable-find "errcheck")
