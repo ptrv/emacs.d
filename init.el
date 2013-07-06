@@ -2766,11 +2766,13 @@ If mark is activate, duplicate region lines below."
 
 ;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
 (defun enable-smartparens-lisp-map-maybe ()
-  "Enable `paredit-mode' in the minibuffer, during `eval-expression'."
+  "Enable `smartparens-mode' in the minibuffer, during
+`eval-expression'."
   (when (eq this-command 'eval-expression)
     (smartparens-mode)
     (ptrv/use-smartparens-lisp-mode-map)))
 
+(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 (add-hook 'minibuffer-setup-hook 'enable-smartparens-lisp-map-maybe)
 
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
