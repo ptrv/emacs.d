@@ -67,6 +67,7 @@
 (depends-on "org-plus-contrib")
 (depends-on "markdown-mode")
 (depends-on "pandoc-mode")
+(depends-on "metaweblog")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ui
