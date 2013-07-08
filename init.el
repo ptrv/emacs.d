@@ -1396,6 +1396,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;; Carton
 (ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$")
 
+;; gnuplot
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot"
+  "open a buffer in gnuplot mode" t)
+(ptrv/add-auto-mode 'gnuplot-mode "\\.gp$")
+
 ;;;; * abbrev
 (define-abbrev-table 'global-abbrev-table
   '(
