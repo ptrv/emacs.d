@@ -253,7 +253,6 @@ file `PATTERNS'."
     elpy
     virtualenv
     ;; major modes
-    go-mode
     glsl-mode
     apache-mode
     yaml-mode
@@ -267,6 +266,10 @@ file `PATTERNS'."
     projectile
     ;; minor-modes
     love-minor-mode
+    ;; golang
+    go-mode
+    go-autocomplete
+    go-eldoc
     go-errcheck)
   "A list of packages to ensure are installed at launch.")
 
@@ -1586,10 +1589,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (exec-path-from-shell-copy-env "GOPATH")
 
   ;; go-lang completion
-  (add-to-list 'load-path (concat
-                           (car (split-string (getenv "GOPATH") ":"))
-                           "/src/github.com/nsf/gocode/emacs"))
-
   (ptrv/with-library go-autocomplete
     (defface ac-go-mode-candidate-face
       '((t (:background "lightgray" :foreground "navy")))
@@ -1654,7 +1653,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (defun ptrv/go-mode-init ()
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
-    (hs-minor-mode +1))
+    (hs-minor-mode +1)
+    (go-eldoc-setup))
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
