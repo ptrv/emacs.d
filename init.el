@@ -1355,9 +1355,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline (concat org-directory "/ptrv.org") "TASKS")
-           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines-after 1)
+           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
           ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
-           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines-after 1)))
+           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1)))
 
   (setq org-ditaa-jar-path "~/applications/ditaa.jar")
   (setq org-plantuml-jar-path "~/applications/plantuml.jar")
