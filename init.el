@@ -114,7 +114,9 @@ FEATURE may be a named feature or a file name, see
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face))
     (,(concat "(" (regexp-opt '("with-eval-after-load"
-                                "ptrv/expose")
+                                "ptrv/expose"
+                                "ptrv/hook-into-modes"
+                                "ptrv/add-to-hook")
                               'symbols))
      (1 font-lock-keyword-face))))
 
@@ -138,6 +140,16 @@ file `PATTERNS'."
     (lambda ()
       (interactive)
       (funcall lex-func))))
+
+(defmacro ptrv/hook-into-modes (func modes)
+  "Add FUNC to list of MODES."
+  `(dolist (mode ,modes)
+     (add-hook (intern (format "%s-hook" (symbol-name mode))) ,func)))
+
+(defmacro ptrv/add-to-hook (hook funcs)
+  "Add FUNCS to HOOK."
+  `(dolist (f ,funcs)
+     (add-hook ,hook f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
@@ -463,8 +475,10 @@ file `PATTERNS'."
 ;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
 ;;     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
-(dolist (x '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
-  (add-hook (intern (format "%s-hook" (symbol-name x))) 'rainbow-mode))
+(ptrv/hook-into-modes #'rainbow-mode '(lisp-mode
+                                       emacs-lisp-mode
+                                       lisp-interaction-mode
+                                       css-mode))
 
 (defvar todo-comment-face 'todo-comment-face)
 (defvar headline-face 'headline-face)
@@ -750,11 +764,10 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (define-key map (kbd "C-c C-p") 'eval-print-last-sexp)
     (define-key map (kbd "M-RET") 'ptrv/lisp-describe-thing-at-point))
 
-  (dolist (mode '(lexbind-mode
-                  ptrv/remove-elc-on-save
-                  fontify-todo
-                  fontify-headline))
-    (add-hook 'emacs-lisp-mode-hook mode))
+  (ptrv/add-to-hook 'emacs-lisp-mode-hook '(lexbind-mode
+                                            ptrv/remove-elc-on-save
+                                            fontify-todo
+                                            fontify-headline))
 
   (defun ptrv/remove-elc-on-save ()
     "If you’re saving an elisp file, likely the .elc is no longer valid."
@@ -765,8 +778,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
               nil :local)))
 
 (ptrv/after ielm
-  (dolist (mode ptrv/emacs-lisp-common-modes)
-    (add-hook 'ielm-mode-hook mode))
+  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
   (ptrv/smartparens-setup-lisp-modes 'inferior-emacs-lisp-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -777,8 +789,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/after clojure-mode
   (message "clojure config has been loaded !!!")
 
-  (dolist (mode ptrv/lisp-common-modes)
-    (add-hook 'clojure-mode-hook mode))
+  (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
   (ptrv/smartparens-setup-lisp-modes 'clojure-mode)
 
   (font-lock-add-keywords
@@ -846,9 +857,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
         nrepl-popup-stacktraces-in-repl nil
         nrepl-port "4555")
 
-  (dolist (mode '(nrepl-mode nrepl-interaction-mode))
-    (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook 'nrepl-turn-on-eldoc-mode)))
+  (ptrv/hook-into-modes #'nrepl-turn-on-eldoc-mode
+                        '(nrepl-mode nrepl-interaction-mode))
 
   (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
                                        nrepl-interaction-mode))
@@ -858,8 +868,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
   ;;Auto Complete
-  (dolist (hook '(nrepl-mode-hook nrepl-interaction-mode-hook))
-    (add-hook hook 'ac-nrepl-setup))
+  (ptrv/hook-into-modes #'ac-nrepl-setup
+                        '(nrepl-mode nrepl-interaction-mode))
 
   (ptrv/after auto-complete
     (add-to-list 'ac-modes 'nrepl-mode))
@@ -1449,10 +1459,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/after latex
   (message "LaTeX config has been loaded !!!")
 
-  (dolist (hook '(LaTeX-math-mode
-                  reftex-mode
-                  auto-fill-mode))
-    (add-hook 'LaTeX-mode-hook hook))
+  (ptrv/add-to-hook 'LaTeX-mode-hook '(LaTeX-math-mode
+                                       reftex-mode
+                                       auto-fill-mode))
 
   (add-hook 'LaTeX-mode-hook (lambda ()
                                (setq TeX-command-default "latexmk")))
@@ -2053,8 +2062,8 @@ prompt for the command to use."
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; disable flycheck for some modes
-(dolist (hook '(emacs-lisp-mode-hook lisp-interaction-mode-hook))
-  (add-hook hook #'(lambda () (flycheck-mode -1))))
+(ptrv/hook-into-modes #'(lambda () (flycheck-mode -1))
+                      '(emacs-lisp-mode lisp-interaction-mode))
 
 (ptrv/after flycheck
   (setq flycheck-highlighting-mode 'lines))
@@ -2070,10 +2079,9 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
-(dolist (x '(emacs-lisp-mode
-             lisp-mode c-mode-common
-             perl-mode sh-mode python-mode))
-  (add-hook (intern (format "%s-hook" (symbol-name x))) 'hs-minor-mode))
+(ptrv/hook-into-modes #'hs-minor-mode '(emacs-lisp-mode
+                                        lisp-mode c-mode-common
+                                        perl-mode sh-mode python-mode))
 
 (ptrv/after hideshow
   (defvar ptrv/hs-minor-mode-map
@@ -2431,8 +2439,7 @@ goto-line-with-feedback in a collapsed buffer"
       (unless (string-match ".*flycheck.*" buffer-file-name)
         (setq ac-sources '(ac-source-clang-async))
         (ac-clang-launch-completion-process)))
-    (dolist (hook '(c-mode-hook c++-mode-hook))
-      (add-hook hook 'ptrv/clang-complete-init)))
+    (ptrv/hook-into-modes #'ptrv/clang-complete-init '(c-mode c++-mode)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
@@ -2441,8 +2448,7 @@ goto-line-with-feedback in a collapsed buffer"
           indent-tabs-mode nil)
     (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
-  (dolist (hook '(c-mode-hook c++-mode-hook))
-    (add-hook hook 'ptrv/cc-mode-init))
+  (ptrv/hook-into-modes #'ptrv/cc-mode-init '(c-mode c++-mode))
 
   (add-hook 'c-mode-common-hook 'linum-mode))
 
