@@ -3039,17 +3039,7 @@ Create a new ielm process if required."
 (defun ptrv/welcome-message ()
   (nth (random (length ptrv/welcome-messages)) ptrv/welcome-messages))
 
-(setq initial-scratch-message (concat ";;_
-;;                 __         _,******
-;;   ,-----,        _  _,**
-;;   | Mu! |          _   ____,****
-;;   ;-----;        _
-;;        \\   ^__^
-;;         \\  (^^)\\_______
-;;          ^-(..)\\       )\\/\\/^_^
-;;                ||----w |
-;; __.-''*-,.,____||_____||___,_.-
-;;                 ''     ''
+(setq initial-scratch-message (concat ";;
 ;; Emacs on " system-name " [" (symbol-name system-type) "]
 ;;
 ;; " (ptrv/welcome-message) "
