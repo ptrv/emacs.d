@@ -1562,7 +1562,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * markdown
-(ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$")
+(ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$" "\\.mkd$")
 
 (ptrv/after markdown-mode
   (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
