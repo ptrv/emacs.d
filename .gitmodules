@@ -16,6 +16,7 @@
 [submodule "site-lisp/processing2-emacs"]
 	path = site-lisp/processing2-emacs
 	url = https://github.com/ptrv/processing2-emacs.git
+    ignore = untracked
 [submodule "site-lisp/arduino-mode"]
 	path = site-lisp/arduino-mode
 	url = https://github.com/ptrv/arduino-mode.git
