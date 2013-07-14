@@ -2125,15 +2125,6 @@ prompt for the command to use."
     "hideshow-expand affected block when using goto-line in a
 collapsed buffer"
     (save-excursion
-      (hs-show-block)))
-
-  (defadvice goto-line-with-feedback
-    (after
-     expand-after-goto-line-with-feedback
-     activate compile)
-    "hideshow-expand affected block when using
-goto-line-with-feedback in a collapsed buffer"
-    (save-excursion
       (hs-show-block))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2842,7 +2833,9 @@ If mark is activate, duplicate region lines below."
             (linum-mode 1))
           (call-interactively 'goto-line))
       (when line-numbers-off-p
-        (linum-mode -1)))))
+        (linum-mode -1))))
+  (save-excursion
+    (hs-show-block)))
 
 (defun toggle-window-split ()
   (interactive)
