@@ -496,17 +496,16 @@ file `PATTERNS'."
 
 ;; Fontifying todo items outside of org-mode
 (defface todo-comment-face
-  '((t (:background "grey95"
-         :foreground "#cd0000"
-         :weight bold
-         :bold t)))
+  '((t (:foreground "#cd0000"
+        :weight bold
+        :bold t)))
   "Face for TODO in code buffers."
   :group 'org-faces)
 (defface headline-face
   '((t (:foreground "#006400"
-        :background "grey95"
         :weight bold
-        :bold t)))
+        :bold t
+        :underline t)))
   "Face for headlines."
   :group 'org-faces)
 (defun fontify-todo ()
