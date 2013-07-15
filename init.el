@@ -791,6 +791,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
   (ptrv/smartparens-setup-lisp-modes 'inferior-emacs-lisp-mode))
 
+(ptrv/with-library nrepl-eval-sexp-fu
+  (setq nrepl-eval-sexp-fu-flash-duration 0.5))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 (ptrv/after find-file-in-project
