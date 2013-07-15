@@ -1903,7 +1903,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
-(move-text-default-bindings)
+(global-set-key [C-S-up] 'move-text-up)
+(global-set-key [C-S-down] 'move-text-down)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * file commands
@@ -2596,7 +2597,9 @@ collapsed buffer"
 (define-key isearch-mode-map (kbd "C-o")
   (lambda () (interactive)
     (let ((case-fold-search isearch-case-fold-search))
-      (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
+      (occur (if isearch-regexp
+                 isearch-string
+               (regexp-quote isearch-string))))))
 
 (global-set-key "\C-m" 'newline-and-indent)
 
@@ -2604,11 +2607,9 @@ collapsed buffer"
 
 (global-set-key (kbd "M-/") 'hippie-expand)
 
-(global-set-key (kbd "C-S-d") 'duplicate-line-or-region-below)
-(global-set-key (kbd "C-S-M-d") 'duplicate-line-below-comment)
-
-(global-set-key (kbd "<S-return>") 'open-line-below)
-(global-set-key (kbd "<C-S-return>") 'open-line-above)
+(global-set-key (kbd "<S-return>") 'ptrv/smart-open-line)
+(global-set-key (kbd "M-o") 'ptrv/smart-open-line)
+(global-set-key (kbd "<C-S-return>") 'ptrv/smart-open-line-above)
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
@@ -2621,9 +2622,12 @@ collapsed buffer"
 
 ;; Help should search more than just commands
 (define-key 'help-command "a" 'apropos)
+(define-key 'help-command "A" 'apropos-command)
 
-(global-set-key (kbd "C-h F") 'find-function)
-(global-set-key (kbd "C-h V") 'find-variable)
+(global-set-key (kbd "C-h C-f") 'find-function)
+(global-set-key (kbd "C-h C-k") 'find-function-on-key)
+(global-set-key (kbd "C-h C-v") 'find-variable)
+(global-set-key (kbd "C-h C-l") 'find-library)
 
 ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
 (global-set-key (kbd "C-x O") #'(lambda ()
@@ -2641,15 +2645,18 @@ collapsed buffer"
 (let ((map mode-specific-map))
   (define-key map "G" ptrv/gist-map)
   (define-key map "A" ptrv/ack-map)
+  (define-key map "D" ptrv/diff-map)
   (define-key map "a" 'org-agenda)
   (define-key map "b" 'org-iswitchb)
   (define-key map "c" 'org-capture)
-  (define-key map "d" ptrv/diff-map)
+  (define-key map "d" 'duplicate-line-or-region-below)
+  (define-key map (kbd "M-d") 'duplicate-line-below-comment)
   (define-key map "f" ptrv/file-commands-map)
   (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
   (define-key map "q" 'exit-emacs-client)
   (define-key map "t" 'ptrv/eshell-or-restore)
+  (define-key map "u" 'ptrv/browse-url)
   (define-key map "v" 'halve-other-window-height)
   (define-key map "w" ptrv/windows-map)
   (define-key map "y" 'ptrv/display-yank-menu))
@@ -2860,19 +2867,26 @@ If mark is activate, duplicate region lines below."
       (server-edit)
     (delete-frame)))
 
-;; http://whattheemacsd.com/editing-defuns.el-01.html
-(defun open-line-below ()
+(defun ptrv/smart-open-line-above ()
+  "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
   (interactive)
-  (end-of-line)
-  (newline)
-  (indent-for-tab-command))
-
-(defun open-line-above ()
-  (interactive)
-  (beginning-of-line)
-  (newline)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
   (forward-line -1)
-  (indent-for-tab-command))
+  (indent-according-to-mode))
+
+(defun ptrv/smart-open-line (arg)
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode.
+
+With a prefix ARG open line above the current line."
+  (interactive "P")
+  (if arg
+      (ptrv/smart-open-line-above)
+    (progn
+      (move-end-of-line nil)
+      (newline-and-indent))))
 
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
@@ -3048,6 +3062,12 @@ Create a new ielm process if required."
   (unless (listp var-list)
     (error "You have to pass a list to this function"))
   (mapc (lambda (x) (make-local-variable x)) var-list))
+
+(defun ptrv/browse-url ()
+  "Open rlf in default browser."
+  (interactive)
+  (let* ((url (thing-at-point-url-at-point)))
+    (if url (browse-url url) (message "No URL at point!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
