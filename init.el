@@ -2637,7 +2637,7 @@ collapsed buffer"
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
   (define-key map "G" ptrv/gist-map)
-  (define-key map "R" 'refresh-file)
+  ;; (define-key map "R" 'refresh-file)
   (define-key map "a" 'org-agenda)
   (define-key map "b" 'org-iswitchb)
   (define-key map "c" 'org-capture)
@@ -2646,7 +2646,7 @@ collapsed buffer"
   (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
   (define-key map "q" 'exit-emacs-client)
-  (define-key map "r" 'revert-buffer)
+  ;; (define-key map "r" 'revert-buffer)
   (define-key map "s" ptrv/ack-map)
   (define-key map "t" 'ptrv/eshell-or-restore)
   (define-key map "v" 'halve-other-window-height)
@@ -2664,7 +2664,8 @@ collapsed buffer"
 
 (defun refresh-file ()
   (interactive)
-  (revert-buffer nil t))
+  (revert-buffer nil t)
+  (message "Buffer reverted!"))
 
 (defun ptrv/display-yank-menu ()
   "Open yank-menu popup."
