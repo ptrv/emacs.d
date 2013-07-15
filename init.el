@@ -2007,6 +2007,7 @@ prompt for the command to use."
   (let ((map (make-sparse-keymap)))
     (define-key map "o" #'ptrv/open-with)
     (define-key map "d" #'ptrv/launch-directory)
+    (define-key map "r" #'ptrv/ido-recentf-open)
     (define-key map "R" #'ptrv/rename-current-buffer-file)
     (define-key map "D" #'ptrv/delete-file-and-buffer)
     (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
@@ -2034,7 +2035,7 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ffip
 (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
-(define-key ptrv/file-commands-map "f" 'ffip)
+(global-set-key (kbd "C-x f") 'ffip)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * processing
@@ -2541,7 +2542,7 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * bindings
-(global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
+;; (global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 
 (global-set-key [f5] 'refresh-file)
