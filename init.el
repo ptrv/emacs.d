@@ -661,6 +661,8 @@ file `PATTERNS'."
 (smartparens-global-mode +1)
 (show-smartparens-global-mode)
 
+(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+
 (defun sp-current-indentation ()
   "Get the indentation offset of the current line."
   (save-excursion
@@ -697,20 +699,63 @@ of the point."
                (:else column))))
         (goto-char (+ (line-beginning-position) offset))))))
 
+(defvar ptrv/smartparens-bindings
+  '(("C-M-f" . sp-forward-sexp)
+    ("C-M-b" . sp-backward-sexp)
+    ("C-M-n" . sp-next-sexp)
+    ("C-M-p" . sp-previous-sexp)
+    ("C-M-d" . sp-down-sexp)
+    ("C-M-u" . sp-backward-up-sexp)
+    ;; ("C-M-a" . sp-backward-down-sexp)
+    ;; ("C-S-d" . sp-beginning-of-sexp)
+    ;; ("C-S-a" . sp-end-of-sexp)
+    ;; ("C-M-e" . sp-up-sexp)
+    ("C-M-k" . sp-kill-sexp)
+    ("C-M-w" . sp-copy-sexp)
+    ("M-<delete>" . sp-unwrap-sexp)
+    ("M-<backspace>" . sp-backward-unwrap-sexp)
+    ("C-<right>" . sp-forward-slurp-sexp)
+    ("C-<left>" . sp-forward-barf-sexp)
+    ("C-M-<left>" . sp-backward-slurp-sexp)
+    ("C-M-<right>" . sp-backward-barf-sexp)
+    ;; ("M-D" . sp-splice-sexp)
+    ;; ("C-M-<delete>" . sp-splice-sexp-killing-forward)
+    ;; ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
+    ;; ("C-S-<backspace>" . sp-splice-sexp-killing-around)
+    ("C-]" . sp-select-next-thing-exchange)
+    ("C-M-]" . sp-select-next-thing)
+    ("C-M-[" . sp-select-previous-thing)
+    ("M-F" . sp-forward-symbol)
+    ("M-B" . sp-backward-symbol)
+    ;; ("H-t" . sp-prefix-pair-object)
+    ;; ("H-p" . sp-prefix-pair-object)
+    ("s-s c" . sp-convolute-sexp)
+    ("s-s a" . sp-absorb-sexp)
+    ("s-s e" . sp-emit-sexp)
+    ("s-s p" . sp-add-to-previous-sexp)
+    ("s-s n" . sp-add-to-next-sexp)
+    ("s-s j" . sp-join-sexp)
+    ("s-s s" . sp-splice-sexp)
+    ("s-S s" . sp-split-sexp)
+    ("s-s r" . sp-splice-sexp-killing-around)
+    ("s-s <up>" . sp-splice-sexp-killing-backward)
+    ("s-s <down>" . sp-splice-sexp-killing-forward))
+  "Alist containing the ptrv's smartparens bindings.")
+
+(sp--populate-keymap ptrv/smartparens-bindings)
+
 ;; Improve Smartparens support for Lisp editing
 (defvar ptrv/smartparens-lisp-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map smartparens-mode-map)
     (dolist (x sp-paredit-bindings)
       (define-key map (read-kbd-macro (car x)) (cdr x)))
-    ;; deleting and killing
-    (define-key map (kbd "C-M-k") 'sp-kill-sexp)
-    (define-key map (kbd "C-M-w") 'sp-copy-sexp)
     ;; depth changing
     (define-key map (kbd "M-?") 'sp-convolute-sexp)
     ;; misc
     (define-key map (kbd "M-J") 'sp-join-sexp)
-    (define-key map (kbd "C-M-t") 'sp-transpose-sexp)
+    (define-key map (kbd "M-s") nil)
+    (define-key map (kbd "M-P") 'sp-splice-sexp)
     (define-key map ")" 'sp-up-sexp)
     (define-key map (kbd "C-d") 'sp-delete-char)
     (define-key map (kbd "DEL") 'sp-backward-delete-char)
@@ -739,6 +784,19 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
         (add-hook hook #'ptrv/use-smartparens-lisp-mode-map)))))
 
+(ptrv/smartparens-setup-lisp-modes sp--lisp-modes)
+
+;;"Enable `smartparens-mode' in the minibuffer, during
+;;`eval-expression'."
+(let ((turn-on-sp #'(lambda ()
+                      (smartparens-mode)
+                      (ptrv/use-smartparens-lisp-mode-map))))
+  (if (boundp 'eval-expression-minibuffer-setup-hook)
+      (add-hook 'eval-expression-minibuffer-setup-hook turn-on-sp)
+    (add-hook 'minibuffer-setup-hook #'(lambda ()
+                                         (when (eq this-command 'eval-expression)
+                                           (funcall turn-on-sp))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lisp
 (defvar ptrv/lisp-common-modes
@@ -763,10 +821,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (add-hook 'emacs-lisp-mode-hook mode)
     (add-hook 'lisp-interaction-mode-hook mode))
 
-  ;; Smartparens support for Emacs Lisp editing
-  (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
-                                       lisp-interaction-mode))
-
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
   (let ((map lisp-mode-shared-map))
     (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
@@ -788,8 +842,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
               nil :local)))
 
 (ptrv/after ielm
-  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
-  (ptrv/smartparens-setup-lisp-modes 'inferior-emacs-lisp-mode))
+  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes))
 
 (ptrv/with-library nrepl-eval-sexp-fu
   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
@@ -803,7 +856,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (message "clojure config has been loaded !!!")
 
   (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
-  (ptrv/smartparens-setup-lisp-modes 'clojure-mode)
 
   (font-lock-add-keywords
    'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
@@ -872,9 +924,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (ptrv/hook-into-modes #'nrepl-turn-on-eldoc-mode
                         '(nrepl-mode nrepl-interaction-mode))
-
-  (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
-                                       nrepl-interaction-mode))
 
   ;; Show documentation/information with M-RET
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
@@ -2919,17 +2968,6 @@ If mark is activate, duplicate region lines below."
       "")))
 (defun ptrv/user-first-name-p ()
   (not (string-equal "" (ptrv/user-first-name))))
-
-;; http://emacsredux.com/blog/2013/04/18/evaluate-emacs-lisp-in-the-minibuffer/
-(defun enable-smartparens-lisp-map-maybe ()
-  "Enable `smartparens-mode' in the minibuffer, during
-`eval-expression'."
-  (when (eq this-command 'eval-expression)
-    (smartparens-mode)
-    (ptrv/use-smartparens-lisp-mode-map)))
-
-(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-(add-hook 'minibuffer-setup-hook 'enable-smartparens-lisp-map-maybe)
 
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
 (defun kill-other-buffers ()
