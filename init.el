@@ -2649,8 +2649,9 @@ collapsed buffer"
   (define-key map "a" 'org-agenda)
   (define-key map "b" 'org-iswitchb)
   (define-key map "c" 'org-capture)
-  (define-key map "d" 'duplicate-line-or-region-below)
-  (define-key map (kbd "M-d") 'duplicate-line-below-comment)
+  (define-key map "d" #'ptrv/duplicate-current-line-or-region)
+  (define-key map (kbd "M-d")
+    #'ptrv/duplicate-and-comment-current-line-or-region)
   (define-key map "f" ptrv/file-commands-map)
   (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
@@ -2769,86 +2770,37 @@ end of the line."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-;; http://www.emacswiki.org/emacs/basic-edit-toolkit.el
-(defun duplicate-line-or-region-above (&optional reverse)
-  "Duplicate current line or region above.
-By default, duplicate current line above.
-If mark is activate, duplicate region lines above.
-Default duplicate above, unless option REVERSE is non-nil."
-  (interactive)
-  (let ((origianl-column (current-column))
-        duplicate-content)
+(defun ptrv/duplicate-current-line-or-region (arg &optional with-comment)
+  "Duplicates the current line or region ARG times.
+If there's no region, the current line will be duplicated.  However, if
+there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (let (beg end (origin (point)))
+    (if (and mark-active (> (point) (mark)))
+        (exchange-point-and-mark))
+    (setq beg (line-beginning-position))
     (if mark-active
-        ;; If mark active.
-        (let ((region-start-pos (region-beginning))
-              (region-end-pos (region-end)))
-          ;; Set duplicate start line position.
-          (setq region-start-pos (progn
-                                   (goto-char region-start-pos)
-                                   (line-beginning-position)))
-          ;; Set duplicate end line position.
-          (setq region-end-pos (progn
-                                 (goto-char region-end-pos)
-                                 (line-end-position)))
-          ;; Get duplicate content.
-          (setq duplicate-content (buffer-substring region-start-pos region-end-pos))
-          (if reverse
-              ;; Go to next line after duplicate end position.
-              (progn
-                (goto-char region-end-pos)
-                (forward-line +1))
-            ;; Otherwise go to duplicate start position.
-            (goto-char region-start-pos)))
-      ;; Otherwise set duplicate content equal current line.
-      (setq duplicate-content (buffer-substring
-                               (line-beginning-position)
-                               (line-end-position)))
-      ;; Just move next line when `reverse' is non-nil.
-      (and reverse (forward-line 1))
-      ;; Move to beginning of line.
-      (beginning-of-line))
-    ;; Open one line.
-    (open-line 1)
-    ;; Insert duplicate content and revert column.
-    (insert duplicate-content)
-    (move-to-column origianl-column t)))
+        (exchange-point-and-mark))
+    (setq end (line-end-position))
+    (let ((region (buffer-substring-no-properties beg end)))
+      (when with-comment
+        (comment-or-uncomment-region beg end)
+        (setq end (line-end-position)))
+      (let ((it 0))
+        (while (< it arg)
+          (goto-char end)
+          (newline)
+          (insert region)
+          (setq end (point))
+          (setq it (1+ it))))
+      (goto-char (+ origin (* (length region) arg) arg)))))
 
-(defun duplicate-line-or-region-below ()
-  "Duplicate current line or region below.
-By default, duplicate current line below.
-If mark is activate, duplicate region lines below."
-  (interactive)
-  (duplicate-line-or-region-above t))
-
-(defun duplicate-line-above-comment (&optional reverse)
-  "Duplicate current line above, and comment current line."
-  (interactive)
-  (if reverse
-      (duplicate-line-or-region-below)
-    (duplicate-line-or-region-above))
-  (save-excursion
-    (if reverse
-        (forward-line -1)
-      (forward-line +1))
-    (comment-or-uncomment-region+)))
-
-(defun duplicate-line-below-comment ()
-  "Duplicate current line below, and comment current line."
-  (interactive)
-  (duplicate-line-above-comment t))
-
-(defun comment-or-uncomment-region+ ()
-  "This function is to comment or uncomment a line or a region."
-  (interactive)
-  (let (beg end)
-    (if mark-active
-        (progn
-          (setq beg (region-beginning))
-          (setq end (region-end)))
-      (setq beg (line-beginning-position))
-      (setq end (line-end-position)))
-    (save-excursion
-      (comment-or-uncomment-region beg end))))
+(defun ptrv/duplicate-and-comment-current-line-or-region (arg)
+  "Duplicates and comments the current line or region ARG times.
+If there's no region, the current line will be duplicated.  However, if
+there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (prelude-duplicate-current-line-or-region arg t))
 
 ;; define function to shutdown emacs server instance
 (defun server-shutdown ()
