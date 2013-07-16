@@ -2785,7 +2785,8 @@ region."
     (if mark-active
         (exchange-point-and-mark))
     (setq end (line-end-position))
-    (let ((region (buffer-substring-no-properties beg end)))
+    (let ((region (buffer-substring-no-properties beg end))
+          (beg-orig beg) (end-orig end))
       (when do-comment
         (comment-or-uncomment-region beg end)
         (setq end (line-end-position)))
@@ -2796,7 +2797,12 @@ region."
           (insert region)
           (setq end (point))
           (setq it (1+ it))))
-      (goto-char (+ origin (* (length region) arg) arg)))))
+      (goto-char (+ origin (* (length region) arg) arg
+                    ;; when commenting, advance current point with
+                    ;; number of comment characters times marked lines
+                    ;; to maintain cursor position
+                    (if do-comment
+                        (* 3 (count-lines beg-orig end-orig)) 0))))))
 
 (defun ptrv/duplicate-and-comment-current-line-or-region (arg)
   "Duplicates and comments the current line or region ARG times.
