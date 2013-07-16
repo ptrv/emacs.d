@@ -2493,7 +2493,7 @@ collapsed buffer"
           ;;c-indent-level 4
           c-default-style "bsd"
           indent-tabs-mode nil)
-    (local-set-key  (kbd "C-c o") 'ff-find-other-file))
+    (local-set-key (kbd "C-c o") 'ff-find-other-file))
 
   (ptrv/hook-into-modes #'ptrv/cc-mode-init '(c-mode c++-mode))
 
@@ -3018,7 +3018,7 @@ Create a new ielm process if required."
 (defun ptrv/browse-url ()
   "Open rlf in default browser."
   (interactive)
-  (let* ((url (thing-at-point-url-at-point)))
+  (let ((url (thing-at-point-url-at-point)))
     (if url (browse-url url) (message "No URL at point!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3030,8 +3030,11 @@ Create a new ielm process if required."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
 (load custom-file 'noerror)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * secrets
 (unless (require 'my-secrets "~/.secrets.gpg" t)
-  (warn "Could not load secrets file!"))
+  (user-error "Could not load secrets file!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
