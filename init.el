@@ -788,14 +788,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
-(let ((turn-on-sp #'(lambda ()
-                      (smartparens-mode)
-                      (ptrv/use-smartparens-lisp-mode-map))))
-  (if (boundp 'eval-expression-minibuffer-setup-hook)
-      (add-hook 'eval-expression-minibuffer-setup-hook turn-on-sp)
-    (add-hook 'minibuffer-setup-hook #'(lambda ()
-                                         (when (eq this-command 'eval-expression)
-                                           (funcall turn-on-sp))))))
+(defun turn-on-sp ()
+  (smartparens-mode)
+  (ptrv/use-smartparens-lisp-mode-map))
+(if (boundp 'eval-expression-minibuffer-setup-hook)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'turn-on-sp)
+  (add-hook 'minibuffer-setup-hook
+            #'(lambda ()
+                (when (eq this-command 'eval-expression)
+                  (turn-on-sp)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lisp
