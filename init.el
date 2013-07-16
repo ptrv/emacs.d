@@ -2804,7 +2804,7 @@ If there's no region, the current line will be duplicated.
 However, if there's a region, all lines that region covers will
 be duplicated."
   (interactive "p")
-  (prelude-duplicate-current-line-or-region arg t))
+  (ptrv/duplicate-current-line-or-region arg t))
 
 ;; define function to shutdown emacs server instance
 (defun server-shutdown ()
