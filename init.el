@@ -2771,10 +2771,12 @@ end of the line."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-(defun ptrv/duplicate-current-line-or-region (arg &optional with-comment)
+(defun ptrv/duplicate-current-line-or-region (arg &optional do-comment)
   "Duplicates the current line or region ARG times.
-If there's no region, the current line will be duplicated.  However, if
-there's a region, all lines that region covers will be duplicated."
+If there's no region, the current line will be duplicated.
+However, if there's a region, all lines that region covers will
+be duplicated. If DO-COMMENT is non-nil, comment current line or
+region."
   (interactive "p")
   (let (beg end (origin (point)))
     (if (and mark-active (> (point) (mark)))
@@ -2784,7 +2786,7 @@ there's a region, all lines that region covers will be duplicated."
         (exchange-point-and-mark))
     (setq end (line-end-position))
     (let ((region (buffer-substring-no-properties beg end)))
-      (when with-comment
+      (when do-comment
         (comment-or-uncomment-region beg end)
         (setq end (line-end-position)))
       (let ((it 0))
@@ -2798,8 +2800,9 @@ there's a region, all lines that region covers will be duplicated."
 
 (defun ptrv/duplicate-and-comment-current-line-or-region (arg)
   "Duplicates and comments the current line or region ARG times.
-If there's no region, the current line will be duplicated.  However, if
-there's a region, all lines that region covers will be duplicated."
+If there's no region, the current line will be duplicated.
+However, if there's a region, all lines that region covers will
+be duplicated."
   (interactive "p")
   (prelude-duplicate-current-line-or-region arg t))
 
