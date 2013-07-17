@@ -239,6 +239,7 @@ file `PATTERNS'."
     popwin
     smooth-scrolling
     rainbow-mode
+    highlight
     ;; utilities
     xml-rpc
     refheap
