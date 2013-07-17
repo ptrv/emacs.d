@@ -479,7 +479,9 @@ file `PATTERNS'."
 
 (defvar ptrv/themes-dir (locate-user-emacs-file "themes/"))
 (add-to-list 'custom-theme-load-path ptrv/themes-dir)
-(load-theme 'gandalf t)
+
+(when (load (concat ptrv/themes-dir "gandalf-theme-emacs/gandalf-theme.el"))
+  (load-theme 'gandalf t))
 
 ;; (ptrv/with-library live-fontify-hex
 ;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))

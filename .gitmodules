@@ -57,3 +57,6 @@
 	path = site-lisp/nrepl-eval-sexp-fu
 	url = https://github.com/ptrv/nrepl-eval-sexp-fu.git
     ignore = untracked
+[submodule "themes/gandalf-theme-emacs"]
+	path = themes/gandalf-theme-emacs
+	url = https://github.com/ptrv/gandalf-theme-emacs.git
