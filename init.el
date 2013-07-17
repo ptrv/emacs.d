@@ -2220,9 +2220,11 @@ collapsed buffer"
     (setq mac-option-key-is-meta nil
           mac-command-key-is-meta t
           mac-command-modifier 'meta
-          mac-option-modifier nil
+          mac-option-modifier 'super
           mac-function-modifier 'hyper
-          mac-right-command-modifier 'super))
+          ;; mac-right-command-modifier 'super
+          mac-right-option-modifier nil
+          ))
 
   (when *is-cocoa-emacs*
     (set-frame-font "Inconsolata-16" nil t)
