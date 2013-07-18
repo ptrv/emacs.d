@@ -2047,7 +2047,7 @@ prompt for the command to use."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * processing
 (autoload 'processing-mode "processing-mode" "Processing mode" t)
-(autoload 'processing-snippets-initialize "processing-mode" nil nil nil)
+(autoload 'processing-snippets-initialize "processing-snippets" nil nil nil)
 (autoload 'processing-find-sketch "processing-mode" nil t)
 (ptrv/add-auto-mode 'processing-mode "\\.pde$")
 
@@ -2059,8 +2059,7 @@ prompt for the command to use."
 
   (cond (*is-mac*
          (setq processing-location "/usr/bin/processing-java")
-         (setq processing-application-dir
-               "/Applications/Processing.app/Contents/Resources/Java")
+         (setq processing-application-dir "/Applications/Processing.app")
          (setq processing-sketch-dir "~/Documents/Processing"))
         (*is-linux*
          (setq processing-location "~/applications/processing-2.0/processing-java")
