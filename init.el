@@ -510,10 +510,13 @@ file `PATTERNS'."
         :underline t)))
   "Face for headlines."
   :group 'org-faces)
+
 (defun fontify-todo ()
   (font-lock-add-keywords
-   nil '((";;.*\\(TODO\\|FIXME\\)"
-          (1 todo-comment-face t)))))
+   nil `(("\\<\\(FIX\\(ME\\)?\\|TODO\\)"
+          1 todo-comment-face t))))
+(add-hook 'prog-mode-hook #'fontify-todo)
+
 (defun fontify-headline ()
   (font-lock-add-keywords
    nil '(("^;;;; [* ]*\\(.*\\)\\>"
@@ -833,7 +836,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (ptrv/add-to-hook 'emacs-lisp-mode-hook '(lexbind-mode
                                             ptrv/remove-elc-on-save
-                                            fontify-todo
                                             fontify-headline))
 
   (defun ptrv/remove-elc-on-save ()
