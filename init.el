@@ -58,9 +58,8 @@
 (make-directory ptrv/pscratch-dir t)
 
 ;; Add every subdirectory of ~/.emacs.d/site-lisp to the load path
-(dolist (project (directory-files (locate-user-emacs-file "site-lisp") t "\\w+"))
-  (when (and (file-directory-p project)
-             (not (string-match "_extras" project)))
+(dolist (project (directory-files (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
+  (when (and (file-directory-p project))
     (add-to-list 'load-path project)))
 
 ;; Set paths to custom.el and loaddefs.el
