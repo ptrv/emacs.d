@@ -596,6 +596,10 @@ file `PATTERNS'."
   (defun eshell/e (file)
     (find-file-other-window file))
 
+  (add-hook 'eshell-prompt-load-hook
+            (lambda ()
+              (set-face-attribute 'eshell-prompt-face nil :foreground "dark green")))
+
   (autoload 'pcomplete/go "pcmpl-go" nil nil)
   (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
 
