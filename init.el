@@ -2000,13 +2000,14 @@ prompt for the command to use."
 (defun ptrv/delete-file-and-buffer ()
   "Delete the current file and kill the buffer."
   (interactive)
-  (let ((filename (buffer-file-name)))
-    (cond
-     ((not filename) (kill-buffer))
-     ((vc-backend filename) (vc-delete-file filename))
-     (:else
-      (delete-file filename)
-      (kill-buffer)))))
+  (when (y-or-n-p "Delete file and its buffer?")
+    (let ((filename (buffer-file-name)))
+      (cond
+       ((not filename) (kill-buffer))
+       ((vc-backend filename) (vc-delete-file filename))
+       (:else
+        (delete-file filename)
+        (kill-buffer))))))
 
 ;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
 (defun ptrv/find-user-init-file ()
