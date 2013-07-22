@@ -1227,13 +1227,16 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (define-key map (kbd "a") #'ack-and-a-half)
     (define-key map (kbd "s") #'ack-and-a-half-same)
     map)
-  "Keymap for searching.")
+  "Keymap for ack commands.")
 
-;; search-map M-s
-(let ((map search-map))
-  (define-key map "a" 'ag)
-  (define-key map "r" 'ag-regexp)
-  (define-key map "O" 'multi-occur))
+(defvar ptrv/search-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "a" #'ag)
+    (define-key map "r" #'ag-regexp)
+    (define-key map "o" #'occur)
+    (define-key map "O" #'multi-occur)
+    map)
+  "Keymap for searching.")
 
 ;; the silver searcher
 (ptrv/after ag
@@ -2662,6 +2665,7 @@ collapsed buffer"
   (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
   (define-key map "q" 'exit-emacs-client)
+  (define-key map "s" ptrv/search-map)
   (define-key map "t" 'ptrv/eshell-or-restore)
   (define-key map "u" 'ptrv/browse-url)
   (define-key map "v" 'halve-other-window-height)
