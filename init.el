@@ -2260,13 +2260,21 @@ collapsed buffer"
   (add-to-list 'ido-ignore-files "\\.DS_Store")
 
   ;;GNU ls and find
-  (let ((gls (executable-find "gls"))
-        (gfind (executable-find "gfind")))
-    (if gls
-        (setq insert-directory-program gls)
-      (message "GNU coreutils not found. Install coreutils with homebrew."))
-    (when gfind
-      (setq find-program gfind))))
+  (ptrv/after files
+    (let ((gls (executable-find "gls")))
+      (if gls
+          (setq insert-directory-program gls)
+        (message "GNU coreutils not found. Install coreutils with homebrew."))))
+
+  (ptrv/after grep
+    (let ((gfind (executable-find "gfind")))
+      (when gfind
+        (setq find-program gfind))))
+
+  (ptrv/after locate
+    (let ((mdfind (executable-find "mdfind")))
+      (when mdfind
+        (setq locate-command mdfind)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * linux
