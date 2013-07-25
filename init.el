@@ -2760,7 +2760,9 @@ end of the line."
 
 (defun ptrv/byte-recompile-home ()
   (interactive)
-  (byte-recompile-directory user-emacs-directory 0))
+  (ptrv/byte-recompile-site-lisp)
+  (ptrv/byte-recompile-elpa)
+  (ptrv/byte-recompile-init))
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil
