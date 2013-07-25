@@ -193,7 +193,7 @@ file `PATTERNS'."
     git-commit-mode
     gitignore-mode
     gitconfig-mode
-    gist
+    yagist
     git-messenger
     ;; editor
     smartparens
@@ -1032,22 +1032,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
-(defvar pcache-directory
-  (let ((dir (file-name-as-directory (concat ptrv/tmp-dir "pcache"))))
-    (make-directory dir t)
-    dir))
-
-(ptrv/after gist
-  (setq gist-view-gist t)
-  (dolist (mode '((processing-mode . "pde")
-                  (desktop-entry-mode . "desktop")))
-    (add-to-list 'gist-supported-modes-alist mode)))
+(ptrv/after yagist
+  (setq yagist-view-gist t))
 
 ;; A key map for Gisting
 (defvar ptrv/gist-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "c" #'gist-region-or-buffer)
-    (define-key map "l" #'gist-list)
+    (define-key map "c" #'yagist-region-or-buffer)
+    (define-key map "p" #'yagist-region-or-buffer-private)
+    (define-key map "l" #'yagist-list)
     map)
   "Keymap for Gists.")
 
