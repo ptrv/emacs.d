@@ -255,7 +255,6 @@ file `PATTERNS'."
     ag
     ack-and-a-half
     exec-path-from-shell
-    w3m
     scratch
     ;; python
     pytest
@@ -2317,16 +2316,6 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * superollider
-(ptrv/after w3m
-  (define-key w3m-mode-map [left] 'backward-char)
-  (define-key w3m-mode-map [right] 'forward-char)
-  (define-key w3m-mode-map [up] 'previous-line)
-  (define-key w3m-mode-map [down] 'next-line)
-  (setq w3m-auto-show 1)
-  (setq w3m-key-binding 'info)
-  (setq w3m-pop-up-frames t)
-  (setq w3m-pop-up-windows nil))
-
 (defun ptrv/sclang-mode-loader ()
   (unless (featurep 'sclang)
     (require 'sclang)
