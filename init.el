@@ -617,7 +617,7 @@ file `PATTERNS'."
 (global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * complete
+;;;; * completion
 (ptrv/with-library auto-complete-config
   (ac-config-default)
   (ac-flyspell-workaround)
@@ -656,6 +656,12 @@ file `PATTERNS'."
     (define-key map "\r" 'ac-complete))
 
   (ac-set-trigger-key "TAB")
+
+  (defun ptrv/auto-complete ()
+    (interactive)
+    (unless (ac-cursor-on-diable-face-p)
+      (auto-complete)))
+  (global-set-key (kbd "s-c") #'ptrv/auto-complete)
 
   ;; complete on dot
   (defun ptrv/ac-dot-complete ()
