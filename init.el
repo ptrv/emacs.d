@@ -66,7 +66,7 @@
 (setq autoload-file (locate-user-emacs-file "loaddefs.el"))
 (setq custom-file (locate-user-emacs-file "custom.el"))
 
-(eval-when-compile (require 'cl))
+(require 'cl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * macros
 (unless (fboundp 'with-eval-after-load)
@@ -3077,4 +3077,5 @@ Create a new ielm process if required."
 ;; Local Variables:
 ;; eval: (orgstruct-mode 1)
 ;; orgstruct-heading-prefix-regexp: ";;;; "
+;; byte-compile-warnings: (not cl-functions)
 ;; End:
