@@ -2432,12 +2432,16 @@ collapsed buffer"
 
   (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
 
-  (let ((elpy-snippets (concat (file-name-directory (locate-library "elpy"))
-                               "snippets/")))
-    (when (and (file-exists-p elpy-snippets)
-               (fboundp 'yas-snippet-dirs))
-      (add-to-list 'yas-snippet-dirs elpy-snippets t)
-      (yas-load-directory elpy-snippets t)))
+  (defun elpy-snippets-initialize ()
+    (let ((elpy-snippets (concat (file-name-directory (locate-library "elpy"))
+                                 "snippets/")))
+      (when (and (file-exists-p elpy-snippets)
+                 (fboundp 'yas-snippet-dirs))
+        (add-to-list 'yas-snippet-dirs elpy-snippets t)
+        (yas-load-directory elpy-snippets))))
+
+  (eval-after-load "yasnippet"
+    '(elpy-snippets-initialize))
 
   (defun elpy-use-ipython-pylab ()
     "Set defaults to use IPython instead of the standard interpreter."
