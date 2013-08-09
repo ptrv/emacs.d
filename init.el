@@ -1730,7 +1730,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (yas-minor-mode +1)
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
     (hs-minor-mode +1)
-    (go-eldoc-setup))
+    (go-eldoc-setup)
+    (make-local-variable 'flycheck-check-syntax-automatically)
+    (setq flycheck-check-syntax-automatically '(save)))
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
