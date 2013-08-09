@@ -1122,7 +1122,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                                yas-x-prompt
                                yas-completing-prompt))
   (ptrv/with-library dropdown-list
-    (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt)))
+    (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))
+
+  (unless yas-global-mode (yas-reload-all)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * undo-tree
