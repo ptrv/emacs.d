@@ -1249,7 +1249,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * edit-server
 (ptrv/after edit-server
-  (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))))
+  (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode)))
+  (setq edit-server-new-frame nil))
 (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
 (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
 (edit-server-start)
