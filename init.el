@@ -607,6 +607,7 @@ file `PATTERNS'."
 
   (autoload 'pcomplete/go "pcmpl-go" nil nil)
   (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
+  (require 'pcmpl-cask)
 
   (ptrv/after auto-complete
     (require 'eshell-ac-pcomplete)))
