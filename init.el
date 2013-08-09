@@ -1111,7 +1111,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * yasnippet
-(yas-global-mode 1)
+;; (yas-global-mode 1)
 (ptrv/after yasnippet
   (define-key yas-keymap [(tab)] nil)
   (define-key yas-keymap (kbd "TAB") nil)
@@ -1727,6 +1727,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (compile (concat "go run " buffer-file-name)))
 
   (defun ptrv/go-mode-init ()
+    (yas-minor-mode +1)
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
     (hs-minor-mode +1)
     (go-eldoc-setup))
@@ -2076,6 +2077,7 @@ prompt for the command to use."
          (setq processing-sketch-dir "~/processing_sketches_v2")))
 
   (defun processing-mode-init ()
+    (yas-minor-mode +1)
     (ptrv/set-variables-local '(ac-sources
                                 ac-user-dictionary))
     (setq ac-sources '(ac-source-dictionary
@@ -2365,6 +2367,7 @@ collapsed buffer"
     (add-hook 'sclang-mode-hook 'ptrv/ac-sclang-init))
 
   (defun ptrv/sclang-init ()
+    (yas-minor-mode +1)
     (setq indent-tabs-mode nil))
   (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
 
