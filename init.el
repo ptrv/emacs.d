@@ -1620,7 +1620,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/add-auto-mode 'json-mode "\\.json$")
 
 ;; Carton
-(ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$")
+(ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$" "/Cask$")
 
 ;; gnuplot
 (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
