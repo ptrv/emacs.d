@@ -168,13 +168,16 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * package
 (require 'package)
-(defadvice package-compute-transaction
-  (before
-   package-compute-transaction-reverse (package-list requirements)
-   activate compile)
-  "reverse the requirements"
-  (setq requirements (reverse requirements))
-  (print requirements))
+(when (eval-when-compile (version-list-<
+                          (version-to-list emacs-version)
+                          '(24 3 50 0)))
+  (defadvice package-compute-transaction
+    (before
+     package-compute-transaction-reverse (package-list requirements)
+     activate compile)
+    "reverse the requirements"
+    (setq requirements (reverse requirements))
+    (print requirements)))
 
 (dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
                   ("marmalade" . "http://marmalade-repo.org/packages/")
@@ -300,24 +303,27 @@ file `PATTERNS'."
 (ptrv/install-packages)
 
 ;; from carton.el and modified
-(defun ptrv/package-upgrade ()
-  "Upgrade packages."
-  (interactive)
-  (with-temp-buffer
-    (package-refresh-contents)
-    (package-initialize)
-    (package-menu--generate nil t) ;; WTF ELPA, really???
-    (let ((upgrades (package-menu--find-upgrades)))
-      (dolist (upgrade upgrades)
-        (let ((name (car upgrade)))
-          (package-install name)))
-      ;; Delete obsolete packages
-      (dolist (pkg package-obsolete-alist)
-        (package-delete (symbol-name (car pkg))
-                        (package-version-join (caadr pkg))))
-      (message "%d package%s has been upgraded."
-               (length upgrades)
-               (if (= (length upgrades) 1) "" "s")))))
+(when (eval-when-compile (version-list-<
+                          (version-to-list emacs-version)
+                          '(24 3 50 0)))
+  (defun ptrv/package-upgrade ()
+    "Upgrade packages."
+    (interactive)
+    (with-temp-buffer
+      (package-refresh-contents)
+      (package-initialize)
+      (package-menu--generate nil t) ;; WTF ELPA, really???
+      (let ((upgrades (package-menu--find-upgrades)))
+        (dolist (upgrade upgrades)
+          (let ((name (car upgrade)))
+            (package-install name)))
+        ;; Delete obsolete packages
+        (dolist (pkg package-obsolete-alist)
+          (package-delete (symbol-name (car pkg))
+                          (package-version-join (caadr pkg))))
+        (message "%d package%s has been upgraded."
+                 (length upgrades)
+                 (if (= (length upgrades) 1) "" "s"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
