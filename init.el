@@ -1307,7 +1307,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           ("*Python Doc*" :noselect t)
           ("*jedi:doc*" :noselect t)
           ("*Registers*" :noselect t)
-          ("*ielm*" :stick t))))
+          ("*ielm*" :stick t)
+          ("*Flycheck errors*" :stick t :noselect t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
