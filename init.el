@@ -1312,7 +1312,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           ("*jedi:doc*" :noselect t)
           ("*Registers*" :noselect t)
           ("*ielm*" :stick t)
-          ("*Flycheck errors*" :stick t :noselect t))))
+          ("*Flycheck errors*" :stick t :noselect t)
+          ("*processing-compilation*" :noselect t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
