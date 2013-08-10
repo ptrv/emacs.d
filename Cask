@@ -17,7 +17,7 @@
 (depends-on "git-commit-mode")
 (depends-on "gitignore-mode")
 (depends-on "gitconfig-mode")
-(depends-on "gist")
+(depends-on "yagist")
 (depends-on "git-messenger")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -72,10 +72,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ui
 (depends-on "notify")
-(depends-on "color-theme")
 (depends-on "popwin")
 (depends-on "smooth-scrolling")
 (depends-on "rainbow-mode")
+(depends-on "highlight")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; utilities
@@ -97,7 +97,6 @@
 (depends-on "ag")
 (depends-on "ack-and-a-half")
 (depends-on "exec-path-from-shell")
-(depends-on "w3m")
 (depends-on "scratch")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,15 +109,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; major modes
-(depends-on "go-mode")
 (depends-on "glsl-mode")
 (depends-on "apache-mode")
 (depends-on "yaml-mode")
-(depends-on "cmake-mode")
+;; (depends-on "cmake-mode")
 (depends-on "lua-mode")
 (depends-on "json-mode")
-(depends-on "gnuplot")
+;; (depends-on "gnuplot")
 (depends-on "pkgbuild-mode")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; golang
+(depends-on "go-mode")
+(depends-on "go-autocomplete")
+(depends-on "go-eldoc")
+(depends-on "go-errcheck")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; project
@@ -128,6 +133,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; minor-modes
 (depends-on "love-minor-mode")
-(depends-on "go-errcheck")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
