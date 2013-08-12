@@ -2524,7 +2524,19 @@ collapsed buffer"
 
   (ptrv/hook-into-modes #'ptrv/cc-mode-init '(c-mode c++-mode))
 
-  (add-hook 'c-mode-common-hook 'linum-mode))
+  ;; doxymacs
+  (add-to-list 'load-path (locate-user-emacs-file
+                           "site-lisp/_extras/doxymacs/lisp"))
+  (autoload 'doxymacs-mode "doxymacs" nil t)
+  (ptrv/after doxymacs
+    (setq doxymacs-external-xml-parser-executable
+          (locate-user-emacs-file
+           "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
+    (unless (file-exists-p doxymacs-external-xml-parser-executable)
+      (warn "The doxymacs_parser executable does not exist!")))
+
+  (ptrv/add-to-hook 'c-mode-common-hook '(linum-mode
+                                          doxymacs-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * x11
