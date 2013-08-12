@@ -2080,8 +2080,8 @@ prompt for the command to use."
          (setq processing-application-dir "/Applications/Processing.app")
          (setq processing-sketch-dir "~/Documents/Processing"))
         (*is-linux*
-         (setq processing-location "~/applications/processing-2.0/processing-java")
-         (setq processing-application-dir "~/applications/processing-2.0")
+         (setq processing-location "~/applications/processing/processing-java")
+         (setq processing-application-dir "~/applications/processing")
          (setq processing-sketch-dir "~/processing_sketches_v2")))
 
   (defun processing-mode-init ()
@@ -2123,7 +2123,7 @@ prompt for the command to use."
                   (message "Copied as HTML to clipboard")))))
         (message (concat "Copy as HTML failed, because current "
                          "buffer is not a Processing buffer."))))
-    (define-key processing-mode-map (kbd "C-c C-p H") 'processing-copy-as-html)
+    (define-key processing-mode-map (kbd "C-c C-p z") 'processing-copy-as-html)
     (easy-menu-add-item processing-mode-menu nil (list "---"))
     (easy-menu-add-item processing-mode-menu nil
                         ["Copy as HTML" processing-copy-as-html
