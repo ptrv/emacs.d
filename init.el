@@ -2536,10 +2536,18 @@ collapsed buffer"
           (locate-user-emacs-file
            "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
     (unless (file-exists-p doxymacs-external-xml-parser-executable)
-      (warn "The doxymacs_parser executable does not exist!")))
+      (warn "The doxymacs_parser executable does not exist!"))
 
-  (ptrv/add-to-hook 'c-mode-common-hook '(linum-mode
-                                          doxymacs-mode)))
+    (defun ptrv/doxymacs-font-lock-hook ()
+      (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+          (doxymacs-font-lock)))
+    (add-hook 'font-lock-mode-hook 'ptrv/doxymacs-font-lock-hook))
+
+  (defun ptrv/c++-mode-init ()
+    (doxymacs-mode +1))
+  (add-hook 'c++-mode-hook #'ptrv/c++-mode-init)
+
+  (add-hook 'c-mode-common-hook #'linum-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * x11
