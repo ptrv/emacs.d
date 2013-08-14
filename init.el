@@ -2775,7 +2775,10 @@ end of the line."
 
 (defun ptrv/byte-recompile-site-lisp ()
   (interactive)
-  (byte-recompile-directory (locate-user-emacs-file "site-lisp") 0))
+  (dolist (project (directory-files
+                    (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
+    (when (file-directory-p project)
+      (byte-recompile-directory project 0))))
 
 (defun ptrv/byte-recompile-elpa ()
   (interactive)
