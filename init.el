@@ -2084,8 +2084,7 @@ prompt for the command to use."
          (setq processing-application-dir "~/applications/processing")
          (setq processing-sketch-dir "~/processing_sketches_v2")))
 
-  (defun processing-mode-init ()
-    (yas-minor-mode +1)
+  (defun ptrv/processing-ac-init ()
     (ptrv/set-variables-local '(ac-sources
                                 ac-user-dictionary))
     (setq ac-sources '(ac-source-dictionary
@@ -2094,9 +2093,13 @@ prompt for the command to use."
     (setq ac-user-dictionary (append processing-functions
                                      processing-builtins
                                      processing-constants)))
-
-  (add-hook 'processing-mode-hook 'processing-mode-init)
+  (add-hook 'processing-mode-hook 'ptrv/processing-ac-init)
   (add-to-list 'ac-modes 'processing-mode)
+
+  (defun ptrv/processing-mode-init ()
+    (yas-minor-mode +1))
+  (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
+
   (let ((map processing-mode-map))
     (define-key map (kbd "C-c C-c") 'processing-sketch-run)
     (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
