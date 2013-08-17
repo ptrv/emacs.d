@@ -680,41 +680,8 @@ file `PATTERNS'."
 
 (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
-(defun sp-current-indentation ()
-  "Get the indentation offset of the current line."
-  (save-excursion
-    (back-to-indentation)
-    (current-column)))
-
-(defun sp-reindent-defun (arg)
-  "Reindent the current function.
-
-If point is inside a string or comment, fill the current
-paragraph instead, and with ARG, justify as well.
-
-Otherwise, reindent the current function, and adjust the position
-of the point."
-  (interactive "P")
-  (if (sp-point-in-string-or-comment)
-      (fill-paragraph arg)
-    (let ((column (current-column))
-          (indentation (sp-current-indentation)))
-      (save-excursion
-        (end-of-defun)
-        (beginning-of-defun)
-        (indent-sexp))
-      (let* ((indentation* (sp-current-indentation))
-             (offset
-              (cond
-               ;; Point was in code, so move it along with the re-indented code
-               ((>= column indentation)
-                (+ column (- indentation* indentation)))
-               ;; Point was indentation, but would be in code now, so move to
-               ;; the beginning of indentation
-               ((<= indentation* column) indentation*)
-               ;; Point was in indentation, and still is, so leave it there
-               (:else column))))
-        (goto-char (+ (line-beginning-position) offset))))))
+;; (defadvice enable-paredit-mode (before disable-autopair activate)
+;;   (turn-off-smartparens-mode))
 
 (defvar ptrv/smartparens-bindings
   '(("C-M-f" . sp-forward-sexp)
@@ -778,7 +745,7 @@ of the point."
     (define-key map (kbd "DEL") 'sp-backward-delete-char)
     (define-key map (kbd "M-d") 'sp-kill-word)
     (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
-    (define-key map (kbd "M-q") 'sp-reindent-defun)
+    (define-key map (kbd "M-q") 'sp-indent-defun)
     map)
   "Keymap for Smartparens bindings in Lisp modes.")
 
