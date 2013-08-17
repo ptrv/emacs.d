@@ -1067,6 +1067,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
 
+(ptrv/after git-commit-mode
+  (add-hook 'git-commit-mode-hook
+            (lambda ()
+              (set-fill-column 72)
+              (auto-fill-mode 1))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * git-messanger
 (ptrv/after git-messenger
