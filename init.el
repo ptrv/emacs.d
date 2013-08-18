@@ -1260,6 +1260,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           ("*Occur*" :noselect t)
           ("\\*Slime Description.*" :noselect t :regexp t :height 30)
           ("*magit-commit*" :noselect t :height 30 :width 80 :stick t)
+          ("COMMIT_EDITMSG" :noselect t :height 30 :width 80 :stick t)
           ("*magit-diff*" :noselect t :height 30 :width 80)
           ("*magit-edit-log*" :noselect t :height 15 :width 80)
           ("*magit-process*" :noselect t :height 15 :width 80)
