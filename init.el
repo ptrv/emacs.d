@@ -834,7 +834,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 (ptrv/after find-file-in-project
-  (add-to-list 'ffip-patterns "*.clj"))
+  (dolist (p '("*.clj" "*.go"))
+    (add-to-list 'ffip-patterns p)))
 
 (ptrv/after clojure-mode
   (message "clojure config has been loaded !!!")
