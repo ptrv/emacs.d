@@ -4,8 +4,8 @@ alias la ls -la $*
 alias c clear
 alias cl clear; ls -l
 alias g git status
-alias gl git pull
-alias gp git push
+alias gl git pull -v
+alias gp git push -v
 alias md mkdir -p $*
 alias gop cd $GOPATH
 alias ... cd ../..
