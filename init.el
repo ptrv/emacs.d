@@ -509,7 +509,7 @@ file `PATTERNS'."
   "Face for TODO in code buffers."
   :group 'org-faces)
 (defface headline-face
-  '((t (:foreground "#006400"
+  '((t (:inherit font-lock-comment-face
         :weight bold
         :bold t
         :underline t)))
