@@ -287,7 +287,7 @@ file `PATTERNS'."
   "A list of packages to ensure are installed at launch.")
 
 (defun ptrv/packages-installed-p ()
-  (cl-every #'package-installed-p ptrv/packages))
+  (every #'package-installed-p ptrv/packages))
 
 (defun ptrv/install-packages ()
   (unless (ptrv/packages-installed-p)
