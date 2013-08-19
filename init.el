@@ -2833,7 +2833,7 @@ region."
                     ;; number of comment characters times marked lines
                     ;; to maintain cursor position
                     (if do-comment
-                        (* (- end-comment end-orig) 0)))))))
+                        (- end-comment end-orig) 0))))))
 
 (defun ptrv/duplicate-and-comment-current-line-or-region (arg)
   "Duplicates and comments the current line or region ARG times.
