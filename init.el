@@ -1795,10 +1795,8 @@ If ARG is not nil, create package in current directory"
   (defun gpx-setup ()
     (when (and (stringp buffer-file-name)
                (string-match "\\.gpx\\'" buffer-file-name))
-      (ptrv/set-variables-local '(nxml-section-element-name-regexp
-                                  nxml-heading-element-name-regexp))
-      (setq nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
-      (setq nxml-heading-element-name-regexp "name\\|time")))
+      (setq-local nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
+      (setq-local nxml-heading-element-name-regexp "name\\|time")))
   (add-hook 'nxml-mode-hook 'gpx-setup)
 
   (setq nxml-slash-auto-complete-flag t
@@ -2064,17 +2062,15 @@ prompt for the command to use."
         (*is-linux*
          (setq processing-location "~/applications/processing/processing-java")
          (setq processing-application-dir "~/applications/processing")
-         (setq processing-sketch-dir "~/processing_sketches_v2")))
+         (setq processing-sketch-dir "~/sketchbook")))
 
   (defun ptrv/processing-ac-init ()
-    (ptrv/set-variables-local '(ac-sources
-                                ac-user-dictionary))
-    (setq ac-sources '(ac-source-dictionary
-                       ac-source-yasnippet
-                       ac-source-words-in-buffer))
-    (setq ac-user-dictionary (append processing-functions
-                                     processing-builtins
-                                     processing-constants)))
+    (setq-local ac-sources '(ac-source-dictionary
+                             ac-source-yasnippet
+                             ac-source-words-in-buffer))
+    (setq-local ac-user-dictionary (append processing-functions
+                                           processing-builtins
+                                           processing-constants)))
   (add-hook 'processing-mode-hook 'ptrv/processing-ac-init)
   (add-to-list 'ac-modes 'processing-mode)
 
@@ -2355,8 +2351,8 @@ collapsed buffer"
   (ptrv/after auto-complete
     (add-to-list 'ac-modes 'sclang-mode)
     (defun ptrv/ac-sclang-init ()
-      (ptrv/set-variables-local '(ac-user-dictionary-files))
-      (add-to-list 'ac-user-dictionary-files "~/.sc_completion"))
+      (setq-local ac-dictionary-files (append ac-dictionary-files
+                                              '("~/.sc_completion"))))
     (add-hook 'sclang-mode-hook 'ptrv/ac-sclang-init))
 
   (defun ptrv/sclang-init ()
