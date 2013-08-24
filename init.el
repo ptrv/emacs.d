@@ -430,14 +430,16 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * email
-(setq
- user-full-name "Peter Vasil"
- user-mail-address "mail@petervasil.net"
- message-send-mail-function 'smtpmail-send-it
- smtpmail-stream-type 'starttls
- smtpmail-default-smtp-server "mail.petervasil.net"
- smtpmail-smtp-server "mail.petervasil.net"
- smtpmail-smtp-service 587)
+(setq user-full-name "Peter Vasil"
+      user-mail-address "mail@petervasil.net")
+(ptrv/after message
+  (setq message-send-mail-function 'smtpmail-send-it))
+(ptrv/after smtpmail
+  (setq smtpmail-smtp-user user-mail-address
+        smtpmail-stream-type 'starttls
+        smtpmail-default-smtp-server "mail.petervasil.net"
+        smtpmail-smtp-server "mail.petervasil.net"
+        smtpmail-smtp-service 587))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ediff
