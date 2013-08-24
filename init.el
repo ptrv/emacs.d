@@ -834,8 +834,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 (ptrv/after find-file-in-project
-  (dolist (p '("*.clj" "*.go"))
-    (add-to-list 'ffip-patterns p)))
+  (add-to-list 'ffip-patterns "*.clj"))
 
 (ptrv/after clojure-mode
   (message "clojure config has been loaded !!!")
@@ -1644,6 +1643,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (exec-path-from-shell-copy-env "GOROOT")
   (exec-path-from-shell-copy-env "GOPATH")
 
+  (defun ptrv/locate-godoc-src-file (f)
+    (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
+
   ;; go-lang completion
   (ptrv/with-library go-autocomplete
     (defface ac-go-mode-candidate-face
@@ -1672,15 +1674,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (interactive)
     (compile "go build"))
 
-  (defun ptrv/go-test ()
+  (defun ptrv/go-test (arg)
     "test project"
-    (interactive)
-    (compile "go test -v"))
+    (interactive "P")
+    (compile (concat "go test" (if arg " -v"))))
 
-  (defun ptrv/go-chk ()
-    "gocheck project"
-    (interactive)
-    (compile "go test -gocheck.vv"))
+  ;; (defun ptrv/go-chk ()
+  ;;   "gocheck project"
+  ;;   (interactive)
+  ;;   (compile "go test -gocheck.vv"))
 
   (defun ptrv/go-run ()
     "go run current package"
@@ -1693,7 +1695,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
             (s-split ","
                      (car (process-lines
                            "go" "list" "-f"
-                           "{{range .GoFiles}}{{.}},{{end}}"))
+                           "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}"))
                      t))
       ;; escape space in file names
       (setq go-list-result
@@ -1712,8 +1714,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
     (hs-minor-mode +1)
     (go-eldoc-setup)
-    (make-local-variable 'flycheck-check-syntax-automatically)
-    (setq flycheck-check-syntax-automatically '(save)))
+    (setq-local flycheck-check-syntax-automatically '(save)))
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
@@ -1723,7 +1724,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (define-key map "r" 'ptrv/go-run-buffer)
       (define-key map "b" 'ptrv/go-build)
       (define-key map "t" 'ptrv/go-test)
-      (define-key map "g" 'ptrv/go-chk)
+      ;; (define-key map "g" 'ptrv/go-chk)
       map)
     "Keymap for some custom go-mode fns.")
 
@@ -1731,16 +1732,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (define-key map (kbd "M-.") 'godef-jump)
     (define-key map (kbd "C-c i") 'go-goto-imports)
     (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
-    (define-key map (kbd "C-c C-p") 'go-create-package)
+    (define-key map (kbd "C-c C-p") 'ptrv/go-create-package)
     (define-key map (kbd "C-c C-c") ptrv/go-mode-map))
 
   (ptrv/after auto-complete-config
     (define-key go-mode-map (kbd ".") 'ptrv/ac-dot-complete))
 
   ;; flycheck support
-  (add-to-list 'load-path (concat
-                           (car (split-string (getenv "GOPATH") ":"))
-                           "/src/github.com/dougm/goflymake"))
+  (add-to-list 'load-path (ptrv/locate-godoc-src-file
+                           "github.com/dougm/goflymake"))
 
   (ptrv/with-library go-flycheck
     (setq goflymake-debug nil)
@@ -1759,9 +1759,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (when (executable-find "errcheck")
     (autoload 'go-errcheck "go-errcheck" nil t)
-    (define-key ptrv/go-mode-map "e" 'go-errcheck)))
+    (define-key ptrv/go-mode-map "e" 'go-errcheck))
 
-(defvar ptrv/go-default-namespace "github.com/ptrv")
+  (ptrv/after find-file-in-project
+    (add-to-list 'ffip-patterns "*.go")))
+
+(defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
 
 (defun ptrv/go-create-package (name &optional arg)
   "Create a new sketch with NAME under GOPATH src folder.
@@ -1769,14 +1772,18 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 If ARG is not nil, create package in current directory"
   (interactive "sInsert new package name: \nP")
   (let ((name (remove ?\s name))
-        (root-dir (concat (car (split-string (getenv "GOPATH") ":"))
-                          "/src/" ptrv/go-default-namespace)))
+        (get-root-dir #'(lambda ()
+                          (concat (car (split-string (getenv "GOPATH") ":"))
+                                  "/src/" (completing-read
+                                           "Use namespace:"
+                                           ptrv/go-default-namespaces)))))
     (if (not (string-equal "" name))
         (progn
           (unless arg
-            (setq name (concat (file-name-as-directory root-dir) name)))
+            (setq name (concat (file-name-as-directory (funcall get-root-dir)) name)))
           (make-directory name)
-          (find-file (concat (file-name-as-directory name) "main.go")))
+          (find-file (concat (file-name-as-directory name)
+                             (read-from-minibuffer "File name: " "main.go"))))
       (error "Please insert a package name"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
