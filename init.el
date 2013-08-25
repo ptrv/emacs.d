@@ -1702,20 +1702,25 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (interactive)
     (let (files-list
           go-list-result
-          go-list-result-list)
-      ;; get package files as list
-      (setq go-list-result-list
-            (s-split ","
-                     (car (process-lines
-                           "go" "list" "-f"
-                           "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}"))
-                     t))
-      ;; escape space in file names
-      (setq go-list-result
-            (mapcar
-             (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
-      (setq files-list (s-join " " go-list-result))
-      (compile (concat "go run " files-list))))
+          go-list-result-list
+          (rawresult (process-lines
+                      "go" "list" "-f"
+                      "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}")))
+      (when rawresult
+        ;; get package files as list
+        (setq go-list-result-list
+              (s-split ","
+                       (car (process-lines
+                             "go" "list" "-f"
+                             "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}"))
+                       t))
+        ;; escape space in file names
+        (when go-list-result-list)
+        (setq go-list-result
+              (mapcar
+               (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
+        (setq files-list (s-join " " go-list-result))
+        (compile (concat "go run " files-list)))))
 
   (defun ptrv/go-run-buffer ()
     "go run current buffer"
