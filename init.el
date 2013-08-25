@@ -739,36 +739,47 @@ file `PATTERNS'."
     ;; depth changing
     (define-key map (kbd "M-?") 'sp-convolute-sexp)
     ;; misc
-    (define-key map (kbd "M-J") 'sp-join-sexp)
+    (define-key map (kbd "M-J") #'sp-join-sexp)
     (define-key map (kbd "M-s") nil)
-    (define-key map (kbd "M-P") 'sp-splice-sexp)
-    (define-key map ")" 'sp-up-sexp)
-    (define-key map (kbd "C-d") 'sp-delete-char)
-    (define-key map (kbd "DEL") 'sp-backward-delete-char)
-    (define-key map (kbd "M-d") 'sp-kill-word)
-    (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
-    (define-key map (kbd "M-q") 'sp-indent-defun)
+    (define-key map (kbd "M-P") #'sp-splice-sexp)
+    (define-key map ")" #'sp-up-sexp)
+    ;; (define-key map (kbd "C-d") 'sp-delete-char)
+    ;; (define-key map (kbd "DEL") 'sp-backward-delete-char)
+    ;; (define-key map (kbd "M-d") 'sp-kill-word)
+    ;; (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
+    ;; (define-key map (kbd "M-q") 'sp-indent-defun)
+    ;; (define-key map (kbd "C-j") 'sp-newline)
+    (define-key map [remap delete-char] #'sp-delete-char)
+    (define-key map [remap backward-delete-char-untabify] #'sp-backward-delete-char)
+    (define-key map [remap backward-delete-char] #'sp-backward-delete-char)
+    (define-key map [remap delete-backward-char] #'sp-backward-delete-char)
+    (define-key map [remap kill-word] #'sp-kill-word)
+    (define-key map [remap backward-kill-word] #'sp-backward-kill-word)
+    (define-key map [remap fill-paragraph] #'sp-indent-defun)
+    (define-key map [remap newline-and-indent] #'sp-newline)
+
     map)
-  "Keymap for Smartparens bindings in Lisp modes.")
+  "Keymap for `ptrv/smartparens-lisp-mode'.")
 
-(defun ptrv/use-smartparens-lisp-mode-map ()
-  "Use Lisp specific Smartparens bindings in the current buffer.
+(define-minor-mode ptrv/smartparens-lisp-mode
+   "A minor mode to enable Lisp editing with Smartparens.
 
-Replace `smartparens-mode-map' with
-`ptrv/smartparens-lisp-mode-map' in the current buffer."
-  (add-to-list 'minor-mode-overriding-map-alist
-               (cons 'smartparens-mode ptrv/smartparens-lisp-mode-map)))
+When enabled, this mode essentially just adds some new key
+bindings."
+   :init-value nil)
 
 (defun ptrv/smartparens-setup-lisp-modes (modes)
   "Setup Smartparens Lisp support in MODES.
 
 Add Lisp pairs and tags to MODES, and use the a special, more strict
 keymap `ptrv/smartparens-lisp-mode-map'."
-  (let ((modes (if (symbolp modes) (list modes) modes)))
-    (sp-local-pair modes "(" nil :bind "M-(")
-    (dolist (mode modes)
-      (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-        (add-hook hook #'ptrv/use-smartparens-lisp-mode-map)))))
+  (when (symbolp modes)
+    (setq modes (list modes)))
+  (sp-local-pair modes "(" nil :bind "M-(")
+  (dolist (mode modes)
+    (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+      (add-hook hook #'smartparens-strict-mode)
+      (add-hook hook #'ptrv/smartparens-lisp-mode))))
 
 (ptrv/smartparens-setup-lisp-modes sp--lisp-modes)
 
@@ -776,7 +787,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;`eval-expression'."
 (defun turn-on-sp ()
   (smartparens-mode)
-  (ptrv/use-smartparens-lisp-mode-map))
+  (ptrv/smartparens-lisp-mode +1))
 (if (boundp 'eval-expression-minibuffer-setup-hook)
     (add-hook 'eval-expression-minibuffer-setup-hook #'turn-on-sp)
   (add-hook 'minibuffer-setup-hook
