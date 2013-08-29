@@ -226,6 +226,7 @@ file `PATTERNS'."
     rainbow-delimiters
     elisp-slime-nav
     clojure-mode
+    clojure-test-mode
     nrepl
     align-cljlet
     litable
@@ -676,6 +677,10 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
+(require 'smartparens)
+(setq sp--lisp-modes
+      (append sp--lisp-modes '(nrepl-interaction-mode
+                               inferior-lisp-mode)))
 (require 'smartparens-config)
 (smartparens-global-mode +1)
 (show-smartparens-global-mode)
@@ -781,8 +786,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (add-hook hook #'smartparens-strict-mode)
       (add-hook hook #'ptrv/smartparens-lisp-mode))))
 
-(ptrv/smartparens-setup-lisp-modes sp--lisp-modes)
-
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
 (defun turn-on-sp ()
@@ -836,10 +839,18 @@ keymap `ptrv/smartparens-lisp-mode-map'."
               (lambda ()
                 (if (file-exists-p (concat buffer-file-name "c"))
                     (delete-file (concat buffer-file-name "c"))))
-              nil :local)))
+              nil :local))
+
+  (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
+                                       lisp-interaction-mode
+                                       lisp-mode)))
 
 (ptrv/after ielm
-  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes))
+  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
+  (ptrv/smartparens-setup-lisp-modes '(inferior-emacs-lisp-mode)))
+
+(ptrv/after inf-lisp
+  (ptrv/smartparens-setup-lisp-modes '(inferior-lisp-mode)))
 
 (ptrv/with-library nrepl-eval-sexp-fu
   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
@@ -853,6 +864,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (message "clojure config has been loaded !!!")
 
   (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
+
+  (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
 
   (font-lock-add-keywords
    'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
@@ -921,6 +934,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (ptrv/hook-into-modes #'nrepl-turn-on-eldoc-mode
                         '(nrepl-mode nrepl-interaction-mode))
+
+  (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
+                                       nrepl-interaction-mode))
 
   ;; Show documentation/information with M-RET
   (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
@@ -1301,6 +1317,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           ("*nrepl-error*" :height 20 :stick t)
           ("*nrepl-doc*" :height 20 :stick t)
           ("*nrepl-src*" :height 20 :stick t)
+          ("\\*nrepl " :regexp t :height 20 :stick t)
           ("*Kill Ring*" :height 30)
           ("*project-status*" :noselect t)
           ("*pytest*" :noselect t)
@@ -2067,7 +2084,7 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ffip
-(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py"))
+(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py" "project.clj"))
 (global-set-key (kbd "C-x f") 'ffip)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
