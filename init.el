@@ -99,7 +99,7 @@ FEATURE may be a named feature or a file name, see
     (with-eval-after-load ',feature ,@forms)))
 
 (defmacro ptrv/with-library (feature &rest body)
-  "Evaluate BODY only if require SYMBOL is successful."
+  "If require FEATURE is successful evaluate BODY."
   (declare (indent defun))
   `(when (require ',feature nil t)
      ,@body))
@@ -343,9 +343,14 @@ file `PATTERNS'."
    (*is-mac* (executable-find "open"))
    (*is-linux* (executable-find "x-www-browser"))))
 
-(setq browse-url-generic-program (ptrv/get-default-url-program)
-      browse-url-browser-function 'browse-url-generic
-      initial-major-mode 'lisp-interaction-mode
+(ptrv/after browse-url
+  (setq browse-url-generic-program (ptrv/get-default-url-program)
+        browse-url-browser-function 'browse-url-generic))
+
+(ptrv/after compile
+  (setq compilation-scroll-output t))
+
+(setq initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
       column-number-mode t
       echo-keystrokes 0.02
@@ -360,9 +365,8 @@ file `PATTERNS'."
       next-error-highlight t
       next-error-highlight-no-select t
       font-lock-maximum-decoration t
-      color-theme-is-global t
+      ;; color-theme-is-global t
       ring-bell-function 'ignore
-      compilation-scroll-output t
       vc-follow-symlinks t
       diff-switches "-u"
       completion-cycle-threshold 5
@@ -370,9 +374,11 @@ file `PATTERNS'."
       ;; from https://github.com/technomancy/better-defaults
       x-select-enable-primary nil
       save-interprogram-paste-before-kill t
-      apropos-do-all t
       mouse-yank-at-point t
       url-configuration-directory (concat ptrv/tmp-dir "url"))
+
+(ptrv/after apropos
+  (setq apropos-do-all t))
 
 (auto-insert-mode 1)
 (auto-compression-mode t)
@@ -395,17 +401,19 @@ file `PATTERNS'."
 (setq save-place-file (concat ptrv/tmp-dir "places"))
 
 ;; savehist keeps track of some history
-(setq savehist-additional-variables '(search ring regexp-search-ring)
-      savehist-autosave-interval 60
-      savehist-file (concat ptrv/tmp-dir "savehist"))
+(ptrv/after savehist
+  (setq savehist-additional-variables '(search ring regexp-search-ring)
+        savehist-autosave-interval 60
+        savehist-file (concat ptrv/tmp-dir "savehist")))
 (savehist-mode t)
 
 ;; desktop.el
-(setq desktop-save 'if-exists)
+(ptrv/after desktop
+  (setq desktop-save 'if-exists))
 (desktop-save-mode 1)
 
 ;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-(setq utf-translate-cjk-mode nil)
+;; (setq utf-translate-cjk-mode nil)
 
 ;;remove all trailing whitespace and trailing blank lines before
 ;;saving the file
@@ -419,9 +427,11 @@ file `PATTERNS'."
 
 ;;enable cua-mode for rectangular selections
 ;; (cua-mode 1)
-(setq cua-enable-cua-keys nil)
+(ptrv/after cua-base
+  (setq cua-enable-cua-keys nil))
 
-(setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks"))
+(ptrv/after bookmark
+  (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks")))
 
 (defun ptrv/get-default-sound-command ()
   "Get default command for playing sound files."
@@ -532,7 +542,8 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * nyan-mode
-(setq nyan-bar-length 16)
+(ptrv/after nyan-mode
+  (setq nyan-bar-length 12))
 (nyan-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
