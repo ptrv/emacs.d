@@ -127,7 +127,7 @@ FEATURE may be a named feature or a file name, see
                           ptrv/font-lock-keywords :append))
 
 (defun ptrv/add-auto-mode (mode &rest patterns)
-  "Add entries to `auto-mode-alist' to use `MODE' for all given
+  "Add entries to `auto-mode-alist' and use `MODE' for all given
 file `PATTERNS'."
   (declare (indent defun))
   (dolist (pattern patterns)
@@ -288,9 +288,11 @@ file `PATTERNS'."
   "A list of packages to ensure are installed at launch.")
 
 (defun ptrv/packages-installed-p ()
+  "Check whether all packages in `ptrv/packages' are installed."
   (every #'package-installed-p ptrv/packages))
 
 (defun ptrv/install-packages ()
+  "Install all packages defined in `ptrv/packages'."
   (unless (ptrv/packages-installed-p)
     ;; check for new packages (package versions)
     (message "%s" "Refresh package database...")
@@ -418,6 +420,7 @@ file `PATTERNS'."
 ;;remove all trailing whitespace and trailing blank lines before
 ;;saving the file
 (defun ptrv/cleanup-whitespace ()
+  "Custom cleanup whitespace function."
   (let ((whitespace-style '(trailing empty)) )
     (whitespace-cleanup)))
 (add-hook 'before-save-hook 'ptrv/cleanup-whitespace)
@@ -530,12 +533,15 @@ file `PATTERNS'."
   :group 'org-faces)
 
 (defun fontify-todo ()
+  "Fontify todos."
   (font-lock-add-keywords
    nil `(("\\<\\(FIX\\(ME\\)?\\|TODO\\)"
           1 todo-comment-face t))))
+
 (add-hook 'prog-mode-hook #'fontify-todo)
 
 (defun fontify-headline ()
+  "Fontify certain headlines."
   (font-lock-add-keywords
    nil '(("^;;;; [* ]*\\(.*\\)\\>"
           (1 headline-face t)))))
@@ -800,6 +806,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
 (defun turn-on-sp ()
+  "Turn on smartparens-mode."
   (smartparens-mode)
   (ptrv/smartparens-lisp-mode +1))
 (if (boundp 'eval-expression-minibuffer-setup-hook)
@@ -817,6 +824,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
 (defun imenu-elisp-sections ()
+  "Add custom expression to imenu."
   (setq imenu-prev-index-position-function nil)
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
@@ -1005,6 +1013,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
         tramp-persistency-file-name (concat ptrv/tmp-dir "tramp")))
 
 (defun sudo-edit (&optional arg)
+  "Edit buffer with superuser privileges."
   (interactive "P")
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
@@ -1368,6 +1377,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (message "Enable scratch-buffer erase on kill!"))))
 
 (defun unkillable-scratch-buffer ()
+  "Make scratch buffer unkillable."
   (if (equal (buffer-name (current-buffer)) "*scratch*")
       (progn
         (if unkillable-scratch-buffer-erase
@@ -1387,7 +1397,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (around
    whitespace-cleanup-indent-tab
    activate)
-  "Fix whitespace-cleanup indent-tabs-mode bug"
+  "Fix `whitespace-cleanup' `indent-tabs-mode' bug."
   (let ((whitespace-indent-tabs-mode indent-tabs-mode)
         (whitespace-tab-width tab-width))
     ad-do-it))
@@ -2257,6 +2267,7 @@ collapsed buffer"
 (ptrv/after rainbow-mode (diminish 'rainbow-mode))
 
 (defmacro rename-modeline (package-name mode new-name)
+  "Rename modeline for PACKAGE-NAME and MODE to NEW-NAME."
   `(eval-after-load ,package-name
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
@@ -2376,17 +2387,20 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * superollider
 (defun ptrv/sclang-mode-loader ()
+  "Load sclang-mode."
   (unless (featurep 'sclang)
     (require 'sclang)
     (ptrv/after sclang
       (sclang-mode)
       (ptrv/sclang-mode-loader--remove))))
 (defun ptrv/sclang-mode-loader--remove ()
+  "Remove `ptrv/sclang-mode-loader' from `auto-mode-alist'."
   (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
           auto-mode-alist))
 (ptrv/add-auto-mode 'ptrv/sclang-mode-loader "\\.\\(sc\\|scd\\)$")
 
 (defun ptrv/sclang ()
+  "Start sclang-mode."
   (interactive)
   (if (require 'sclang nil t)
       (progn
@@ -2661,7 +2675,7 @@ collapsed buffer"
     (define-key map "b" 'winner-undo)
     (define-key map "f" 'winner-redo)
     map)
-  "Keymap for window manipulation")
+  "Keymap for window manipulation.")
 
 ;;fast vertical naviation
 (global-set-key  (kbd "M-U") (lambda () (interactive) (forward-line -10)))
@@ -2757,23 +2771,24 @@ collapsed buffer"
       (find-file file))))
 
 (defun refresh-file ()
+  "Revert file in current buffer."
   (interactive)
   (revert-buffer nil t)
   (message "Buffer reverted!"))
 
 (defun ptrv/display-yank-menu ()
-  "Open yank-menu popup."
+  "Open function `yank-menu' popup."
   (interactive)
   (popup-menu 'yank-menu))
 
 ;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
 (defun comment-dwim-line (&optional arg)
-  "Replacement for the comment-dwim command.
+  "Replacement for the `comment-dwim' command.
 
-If no region is selected and current line is not blank and we are
-not at the end of the line, then comment current line. Replaces
-default behaviour of comment-dwim, when it inserts comment at the
-end of the line."
+Pass ARG to `comment-dwim'.  If no region is selected and current
+line is not blank and we are not at the end of the line, then
+comment current line.  Replaces default behaviour of `comment-dwim,'
+when it inserts comment at the end of the line."
   (interactive "*P")
   (comment-normalize-vars)
   (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
@@ -2814,11 +2829,13 @@ end of the line."
     (set-window-buffer (car x) (window-buffer (cadr x))) (rotate-windows-helper (cdr x) d)))
 
 (defun rotate-windows ()
+  "Rotate windows."
   (interactive)
   (rotate-windows-helper (window-list) (window-buffer (car (window-list))))
   (select-window (car (last (window-list)))))
 
 (defun ptrv/byte-recompile-site-lisp ()
+  "Recompile user site-lisp directory."
   (interactive)
   (dolist (project (directory-files
                     (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
@@ -2826,15 +2843,18 @@ end of the line."
       (byte-recompile-directory project 0))))
 
 (defun ptrv/byte-recompile-elpa ()
+  "Recompile elpa directory."
   (interactive)
   (when (boundp 'package-user-dir)
     (byte-recompile-directory package-user-dir 0)))
 
 (defun ptrv/byte-recompile-init ()
+  "Recompile user's init file."
   (interactive)
   (byte-recompile-file (locate-user-emacs-file "init.el") t 0))
 
 (defun ptrv/byte-recompile-home ()
+  "Recompile all relevant files in user's Emacs dir."
   (interactive)
   (ptrv/byte-recompile-site-lisp)
   (ptrv/byte-recompile-elpa)
@@ -2842,7 +2862,7 @@ end of the line."
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil
-  "create a scratch buffer"
+  "Create a scratch buffer."
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (lisp-interaction-mode)
@@ -2864,7 +2884,7 @@ end of the line."
   "Duplicates the current line or region ARG times.
 If there's no region, the current line will be duplicated.
 However, if there's a region, all lines that region covers will
-be duplicated. If DO-COMMENT is non-nil, comment current line or
+be duplicated.  If DO-COMMENT is non-nil, comment current line or
 region."
   (interactive "p")
   (let (beg end (origin (point)))
@@ -2904,16 +2924,17 @@ be duplicated."
 
 ;; define function to shutdown emacs server instance
 (defun server-shutdown ()
-  "Save buffers, Quit, and Shutdown (kill) server"
+  "Save buffers, Quit, and Shutdown (kill) server."
   (interactive)
   (save-some-buffers)
   (kill-emacs))
 
 (defun exit-emacs-client ()
-  "consistent exit emacsclient.
-   if not in emacs client, echo a message in minibuffer, don't
-   exit emacs. if in server mode and editing file, do C-x #
-   server-edit else do C-x 5 0 delete-frame"
+  "Consistent exit emacsclient.
+
+If not in emacs client, echo a message in minibuffer, don't exit
+emacs.  If in server mode and editing file, do C-x # server-edit
+else do C-x 5 0 delete-frame"
   (interactive)
   (if server-buffer-clients
       (server-edit)
@@ -2941,7 +2962,8 @@ With a prefix ARG open line above the current line."
       (newline-and-indent))))
 
 (defun goto-line-with-feedback ()
-  "Show line numbers temporarily, while prompting for the line number input"
+  "Show line numbers temporarily, while prompting for the line
+number input."
   (interactive)
   (let ((line-numbers-off-p (if (boundp 'linum-mode)
                                 (not linum-mode)
@@ -2957,6 +2979,7 @@ With a prefix ARG open line above the current line."
     (hs-show-block)))
 
 (defun toggle-window-split ()
+  "Toggle window split."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -2999,6 +3022,7 @@ With a prefix ARG open line above the current line."
   (enlarge-window (/ (window-height (next-window)) 2)))
 
 (defun xml-format ()
+  "Format XML file with xmllint."
   (interactive)
   (save-excursion
     (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
@@ -3030,11 +3054,13 @@ With a prefix ARG open line above the current line."
     (indent-region (region-beginning) (region-end))))
 
 (defun ptrv/user-first-name ()
+  "Get user's first name."
   (let* ((first-name (car (split-string user-full-name))))
     (if first-name
         (capitalize first-name)
       "")))
 (defun ptrv/user-first-name-p ()
+  "Check whether the user name is provided."
   (not (string-equal "" (ptrv/user-first-name))))
 
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
@@ -3074,6 +3100,7 @@ Create a new ielm process if required."
 
 ;;http://www.emacswiki.org/emacs/IncrementNumber
 (defun ptrv/change-number-at-point (change)
+  "Change number at point with CHANGE fn."
   (save-excursion
     (save-match-data
       (or (looking-at "[0123456789]")
@@ -3082,18 +3109,21 @@ Create a new ielm process if required."
        (number-to-string
         (mod (funcall change (string-to-number (match-string 0))) 10))))))
 (defun increment-number-at-point ()
+  "Increment number at point."
   (interactive)
   (ptrv/change-number-at-point '1+))
 (defun decrement-number-at-point ()
+  "Decrement number at point."
   (interactive)
   (ptrv/change-number-at-point '1-))
 
 (defun ptrv/lisp-describe-thing-at-point ()
   "Show the documentation of the Elisp function and variable near point.
-   This checks in turn:
-     -- for a function name where point is
-     -- for a variable name where point is
-     -- for a surrounding function call"
+
+This checks in turn:
+-- for a function name where point is
+-- for a variable name where point is
+-- for a surrounding function call"
   (interactive)
   ;; sigh, function-at-point is too clever.  we want only the first half.
   (let ((sym (ignore-errors
@@ -3148,6 +3178,7 @@ Create a new ielm process if required."
            "Turn your head towards the sun and the shadows will fall behind you.")))
 
 (defun ptrv/welcome-message ()
+  "Get random welcom message."
   (nth (random (length ptrv/welcome-messages)) ptrv/welcome-messages))
 
 (setq initial-scratch-message (concat ";;
