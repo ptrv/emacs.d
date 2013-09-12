@@ -289,7 +289,7 @@ file `PATTERNS'."
 
 (defun ptrv/packages-installed-p ()
   "Check whether all packages in `ptrv/packages' are installed."
-  (every #'package-installed-p ptrv/packages))
+  (every 'package-installed-p ptrv/packages))
 
 (defun ptrv/install-packages ()
   "Install all packages defined in `ptrv/packages'."
@@ -509,10 +509,10 @@ file `PATTERNS'."
 ;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
 ;;     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
 
-(ptrv/hook-into-modes #'rainbow-mode '(lisp-mode
-                                       emacs-lisp-mode
-                                       lisp-interaction-mode
-                                       css-mode))
+(ptrv/hook-into-modes 'rainbow-mode '(lisp-mode
+                                      emacs-lisp-mode
+                                      lisp-interaction-mode
+                                      css-mode))
 
 (defvar todo-comment-face 'todo-comment-face)
 (defvar headline-face 'headline-face)
@@ -538,7 +538,7 @@ file `PATTERNS'."
    nil `(("\\<\\(FIX\\(ME\\)?\\|TODO\\)"
           1 todo-comment-face t))))
 
-(add-hook 'prog-mode-hook #'fontify-todo)
+(add-hook 'prog-mode-hook 'fontify-todo)
 
 (defun fontify-headline ()
   "Fontify certain headlines."
@@ -683,7 +683,7 @@ file `PATTERNS'."
     (interactive)
     (unless (ac-cursor-on-diable-face-p)
       (auto-complete)))
-  (global-set-key (kbd "s-c") #'ptrv/auto-complete)
+  (global-set-key (kbd "s-c") 'ptrv/auto-complete)
 
   ;; complete on dot
   (defun ptrv/ac-dot-complete ()
@@ -762,24 +762,24 @@ file `PATTERNS'."
     ;; depth changing
     (define-key map (kbd "M-?") 'sp-convolute-sexp)
     ;; misc
-    (define-key map (kbd "M-J") #'sp-join-sexp)
+    (define-key map (kbd "M-J") 'sp-join-sexp)
     (define-key map (kbd "M-s") nil)
-    (define-key map (kbd "M-P") #'sp-splice-sexp)
-    (define-key map ")" #'sp-up-sexp)
+    (define-key map (kbd "M-P") 'sp-splice-sexp)
+    (define-key map ")" 'sp-up-sexp)
     ;; (define-key map (kbd "C-d") 'sp-delete-char)
     ;; (define-key map (kbd "DEL") 'sp-backward-delete-char)
     ;; (define-key map (kbd "M-d") 'sp-kill-word)
     ;; (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
     ;; (define-key map (kbd "M-q") 'sp-indent-defun)
     ;; (define-key map (kbd "C-j") 'sp-newline)
-    (define-key map [remap delete-char] #'sp-delete-char)
-    (define-key map [remap backward-delete-char-untabify] #'sp-backward-delete-char)
-    (define-key map [remap backward-delete-char] #'sp-backward-delete-char)
-    (define-key map [remap delete-backward-char] #'sp-backward-delete-char)
-    (define-key map [remap kill-word] #'sp-kill-word)
-    (define-key map [remap backward-kill-word] #'sp-backward-kill-word)
-    (define-key map [remap fill-paragraph] #'sp-indent-defun)
-    (define-key map [remap newline-and-indent] #'sp-newline)
+    (define-key map [remap delete-char] 'sp-delete-char)
+    (define-key map [remap backward-delete-char-untabify] 'sp-backward-delete-char)
+    (define-key map [remap backward-delete-char] 'sp-backward-delete-char)
+    (define-key map [remap delete-backward-char] 'sp-backward-delete-char)
+    (define-key map [remap kill-word] 'sp-kill-word)
+    (define-key map [remap backward-kill-word] 'sp-backward-kill-word)
+    (define-key map [remap fill-paragraph] 'sp-indent-defun)
+    (define-key map [remap newline-and-indent] 'sp-newline)
 
     map)
   "Keymap for `ptrv/smartparens-lisp-mode'.")
@@ -801,8 +801,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (sp-local-pair modes "(" nil :bind "M-(")
   (dolist (mode modes)
     (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook #'smartparens-strict-mode)
-      (add-hook hook #'ptrv/smartparens-lisp-mode))))
+      (add-hook hook 'smartparens-strict-mode)
+      (add-hook hook 'ptrv/smartparens-lisp-mode))))
 
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
@@ -811,7 +811,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (smartparens-mode)
   (ptrv/smartparens-lisp-mode +1))
 (if (boundp 'eval-expression-minibuffer-setup-hook)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'turn-on-sp)
+    (add-hook 'eval-expression-minibuffer-setup-hook 'turn-on-sp)
   (add-hook 'minibuffer-setup-hook
             #'(lambda ()
                 (when (eq this-command 'eval-expression)
@@ -952,7 +952,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
         nrepl-popup-stacktraces-in-repl nil
         nrepl-port "4555")
 
-  (ptrv/hook-into-modes #'nrepl-turn-on-eldoc-mode
+  (ptrv/hook-into-modes 'nrepl-turn-on-eldoc-mode
                         '(nrepl-mode nrepl-interaction-mode))
 
   (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
@@ -963,7 +963,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
   ;;Auto Complete
-  (ptrv/hook-into-modes #'ac-nrepl-setup
+  (ptrv/hook-into-modes 'ac-nrepl-setup
                         '(nrepl-mode nrepl-interaction-mode))
 
   (ptrv/after auto-complete
@@ -1067,9 +1067,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;; A key map for Gisting
 (defvar ptrv/gist-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "c" #'yagist-region-or-buffer)
-    (define-key map "p" #'yagist-region-or-buffer-private)
-    (define-key map "l" #'yagist-list)
+    (define-key map "c" 'yagist-region-or-buffer)
+    (define-key map "p" 'yagist-region-or-buffer-private)
+    (define-key map "l" 'yagist-list)
     map)
   "Keymap for Gists.")
 
@@ -1097,7 +1097,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (jump-to-register :magit-fullscreen))
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
   (define-key magit-status-mode-map (kbd "Q")
-    (ptrv/expose (apply-partially #'magit-quit-session t)))
+    (ptrv/expose (apply-partially 'magit-quit-session t)))
 
   (defun magit-toggle-whitespace ()
     (interactive)
@@ -1313,17 +1313,17 @@ See also `toggle-frame-maximized'."
 
 (defvar ptrv/ack-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") #'ack-and-a-half)
-    (define-key map (kbd "s") #'ack-and-a-half-same)
+    (define-key map (kbd "a") 'ack-and-a-half)
+    (define-key map (kbd "s") 'ack-and-a-half-same)
     map)
   "Keymap for ack commands.")
 
 (defvar ptrv/search-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "a" #'ag)
-    (define-key map "r" #'ag-regexp)
-    (define-key map "o" #'occur)
-    (define-key map "O" #'multi-occur)
+    (define-key map "a" 'ag)
+    (define-key map "r" 'ag-regexp)
+    (define-key map "o" 'occur)
+    (define-key map "O" 'multi-occur)
     map)
   "Keymap for searching.")
 
@@ -2126,17 +2126,17 @@ prompt for the command to use."
 
 (defvar ptrv/file-commands-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "o" #'ptrv/open-with)
-    (define-key map "d" #'ptrv/launch-directory)
-    (define-key map "r" #'ptrv/ido-recentf-open)
-    (define-key map "R" #'ptrv/rename-current-buffer-file)
-    (define-key map "D" #'ptrv/delete-file-and-buffer)
-    (define-key map "w" #'ptrv/copy-file-name-to-clipboard)
-    (define-key map "i" #'ptrv/find-user-init-file)
-    (define-key map (kbd "b i") #'ptrv/byte-recompile-init)
-    (define-key map (kbd "b s") #'ptrv/byte-recompile-site-lisp)
-    (define-key map (kbd "b e") #'ptrv/byte-recompile-elpa)
-    (define-key map (kbd "b h") #'ptrv/byte-recompile-home)
+    (define-key map "o" 'ptrv/open-with)
+    (define-key map "d" 'ptrv/launch-directory)
+    (define-key map "r" 'ptrv/ido-recentf-open)
+    (define-key map "R" 'ptrv/rename-current-buffer-file)
+    (define-key map "D" 'ptrv/delete-file-and-buffer)
+    (define-key map "w" 'ptrv/copy-file-name-to-clipboard)
+    (define-key map "i" 'ptrv/find-user-init-file)
+    (define-key map (kbd "b i") 'ptrv/byte-recompile-init)
+    (define-key map (kbd "b s") 'ptrv/byte-recompile-site-lisp)
+    (define-key map (kbd "b e") 'ptrv/byte-recompile-elpa)
+    (define-key map (kbd "b h") 'ptrv/byte-recompile-home)
     map)
   "Keymap for file functions.")
 
@@ -2234,7 +2234,7 @@ prompt for the command to use."
   (add-to-list 'debug-ignored-errors "\\`Flycheck mode disabled\\'")
   (add-to-list 'debug-ignored-errors "\\`Configured syntax checker .* cannot be used\\'"))
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'after-init-hook 'global-flycheck-mode)
 
 ;; disable flycheck for some modes
 (ptrv/hook-into-modes #'(lambda () (flycheck-mode -1))
@@ -2254,9 +2254,9 @@ prompt for the command to use."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
-(ptrv/hook-into-modes #'hs-minor-mode '(emacs-lisp-mode
-                                        lisp-mode c-mode-common
-                                        perl-mode sh-mode python-mode))
+(ptrv/hook-into-modes 'hs-minor-mode '(emacs-lisp-mode
+                                       lisp-mode c-mode-common
+                                       perl-mode sh-mode python-mode))
 
 (ptrv/after hideshow
   (defvar ptrv/hs-minor-mode-map
@@ -2614,7 +2614,7 @@ collapsed buffer"
       (unless (string-match ".*flycheck.*" buffer-file-name)
         (setq ac-sources '(ac-source-clang-async))
         (ac-clang-launch-completion-process)))
-    (ptrv/hook-into-modes #'ptrv/clang-complete-init '(c-mode c++-mode)))
+    (ptrv/hook-into-modes 'ptrv/clang-complete-init '(c-mode c++-mode)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
@@ -2623,7 +2623,7 @@ collapsed buffer"
           indent-tabs-mode nil)
     (local-set-key (kbd "C-c o") 'ff-find-other-file))
 
-  (ptrv/hook-into-modes #'ptrv/cc-mode-init '(c-mode c++-mode))
+  (ptrv/hook-into-modes 'ptrv/cc-mode-init '(c-mode c++-mode))
 
   ;; doxymacs
   (add-to-list 'load-path (locate-user-emacs-file
@@ -2643,9 +2643,9 @@ collapsed buffer"
 
   (defun ptrv/c++-mode-init ()
     (doxymacs-mode +1))
-  (add-hook 'c++-mode-hook #'ptrv/c++-mode-init)
+  (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
 
-  (add-hook 'c-mode-common-hook #'linum-mode))
+  (add-hook 'c-mode-common-hook 'linum-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * x11
@@ -2797,9 +2797,9 @@ collapsed buffer"
   (define-key map "a" 'org-agenda)
   (define-key map "b" 'org-iswitchb)
   (define-key map "c" 'org-capture)
-  (define-key map "d" #'ptrv/duplicate-current-line-or-region)
+  (define-key map "d" 'ptrv/duplicate-current-line-or-region)
   (define-key map (kbd "M-d")
-    #'ptrv/duplicate-and-comment-current-line-or-region)
+    'ptrv/duplicate-and-comment-current-line-or-region)
   (define-key map "f" ptrv/file-commands-map)
   (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
