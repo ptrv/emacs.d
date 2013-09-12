@@ -2174,11 +2174,11 @@ prompt for the command to use."
   (cond (*is-mac*
          (setq processing-location "/usr/bin/processing-java")
          (setq processing-application-dir "/Applications/Processing.app")
-         (setq processing-sketch-dir "~/Documents/Processing"))
+         (setq processing-sketchbook-dir "~/Documents/Processing"))
         (*is-linux*
          (setq processing-location "~/applications/processing/processing-java")
          (setq processing-application-dir "~/applications/processing")
-         (setq processing-sketch-dir "~/sketchbook")))
+         (setq processing-sketchbook-dir "~/sketchbook")))
 
   (defun ptrv/processing-ac-init ()
     (setq-local ac-sources '(ac-source-dictionary
