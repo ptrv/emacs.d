@@ -1225,6 +1225,55 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                   (abbreviate-file-name (buffer-file-name))
                 "%b")))
 
+;; for emacs <= 24.3 support of toggle-frame-maximized/fullscreen
+(unless (fboundp 'toggle-frame-maximized)
+  (message "toggle-frame-maximized has been defined for compatibility!")
+  (defun toggle-frame-maximized ()
+    "Toggle maximization state of the selected frame.
+Maximize the selected frame or un-maximize if it is already maximized.
+Respect window manager screen decorations.
+If the frame is in fullscreen mode, don't change its mode,
+just toggle the temporary frame parameter `maximized',
+so the frame will go to the right maximization state
+after disabling fullscreen mode.
+See also `toggle-frame-fullscreen'."
+    (interactive)
+    (if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+        (modify-frame-parameters
+         nil
+         `((maximized
+            . ,(unless (eq (frame-parameter nil 'maximized) 'maximized)
+                 'maximized))))
+      (modify-frame-parameters
+       nil
+       `((fullscreen
+          . ,(unless (eq (frame-parameter nil 'fullscreen) 'maximized)
+               'maximized)))))))
+;; defailias
+(defalias 'toggle-fullscreen 'toggle-frame-maximized)
+
+(unless (fboundp 'toggle-frame-fullscreen)
+  (message "toggle-frame-fullscreen has been defined for compatibility!")
+  (defun toggle-frame-fullscreen ()
+    "Toggle fullscreen mode of the selected frame.
+Enable fullscreen mode of the selected frame or disable if it is
+already fullscreen.  Ignore window manager screen decorations.
+When turning on fullscreen mode, remember the previous value of the
+maximization state in the temporary frame parameter `maximized'.
+Restore the maximization state when turning off fullscreen mode.
+See also `toggle-frame-maximized'."
+    (interactive)
+    (modify-frame-parameters
+     nil
+     `((maximized
+        . ,(unless (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+             (frame-parameter nil 'fullscreen)))
+       (fullscreen
+        . ,(if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+               (if (eq (frame-parameter nil 'maximized) 'maximized)
+                   'maximized)
+             'fullscreen))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
 (ptrv/after iflipb
@@ -2601,12 +2650,12 @@ collapsed buffer"
 ;;;; * x11
 (when *is-x11*
   ;; Maximise the Emacs window
-  (defun toggle-fullscreen ()
-    (interactive)
-    (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                           '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-    (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                           '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
+  ;; (defun toggle-fullscreen ()
+  ;;   (interactive)
+  ;;   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+  ;;                          '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
+  ;;   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+  ;;                          '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
 
   (cond ((and (<= (x-display-pixel-width) 1280)
               (<= (x-display-pixel-height) 800))
