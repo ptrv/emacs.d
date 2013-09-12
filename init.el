@@ -622,8 +622,9 @@ file `PATTERNS'."
     (find-file-other-window file))
 
   (add-hook 'eshell-prompt-load-hook
-            (lambda ()
-              (set-face-attribute 'eshell-prompt-face nil :foreground "dark green")))
+            #'(lambda ()
+                (set-face-attribute
+                 'eshell-prompt-face nil :foreground "dark green")))
 
   (autoload 'pcomplete/go "pcmpl-go" nil nil)
   (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
@@ -635,7 +636,7 @@ file `PATTERNS'."
 ;; Start eshell or switch to it if it's active.
 (global-set-key (kbd "C-x m") 'eshell)
 ;; Start a new eshell even if one is active.
-(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
+(global-set-key (kbd "C-x M") #'(lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * completion
@@ -855,9 +856,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (defun ptrv/remove-elc-on-save ()
     "If you’re saving an elisp file, likely the .elc is no longer valid."
     (add-hook 'after-save-hook
-              (lambda ()
-                (if (file-exists-p (concat buffer-file-name "c"))
-                    (delete-file (concat buffer-file-name "c"))))
+              #'(lambda ()
+                  (if (file-exists-p (concat buffer-file-name "c"))
+                      (delete-file (concat buffer-file-name "c"))))
               nil :local))
 
   (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
@@ -902,8 +903,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   ;;                                             (match-end 1) "∈")
   ;;                             nil)))))
   (add-hook 'clojure-mode-hook
-            (lambda ()
-              (setq buffer-save-without-query t)))
+            #'(lambda ()
+                (setq buffer-save-without-query t)))
 
   ;;Treat hyphens as a word character when transposing words
   (defvar clojure-mode-with-hyphens-as-word-sep-syntax-table
@@ -925,7 +926,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
     (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check))
 
-  (add-hook 'clojure-mode-hook (lambda () (flycheck-mode -1)))
+  (add-hook 'clojure-mode-hook #'(lambda () (flycheck-mode -1)))
 
   ;; push-mark when switching to nrepl via C-c C-z
   (defadvice nrepl-switch-to-repl-buffer
@@ -1001,12 +1002,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
 (setq backup-enable-predicate
-      (lambda (name)
-        (and (normal-backup-enable-predicate name)
-             (not
-              (let ((method (file-remote-p name 'method)))
-                (when (stringp method)
-                  (member method '("su" "sudo"))))))))
+      #'(lambda (name)
+          (and (normal-backup-enable-predicate name)
+               (not
+                (let ((method (file-remote-p name 'method)))
+                  (when (stringp method)
+                    (member method '("su" "sudo"))))))))
 
 (ptrv/after tramp
   (setq tramp-backup-directory-alist backup-directory-alist
@@ -1040,9 +1041,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
          ("ssh" (filename . "^/ssh.*")))))
 
 (add-hook 'ibuffer-mode-hook
-          (lambda ()
-            (ibuffer-auto-mode 1)
-            (ibuffer-switch-to-saved-filter-groups "default")))
+          #'(lambda ()
+              (ibuffer-auto-mode 1)
+              (ibuffer-switch-to-saved-filter-groups "default")))
 
 (setq ibuffer-show-empty-filter-groups nil)
 
@@ -1077,9 +1078,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;; newline after 72 chars in magit-log-edit-mode
 (ptrv/after magit
   (add-hook 'magit-log-edit-mode-hook
-            (lambda ()
-              (set-fill-column 72)
-              (auto-fill-mode 1)))
+            #'(lambda ()
+                (set-fill-column 72)
+                (auto-fill-mode 1)))
 
   ;; http://whattheemacsd.com/setup-magit.el-01.html
   ;; full screen magit-status
@@ -1118,9 +1119,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (ptrv/after git-commit-mode
   (add-hook 'git-commit-mode-hook
-            (lambda ()
-              (set-fill-column 72)
-              (auto-fill-mode 1)))
+            #'(lambda ()
+                (set-fill-column 72)
+                (auto-fill-mode 1)))
 
   ;; Add an extra newline to separate commit message from git commentary
   (defun magit-commit-mode-init ()
@@ -1619,8 +1620,8 @@ See also `toggle-frame-maximized'."
                                        reftex-mode
                                        auto-fill-mode))
 
-  (add-hook 'LaTeX-mode-hook (lambda ()
-                               (setq TeX-command-default "latexmk")))
+  (add-hook 'LaTeX-mode-hook #'(lambda ()
+                                 (setq TeX-command-default "latexmk")))
 
   ;; clean intermediate files from latexmk
   (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
@@ -1962,14 +1963,14 @@ If ARG is not nil, create package in current directory"
 (ptrv/after erc
   ;;change wrap width when window is resized
   (add-hook 'window-configuration-change-hook
-            '(lambda ()
-               (save-excursion
-                 (walk-windows
-                  (lambda (w)
-                    (let ((buffer (window-buffer w)))
-                      (set-buffer buffer)
-                      (when (eq major-mode 'erc-mode)
-                        (setq erc-fill-column (- (window-width w) 2))))))))))
+            #'(lambda ()
+                (save-excursion
+                  (walk-windows
+                   (lambda (w)
+                     (let ((buffer (window-buffer w)))
+                       (set-buffer buffer)
+                       (when (eq major-mode 'erc-mode)
+                         (setq erc-fill-column (- (window-width w) 2))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode
@@ -2482,21 +2483,21 @@ collapsed buffer"
   (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
   ;; Raise all supercollider windows.
   (define-key sclang-mode-map (kbd "C-c F")
-    (lambda ()
-      (interactive)
-      (sclang-eval-string "Window.allWindows.do(_.front);")))
+    #'(lambda ()
+        (interactive)
+        (sclang-eval-string "Window.allWindows.do(_.front);")))
   (define-key sclang-server-key-map [?l]
-    (lambda ()
-      (interactive)
-      (sclang-eval-string "Server.default.meter;")))
+    #'(lambda ()
+        (interactive)
+        (sclang-eval-string "Server.default.meter;")))
   (define-key sclang-server-key-map [?s]
-    (lambda ()
-      (interactive)
-      (sclang-eval-string "Server.default.scope(numChannels: 2);")))
+    #'(lambda ()
+        (interactive)
+        (sclang-eval-string "Server.default.scope(numChannels: 2);")))
   (define-key sclang-server-key-map [?h]
-    (lambda ()
-      (interactive)
-      (sclang-eval-string "HelperWindow.new;")))
+    #'(lambda ()
+        (interactive)
+        (sclang-eval-string "HelperWindow.new;")))
   (define-key sclang-mode-map (kbd "s-.") 'sclang-main-stop)
   (define-key sclang-mode-map (kbd "<s-return>") 'sclang-eval-region-or-line)
 
@@ -2717,18 +2718,18 @@ collapsed buffer"
   (let ((map (make-sparse-keymap)))
     (define-key map "s" 'swap-windows)
     (define-key map "r" 'rotate-windows)
-    (define-key map "." (lambda () (interactive) (shrink-window-horizontally 4)))
-    (define-key map "," (lambda () (interactive) (enlarge-window-horizontally 4)))
-    (define-key map (kbd "<down>") (lambda () (interactive) (enlarge-window -4)))
-    (define-key map (kbd "<up>") (lambda () (interactive) (enlarge-window 4)))
+    (define-key map "." #'(lambda () (interactive) (shrink-window-horizontally 4)))
+    (define-key map "," #'(lambda () (interactive) (enlarge-window-horizontally 4)))
+    (define-key map (kbd "<down>") #'(lambda () (interactive) (enlarge-window -4)))
+    (define-key map (kbd "<up>") #'(lambda () (interactive) (enlarge-window 4)))
     (define-key map "b" 'winner-undo)
     (define-key map "f" 'winner-redo)
     map)
   "Keymap for window manipulation.")
 
 ;;fast vertical naviation
-(global-set-key  (kbd "M-U") (lambda () (interactive) (forward-line -10)))
-(global-set-key  (kbd "M-D") (lambda () (interactive) (forward-line 10)))
+(global-set-key  (kbd "M-U") #'(lambda () (interactive) (forward-line -10)))
+(global-set-key  (kbd "M-D") #'(lambda () (interactive) (forward-line 10)))
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
@@ -2742,11 +2743,11 @@ collapsed buffer"
 
 ;; Activate occur easily inside isearch
 (define-key isearch-mode-map (kbd "C-o")
-  (lambda () (interactive)
-    (let ((case-fold-search isearch-case-fold-search))
-      (occur (if isearch-regexp
-                 isearch-string
-               (regexp-quote isearch-string))))))
+  #'(lambda () (interactive)
+      (let ((case-fold-search isearch-case-fold-search))
+        (occur (if isearch-regexp
+                   isearch-string
+                 (regexp-quote isearch-string))))))
 
 (global-set-key "\C-m" 'newline-and-indent)
 
@@ -2760,9 +2761,9 @@ collapsed buffer"
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
-(global-set-key (kbd "M-j") (lambda ()
-                              (interactive)
-                              (join-line -1)))
+(global-set-key (kbd "M-j") #'(lambda ()
+                                (interactive)
+                                (join-line -1)))
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 (global-set-key (kbd "C-M-z") 'indent-defun)
