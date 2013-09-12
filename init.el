@@ -619,7 +619,7 @@ file `PATTERNS'."
       (erase-buffer)))
 
   (defun eshell/e (file)
-    (find-file-other-window file))
+    (find-file file))
 
   (add-hook 'eshell-prompt-load-hook
             #'(lambda ()
