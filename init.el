@@ -266,6 +266,7 @@ file `PATTERNS'."
     jedi
     elpy
     virtualenv
+    python-info
     ;; major modes
     glsl-mode
     apache-mode
