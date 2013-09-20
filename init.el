@@ -2630,7 +2630,9 @@ collapsed buffer"
     (add-hook 'font-lock-mode-hook 'ptrv/doxymacs-font-lock-hook))
 
   (defun ptrv/c++-mode-init ()
-    (doxymacs-mode +1))
+    ;; (doxymacs-mode +1)
+    (flycheck-mode -1)
+    (yas-minor-mode +1))
   (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
 
   (add-hook 'c-mode-common-hook 'linum-mode))
