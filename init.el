@@ -1180,20 +1180,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sql-mode
-;; switch between sqlite3 and spatialite excutable
 (ptrv/after sql
-  (defun sql-switch-spatialite-sqlite ()
-    (interactive)
-    (let* ((sqlprog sql-sqlite-program)
-           (change (if (string-match "sqlite" sqlprog)
-                       (executable-find "spatialite")
-                     (executable-find "sqlite3"))))
-      (setq sql-sqlite-program change)
-      (message "sql-sqlite-program changed to %s" change)))
-
   (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
-  (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer)
-  (define-key sql-mode-map (kbd "C-c C-p s") 'sql-switch-spatialite-sqlite))
+  (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer))
+
+(autoload 'sql-spatialite "sql-spatialite-ext"
+  "Run spatialite as an inferior process." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smart-operator
