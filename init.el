@@ -2636,6 +2636,19 @@ collapsed buffer"
   (add-hook 'c-mode-common-hook 'linum-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * lua
+(ptrv/after lua-mode
+  (require 'smartparens-lua))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * html
+(ptrv/after sgml-mode
+  (require 'smartparens-html)
+  (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
+  (define-key html-mode-map (kbd "C-c C-f") 'sp-html-next-tag)
+  (define-key html-mode-map (kbd "C-c C-b") 'sp-html-previous-tag))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * x11
 (when *is-x11*
   ;; Maximise the Emacs window
