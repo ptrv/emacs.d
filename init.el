@@ -499,16 +499,9 @@ file `PATTERNS'."
 (global-hl-line-mode 1)
 
 (defvar ptrv/themes-dir (locate-user-emacs-file "themes/"))
-(add-to-list 'custom-theme-load-path ptrv/themes-dir)
-
-(when (load (concat ptrv/themes-dir
-                    "gandalf-theme-emacs/gandalf-theme.el")
-            :noerror)
-  (load-theme 'gandalf t))
-
-;; (ptrv/with-library live-fontify-hex
-;;   (dolist (mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode css-mode))
-;;     (font-lock-add-keywords mode '((live-fontify-hex-colors)))))
+(add-to-list 'custom-theme-load-path
+             (concat ptrv/themes-dir "gandalf-theme-emacs"))
+(load-theme 'gandalf t)
 
 (ptrv/hook-into-modes 'rainbow-mode '(lisp-mode
                                       emacs-lisp-mode
