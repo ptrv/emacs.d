@@ -281,6 +281,7 @@ file `PATTERNS'."
     projectile
     ;; minor-modes
     love-minor-mode
+    whitespace-cleanup-mode
     ;; golang
     go-mode
     go-autocomplete
@@ -418,13 +419,20 @@ file `PATTERNS'."
 ;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 ;; (setq utf-translate-cjk-mode nil)
 
-;;remove all trailing whitespace and trailing blank lines before
-;;saving the file
-(defun ptrv/cleanup-whitespace ()
-  "Custom cleanup whitespace function."
-  (let ((whitespace-style '(trailing empty)) )
-    (whitespace-cleanup)))
-(add-hook 'before-save-hook 'ptrv/cleanup-whitespace)
+(ptrv/after whitespace
+  (diminish 'whitespace-mode " ␣")
+  ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
+  ;; portions of lines via faces.  Also indicate tabs via characters
+  (setq whitespace-style '(face indentation space-after-tab space-before-tab
+                                tab-mark empty trailing)
+        whitespace-line-column nil))    ; Use `fill-column' for overlong lines
+
+(ptrv/after whitespace-cleanup-mode
+  (setq whitespace-cleanup-mode-only-if-initially-clean nil))
+
+(dolist (it '(prog-mode-hook text-mode-hook))
+  (add-hook it 'whitespace-mode)
+  (add-hook it 'whitespace-cleanup-mode))
 
 ;; disabled commands
 (setq disabled-command-function nil)
@@ -1421,17 +1429,6 @@ See also `toggle-frame-maximized'."
 ;; make file executabable on save if has shebang
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
-
-;; fix whitespace-cleanup
-;; http://stackoverflow.com/a/12958498/464831
-(defadvice whitespace-cleanup
-  (around
-   whitespace-cleanup-indent-tab
-   activate)
-  "Fix `whitespace-cleanup' `indent-tabs-mode' bug."
-  (let ((whitespace-indent-tabs-mode indent-tabs-mode)
-        (whitespace-tab-width tab-width))
-    ad-do-it))
 
 ;; use ibuffer
 (global-set-key [remap list-buffers] 'ibuffer)
