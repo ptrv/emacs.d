@@ -949,21 +949,21 @@ keymap `ptrv/smartparens-lisp-mode-map'."
         nrepl-port "4555")
 
   (ptrv/hook-into-modes 'nrepl-turn-on-eldoc-mode
-                        '(nrepl-mode nrepl-interaction-mode))
+                        '(nrepl-repl-mode nrepl-interaction-mode))
 
-  (ptrv/smartparens-setup-lisp-modes '(nrepl-mode
+  (ptrv/smartparens-setup-lisp-modes '(nrepl-repl-mode
                                        nrepl-interaction-mode))
 
   ;; Show documentation/information with M-RET
-  (define-key nrepl-mode-map (kbd "M-RET") 'nrepl-doc)
+  (define-key nrepl-repl-mode-map (kbd "M-RET") 'nrepl-doc)
   (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
 
   ;;Auto Complete
   (ptrv/hook-into-modes 'ac-nrepl-setup
-                        '(nrepl-mode nrepl-interaction-mode))
+                        '(nrepl-repl-mode nrepl-interaction-mode))
 
   (ptrv/after auto-complete
-    (add-to-list 'ac-modes 'nrepl-mode))
+    (add-to-list 'ac-modes 'nrepl-repl-mode))
 
   ;; specify the print length to be 100 to stop infinite sequences killing things.
   (defun live-nrepl-set-print-length ()
@@ -976,7 +976,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (interactive)
       (setq buffer-display-table (make-display-table))
       (aset buffer-display-table ?\^M []))
-    (add-hook 'nrepl-mode-hook 'live-windows-hide-eol)
+    (add-hook 'nrepl-repl-mode-hook 'live-windows-hide-eol)
 
     ;; Windows M-. navigation fix
     (defun nrepl-jump-to-def (var)
@@ -2281,7 +2281,7 @@ collapsed buffer"
 (ptrv/after abbrev (diminish 'abbrev-mode))
 (ptrv/after undo-tree (diminish 'undo-tree-mode " τ"))
 (ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
-(ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ"))
+(ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ/i"))
 (ptrv/after simple (diminish 'auto-fill-function " φ"))
 (ptrv/after projectile (diminish 'projectile-mode))
 (ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
@@ -2294,7 +2294,7 @@ collapsed buffer"
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
-(rename-modeline "nrepl" nrepl-mode "ηζ")
+(rename-modeline "nrepl" nrepl-repl-mode "ηζ/r")
 (rename-modeline "clojure-mode" clojure-mode "λ")
 (rename-modeline "python" python-mode "Py")
 (rename-modeline "lisp-mode" emacs-lisp-mode "EL")
