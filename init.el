@@ -62,10 +62,6 @@
   (when (and (file-directory-p project))
     (add-to-list 'load-path project)))
 
-;; Set paths to custom.el and loaddefs.el
-(setq autoload-file (locate-user-emacs-file "loaddefs.el"))
-(setq custom-file (locate-user-emacs-file "custom.el"))
-
 (require 'cl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * macros
@@ -3202,7 +3198,11 @@ This checks in turn:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
-(load custom-file 'noerror)
+;; Set paths to custom.el and loaddefs.el
+(defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
+(ptrv/after cus-edit
+  (setq custom-file ptrv/custom-file))
+(load ptrv/custom-file :no-error :no-message)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * secrets
