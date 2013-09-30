@@ -575,29 +575,18 @@ started from a shell."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido-ubiquitous
 (ptrv/after ido-ubiquitous
-  (dolist (func '(tmm-prompt erc-iswitchb))
-    (ido-ubiquitous-disable-in func))
-
-  (dolist (cmd '(sh-set-shell
-                 ispell-change-dictionary
-                 add-dir-local-variable
-                 ahg-do-command
-                 sclang-dump-interface
-                 sclang-dump-full-interface
-                 kill-ring-search
-                 tmm-menubar))
-    (add-to-list 'ido-ubiquitous-command-exceptions cmd))
-
-  ;; Fix ido-ubiquitous for newer packages
-  (defmacro ido-ubiquitous-use-new-completing-read (cmd package)
-    `(eval-after-load ,package
-       '(defadvice ,cmd (around ido-ubiquitous-new activate)
-          (let ((ido-ubiquitous-enable-compatibility nil))
-            ad-do-it))))
-
-  ;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
-  ;; (ido-ubiquitous-use-new-completing-read yas-expand 'yasnippet)
-  (ido-ubiquitous-use-new-completing-read yas-visit-snippet-file 'yasnippet))
+  ;; (dolist (cmd '(sh-set-shell
+  ;;                ispell-change-dictionary
+  ;;                add-dir-local-variable
+  ;;                ahg-do-command
+  ;;                sclang-dump-interface
+  ;;                sclang-dump-full-interface
+  ;;                kill-ring-search
+  ;;                tmm-menubar
+  ;;                erc-iswitchb))
+  ;;   (add-to-list 'ido-ubiquitous-command-overrides
+  ;;                `(disable exact ,(symbol-name cmd))))
+  )
 (ido-ubiquitous-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
