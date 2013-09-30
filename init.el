@@ -2634,6 +2634,12 @@ collapsed buffer"
   (define-key html-mode-map (kbd "C-c C-b") 'sp-html-previous-tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * ruby
+(ptrv/after ruby-mode
+  ;; smartparens
+  (require 'smartparens-ruby))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * x11
 (when *is-x11*
   ;; Maximise the Emacs window
