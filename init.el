@@ -1018,30 +1018,32 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ibuffer
-(setq ibuffer-saved-filter-groups
-      '(("default"
-         ("IRC"      (mode . erc-mode))
-         ("emacs" (or (name . "^\\*scratch\\*$")
-                      (name . "^\\*Messages\\*$")
-                      (name . "^\\*Completions\\*$")
-                      (filename . ".emacs.d")
-                      (filename . ".live-packs")))
-         ("magit" (name . "\\*magit"))
-         ("dired" (mode . dired-mode))
-         ("sclang" (mode . sclang-mode))
-         ("Org" (mode . org-mode))
-         ("Help" (or (name . "\\*Help\\*")
-                     (name . "\\*Apropos\\*")
-                     (name . "\\*info\\*")))
-         ("#!-config" (filename . ".cb-config"))
-         ("ssh" (filename . "^/ssh.*")))))
+(ptrv/after ibuf-ext
+  (setq ibuffer-saved-filter-groups
+        '(("default"
+           ("IRC"      (mode . erc-mode))
+           ("emacs" (or (name . "^\\*scratch\\*$")
+                        (name . "^\\*Messages\\*$")
+                        (name . "^\\*Completions\\*$")
+                        (filename . ".emacs.d")
+                        (filename . ".live-packs")))
+           ("magit" (name . "\\*magit"))
+           ("dired" (mode . dired-mode))
+           ("sclang" (mode . sclang-mode))
+           ("Org" (mode . org-mode))
+           ("Help" (or (name . "\\*Help\\*")
+                       (name . "\\*Apropos\\*")
+                       (name . "\\*info\\*")))
+           ("#!-config" (filename . ".cb-config"))
+           ("ssh" (filename . "^/ssh.*")))))
+
+  (setq ibuffer-show-empty-filter-groups nil))
 
 (add-hook 'ibuffer-mode-hook
           #'(lambda ()
               (ibuffer-auto-mode 1)
               (ibuffer-switch-to-saved-filter-groups "default")))
 
-(setq ibuffer-show-empty-filter-groups nil)
 
 (ptrv/with-library ibuffer-git
   (setq ibuffer-formats
