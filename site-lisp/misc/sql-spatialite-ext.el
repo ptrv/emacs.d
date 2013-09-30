@@ -1,4 +1,4 @@
-;;; sql-spatialite-ext.el --- Spatialite extensions for sql.el -*- lexical-binding: t; -*-
+;;; sql-spatialite-ext.el --- Spatialite extension for sql.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013  Peter Vasil
 
@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; Spatialite extesnsions for sql.el.
+;; Spatialite extesnsion for sql.el.
 
 ;; Add this file to your load path and put the following in your .emacs:
 ;; (autoload 'sql-spatialite "sql-spatialite-ext"
