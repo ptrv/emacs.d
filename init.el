@@ -267,10 +267,10 @@ file `PATTERNS'."
     glsl-mode
     apache-mode
     yaml-mode
-    ;; cmake-mode
+    ;;cmake-mode
     lua-mode
     json-mode
-    ;; gnuplot
+    ;;gnuplot
     pkgbuild-mode
     ;; project
     find-file-in-project
@@ -411,9 +411,6 @@ file `PATTERNS'."
 (ptrv/after desktop
   (setq desktop-save 'if-exists))
 (desktop-save-mode 1)
-
-;;disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-;; (setq utf-translate-cjk-mode nil)
 
 (ptrv/after whitespace
   (diminish 'whitespace-mode " ␣")
@@ -1235,7 +1232,7 @@ See also `toggle-frame-fullscreen'."
        `((fullscreen
           . ,(unless (eq (frame-parameter nil 'fullscreen) 'maximized)
                'maximized)))))))
-;; defailias
+;; defalias
 (defalias 'toggle-fullscreen 'toggle-frame-maximized)
 
 (unless (fboundp 'toggle-frame-fullscreen)
@@ -1901,8 +1898,8 @@ If ARG is not nil, create package in current directory"
     (erc :server "irc.freenode.net"
          :full-name "Peter V."
          :port 6667
-         :nick freenode-user
-         ))
+         :nick freenode-user))
+
   (ptrv/after erc
     (erc-services-mode 1)
     (setq erc-prompt-for-nickserv-password nil)
@@ -3119,9 +3116,9 @@ Don't mess with special buffers."
     ;;(setq list (sort list (lambda (a b) (< (car a) (car b)))))
     (with-output-to-temp-buffer "*Registers*"
       (dolist (elt list)
-	(when (get-register (car elt))
-	  (describe-register-1 (car elt))
-	  (terpri))))))
+        (when (get-register (car elt))
+          (describe-register-1 (car elt))
+          (terpri))))))
 
 ;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
 (defun switch-to-previous-buffer ()
