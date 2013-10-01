@@ -936,10 +936,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/add-auto-mode 'clojure-mode "\\.cljs$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * 4clojure
-(autoload '4clojure-problem "four-clj" nil t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * nrepl
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
