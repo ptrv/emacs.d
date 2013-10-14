@@ -227,6 +227,7 @@ file `PATTERNS'."
     align-cljlet
     litable
     lexbind-mode
+    nrepl-eval-sexp-fu
     ;; markup
     org-plus-contrib
     markdown-mode
@@ -868,8 +869,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/after inf-lisp
   (ptrv/smartparens-setup-lisp-modes '(inferior-lisp-mode)))
 
-(ptrv/with-library nrepl-eval-sexp-fu
+(ptrv/after nrepl-eval-sexp-fu
   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
+(require 'nrepl-eval-sexp-fu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
