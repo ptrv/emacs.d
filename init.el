@@ -1436,24 +1436,23 @@ See also `toggle-frame-maximized'."
         org-completion-use-iswitchb nil
         org-completion-use-ido t
         org-log-done t
-        org-clock-into-drawer t
         org-src-fontify-natively nil
         org-default-notes-file "~/Dropbox/org/captures.org"
         org-directory "~/Dropbox/org"
-        org-agenda-files '("~/Dropbox/org/ptrv.org"
-                           "~/Dropbox/org/uni.org"
-                           "~/Dropbox/org/master_thesis.org"))
+        org-agenda-files '("~/Dropbox/org/ptrv.org"))
+
+  (ptrv/after org-clock
+    (setq org-clock-into-drawer t))
 
   (setq org-link-mailto-program
         '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
 
-  (setq org-mobile-directory "~/Dropbox/MobileOrg"
-        org-mobile-files '("~/Dropbox/org/ptrv.org"
-                           "~/Dropbox/org/uni.org"
-                           "~/Dropbox/org/notes.org"
-                           "~/Dropbox/org/journal.org"
-                           "~/Dropbox/org/master_thesis.org")
-        org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org")
+  (ptrv/after org-mobile
+    (setq org-mobile-directory "~/Dropbox/MobileOrg"
+          org-mobile-files '("~/Dropbox/org/ptrv.org"
+                             "~/Dropbox/org/notes.org"
+                             "~/Dropbox/org/journal.org")
+          org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org"))
 
   ;; yasnippet workaround
   (ptrv/after yasnippet
@@ -1472,32 +1471,34 @@ See also `toggle-frame-maximized'."
 
   (define-key org-mode-map (kbd "C-c g") 'org-sparse-tree)
 
-  (setq org-agenda-custom-commands
-        '(("P" "Projects"
-           ((tags "PROJECT")))
-          ("H" "Home Lists"
-           ((tags "HOME")
-            (tags "COMPUTER")
-            (tags "DVD")
-            (tags "READING")))
-          ("U" "Uni"
-           ((tags "UNI")))
-          ;; ("W" "Work Lists"
-          ;;  ((tags "WORK")))
-          ("D" "Daily Action List"
-           ((agenda "" ((org-agenda-ndays 1)
-                        (org-agenda-sorting-strategy
-                         '((agenda time-up priority-down tag-up)))
-                        (org-deadline-warning-days 0)))))))
+  (ptrv/after org-agenda
+    (setq org-agenda-custom-commands
+          '(("P" "Projects"
+             ((tags "PROJECT")))
+            ("H" "Home Lists"
+             ((tags "HOME")
+              (tags "COMPUTER")
+              (tags "DVD")
+              (tags "READING")))
+            ("W" "Work Lists"
+             ((tags "WORK")))
+            ("D" "Daily Action List"
+             ((agenda "" ((org-agenda-ndays 1)
+                          (org-agenda-sorting-strategy
+                           '((agenda time-up priority-down tag-up)))
+                          (org-deadline-warning-days 0))))))))
 
-  (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline (concat org-directory "/ptrv.org") "TASKS")
-           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
-          ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
-           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1)))
+  (ptrv/after org-capture
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file+headline (concat org-directory "/ptrv.org") "TASKS")
+             "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
+            ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+             "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1))))
 
-  (setq org-ditaa-jar-path "~/applications/ditaa.jar")
-  (setq org-plantuml-jar-path "~/applications/plantuml.jar")
+  (ptrv/after org-ditaa
+    (setq org-ditaa-jar-path "~/applications/ditaa.jar"))
+  (ptrv/after org-platuml
+    (setq org-plantuml-jar-path "~/applications/plantuml.jar"))
 
   (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
 
