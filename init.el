@@ -2513,7 +2513,9 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
 (ptrv/after lua-mode
-  (require 'smartparens-lua))
+  (require 'smartparens-lua)
+
+  (add-hook 'lua-mode-hook 'yas-minor-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
