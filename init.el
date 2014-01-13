@@ -1613,7 +1613,7 @@ See also `toggle-frame-maximized'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-(add-hook 'markdown-mode-hook 'turn-on-pandoc)
+(add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)
 (ptrv/add-auto-mode 'markdown-mode "\\.text$")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
