@@ -223,7 +223,7 @@ file `PATTERNS'."
     elisp-slime-nav
     clojure-mode
     clojure-test-mode
-    nrepl
+    cider
     align-cljlet
     litable
     lexbind-mode
@@ -670,7 +670,7 @@ file `PATTERNS'."
 ;;;; * smartparens
 (require 'smartparens)
 (setq sp--lisp-modes
-      (append sp--lisp-modes '(nrepl-interaction-mode
+      (append sp--lisp-modes '(cider-repl-mode
                                inferior-lisp-mode)))
 (require 'smartparens-config)
 (smartparens-global-mode +1)
@@ -861,113 +861,47 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
 
-  ;; (font-lock-add-keywords
-  ;;  'clojure-mode `(("(\\(fn\\)[\[[:space:]]"
-  ;;                   (0 (progn (compose-region (match-beginning 1)
-  ;;                                             (match-end 1) "λ")
-  ;;                             nil)))))
-  ;; (font-lock-add-keywords
-  ;;  'clojure-mode `(("\\(#\\)("
-  ;;                   (0 (progn (compose-region (match-beginning 1)
-  ;;                                             (match-end 1) "ƒ")
-  ;;                             nil)))))
-  ;; (font-lock-add-keywords
-  ;;  'clojure-mode `(("\\(#\\){"
-  ;;                   (0 (progn (compose-region (match-beginning 1)
-  ;;                                             (match-end 1) "∈")
-  ;;                             nil)))))
-  (add-hook 'clojure-mode-hook
-            #'(lambda ()
-                (setq buffer-save-without-query t)))
-
-  ;;Treat hyphens as a word character when transposing words
-  (defvar clojure-mode-with-hyphens-as-word-sep-syntax-table
-    (let ((st (make-syntax-table clojure-mode-syntax-table)))
-      (modify-syntax-entry ?- "w" st)
-      st))
-  (defun live-transpose-words-with-hyphens (arg)
-    "Treat hyphens as a word character when transposing words"
-    (interactive "*p")
-    (with-syntax-table clojure-mode-with-hyphens-as-word-sep-syntax-table
-      (transpose-words arg)))
-
-  (define-key clojure-mode-map (kbd "M-t") 'live-transpose-words-with-hyphens)
-
-  (autoload 'kibit-mode "kibit-mode" nil t)
-  (add-hook 'clojure-mode-hook 'kibit-mode)
-
-  (ptrv/after kibit-mode
-    (define-key kibit-mode-keymap (kbd "C-c C-n") 'nil)
-    (define-key kibit-mode-keymap (kbd "C-c k c") 'kibit-check))
-
-  (add-hook 'clojure-mode-hook #'(lambda () (flycheck-mode -1)))
-
-  ;; push-mark when switching to nrepl via C-c C-z
-  (defadvice nrepl-switch-to-repl-buffer
-    (around
-     nrepl-switch-to-repl-buffer-with-mark
-     activate)
-    (with-current-buffer (current-buffer)
-      (push-mark)
-      ad-do-it)))
-
-(ptrv/add-auto-mode 'clojure-mode "\\.cljs$")
+  (defun ptrv/clojure-mode-init ()
+    (yas-minor-mode 1))
+  (add-hook 'clojure-mode-hook 'ptrv/clojure-mode-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * nrepl
-(add-to-list 'same-window-buffer-names "*nrepl*")
+(add-to-list 'same-window-buffer-names "*cider*")
 
-(ptrv/after nrepl
-  (setq nrepl-popup-stacktraces nil
-        nrepl-popup-stacktraces-in-repl nil
-        nrepl-port "4555")
+(ptrv/after cider-repl
+  (setq cider-repl-pop-to-buffer-on-connect t)
+  (setq cider-repl-popup-stacktraces t)
 
-  (ptrv/hook-into-modes 'nrepl-turn-on-eldoc-mode
-                        '(nrepl-repl-mode nrepl-interaction-mode))
-
-  (ptrv/smartparens-setup-lisp-modes '(nrepl-repl-mode
-                                       nrepl-interaction-mode))
-
-  ;; Show documentation/information with M-RET
-  (define-key nrepl-repl-mode-map (kbd "M-RET") 'nrepl-doc)
-  (define-key nrepl-interaction-mode-map (kbd "M-RET") 'nrepl-doc)
-
-  ;;Auto Complete
-  (ptrv/hook-into-modes 'ac-nrepl-setup
-                        '(nrepl-repl-mode nrepl-interaction-mode))
+  (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
 
   (ptrv/after auto-complete
-    (add-to-list 'ac-modes 'nrepl-repl-mode))
+    (add-to-list 'ac-modes 'cider-repl-mode))
+  )
 
-  ;; specify the print length to be 100 to stop infinite sequences killing things.
-  (defun live-nrepl-set-print-length ()
-    (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
-  (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
+(ptrv/after nrepl-client
+  ;; (setq nrepl-port "4555")
+  (setq nrepl-buffer-name-show-port t))
 
-  (when *is-windows*
-    (defun live-windows-hide-eol ()
-      "Do not show ^M in files containing mixed UNIX and DOS line endings."
-      (interactive)
-      (setq buffer-display-table (make-display-table))
-      (aset buffer-display-table ?\^M []))
-    (add-hook 'nrepl-repl-mode-hook 'live-windows-hide-eol)
+(ptrv/after cider-interaction
+  (setq cider-popup-stacktraces nil)
+  (add-hook 'cider-interaction-mode-hook 'ac-nrepl-setup)
+  )
 
-    ;; Windows M-. navigation fix
-    (defun nrepl-jump-to-def (var)
-      "Jump to the definition of the var at point."
-      (let ((form (format "((clojure.core/juxt
-                         (comp (fn [s] (if (clojure.core/re-find #\"[Ww]indows\" (System/getProperty \"os.name\"))
-                                           (.replace s \"file:/\" \"file:\")
-                                           s))
-                               clojure.core/str
-                               clojure.java.io/resource :file)
-                         (comp clojure.core/str clojure.java.io/file :file) :line)
-                        (clojure.core/meta (clojure.core/ns-resolve '%s '%s)))"
-                          (nrepl-current-ns) var)))
-        (nrepl-send-string form
-                           (nrepl-jump-to-def-handler (current-buffer))
-                           (nrepl-current-ns)
-                           (nrepl-current-tooling-session))))))
+(ptrv/after cider-repl-mode
+  (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
+  (ptrv/smartparens-setup-lisp-modes '(cider-repl-mode)))
+
+(ptrv/after cider-mode
+  (message "cider-mode config has been loaded!!!")
+
+  (ptrv/hook-into-modes 'cider-turn-on-eldoc-mode
+                        '(cider-mode))
+
+  ;; Show documentation/information with M-RET
+  (define-key cider-mode-map (kbd "M-RET") 'cider-doc)
+
+  (add-hook 'cider-mode-hook 'ac-nrepl-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
