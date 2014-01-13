@@ -2564,8 +2564,6 @@ collapsed buffer"
 ;;;; * key-chord
 (key-chord-mode 1)
 (key-chord-define-global "JJ" 'switch-to-previous-buffer)
-(key-chord-define-global "KK" 'winner-undo)
-(key-chord-define-global "LL" 'winner-redo)
 (key-chord-define-global "BB" 'ido-switch-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
