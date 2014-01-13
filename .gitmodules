@@ -39,9 +39,6 @@
 	path = site-lisp/emacs-clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
     ignore = untracked
-[submodule "site-lisp/ibuffer-git"]
-	path = site-lisp/ibuffer-git
-	url = git://github.com/jrockway/ibuffer-git
 [submodule "site-lisp/flycheck-go-alt"]
 	path = site-lisp/flycheck-go-alt
 	url = https://gist.github.com/5414276.git

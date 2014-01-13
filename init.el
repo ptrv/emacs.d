@@ -249,14 +249,12 @@ file `PATTERNS'."
     google-this
     htmlize
     mwe-log-commands
-    nyan-mode
     diminish
     kill-ring-search
     ;; tools
     ag
     ack-and-a-half
     exec-path-from-shell
-    scratch
     ;; python
     pytest
     pylint
@@ -553,12 +551,6 @@ started from a shell."
   (font-lock-add-keywords
    nil '(("^;;;; [* ]*\\(.*\\)\\>"
           (1 headline-face t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * nyan-mode
-(ptrv/after nyan-mode
-  (setq nyan-bar-length 12))
-(nyan-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
@@ -1041,19 +1033,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           #'(lambda ()
               (ibuffer-auto-mode 1)
               (ibuffer-switch-to-saved-filter-groups "default")))
-
-
-(ptrv/with-library ibuffer-git
-  (setq ibuffer-formats
-        '((mark modified read-only git-status-mini " "
-                (name 18 18 :left :elide)
-                " "
-                (size 9 -1 :right)
-                " "
-                (git-status 8 8 :left :elide)
-                " "
-                (mode 16 16 :left :elide)
-                " " filename-and-process))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
