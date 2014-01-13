@@ -943,7 +943,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                        (name . "\\*Apropos\\*")
                        (name . "\\*info\\*")))
            ("#!-config" (filename . ".cb-config"))
-           ("ssh" (filename . "^/ssh.*")))))
+           ("ssh" (filename . "^/ssh.*"))
+           ("root" (filename . "^/sudo:root.*")))))
 
   (setq ibuffer-show-empty-filter-groups nil))
 
