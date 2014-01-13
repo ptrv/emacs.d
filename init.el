@@ -413,7 +413,6 @@ file `PATTERNS'."
 (desktop-save-mode 1)
 
 (ptrv/after whitespace
-  (diminish 'whitespace-mode " ␣")
   ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
   ;; portions of lines via faces.  Also indicate tabs via characters
   (setq whitespace-style '(face indentation space-after-tab space-before-tab
@@ -2240,16 +2239,11 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
-(ptrv/after auto-complete (diminish 'auto-complete-mode " α"))
-(ptrv/after yasnippet (diminish 'yas-minor-mode " γ"))
 (ptrv/after eldoc (diminish 'eldoc-mode))
 (ptrv/after abbrev (diminish 'abbrev-mode))
-(ptrv/after undo-tree (diminish 'undo-tree-mode " τ"))
-(ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode " δ"))
-(ptrv/after nrepl (diminish 'nrepl-interaction-mode " ηζ/i"))
-(ptrv/after simple (diminish 'auto-fill-function " φ"))
+(ptrv/after undo-tree (diminish 'undo-tree-mode))
+(ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode))
 (ptrv/after projectile (diminish 'projectile-mode))
-(ptrv/after kibit-mode (diminish 'kibit-mode " κ"))
 (ptrv/after google-this (diminish 'google-this-mode))
 (ptrv/after rainbow-mode (diminish 'rainbow-mode))
 
@@ -2259,7 +2253,6 @@ collapsed buffer"
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
-(rename-modeline "nrepl" nrepl-repl-mode "ηζ/r")
 (rename-modeline "clojure-mode" clojure-mode "λ")
 (rename-modeline "python" python-mode "Py")
 (rename-modeline "lisp-mode" emacs-lisp-mode "EL")
