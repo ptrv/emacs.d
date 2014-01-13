@@ -2555,6 +2555,8 @@ collapsed buffer"
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(ptrv/after multiple-cursors-core
+  (setq mc/list-file (concat ptrv/tmp-dir "mc-lists.el")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
