@@ -239,6 +239,7 @@ file `PATTERNS'."
     smooth-scrolling
     rainbow-mode
     highlight
+    zenburn-theme
     ;; utilities
     xml-rpc
     refheap
@@ -510,10 +511,11 @@ started from a shell."
 (setq column-number-mode t)
 (global-hl-line-mode 1)
 
-(defvar ptrv/themes-dir (locate-user-emacs-file "themes/"))
-(add-to-list 'custom-theme-load-path
-             (concat ptrv/themes-dir "gandalf-theme-emacs"))
-(load-theme 'gandalf t)
+;; (defvar ptrv/themes-dir (locate-user-emacs-file "themes/"))
+;; (add-to-list 'custom-theme-load-path
+;;              (concat ptrv/themes-dir "gandalf-theme-emacs"))
+;; (load-theme 'gandalf :no-confirm)
+(load-theme 'zenburn :no-confirm)
 
 (ptrv/hook-into-modes 'rainbow-mode '(lisp-mode
                                       emacs-lisp-mode
