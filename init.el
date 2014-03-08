@@ -1970,7 +1970,11 @@ prompt for the command to use."
     map)
   "Keymap for file functions.")
 
-(ptrv/after dired (require 'dired-x))
+(ptrv/after dired
+  (require 'dired-x)
+
+  (setq dired-auto-revert-buffer t
+        dired-listing-switches "-ahl"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * projectile
