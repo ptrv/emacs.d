@@ -2476,9 +2476,17 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
 (ptrv/after lua-mode
-  (require 'smartparens-lua)
-
-  (add-hook 'lua-mode-hook 'yas-minor-mode))
+  (defun ptrv/lua-send-region-or-current-line ()
+    "Send current region or line to lua process."
+    (interactive)
+    (if (region-active-p)
+        (lua-send-region (region-beginning) (region-end))
+      (lua-send-current-line)))
+  (defun ptrv/lua-mode-init ()
+    (yas-minor-mode +1)
+    (local-set-key (kbd "C-c C-d") 'lua-send-proc)
+    (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line))
+  (add-hook 'lua-mode-hook 'ptrv/lua-mode-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
