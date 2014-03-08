@@ -1149,8 +1149,6 @@ See also `toggle-frame-maximized'."
 
 (defvar ptrv/search-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "a" 'ag)
-    (define-key map "r" 'ag-regexp)
     (define-key map "o" 'occur)
     (define-key map "O" 'multi-occur)
     map)
@@ -1158,7 +1156,20 @@ See also `toggle-frame-maximized'."
 
 ;; the silver searcher
 (ptrv/after ag
-  (setq ag-highlight-search t))
+  (setq ag-highlight-search t
+        ag-reuse-buffers t))
+
+(defvar ptrv/ag-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "a") 'ag-regexp)
+    (define-key map (kbd "A") 'ag)
+    (define-key map (kbd "d") 'ag-dired-regexp)
+    (define-key map (kbd "D") 'ag-dired)
+    (define-key map (kbd "f") 'ag-files)
+    (define-key map (kbd "k") 'ag-kill-other-buffers)
+    (define-key map (kbd "K") 'ag-kill-buffers)
+    map)
+  "Keymap for Ag")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * edit-server
@@ -2624,9 +2635,10 @@ collapsed buffer"
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
   (define-key map "G" ptrv/gist-map)
-  (define-key map "A" ptrv/ack-map)
+  ;; (define-key map "A" ptrv/ack-map)
+  (define-key map "A" 'org-agenda)
   (define-key map "D" ptrv/diff-map)
-  (define-key map "a" 'org-agenda)
+  (define-key map "a" ptrv/ag-map)
   (define-key map "b" 'org-iswitchb)
   (define-key map "c" 'org-capture)
   (define-key map "d" 'ptrv/duplicate-current-line-or-region)
