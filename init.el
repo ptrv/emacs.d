@@ -668,101 +668,49 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
-(require 'smartparens)
-(setq sp--lisp-modes
-      (append sp--lisp-modes '(cider-repl-mode
-                               inferior-lisp-mode)))
 (require 'smartparens-config)
-(smartparens-global-mode +1)
+
+(ptrv/after smartparens
+  (let ((map smartparens-mode-map))
+    ;; Movement and navigation
+    (define-key map (kbd "C-M-f") #'sp-forward-sexp)
+    (define-key map (kbd "C-M-b") #'sp-backward-sexp)
+    (define-key map (kbd "C-M-u") #'sp-backward-up-sexp)
+    (define-key map (kbd "C-M-d") #'sp-down-sexp)
+    (define-key map (kbd "C-M-p") #'sp-backward-down-sexp)
+    (define-key map (kbd "C-M-n") #'sp-up-sexp)
+    ;; Deleting and killing
+    (define-key map (kbd "C-M-k") #'sp-kill-sexp)
+    (define-key map (kbd "C-M-w") #'sp-copy-sexp)
+    ;; Depth changing
+    (define-key map (kbd "M-s") #'sp-splice-sexp)
+    (define-key map (kbd "M-<up>") #'sp-splice-sexp-killing-backward)
+    (define-key map (kbd "M-<down>") #'sp-splice-sexp-killing-forward)
+    (define-key map (kbd "M-r") #'sp-splice-sexp-killing-around)
+    (define-key map (kbd "M-?") #'sp-convolute-sexp)
+    ;; Barfage & Slurpage
+    (define-key map (kbd "C-)")  #'sp-forward-slurp-sexp)
+    (define-key map (kbd "C-<right>") #'sp-forward-slurp-sexp)
+    (define-key map (kbd "C-}")  #'sp-forward-barf-sexp)
+    (define-key map (kbd "C-<left>") #'sp-forward-barf-sexp)
+    (define-key map (kbd "C-(")  #'sp-backward-slurp-sexp)
+    (define-key map (kbd "C-M-<left>") #'sp-backward-slurp-sexp)
+    (define-key map (kbd "C-{")  #'sp-backward-barf-sexp)
+    (define-key map (kbd "C-M-<right>") #'sp-backward-barf-sexp)
+    ;; Miscellaneous commands
+    (define-key map (kbd "M-S") #'sp-split-sexp)
+    (define-key map (kbd "M-J") #'sp-join-sexp)
+    (define-key map (kbd "C-M-t") #'sp-transpose-sexp))
+
+  ;; Some additional bindings for strict mode
+  (let ((map smartparens-strict-mode-map))
+    (define-key map (kbd "M-q") #'sp-indent-defun)
+    (define-key map (kbd "C-j") #'sp-newline)))
+
+(smartparens-global-mode)
 (show-smartparens-global-mode)
 
 (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-
-;; (defadvice enable-paredit-mode (before disable-autopair activate)
-;;   (turn-off-smartparens-mode))
-
-(defvar ptrv/smartparens-bindings
-  '(("C-M-f" . sp-forward-sexp)
-    ("C-M-b" . sp-backward-sexp)
-    ("C-M-n" . sp-next-sexp)
-    ("C-M-p" . sp-previous-sexp)
-    ("C-M-d" . sp-down-sexp)
-    ("C-M-u" . sp-backward-up-sexp)
-    ("C-M-a" . sp-backward-down-sexp)
-    ("C-S-a" . sp-beginning-of-sexp)
-    ("C-S-d" . sp-end-of-sexp)
-    ("C-M-e" . sp-up-sexp)
-    ("C-M-k" . sp-kill-sexp)
-    ("C-M-w" . sp-copy-sexp)
-    ("M-<delete>" . sp-unwrap-sexp)
-    ("M-<backspace>" . sp-backward-unwrap-sexp)
-    ("C-<right>" . sp-forward-slurp-sexp)
-    ("C-<left>" . sp-forward-barf-sexp)
-    ("C-M-<left>" . sp-backward-slurp-sexp)
-    ("C-M-<right>" . sp-backward-barf-sexp)
-    ;; ("M-D" . sp-splice-sexp)
-    ;; ("C-M-<delete>" . sp-splice-sexp-killing-forward)
-    ;; ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
-    ;; ("C-S-<backspace>" . sp-splice-sexp-killing-around)
-    ("C-]" . sp-select-next-thing-exchange)
-    ("C-M-]" . sp-select-next-thing)
-    ("C-M-[" . sp-select-previous-thing)
-    ("M-F" . sp-forward-symbol)
-    ("M-B" . sp-backward-symbol)
-    ;; ("H-t" . sp-prefix-pair-object)
-    ;; ("H-p" . sp-prefix-pair-object)
-    ("s-s c" . sp-convolute-sexp)
-    ("s-s a" . sp-absorb-sexp)
-    ("s-s e" . sp-emit-sexp)
-    ("s-s p" . sp-add-to-previous-sexp)
-    ("s-s n" . sp-add-to-next-sexp)
-    ("s-s j" . sp-join-sexp)
-    ("s-s s" . sp-splice-sexp)
-    ("s-S s" . sp-split-sexp)
-    ("s-s r" . sp-splice-sexp-killing-around)
-    ("s-s <up>" . sp-splice-sexp-killing-backward)
-    ("s-s <down>" . sp-splice-sexp-killing-forward))
-  "Alist containing the ptrv's smartparens bindings.")
-
-(sp--populate-keymap ptrv/smartparens-bindings)
-
-;; Improve Smartparens support for Lisp editing
-(defvar ptrv/smartparens-lisp-mode-map
-  (let ((map (make-sparse-keymap)))
-    (set-keymap-parent map smartparens-mode-map)
-    (dolist (x sp-paredit-bindings)
-      (define-key map (read-kbd-macro (car x)) (cdr x)))
-    ;; depth changing
-    (define-key map (kbd "M-?") 'sp-convolute-sexp)
-    ;; misc
-    (define-key map (kbd "M-J") 'sp-join-sexp)
-    (define-key map (kbd "M-s") nil)
-    (define-key map (kbd "M-P") 'sp-splice-sexp)
-    (define-key map ")" 'sp-up-sexp)
-    ;; (define-key map (kbd "C-d") 'sp-delete-char)
-    ;; (define-key map (kbd "DEL") 'sp-backward-delete-char)
-    ;; (define-key map (kbd "M-d") 'sp-kill-word)
-    ;; (define-key map (kbd "M-DEL") 'sp-backward-kill-word)
-    (define-key map (kbd "M-q") 'sp-indent-defun)
-    (define-key map (kbd "C-j") 'sp-newline)
-    ;; (define-key map [remap delete-char] 'sp-delete-char)
-    ;; (define-key map [remap backward-delete-char-untabify] 'sp-backward-delete-char)
-    ;; (define-key map [remap backward-delete-char] 'sp-backward-delete-char)
-    ;; (define-key map [remap delete-backward-char] 'sp-backward-delete-char)
-    ;; (define-key map [remap kill-word] 'sp-kill-word)
-    ;; (define-key map [remap backward-kill-word] 'sp-backward-kill-word)
-    ;; (define-key map [remap fill-paragraph] 'sp-indent-defun)
-    ;; (define-key map [remap newline-and-indent] 'sp-newline)
-
-    map)
-  "Keymap for `ptrv/smartparens-lisp-mode'.")
-
-(define-minor-mode ptrv/smartparens-lisp-mode
-   "A minor mode to enable Lisp editing with Smartparens.
-
-When enabled, this mode essentially just adds some new key
-bindings."
-   :init-value nil)
 
 (defun ptrv/smartparens-setup-lisp-modes (modes)
   "Setup Smartparens Lisp support in MODES.
@@ -774,15 +722,13 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (sp-local-pair modes "(" nil :bind "M-(")
   (dolist (mode modes)
     (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook 'smartparens-strict-mode)
-      (add-hook hook 'ptrv/smartparens-lisp-mode))))
+      (add-hook hook 'smartparens-strict-mode))))
 
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
 (defun turn-on-sp ()
   "Turn on smartparens-mode."
-  (smartparens-mode)
-  (ptrv/smartparens-lisp-mode +1))
+  (smartparens-mode))
 (if (boundp 'eval-expression-minibuffer-setup-hook)
     (add-hook 'eval-expression-minibuffer-setup-hook 'turn-on-sp)
   (add-hook 'minibuffer-setup-hook
