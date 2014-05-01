@@ -955,7 +955,11 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (setq magit-diff-options (remove "-w" magit-diff-options))
     (magit-refresh))
 
-  (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace))
+  (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
+
+  (setq magit-auto-revert-mode nil))
+
+(global-set-key (kbd "C-x g") 'magit-status)
 
 (ptrv/after git-commit-mode
   (add-hook 'git-commit-mode-hook
@@ -2634,7 +2638,6 @@ collapsed buffer"
   (define-key map (kbd "M-d")
     'ptrv/duplicate-and-comment-current-line-or-region)
   (define-key map "f" ptrv/file-commands-map)
-  (define-key map "g" 'magit-status)
   (define-key map "l" 'org-store-link)
   (define-key map "q" 'exit-emacs-client)
   (define-key map "s" ptrv/search-map)
