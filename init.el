@@ -2324,7 +2324,8 @@ collapsed buffer"
   (setq elpy-default-minor-modes '(eldoc-mode
                                    highlight-indentation-mode
                                    yas-minor-mode
-                                   auto-complete-mode))
+                                   auto-complete-mode
+                                   pyvenv-mode))
 
   (defun elpy-enable-maybe ()
     (when (and (buffer-file-name)
@@ -2367,7 +2368,6 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
 (ptrv/after python
-  (exec-path-from-shell-copy-env "PYTHONPATH")
 
   (setq python-check-command "flake8")
 
