@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; Spatialite extesnsion for sql.el.
+;; SpatiaLite extension for sql.el.
 
 ;; Add this file to your load path and put the following in your .emacs:
 ;; (autoload 'sql-spatialite "sql-spatialite-ext"
@@ -45,7 +45,7 @@ Starts `sql-interactive-mode' after doing some setup."
   :group 'SQL)
 
 (defcustom sql-spatialite-login-params
-  '((database :file ".*\\.\\(db\\|sqlite[23]?\\)"))
+  '((database :file ".*\\.\\(db\\|sqlite\\)"))
   "List of login parameters needed to connect to Spatialite."
   :type 'sql-login-params
   :version "24.1"
