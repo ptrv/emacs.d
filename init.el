@@ -325,6 +325,12 @@ file `PATTERNS'."
         (message "%d package%s has been upgraded."
                  (length upgrades)
                  (if (= (length upgrades) 1) "" "s"))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * custom settings
+(defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
+(ptrv/after cus-edit
+  (setq custom-file ptrv/custom-file))
+(load ptrv/custom-file :no-error :no-message)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
@@ -3019,13 +3025,6 @@ This checks in turn:
 (unless (server-running-p)
   (server-start))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * custom settings
-;; Set paths to custom.el and loaddefs.el
-(defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
-(ptrv/after cus-edit
-  (setq custom-file ptrv/custom-file))
-(load ptrv/custom-file :no-error :no-message)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * secrets
