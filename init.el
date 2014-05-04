@@ -664,7 +664,7 @@ file `PATTERNS'."
     (interactive)
     (insert ".")
     (unless (ac-cursor-on-diable-face-p)
-      (auto-complete))))
+      (ac-start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
