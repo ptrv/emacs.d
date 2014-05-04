@@ -1579,30 +1579,27 @@ See also `toggle-frame-maximized'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * golang
-
 (ptrv/after go-mode
   (message "go-mode config has been loaded !!!")
-
-  (exec-path-from-shell-copy-env "GOROOT")
-  (exec-path-from-shell-copy-env "GOPATH")
 
   (defun ptrv/locate-godoc-src-file (f)
     (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
 
   ;; go-lang completion
-  (ptrv/with-library go-autocomplete
-    (defface ac-go-mode-candidate-face
-      '((t (:background "lightgray" :foreground "navy")))
-      "Face for go-autocomplete candidate"
-      :group 'auto-complete)
-    (defface ac-go-mode-selection-face
-      '((t (:background "navy" :foreground "white")))
-      "Face for the go-autocomplete selected candidate."
-      :group 'auto-complete)
-    (setcdr (assoc 'candidate-face ac-source-go)
-            'ac-go-mode-candidate-face)
-    (setcdr (assoc 'selection-face ac-source-go)
-            'ac-go-mode-selection-face))
+  (ptrv/after auto-complete
+    (ptrv/with-library go-autocomplete
+      (defface ac-go-mode-candidate-face
+        '((t (:background "lightgray" :foreground "navy")))
+        "Face for go-autocomplete candidate"
+        :group 'auto-complete)
+      (defface ac-go-mode-selection-face
+        '((t (:background "navy" :foreground "white")))
+        "Face for the go-autocomplete selected candidate."
+        :group 'auto-complete)
+      (setcdr (assoc 'candidate-face ac-source-go)
+              'ac-go-mode-candidate-face)
+      (setcdr (assoc 'selection-face ac-source-go)
+              'ac-go-mode-selection-face)))
 
   ;; (defun go-dot-complete ()
   ;;   "Insert dot and complete code at point."
@@ -1662,7 +1659,9 @@ See also `toggle-frame-maximized'."
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
     (hs-minor-mode +1)
     (go-eldoc-setup)
-    (setq-local flycheck-check-syntax-automatically '(save)))
+    (setq-local flycheck-check-syntax-automatically '(save))
+    (whitespace-mode -1)
+    (whitespace-cleanup-mode -1))
 
   (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
@@ -1685,29 +1684,6 @@ See also `toggle-frame-maximized'."
 
   (ptrv/after auto-complete-config
     (define-key go-mode-map (kbd ".") 'ptrv/ac-dot-complete))
-
-  ;; flycheck support
-  (add-to-list 'load-path (ptrv/locate-godoc-src-file
-                           "github.com/dougm/goflymake"))
-
-  (ptrv/with-library go-flycheck
-    (setq goflymake-debug nil)
-
-    (ptrv/after flycheck
-      (flycheck-define-checker go
-        "A Go syntax and style checker using the gofmt utility. "
-        :command ("gofmt" source)
-        :error-patterns ((error line-start
-                                (file-name) ":"
-                                line ":" column ": "
-                                (message) line-end))
-        :modes go-mode
-        :next-checkers ((no-errors . go-goflymake)))
-      (add-to-list 'flycheck-checkers 'go)))
-
-  (when (executable-find "errcheck")
-    (autoload 'go-errcheck "go-errcheck" nil t)
-    (define-key ptrv/go-mode-map "e" 'go-errcheck))
 
   (ptrv/after find-file-in-project
     (add-to-list 'ffip-patterns "*.go")))
