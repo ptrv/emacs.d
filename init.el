@@ -254,11 +254,10 @@ file `PATTERNS'."
     ack-and-a-half
     exec-path-from-shell
     ;; python
-    pylint
     jedi
     anaconda-mode
     python-info
-    pyvenv
+    pyenv-mode
     highlight-indentation
     ;; major modes
     glsl-mode
@@ -2275,7 +2274,7 @@ collapsed buffer"
     (anaconda-mode +1)
     (anaconda-eldoc +1)
     (setq-local company-backends '(company-anaconda))
-    (pyvenv-mode +1)
+    (pyenv-mode +1)
     (highlight-indentation-mode +1))
   (add-hook 'python-mode-hook 'ptrv/python-mode-init)
 
@@ -2300,11 +2299,7 @@ collapsed buffer"
    :mode 'python-mode
    :regexp "[[:alnum:]_]+"
    :doc-spec
-   '(("(python)Index" nil "")))
-
-  ;; pylint
-  (add-hook 'python-mode-hook 'pylint-add-menu-items)
-  (add-hook 'python-mode-hook 'pylint-add-key-bindings))
+   '(("(python)Index" nil ""))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
