@@ -1921,6 +1921,17 @@ prompt for the command to use."
          (setq processing-application-dir "~/applications/processing")
          (setq processing-sketchbook-dir "~/sketchbook")))
 
+  (defvar ptrv/processing-keywords
+    (cons 'processing-mode (append processing-functions
+                                   processing-builtins
+                                   processing-constants)))
+
+  (defun ptrv/processing-company--init ()
+    (setq-local company-backends '(company-keywords company-yasnippet))
+    (setq-local company-keywords-alist company-keywords-alist)
+    (add-to-list 'company-keywords-alist ptrv/processing-keywords))
+  (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
+
   (defun ptrv/processing-mode-init ()
     (yas-minor-mode +1))
   (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
