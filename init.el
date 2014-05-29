@@ -559,18 +559,17 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido-ubiquitous
 (ptrv/after ido-ubiquitous
-  ;; (dolist (cmd '(sh-set-shell
-  ;;                ispell-change-dictionary
-  ;;                add-dir-local-variable
-  ;;                ahg-do-command
-  ;;                sclang-dump-interface
-  ;;                sclang-dump-full-interface
-  ;;                kill-ring-search
-  ;;                tmm-menubar
-  ;;                erc-iswitchb))
-  ;;   (add-to-list 'ido-ubiquitous-command-overrides
-  ;;                `(disable exact ,(symbol-name cmd))))
-  )
+  (dolist (cmd '(sh-set-shell
+                 ispell-change-dictionary
+                 add-dir-local-variable
+                 ahg-do-command
+                 sclang-dump-interface
+                 sclang-dump-full-interface
+                 kill-ring-search
+                 tmm-menubar
+                 erc-iswitchb))
+    (add-to-list 'ido-ubiquitous-command-overrides
+                 `(disable exact ,(symbol-name cmd)))))
 (ido-ubiquitous-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
