@@ -612,11 +612,12 @@ file `PATTERNS'."
 (global-set-key (kbd "C-x M") #'(lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * completion
+;;;; * company
 (ptrv/after company
   (setq company-idle-delay 0.5)
   (setq company-tooltip-limit 10)
-  (setq company-minimum-prefix-length 2))
+  (setq company-minimum-prefix-length 2)
+  (setq company-show-numbers t))
 (global-company-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1530,6 +1531,8 @@ See also `toggle-frame-maximized'."
   (add-to-list 'load-path (ptrv/locate-godoc-src-file
                            "github.com/nsf/gocode/emacs-company"))
   (ptrv/after company
+    (ptrv/after company-go
+      (setq company-go-show-annotation t))
     (ptrv/with-library company-go
       (add-hook 'go-mode-hook #'(lambda ()
                                   (setq-local company-backends '(company-go))))))
