@@ -2293,7 +2293,9 @@ collapsed buffer"
           ;;c-indent-level 4
           c-default-style "bsd"
           indent-tabs-mode nil)
-    (local-set-key (kbd "C-c o") 'ff-find-other-file))
+    (local-set-key (kbd "C-c o") 'ff-find-other-file)
+    (ggtags-mode +1)
+    (local-set-key (kbd "C-c C-c") 'compile))
 
   (ptrv/hook-into-modes 'ptrv/cc-mode-init '(c-mode c++-mode))
 
@@ -2318,6 +2320,11 @@ collapsed buffer"
     (flycheck-mode -1)
     (yas-minor-mode +1))
   (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
+
+  (defun ptrv/c-mode-init()
+    (local-set-key (kbd "RET") 'newline-and-indent)
+    (local-set-key (kbd "C-c C-c") 'compile))
+  (add-hook 'c-mode-hook 'ptrv/c-mode-init)
 
   (add-hook 'c-mode-common-hook 'linum-mode))
 
