@@ -1931,7 +1931,7 @@ prompt for the command to use."
 
   (defun ptrv/processing-company--init ()
     (setq-local company-backends '(company-keywords company-yasnippet))
-    (setq-local company-keywords-alist company-keywords-alist)
+    (make-local-variable 'company-keywords-alist)
     (add-to-list 'company-keywords-alist ptrv/processing-keywords))
   (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
 
@@ -2314,6 +2314,13 @@ collapsed buffer"
 
 (ptrv/after cc-mode
   (message "cc-mode config has been loaded !!!")
+
+  (ptrv/after company
+    (defun ptrv/cc-mode-company--init ()
+      (make-local-variable 'company-begin-commands)
+      (dolist (it '(c-electric-lt-gt c-electric-colon))
+        (add-to-list 'company-begin-commands it)))
+    (ptrv/hook-into-modes 'ptrv/cc-mode-company--init '(c++-mode)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
