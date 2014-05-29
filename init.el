@@ -929,12 +929,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * yasnippet
 ;; (yas-global-mode 1)
 (ptrv/after yasnippet
-  (define-key yas-keymap [(tab)] nil)
-  (define-key yas-keymap (kbd "TAB") nil)
-  (define-key yas-keymap [(control tab)] 'yas-next-field-or-maybe-expand)
-  (define-key yas-keymap (kbd "C-TAB")   'yas-next-field-or-maybe-expand)
-  (setq yas-prompt-functions '(yas-ido-prompt
-                               yas-x-prompt
+  (setq yas-prompt-functions '(yas-x-prompt
+                               yas-ido-prompt
                                yas-completing-prompt))
   (ptrv/with-library dropdown-list
     (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))
