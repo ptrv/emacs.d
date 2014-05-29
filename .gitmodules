@@ -1,10 +1,6 @@
 [submodule "site-lisp/_extras/yasnippet-snippets"]
 	path = site-lisp/_extras/yasnippet-snippets
 	url = https://github.com/ptrv/yasnippet-snippets.git
-[submodule "site-lisp/auto-complete-auctex"]
-	path = site-lisp/auto-complete-auctex
-	url = https://github.com/monsanto/auto-complete-auctex.git
-    ignore = untracked
 [submodule "site-lisp/emacs-faust-mode"]
 	path = site-lisp/emacs-faust-mode
 	url = https://github.com/ptrv/emacs-faust-mode.git
@@ -34,10 +30,6 @@
 [submodule "site-lisp/kibit-mode"]
 	path = site-lisp/kibit-mode
 	url = https://github.com/aredington/kibit-mode.git
-    ignore = untracked
-[submodule "site-lisp/emacs-clang-complete-async"]
-	path = site-lisp/emacs-clang-complete-async
-	url = https://github.com/Golevka/emacs-clang-complete-async.git
     ignore = untracked
 [submodule "site-lisp/flycheck-go-alt"]
 	path = site-lisp/flycheck-go-alt

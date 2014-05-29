@@ -212,8 +212,7 @@ file `PATTERNS'."
     ido-ubiquitous
     idomenu
     ;; completion
-    auto-complete
-    ac-nrepl
+    company
     pcmpl-git
     ;; snippets
     dropdown-list
@@ -607,10 +606,7 @@ file `PATTERNS'."
 
   (autoload 'pcomplete/go "pcmpl-go" nil nil)
   (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
-  (require 'pcmpl-cask)
-
-  (ptrv/after auto-complete
-    (require 'eshell-ac-pcomplete)))
+  (require 'pcmpl-cask))
 
 ;; Start eshell or switch to it if it's active.
 (global-set-key (kbd "C-x m") 'eshell)
@@ -619,58 +615,11 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * completion
-(ptrv/with-library auto-complete-config
-  (ac-config-default)
-  (ac-flyspell-workaround)
-
-  (setq ac-comphist-file (concat ptrv/tmp-dir "ac-comphist.dat")
-        ac-auto-show-menu t
-        ac-dwim t
-        ac-use-menu-map t
-        ac-quick-help-delay 0.8
-        ac-quick-help-height 60
-        ac-disable-inline t
-        ac-show-menu-immediately-on-auto-complete t
-        ac-ignore-case nil
-        ac-candidate-menu-min 0
-        ac-auto-start nil)
-
-  (set-default 'ac-sources
-               '(ac-source-dictionary
-                 ac-source-words-in-buffer
-                 ac-source-words-in-same-mode-buffers
-                 ac-source-semantic
-                 ac-source-yasnippet))
-
-  (dolist (mode '(magit-log-edit-mode log-edit-mode org-mode text-mode haml-mode
-                                      sass-mode yaml-mode csv-mode espresso-mode haskell-mode
-                                      html-mode nxml-mode sh-mode smarty-mode clojure-mode
-                                      lisp-mode textile-mode markdown-mode tuareg-mode))
-    (add-to-list 'ac-modes mode))
-
-  (let ((map ac-completing-map))
-    (define-key map (kbd "C-M-n") 'ac-next)
-    (define-key map (kbd "C-M-p") 'ac-previous)
-    (define-key map "\t" 'ac-complete)
-    (define-key map (kbd "M-RET") 'ac-help)
-    ;;(define-key map "\r" 'nil)
-    (define-key map "\r" 'ac-complete))
-
-  (ac-set-trigger-key "TAB")
-
-  (defun ptrv/auto-complete ()
-    (interactive)
-    (unless (ac-cursor-on-diable-face-p)
-      (auto-complete)))
-  (global-set-key (kbd "s-c") 'ptrv/auto-complete)
-
-  ;; complete on dot
-  (defun ptrv/ac-dot-complete ()
-    "Insert dot and complete code at point."
-    (interactive)
-    (insert ".")
-    (unless (ac-cursor-on-diable-face-p)
-      (ac-start))))
+(ptrv/after company
+  (setq company-idle-delay 0.5)
+  (setq company-tooltip-limit 10)
+  (setq company-minimum-prefix-length 2))
+(global-company-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
@@ -823,22 +772,14 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (ptrv/after cider-repl
   (setq cider-repl-pop-to-buffer-on-connect t)
-  (setq cider-repl-popup-stacktraces t)
-
-  (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
-
-  (ptrv/after auto-complete
-    (add-to-list 'ac-modes 'cider-repl-mode))
-  )
+  (setq cider-repl-popup-stacktraces t))
 
 (ptrv/after nrepl-client
   ;; (setq nrepl-port "4555")
   (setq nrepl-buffer-name-show-port t))
 
 (ptrv/after cider-interaction
-  (setq cider-popup-stacktraces nil)
-  (add-hook 'cider-interaction-mode-hook 'ac-nrepl-setup)
-  )
+  (setq cider-popup-stacktraces nil))
 
 (ptrv/after cider-repl-mode
   (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
@@ -851,9 +792,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                         '(cider-mode))
 
   ;; Show documentation/information with M-RET
-  (define-key cider-mode-map (kbd "M-RET") 'cider-doc)
-
-  (add-hook 'cider-mode-hook 'ac-nrepl-setup))
+  (define-key cider-mode-map (kbd "M-RET") 'cider-doc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
@@ -1331,7 +1270,6 @@ See also `toggle-frame-maximized'."
     (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround))
 
   (defun org-mode-init ()
-    (auto-complete-mode -1)
     (turn-off-flyspell))
 
   (add-hook 'org-mode-hook 'org-mode-init)
@@ -1473,7 +1411,6 @@ See also `toggle-frame-maximized'."
    :doc-spec '(("(latex2e)Concept Index" )
                ("(latex2e)Command Index")))
 
-  (require 'auto-complete-auctex)
   (require 'pstricks)
 
   ;; smartparens LaTeX
@@ -1591,28 +1528,12 @@ See also `toggle-frame-maximized'."
   (defun ptrv/locate-godoc-src-file (f)
     (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
 
-  ;; go-lang completion
-  (ptrv/after auto-complete
-    (ptrv/with-library go-autocomplete
-      (defface ac-go-mode-candidate-face
-        '((t (:background "lightgray" :foreground "navy")))
-        "Face for go-autocomplete candidate"
-        :group 'auto-complete)
-      (defface ac-go-mode-selection-face
-        '((t (:background "navy" :foreground "white")))
-        "Face for the go-autocomplete selected candidate."
-        :group 'auto-complete)
-      (setcdr (assoc 'candidate-face ac-source-go)
-              'ac-go-mode-candidate-face)
-      (setcdr (assoc 'selection-face ac-source-go)
-              'ac-go-mode-selection-face)))
-
-  ;; (defun go-dot-complete ()
-  ;;   "Insert dot and complete code at point."
-  ;;   (interactive)
-  ;;   (insert ".")
-  ;;   (unless (ac-cursor-on-diable-face-p)
-  ;;     (auto-complete '(ac-source-go))))
+  (add-to-list 'load-path (ptrv/locate-godoc-src-file
+                           "github.com/nsf/gocode/emacs-company"))
+  (ptrv/after company
+    (ptrv/with-library company-go
+      (add-hook 'go-mode-hook #'(lambda ()
+                                  (setq-local company-backends '(company-go))))))
 
   ;; compile fucntions
   (defun ptrv/go-build ()
@@ -1687,9 +1608,6 @@ See also `toggle-frame-maximized'."
     (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
     (define-key map (kbd "C-c C-p") 'ptrv/go-create-package)
     (define-key map (kbd "C-c C-c") ptrv/go-mode-map))
-
-  (ptrv/after auto-complete-config
-    (define-key go-mode-map (kbd ".") 'ptrv/ac-dot-complete))
 
   (ptrv/after find-file-in-project
     (add-to-list 'ffip-patterns "*.go")))
@@ -1998,16 +1916,6 @@ prompt for the command to use."
          (setq processing-application-dir "~/applications/processing")
          (setq processing-sketchbook-dir "~/sketchbook")))
 
-  (defun ptrv/processing-ac-init ()
-    (setq-local ac-sources '(ac-source-dictionary
-                             ac-source-yasnippet
-                             ac-source-words-in-buffer))
-    (setq-local ac-user-dictionary (append processing-functions
-                                           processing-builtins
-                                           processing-constants)))
-  (add-hook 'processing-mode-hook 'ptrv/processing-ac-init)
-  (add-to-list 'ac-modes 'processing-mode)
-
   (defun ptrv/processing-mode-init ()
     (yas-minor-mode +1))
   (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
@@ -2280,13 +2188,6 @@ collapsed buffer"
         sclang-runtime-directory "~/scwork/"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-  (ptrv/after auto-complete
-    (add-to-list 'ac-modes 'sclang-mode)
-    (defun ptrv/ac-sclang-init ()
-      (setq-local ac-dictionary-files (append ac-dictionary-files
-                                              '("~/.sc_completion"))))
-    (add-hook 'sclang-mode-hook 'ptrv/ac-sclang-init))
-
   (defun ptrv/sclang-init ()
     (yas-minor-mode +1)
     (setq indent-tabs-mode nil))
@@ -2404,25 +2305,8 @@ collapsed buffer"
                         (awk-mode . "awk")
                         (other . "bsd")))
 
-;; Hook auto-complete into clang
 (ptrv/after cc-mode
   (message "cc-mode config has been loaded !!!")
-  (ptrv/with-library auto-complete-clang-async
-    (setq ac-clang-complete-executable
-          (locate-user-emacs-file "site-lisp/emacs-clang-complete-async/clang-complete"))
-    (when (not (file-exists-p ac-clang-complete-executable))
-      (warn "The clang-complete executable doesn't exist"))
-    ;; Add Qt4 includes to load path if installed
-    ;; (when (file-exists-p "/usr/include/qt4")
-    ;;   (setq-default ac-clang-cflags
-    ;;                 (mapcar (lambda (f) (concat "-I" f))
-    ;;                         (directory-files "/usr/include/qt4" t "Qt\\w+"))))
-
-    (defun ptrv/clang-complete-init ()
-      (unless (string-match ".*flycheck.*" buffer-file-name)
-        (setq ac-sources '(ac-source-clang-async))
-        (ac-clang-launch-completion-process)))
-    (ptrv/hook-into-modes 'ptrv/clang-complete-init '(c-mode c++-mode)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
