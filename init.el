@@ -1551,9 +1551,12 @@ See also `toggle-frame-maximized'."
   ;;   (interactive)
   ;;   (compile "go test -gocheck.vv"))
 
-  (defun ptrv/go-run ()
+  (defun ptrv/read-compile--cmd (default-cmd read-cmd?)
+    (if read-cmd? (compilation-read-command default-cmd) default-cmd))
+
+  (defun ptrv/go-run (arg)
     "go run current package"
-    (interactive)
+    (interactive "p")
     (let (files-list
           go-list-result
           go-list-result-list
@@ -1574,12 +1577,15 @@ See also `toggle-frame-maximized'."
               (mapcar
                (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
         (setq files-list (s-join " " go-list-result))
-        (compile (concat "go run " files-list)))))
+        (compile (concat (ptrv/read-compile--cmd "go run" (= arg 16)) " " files-list
+                         (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))))
 
-  (defun ptrv/go-run-buffer ()
+  (defun ptrv/go-run-buffer (arg)
     "go run current buffer"
-    (interactive)
-    (compile (concat "go run " buffer-file-name)))
+    (interactive "p")
+    (compile (concat
+              (ptrv/read-compile--cmd "go run" (= arg 16)) " " buffer-file-name
+              (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))
 
   (defun ptrv/go-mode-init ()
     (yas-minor-mode +1)
