@@ -1440,6 +1440,7 @@ See also `toggle-frame-maximized'."
   "\\.yml$" "\\.yaml$" "\\.ya?ml$")
 
 ;; Snippets
+(autoload 'snippet-mode "yasnippet")
 (ptrv/add-auto-mode 'snippet-mode "snippets/" "\\.yasnippet$")
 
 ;; pd-mode
