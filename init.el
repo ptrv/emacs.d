@@ -259,9 +259,10 @@ file `PATTERNS'."
     pytest
     pylint
     jedi
-    elpy
-    virtualenv
+    anaconda-mode
     python-info
+    pyvenv-mode
+    highlight-indentation-mode
     ;; major modes
     glsl-mode
     apache-mode
@@ -2220,57 +2221,18 @@ collapsed buffer"
     (sclang-snippets-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * elpy
-(ptrv/after python
-  (setq elpy-default-minor-modes '(eldoc-mode
-                                   highlight-indentation-mode
-                                   yas-minor-mode
-                                   auto-complete-mode
-                                   pyvenv-mode))
-
-  (defun elpy-enable-maybe ()
-    (when (and (buffer-file-name)
-               (not (file-remote-p (buffer-file-name))))
-      (elpy-mode)))
-  (add-hook 'python-mode-hook 'elpy-enable-maybe))
-
-(ptrv/after elpy
-  (let ((map elpy-mode-map))
-    (define-key map (kbd "C-c C-f") nil)
-    (define-key map (kbd "C-c C-j") nil)
-    (define-key map (kbd "C-c C-n") nil)
-    (define-key map (kbd "C-c C-p") nil)
-    (define-key map (kbd "C-c C-t") nil)
-    (define-key map (kbd "C-c C-t n") 'elpy-test))
-
-  (ptrv/after auto-complete-config
-    (define-key elpy-mode-map "." 'ptrv/ac-dot-complete))
-
-  (add-hook 'python-mode-hook 'elpy-initialize-local-variables)
-
-  (defun elpy-snippets-initialize ()
-    (let ((elpy-snippets (concat (file-name-directory (locate-library "elpy"))
-                                 "snippets/")))
-      (when (and (file-exists-p elpy-snippets)
-                 (fboundp 'yas-snippet-dirs))
-        (add-to-list 'yas-snippet-dirs elpy-snippets t)
-        (yas-load-directory elpy-snippets))))
-
-  (eval-after-load "yasnippet"
-    '(elpy-snippets-initialize))
-
-  (defun elpy-use-ipython-pylab ()
-    "Set defaults to use IPython instead of the standard interpreter."
-    (interactive)
-    (unless (boundp 'python-python-command)
-      (elpy-use-ipython)
-      (setq python-shell-interpreter-args "--pylab"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
 (ptrv/after python
 
   (setq python-check-command "flake8")
+
+  (defun ptrv/python-mode-init ()
+    (anaconda-mode +1)
+    (anaconda-eldoc +1)
+    (setq-local company-backends '(company-anaconda))
+    (pyvenv-mode +1)
+    (highlight-indentation-mode +1))
+  (add-hook 'python-mode-hook 'ptrv/python-mode-init)
 
   ;; pytest
   (autoload 'pytest-all "pytest" nil t)
