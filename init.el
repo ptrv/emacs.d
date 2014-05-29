@@ -2160,7 +2160,7 @@ collapsed buffer"
                                    "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * superollider
+;;;; * sclang
 (defun ptrv/sclang-mode-loader ()
   "Load sclang-mode."
   (unless (featurep 'sclang)
@@ -2192,6 +2192,20 @@ collapsed buffer"
         sclang-library-configuration-file "~/.sclang.cfg"
         sclang-runtime-directory "~/scwork/"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
+
+  (defvar ptrv/sclang-keywords
+    (cons 'sclang-mode (split-string
+                        (with-temp-buffer
+                          (insert-file-contents "~/.sc_completion")
+                          (buffer-substring-no-properties
+                           (point-min)
+                           (point-max))) "\n" t)))
+
+  (ptrv/after company
+    (defun ptrv/sclang-company--init()
+      (setq-local company-backends '(company-keywords company-yasnippet))
+      (setq-local company-keywords-alist `(,ptrv/sclang-keywords)))
+    (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
 
   (defun ptrv/sclang-init ()
     (yas-minor-mode +1)
