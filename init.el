@@ -254,13 +254,12 @@ file `PATTERNS'."
     ack-and-a-half
     exec-path-from-shell
     ;; python
-    pytest
     pylint
     jedi
     anaconda-mode
     python-info
-    pyvenv-mode
-    highlight-indentation-mode
+    pyvenv
+    highlight-indentation
     ;; major modes
     glsl-mode
     apache-mode
@@ -2253,19 +2252,19 @@ collapsed buffer"
   (add-hook 'python-mode-hook 'ptrv/python-mode-init)
 
   ;; pytest
-  (autoload 'pytest-all "pytest" nil t)
-  (autoload 'pytest-module "pytest" nil t)
-  (autoload 'pytest-one "pytest" nil t)
-  (autoload 'pytest-directory "pytest" nil t)
-  (setq pytest-global-name "py.test")
-  (let ((map python-mode-map))
-    (define-key map (kbd "C-c C-t a") 'pytest-all)
-    (define-key map (kbd "C-c C-t m") 'pytest-module)
-    (define-key map (kbd "C-c C-t o") 'pytest-one)
-    (define-key map (kbd "C-c C-t d") 'pytest-directory)
-    (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
-    (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
-    (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one))
+  ;; (autoload 'pytest-all "pytest" nil t)
+  ;; (autoload 'pytest-module "pytest" nil t)
+  ;; (autoload 'pytest-one "pytest" nil t)
+  ;; (autoload 'pytest-directory "pytest" nil t)
+  ;; (setq pytest-global-name "py.test")
+  ;; (let ((map python-mode-map))
+  ;;   (define-key map (kbd "C-c C-t a") 'pytest-all)
+  ;;   (define-key map (kbd "C-c C-t m") 'pytest-module)
+  ;;   (define-key map (kbd "C-c C-t o") 'pytest-one)
+  ;;   (define-key map (kbd "C-c C-t d") 'pytest-directory)
+  ;;   (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
+  ;;   (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
+  ;;   (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one))
 
   ;; info
   (autoload 'info-lookup-add-help "info-look" nil nil)
