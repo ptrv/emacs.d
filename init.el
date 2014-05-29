@@ -2199,26 +2199,39 @@ collapsed buffer"
     (setq indent-tabs-mode nil))
   (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
 
-  (define-key sclang-mode-map (kbd "C-c ]") 'sclang-pop-definition-mark)
-  ;; Raise all supercollider windows.
-  (define-key sclang-mode-map (kbd "C-c F")
-    #'(lambda ()
-        (interactive)
-        (sclang-eval-string "Window.allWindows.do(_.front);")))
-  (define-key sclang-server-key-map [?l]
-    #'(lambda ()
-        (interactive)
-        (sclang-eval-string "Server.default.meter;")))
-  (define-key sclang-server-key-map [?s]
-    #'(lambda ()
-        (interactive)
-        (sclang-eval-string "Server.default.scope(numChannels: 2);")))
-  (define-key sclang-server-key-map [?h]
-    #'(lambda ()
-        (interactive)
-        (sclang-eval-string "HelperWindow.new;")))
-  (define-key sclang-mode-map (kbd "s-.") 'sclang-main-stop)
-  (define-key sclang-mode-map (kbd "<s-return>") 'sclang-eval-region-or-line)
+  (defun ptrv/sclang-all-windows-to-front ()
+    "Raise all supercollider windows."
+    (interactive)
+    (sclang-eval-string "Window.allWindows.do(_.front);"))
+
+  (let ((map sclang-mode-map))
+    (define-key map (kbd "C-c ]") 'sclang-pop-definition-mark)
+    (define-key map (kbd "C-c F") 'ptrv/sclang-all-windows-to-front)
+    (define-key map (kbd "s-.") 'sclang-main-stop)
+    (define-key map (kbd "<s-return>") 'sclang-eval-region-or-line))
+
+  (defun ptrv/sclang-show-meter ()
+    "Show level meter."
+    (interactive)
+    (sclang-eval-string "Server.default.meter;"))
+  (defun ptrv/sclang-show-scope ()
+    "Show scope."
+    (interactive)
+    (sclang-eval-string "Server.default.scope(numChannels: 2);"))
+  (defun ptrv/sclang-show-helper-window ()
+    "Show helper window."
+    (interactive)
+    (sclang-eval-string "HelperWindow.new;"))
+  (defun ptrv/sclang-plot-tree ()
+    "Show tree window."
+    (interactive)
+    (sclang-eval-string "Server.default.plotTree;"))
+
+  (let ((map sclang-server-key-map))
+    (define-key map [?l] 'ptrv/sclang-show-meter)
+    (define-key map [?s] 'ptrv/sclang-show-scope)
+    (define-key map [?h] 'ptrv/sclang-show-helper-window)
+    (define-key map [?t] 'ptrv/sclang-show-tree))
 
   ;; snippets
   (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
