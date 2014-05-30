@@ -2209,18 +2209,9 @@ collapsed buffer"
         sclang-runtime-directory "~/scwork/"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-  (defvar ptrv/sclang-keywords
-    (cons 'sclang-mode (split-string
-                        (with-temp-buffer
-                          (insert-file-contents "~/.sc_completion")
-                          (buffer-substring-no-properties
-                           (point-min)
-                           (point-max))) "\n" t)))
-
   (ptrv/after company
     (defun ptrv/sclang-company--init()
-      (setq-local company-backends '(company-keywords company-yasnippet))
-      (setq-local company-keywords-alist `(,ptrv/sclang-keywords)))
+      (setq-local company-backends '(company-sclang company-yasnippet)))
     (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
 
   (defun ptrv/sclang-init ()
