@@ -1091,8 +1091,7 @@ See also `toggle-frame-maximized'."
   "Keymap for ack commands.")
 
 (defvar ptrv/search-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "o" 'occur)
+  (let ((map search-map))
     (define-key map "O" 'multi-occur)
     map)
   "Keymap for searching.")
