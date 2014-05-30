@@ -2242,7 +2242,7 @@ collapsed buffer"
     "Show helper window."
     (interactive)
     (sclang-eval-string "HelperWindow.new;"))
-  (defun ptrv/sclang-plot-tree ()
+  (defun ptrv/sclang-show-server-tree ()
     "Show tree window."
     (interactive)
     (sclang-eval-string "Server.default.plotTree;"))
@@ -2251,7 +2251,7 @@ collapsed buffer"
     (define-key map [?l] 'ptrv/sclang-show-meter)
     (define-key map [?s] 'ptrv/sclang-show-scope)
     (define-key map [?h] 'ptrv/sclang-show-helper-window)
-    (define-key map [?t] 'ptrv/sclang-show-tree))
+    (define-key map [?t] 'ptrv/sclang-show-server-tree))
 
   ;; snippets
   (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
