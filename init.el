@@ -900,7 +900,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 
-  (setq magit-auto-revert-mode nil))
+  (setq magit-auto-revert-mode nil
+        magit-set-upstream-on-push t
+        magit-completing-read-function 'magit-ido-completing-read))
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
