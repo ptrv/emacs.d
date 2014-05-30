@@ -422,7 +422,7 @@ file `PATTERNS'."
         whitespace-line-column nil))    ; Use `fill-column' for overlong lines
 
 (ptrv/after whitespace-cleanup-mode
-  (setq whitespace-cleanup-mode-only-if-initially-clean nil))
+  (setq whitespace-cleanup-mode-only-if-initially-clean t))
 
 (dolist (it '(prog-mode-hook text-mode-hook))
   (add-hook it 'whitespace-mode)
