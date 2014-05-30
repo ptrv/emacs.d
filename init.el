@@ -2929,7 +2929,7 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * secrets
 (unless (require 'my-secrets "~/.secrets.gpg" t)
-  (user-error "Could not load secrets file!"))
+  (message "Could not load secrets file!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
