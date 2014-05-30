@@ -1239,9 +1239,11 @@ See also `toggle-frame-maximized'."
         org-completion-use-ido t
         org-log-done t
         org-src-fontify-natively nil
-        org-default-notes-file "~/Dropbox/org/captures.org"
-        org-directory "~/Dropbox/org"
-        org-agenda-files '("~/Dropbox/org/ptrv.org"))
+        ;; Set agenda files in custom.el or use default
+        ;; org-directory "~/Dropbox/org"
+        org-default-notes-file (concat org-directory "/captures.org")
+        ;; org-agenda-files '((concat org-directory "/ptrv.org"))
+        )
 
   (ptrv/after org-clock
     (setq org-clock-into-drawer t))
