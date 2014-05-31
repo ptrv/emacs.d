@@ -1533,7 +1533,8 @@ See also `toggle-frame-maximized'."
       (setq company-go-show-annotation t))
     (ptrv/with-library company-go
       (add-hook 'go-mode-hook #'(lambda ()
-                                  (setq-local company-backends '(company-go))))))
+                                  (setq-local company-backends
+                                              '((company-go :with company-yasnippet)))))))
 
   ;; compile fucntions
   (defun ptrv/go-build ()
@@ -1931,7 +1932,7 @@ prompt for the command to use."
                                    processing-constants)))
 
   (defun ptrv/processing-company--init ()
-    (setq-local company-backends '(company-keywords company-yasnippet))
+    (setq-local company-backends '((company-keywords :with company-yasnippet)))
     (make-local-variable 'company-keywords-alist)
     (add-to-list 'company-keywords-alist ptrv/processing-keywords))
   (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
@@ -2210,13 +2211,14 @@ collapsed buffer"
 
   (ptrv/after company
     (defun ptrv/sclang-company--init()
-      (setq-local company-backends '(company-sclang company-yasnippet)))
+      (setq-local company-backends '((company-sclang :with company-yasnippet))))
     (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
 
   (defun ptrv/sclang-init ()
     (yas-minor-mode +1)
     (setq indent-tabs-mode nil))
   (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
+  ;; (add-hook 'sclang-mode-hook 'sclang-extensions-mode)
 
   (defun ptrv/sclang-all-windows-to-front ()
     "Raise all supercollider windows."
@@ -2266,7 +2268,7 @@ collapsed buffer"
   (defun ptrv/python-mode-init ()
     (anaconda-mode +1)
     (anaconda-eldoc +1)
-    (setq-local company-backends '(company-anaconda))
+    (setq-local company-backends '((company-anaconda :with company-yasnippet)))
     (pyenv-mode +1)
     (highlight-indentation-mode +1))
   (add-hook 'python-mode-hook 'ptrv/python-mode-init)
