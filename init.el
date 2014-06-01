@@ -193,6 +193,7 @@ file `PATTERNS'."
     gitconfig-mode
     yagist
     git-messenger
+    diff-hl
     ;; editor
     smartparens
     iflipb
@@ -931,6 +932,10 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/after git-messenger
   (setq git-messenger:show-detail t))
 (global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * diff-hl
+(global-diff-hl-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
