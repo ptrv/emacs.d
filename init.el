@@ -2255,28 +2255,37 @@ collapsed buffer"
     (define-key map (kbd "<s-return>") 'sclang-eval-region-or-line)
     (define-key map (kbd "C-c C-b") 'ptrv/sclang-ido-switch-to-buffer))
 
-  (defun ptrv/sclang-show-meter ()
+  (defun ptrv/sclang--show-window (win-cmd-str transparent? &optional alpha)
+    ""
+    (let* ((alpha-val (or alpha 0.6))
+           (transparency-code (if transparent?
+                                  (concat
+                                   ".window.alpha = "
+                                   (number-to-string alpha-val)))))
+      (sclang-eval-string (concat win-cmd-str transparency-code ";"))))
+
+  (defun ptrv/sclang-show-meter (arg)
     "Show level meter."
-    (interactive)
-    (sclang-eval-string "Server.default.meter;"))
-  (defun ptrv/sclang-show-scope ()
+    (interactive "P")
+    (ptrv/sclang--show-window "Server.default.meter" arg))
+  (defun ptrv/sclang-show-scope (arg)
     "Show scope."
-    (interactive)
-    (sclang-eval-string "Server.default.scope(numChannels: 2);"))
-  (defun ptrv/sclang-show-helper-window ()
+    (interactive "P")
+    (ptrv/sclang--show-window "Server.default.scope(numChannels: 2)" arg))
+  (defun ptrv/sclang-show-helper-window (arg)
     "Show helper window."
-    (interactive)
-    (sclang-eval-string "HelperWindow.new;"))
-  (defun ptrv/sclang-show-server-tree ()
+    (interactive "P")
+    (ptrv/sclang--show-window "HelperWindow.new" arg))
+  (defun ptrv/sclang-show-node-tree (arg)
     "Show tree window."
-    (interactive)
-    (sclang-eval-string "Server.default.plotTree;"))
+    (interactive "P")
+    (ptrv/sclang--show-window "Server.default.plotTree" arg))
 
   (let ((map sclang-server-key-map))
     (define-key map [?l] 'ptrv/sclang-show-meter)
     (define-key map [?s] 'ptrv/sclang-show-scope)
     (define-key map [?h] 'ptrv/sclang-show-helper-window)
-    (define-key map [?t] 'ptrv/sclang-show-server-tree))
+    (define-key map [?t] 'ptrv/sclang-show-node-tree))
 
   ;; snippets
   (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
