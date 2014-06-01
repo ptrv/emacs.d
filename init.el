@@ -2234,11 +2234,26 @@ collapsed buffer"
     (interactive)
     (sclang-eval-string "Window.allWindows.do(_.front);"))
 
+  (defun ptrv/sclang-ido-switch-to-buffer ()
+    (interactive)
+    (let* ((blist (buffer-list))
+           (predicate (lambda (b)
+                        (with-current-buffer b
+                          (derived-mode-p 'sclang-mode))))
+           (sc-buffers (delq nil (mapcar
+                                  (lambda (b)
+                                    (if (funcall predicate b) b nil))
+                                  blist))))
+      (pop-to-buffer-same-window
+       (ido-completing-read "SCLang buffers: "
+                            (mapcar 'list (mapcar 'buffer-name sc-buffers))))))
+
   (let ((map sclang-mode-map))
     (define-key map (kbd "C-c ]") 'sclang-pop-definition-mark)
     (define-key map (kbd "C-c F") 'ptrv/sclang-all-windows-to-front)
     (define-key map (kbd "s-.") 'sclang-main-stop)
-    (define-key map (kbd "<s-return>") 'sclang-eval-region-or-line))
+    (define-key map (kbd "<s-return>") 'sclang-eval-region-or-line)
+    (define-key map (kbd "C-c C-b") 'ptrv/sclang-ido-switch-to-buffer))
 
   (defun ptrv/sclang-show-meter ()
     "Show level meter."
