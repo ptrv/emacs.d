@@ -2225,7 +2225,8 @@ collapsed buffer"
 
   (defun ptrv/sclang-init ()
     (yas-minor-mode +1)
-    (setq indent-tabs-mode nil))
+    (setq indent-tabs-mode nil)
+    (subword-mode +1))
   (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
   ;; (add-hook 'sclang-mode-hook 'sclang-extensions-mode)
 
