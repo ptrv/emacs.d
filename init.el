@@ -1525,9 +1525,8 @@ See also `toggle-frame-maximized'."
   (add-to-list 'load-path (ptrv/locate-godoc-src-file
                            "github.com/nsf/gocode/emacs-company"))
   (ptrv/after company
-    (ptrv/after company-go
-      (setq company-go-show-annotation t))
     (ptrv/with-library company-go
+      (setq company-go-show-annotation t)
       (add-hook 'go-mode-hook #'(lambda ()
                                   (setq-local company-backends
                                               '((company-go :with company-yasnippet)))))))
