@@ -967,10 +967,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   "Run spatialite as an inferior process." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * smart-operator
-(autoload 'smart-operator-mode "smart-operator" nil t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tea-time
 (autoload 'tea-time "tea-time" nil t)
 (ptrv/after tea-time
