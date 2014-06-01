@@ -2277,10 +2277,10 @@ collapsed buffer"
     "Show helper window."
     (interactive "P")
     (ptrv/sclang--show-window "HelperWindow.new" arg))
-  (defun ptrv/sclang-show-node-tree (arg)
+  (defun ptrv/sclang-show-node-tree ()
     "Show tree window."
-    (interactive "P")
-    (ptrv/sclang--show-window "Server.default.plotTree" arg))
+    (interactive)
+    (sclang-eval-string "Server.default.plotTree;"))
 
   (let ((map sclang-server-key-map))
     (define-key map [?l] 'ptrv/sclang-show-meter)
