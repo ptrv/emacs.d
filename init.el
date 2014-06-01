@@ -706,6 +706,11 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
+(ptrv/after company
+  (defun ptrv/company-elisp--init ()
+    (setq-local company-backends '((company-capf :with company-dabbrev))))
+  (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
+
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
 (defvar ptrv/emacs-lisp-common-modes
   (append
