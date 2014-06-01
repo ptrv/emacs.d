@@ -616,7 +616,11 @@ file `PATTERNS'."
   (setq company-tooltip-limit 10)
   (setq company-minimum-prefix-length 2)
   (setq company-show-numbers t)
-  (setq company-global-modes '(not magit-status-mode)))
+  (setq company-global-modes '(not magit-status-mode))
+
+  (ptrv/after company-dabbrev
+    (setq company-dabbrev-downcase nil)))
+
 (global-company-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
