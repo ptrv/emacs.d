@@ -27,10 +27,6 @@
 [submodule "site-lisp/chuck-mode"]
 	path = site-lisp/chuck-mode
 	url = https://github.com/ptrv/chuck-mode.git
-[submodule "site-lisp/kibit-mode"]
-	path = site-lisp/kibit-mode
-	url = https://github.com/aredington/kibit-mode.git
-    ignore = untracked
 [submodule "site-lisp/flycheck-go-alt"]
 	path = site-lisp/flycheck-go-alt
 	url = https://gist.github.com/5414276.git
