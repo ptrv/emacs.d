@@ -2210,9 +2210,10 @@ collapsed buffer"
         sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
   (ptrv/after company
-    (defun ptrv/sclang-company--init()
-      (setq-local company-backends '((company-sclang :with company-yasnippet))))
-    (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
+    (ptrv/with-library company-sclang
+      (defun ptrv/sclang-company--init()
+        (setq-local company-backends '((company-sclang :with company-yasnippet))))
+      (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init)))
 
   (defun ptrv/sclang-init ()
     (yas-minor-mode +1)
