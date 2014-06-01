@@ -2564,7 +2564,7 @@ collapsed buffer"
   (define-key map "s" ptrv/search-map)
   (define-key map "t" 'ptrv/eshell-or-restore)
   (define-key map "u" 'ptrv/browse-url)
-  (define-key map "v" 'halve-other-window-height)
+  (define-key map "v" 'halve-other-window-height-or-width)
   (define-key map "w" ptrv/windows-map)
   (define-key map "y" 'ptrv/display-yank-menu))
 
@@ -2823,10 +2823,12 @@ number input."
           "culpa qui officia deserunt mollit anim id est laborum."))
 
 ;; http://stackoverflow.com/a/4988206
-(defun halve-other-window-height ()
+(defun halve-other-window-height-or-width (arg)
   "Expand current window to use half of the other window's lines."
-  (interactive)
-  (enlarge-window (/ (window-height (next-window)) 2)))
+  (interactive "P")
+  (let ((win-dim-fn (if arg 'window-width 'window-height))
+        (win-division-factor (if arg 4 2)))
+    (enlarge-window (/ (funcall win-dim-fn (next-window)) win-division-factor) arg)))
 
 (defun xml-format ()
   "Format XML file with xmllint."
