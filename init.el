@@ -2216,7 +2216,11 @@ collapsed buffer"
   (ptrv/after company
     (ptrv/with-library company-sclang
       (defun ptrv/sclang-company--init()
-        (setq-local company-backends '((company-sclang :with company-yasnippet))))
+        (setq-local company-backends '((company-sclang
+                                        company-yasnippet
+                                        company-dabbrev-code)))
+        (make-local-variable 'company-dabbrev-code-modes)
+        (add-to-list 'company-dabbrev-code-modes 'sclang-mode))
       (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init)))
 
   (defun ptrv/sclang-init ()
