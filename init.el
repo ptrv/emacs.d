@@ -231,7 +231,7 @@ file `PATTERNS'."
     pandoc-mode
     metaweblog
     ;; ui
-    notify
+    alert
     popwin
     smooth-scrolling
     rainbow-mode
@@ -2150,15 +2150,12 @@ collapsed buffer"
     (defun my-notify-erc (match-type nickuserhost message)
       "Notify when a message is received."
       (unless (posix-string-match "^\\** *Users on #" message)
-        (notify (format "%s in %s"
+        (alert (replace-regexp-in-string " +" " " message)
+         :title (format "%s in %s"
                         ;; Username of sender
                         (car (split-string nickuserhost "!"))
                         ;; Channel
-                        (or (erc-default-target) "#unknown"))
-                ;; Remove duplicate spaces
-                (replace-regexp-in-string " +" " " message)
-                ;; :icon "/usr/share/notify-osd/icons/gnome/scalable/status/notification-message-im.svg"
-                :timeout -1)))
+                        (or (erc-default-target) "#unknown")))))
 
     (add-hook 'erc-text-matched-hook 'my-notify-erc))
 
