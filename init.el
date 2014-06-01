@@ -2306,7 +2306,7 @@ collapsed buffer"
       (make-local-variable 'company-begin-commands)
       (dolist (it '(c-electric-lt-gt c-electric-colon))
         (add-to-list 'company-begin-commands it)))
-    (ptrv/hook-into-modes 'ptrv/cc-mode-company--init '(c++-mode)))
+    (ptrv/hook-into-modes 'ptrv/cc-mode-company--init '(c-mode c++-mode)))
 
   (defun ptrv/cc-mode-init ()
     (setq c-basic-offset 4
