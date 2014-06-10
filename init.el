@@ -1729,7 +1729,9 @@ If ARG is not nil, create package in current directory"
                      (let ((buffer (window-buffer w)))
                        (set-buffer buffer)
                        (when (eq major-mode 'erc-mode)
-                         (setq erc-fill-column (- (window-width w) 2))))))))))
+                         (setq erc-fill-column (- (window-width w) 2)))))))))
+
+  (setq erc-hide-list '("JOIN" "PART" "QUIT")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode
