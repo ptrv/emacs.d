@@ -149,7 +149,7 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
 (setq auto-save-list-file-name
-      (concat ptrv/autosaves-dir "autosave-list"))
+      (expand-file-name "autosave-list" ptrv/autosaves-dir))
 (setq auto-save-file-name-transforms
       `((".*" ,(concat ptrv/autosaves-dir "\\1") t)))
 (setq backup-directory-alist
@@ -378,7 +378,7 @@ file `PATTERNS'."
       x-select-enable-primary nil
       save-interprogram-paste-before-kill t
       mouse-yank-at-point t
-      url-configuration-directory (concat ptrv/tmp-dir "url"))
+      url-configuration-directory (expand-file-name "url" ptrv/tmp-dir))
 
 (ptrv/after apropos
   (setq apropos-do-all t))
@@ -389,7 +389,7 @@ file `PATTERNS'."
 (windmove-default-keybindings 'super)
 
 (ptrv/after recentf
-  (setq recentf-save-file (concat ptrv/tmp-dir "recentf")
+  (setq recentf-save-file (expand-file-name "recentf" ptrv/tmp-dir)
         recentf-max-saved-items 100))
 (recentf-mode t)
 
@@ -401,13 +401,13 @@ file `PATTERNS'."
 
 (require 'saveplace)
 (setq-default save-place t)
-(setq save-place-file (concat ptrv/tmp-dir "places"))
+(setq save-place-file (expand-file-name "places" ptrv/tmp-dir))
 
 ;; savehist keeps track of some history
 (ptrv/after savehist
   (setq savehist-additional-variables '(search ring regexp-search-ring)
         savehist-autosave-interval 60
-        savehist-file (concat ptrv/tmp-dir "savehist")))
+        savehist-file (expand-file-name "savehist" ptrv/tmp-dir)))
 (savehist-mode t)
 
 ;; desktop.el
@@ -438,7 +438,7 @@ file `PATTERNS'."
   (setq cua-enable-cua-keys nil))
 
 (ptrv/after bookmark
-  (setq bookmark-default-file (concat ptrv/tmp-dir "bookmarks")))
+  (setq bookmark-default-file (expand-file-name "bookmarks" ptrv/tmp-dir)))
 
 (defun ptrv/get-default-sound-command ()
   "Get default command for playing sound files."
@@ -553,7 +553,7 @@ file `PATTERNS'."
         ido-max-prospects 10
         ido-default-file-method 'selected-window
         ido-max-directory-size 100000
-        ido-save-directory-list-file (concat ptrv/tmp-dir "ido.last")))
+        ido-save-directory-list-file (expand-file-name "ido.last" ptrv/tmp-dir)))
 (ido-mode t)
 (icomplete-mode 1)
 
@@ -577,7 +577,7 @@ file `PATTERNS'."
 ;;;; * smex
 (global-set-key (kbd "M-x") 'smex)
 (ptrv/after smex
-  (setq smex-save-file (concat ptrv/tmp-dir "smex-items"))
+  (setq smex-save-file (expand-file-name "smex-items" ptrv/tmp-dir))
   (global-set-key (kbd "M-X") 'smex-major-mode-commands))
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
@@ -814,7 +814,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (ptrv/after tramp
   (setq tramp-backup-directory-alist backup-directory-alist
-        tramp-persistency-file-name (concat ptrv/tmp-dir "tramp")))
+        tramp-persistency-file-name (expand-file-name "tramp" ptrv/tmp-dir)))
 
 (defun sudo-edit (&optional arg)
   "Edit buffer with superuser privileges."
@@ -968,8 +968,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/after pomodoro
   (pomodoro-add-to-mode-line)
   (setq pomodoro-sound-player (ptrv/get-default-sound-command))
-  (setq pomodoro-break-start-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
-  (setq pomodoro-work-start-sound (concat ptrv/etc-dir "sounds/alarm.wav")))
+  (setq pomodoro-break-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))
+  (setq pomodoro-work-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sql-mode
@@ -984,7 +984,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * tea-time
 (autoload 'tea-time "tea-time" nil t)
 (ptrv/after tea-time
-  (setq tea-time-sound (concat ptrv/etc-dir "sounds/alarm.wav"))
+  (setq tea-time-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))
   (setq tea-time-sound-command (concat
                                 (ptrv/get-default-sound-command) " %s")))
 
@@ -1258,7 +1258,7 @@ See also `toggle-frame-maximized'."
         org-src-fontify-natively nil
         ;; Set agenda files in custom.el or use default
         ;; org-directory "~/Dropbox/org"
-        org-default-notes-file (concat org-directory "/captures.org")
+        org-default-notes-file (expand-file-name "captures.org" org-directory)
         ;; org-agenda-files '((concat org-directory "/ptrv.org"))
         )
 
@@ -1310,9 +1310,9 @@ See also `toggle-frame-maximized'."
 
   (ptrv/after org-capture
     (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline (concat org-directory "/ptrv.org") "TASKS")
+          '(("t" "Todo" entry (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
              "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
-            ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+            ("j" "Journal" entry (file+datetree (expand-file-name "journal.org" org-directory))
              "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1))))
 
   (ptrv/after org-ditaa
@@ -1523,7 +1523,7 @@ See also `toggle-frame-maximized'."
 (ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$" "\\.mkd$")
 
 (ptrv/after markdown-mode
-  (setq markdown-css-path (concat ptrv/etc-dir "css/markdown.css"))
+  (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir))
   (sp-with-modes '(markdown-mode gfm-mode)
     (sp-local-pair "*" "*" :bind "C-*")
     (sp-local-pair "`" "`")
@@ -1912,10 +1912,10 @@ prompt for the command to use."
 (ptrv/after projectile
   (dolist (file '(".ropeproject" "setup.py"))
     (add-to-list 'projectile-project-root-files file t)))
-(setq projectile-known-projects-file (concat
-                                      ptrv/tmp-dir
-                                      "projectile-bookmarks.eld")
-      projectile-cache-file (concat ptrv/tmp-dir "projectile.cache"))
+(setq projectile-known-projects-file (expand-file-name
+                                      "projectile-bookmarks.eld"
+                                      ptrv/tmp-dir)
+      projectile-cache-file (expand-file-name "projectile.cache" ptrv/tmp-dir))
 (projectile-global-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2478,7 +2478,7 @@ collapsed buffer"
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 (ptrv/after multiple-cursors-core
-  (setq mc/list-file (concat ptrv/tmp-dir "mc-lists.el")))
+  (setq mc/list-file (expand-file-name "mc-lists.el" ptrv/tmp-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
