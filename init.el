@@ -257,6 +257,7 @@ file `PATTERNS'."
     ;; python
     jedi
     anaconda-mode
+    company-anaconda
     python-info
     pyenv-mode
     highlight-indentation
@@ -1196,7 +1197,8 @@ See also `toggle-frame-maximized'."
         ("*Registers*" :noselect t)
         ("*ielm*" :stick t)
         ("*Flycheck errors*" :stick t :noselect t)
-        ("*processing-compilation*" :noselect t))))
+        ("*processing-compilation*" :noselect t)
+        ("*anaconda-doc*" :noselect t))))
 (popwin-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2313,7 +2315,7 @@ collapsed buffer"
 
   (defun ptrv/python-mode-init ()
     (anaconda-mode +1)
-    (anaconda-eldoc +1)
+    (eldoc-mode)
     (setq-local company-backends '((company-anaconda :with company-yasnippet)))
     (pyenv-mode +1)
     (highlight-indentation-mode +1))
