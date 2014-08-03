@@ -283,6 +283,9 @@ file `PATTERNS'."
     go-errcheck)
   "A list of packages to ensure are installed at launch.")
 
+(when *is-mac*
+  (add-to-list 'ptrv/packages 'dash-at-point))
+
 (defun ptrv/packages-installed-p ()
   "Check whether all packages in `ptrv/packages' are installed."
   (every 'package-installed-p ptrv/packages))
