@@ -281,7 +281,9 @@ file `PATTERNS'."
     go-eldoc
     go-errcheck
     ;; c++
-    ggtags)
+    ggtags
+    irony
+    company-irony)
   "A list of packages to ensure are installed at launch.")
 
 (when *is-mac*
@@ -2428,6 +2430,17 @@ collapsed buffer"
   (when *is-mac*
     ;; LLDB support for gud
     (autoload 'lldb "gud-lldb" nil t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * irony
+(ptrv/after cc-mode
+  (message "Load config: Irony...")
+
+  (defun ptrv/company-irony--init ()
+    (setq-local company-backends '(company-irony company-clang))
+    (local-set-key (kbd "<f12>") 'company-complete-common))
+  (ptrv/add-to-hook 'c++-mode-hook '(irony-mode ptrv/company-irony--init))
+  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
