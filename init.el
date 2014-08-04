@@ -255,7 +255,6 @@ file `PATTERNS'."
     ack-and-a-half
     exec-path-from-shell
     ;; python
-    jedi
     anaconda-mode
     company-anaconda
     python-info
