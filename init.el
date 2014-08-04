@@ -279,7 +279,9 @@ file `PATTERNS'."
     ;; golang
     go-mode
     go-eldoc
-    go-errcheck)
+    go-errcheck
+    ;; c++
+    ggtags)
   "A list of packages to ensure are installed at launch.")
 
 (when *is-mac*
@@ -2386,7 +2388,9 @@ collapsed buffer"
           c-default-style "bsd"
           indent-tabs-mode nil)
     (local-set-key (kbd "C-c o") 'ff-find-other-file)
-    ;; (ggtags-mode +1)
+    (eldoc-mode +1)
+    (ggtags-mode +1)
+    (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
     (local-set-key (kbd "C-c C-c") 'compile)
     (setq-local split-width-threshold nil))
 
