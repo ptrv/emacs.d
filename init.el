@@ -2426,45 +2426,6 @@ collapsed buffer"
     (autoload 'lldb "gud-lldb" nil t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * rtags
-(ptrv/after cc-mode
-  (message "Load config: RTags...")
-
-  (defvar ptrv/rtags-dir "~/src/rtags/")
-  (add-to-list 'load-path (expand-file-name "src" ptrv/rtags-dir))
-  (ptrv/with-library rtags
-    (when (not (and (file-exists-p (expand-file-name "build/bin/rdm" ptrv/rtags-dir))
-                    (file-exists-p (expand-file-name "build/bin/rc" ptrv/rtags-dir))))
-      (warn "The RTags binaries are not compiled!"))
-
-    (rtags-enable-standard-keybindings c-mode-base-map (kbd "C-c C-x"))
-
-    (defun ptrv/rtags-diagnostics (&optional restart nodirty)
-      (interactive "P")
-      (if restart (rtags-stop-diagnostics))
-      (rtags-init-diagnostics-buffer-and-process)
-      (when (called-interactively-p 'any)
-        (popwin:pop-to-buffer (get-buffer "*RTags Diagnostics*") t)))
-
-    (let ((map c-mode-base-map))
-      (define-key map (kbd "C-c C-x n") 'rtags-next-match)
-      (define-key map (kbd "C-c C-x C-n") 'rtags-next-match)
-      (define-key map (kbd "C-c C-x p") 'rtags-previous-match)
-      (define-key map (kbd "C-c C-x C-p") 'rtags-previous-match)
-      (define-key map (kbd "C-c C-x }") 'rtags-next-diag)
-      (define-key map (kbd "C-c C-x {") 'rtags-previous-diag)
-      (define-key map (kbd "C-c C-x D") 'ptrv/rtags-diagnostics))
-
-    (ptrv/after company
-      (ptrv/after company-rtags
-        (setq rtags-completions-enabled t))
-      (require 'company-rtags)
-      (defun ptrv/company-rtags--init ()
-        (make-local-variable 'company-backends)
-        (add-to-list 'company-backends 'company-rtags))
-      (ptrv/hook-into-modes 'ptrv/company-rtags--init '(c-mode c++-mode)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
 (ptrv/after lua-mode
   (defun ptrv/lua-send-region-or-current-line ()
