@@ -278,7 +278,6 @@ file `PATTERNS'."
     whitespace-cleanup-mode
     ;; golang
     go-mode
-    go-autocomplete
     go-eldoc
     go-errcheck)
   "A list of packages to ensure are installed at launch.")
