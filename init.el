@@ -2457,7 +2457,27 @@ collapsed buffer"
 
   (when *is-mac*
     ;; LLDB support for gud
-    (autoload 'lldb "gud-lldb" nil t)))
+    (autoload 'lldb "gud-lldb" nil t))
+
+  ;; C++11 keywords
+  (font-lock-add-keywords
+   'c++-mode
+   `(;; complete some fundamental keywords
+     ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
+     ;; add the new C++11 keywords
+     ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
+     ("\\<\\(char[0-9]+_t\\)\\>" . font-lock-keyword-face)
+     ;; PREPROCESSOR_CONSTANT
+     ("\\<[A-Z]+[A-Z_]+\\>" . font-lock-constant-face)
+     ;; hexadecimal numbers
+     ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
+     ;; integer/float/scientific numbers
+     ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
+     ;; user-types (customize!)
+     ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(t\\|type\\|ptr\\)\\>" . font-lock-type-face)
+     ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
+     ) :append)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * irony
