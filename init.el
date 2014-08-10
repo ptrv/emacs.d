@@ -2453,7 +2453,7 @@ collapsed buffer"
     (local-set-key (kbd "C-c C-c") 'compile))
   (add-hook 'c-mode-hook 'ptrv/c-mode-init)
 
-  (add-hook 'c-mode-common-hook 'linum-mode)
+  ;; (add-hook 'c-mode-common-hook 'linum-mode)
 
   (when *is-mac*
     ;; LLDB support for gud
