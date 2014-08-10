@@ -2416,15 +2416,26 @@ collapsed buffer"
   (ptrv/hook-into-modes 'ptrv/cc-mode-init '(c-mode c++-mode))
 
   ;; doxymacs
-  (add-to-list 'load-path (locate-user-emacs-file
-                           "site-lisp/_extras/doxymacs/lisp"))
-  (autoload 'doxymacs-mode "doxymacs" nil t)
+  (defvar ptrv/doxymacs-path
+    (cond
+     (*is-mac*
+      (concat (ptrv/homebrew-prefix "doxymacs")
+              "/share/emacs/site-lisp"))
+     (*is-linux*
+      (locate-user-emacs-file
+       "site-lisp/_extras/doxymacs/lisp"))
+     (t nil)))
+
+  (when ptrv/doxymacs-path
+    (add-to-list 'load-path ptrv/doxymacs-path)
+    (autoload 'doxymacs-mode "doxymacs" nil t))
   (ptrv/after doxymacs
-    (setq doxymacs-external-xml-parser-executable
-          (locate-user-emacs-file
-           "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
-    (unless (file-exists-p doxymacs-external-xml-parser-executable)
-      (warn "The doxymacs_parser executable does not exist!"))
+    (when *is-linux*
+      (setq doxymacs-external-xml-parser-executable
+            (locate-user-emacs-file
+             "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
+      (unless (file-exists-p doxymacs-external-xml-parser-executable)
+        (warn "The doxymacs_parser executable does not exist!")))
 
     (defun ptrv/doxymacs-font-lock-hook ()
       (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
