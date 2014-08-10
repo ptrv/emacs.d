@@ -338,6 +338,22 @@ file `PATTERNS'."
 ;;;; * PATH
 (exec-path-from-shell-initialize)
 
+(when *is-mac*
+  (defun ptrv/homebrew-prefix (&optional formula)
+    "Get the homebrew prefix for FORMULA.
+
+Without FORMULA, get the homebrew prefix itself.
+
+Return nil, if homebrew is not available, or if the prefix
+directory does not exist.
+Source: `https://github.com/lunaryorn/.emacs.d'"
+    (let ((prefix (condition-case nil
+                      (car (apply #'process-lines "brew" "--prefix"
+                                  (when formula (list formula))))
+                    (error nil))))
+      (when (and prefix (file-directory-p prefix))
+        prefix))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
