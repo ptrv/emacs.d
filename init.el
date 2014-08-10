@@ -234,7 +234,6 @@ file `PATTERNS'."
     ;; ui
     alert
     popwin
-    smooth-scrolling
     rainbow-mode
     highlight
     zenburn-theme
@@ -1144,10 +1143,6 @@ See also `toggle-frame-maximized'."
 (define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
 (define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
 (define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * smooth-scrolling
-(setq smooth-scroll-margin 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * google-this
