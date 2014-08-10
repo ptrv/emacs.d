@@ -2383,8 +2383,15 @@ collapsed buffer"
       )
     (ptrv/hook-into-modes 'ptrv/cc-mode-company--init '(c-mode c++-mode)))
 
+  (c-add-style "my-cc-mode"
+               '("bsd"
+                 (c-basic-offset . 4)
+                 (c-offsets-alist . ((innamespace . 0)))))
+
   (defun ptrv/cc-mode-init ()
+    (c-set-style "my-cc-mode")
     (setq c-basic-offset 4
+          tab-width 4
           ;;c-indent-level 4
           c-default-style "bsd"
           indent-tabs-mode nil)
