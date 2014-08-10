@@ -1167,12 +1167,14 @@ See also `toggle-frame-maximized'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * popwin
 (defun ptrv/get-popwin-height (&optional size)
-  (let* ((screen-is-small (< (display-pixel-height) 1000))
-         (default-value (if screen-is-small 20 30)))
-    (cond ((eq size 'small) (if screen-is-small 10 15))
-          ((eq size 'medium) (if screen-is-small 15 20))
-          ((eq size 'big) default-value)
-          (:else default-value))))
+  (let* ((default-values (cond ((>= (display-pixel-height) 1000) '(30 20 15))
+                               ((and (< (display-pixel-height) 1000)
+                                     (>= (display-pixel-height) 900)) '(25 20 15))
+                               ((< (display-pixel-height) 900) '(20 15 10)))))
+    (cond ((eq size 'small) (nth 2 default-values))
+          ((eq size 'medium) (nth 1 default-values))
+          ((eq size 'big) (car default-values))
+          (:else (car default-values)))))
 
 (require 'popwin)
 (ptrv/after popwin
