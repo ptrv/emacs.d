@@ -2457,10 +2457,6 @@ collapsed buffer"
 
   ;; (add-hook 'c-mode-common-hook 'linum-mode)
 
-  (when *is-mac*
-    ;; LLDB support for gud
-    (autoload 'lldb "gud-lldb" nil t))
-
   ;; C++11 keywords
   (font-lock-add-keywords
    'c++-mode
@@ -2480,6 +2476,10 @@ collapsed buffer"
      ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
      ) :append)
   )
+
+(when *is-mac*
+  ;; LLDB support for gud
+  (autoload 'lldb "gud-lldb" nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * irony
