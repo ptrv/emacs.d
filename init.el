@@ -639,6 +639,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq company-minimum-prefix-length 2)
   (setq company-show-numbers t)
   (setq company-global-modes '(not magit-status-mode))
+  (setq company-transformers '(company-sort-by-occurrence))
 
   (ptrv/after company-dabbrev
     (setq company-dabbrev-downcase nil)))
