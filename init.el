@@ -1446,10 +1446,7 @@ See also `toggle-frame-maximized'."
    :doc-spec '(("(latex2e)Concept Index" )
                ("(latex2e)Command Index")))
 
-  (require 'pstricks)
-
-  ;; smartparens LaTeX
-  (require 'smartparens-latex))
+  (require 'pstricks))
 
 (ptrv/after reftex
   (message "RefTeX config has been loaded !!!")
@@ -2514,12 +2511,6 @@ collapsed buffer"
   (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
   (define-key html-mode-map (kbd "C-c C-f") 'sp-html-next-tag)
   (define-key html-mode-map (kbd "C-c C-b") 'sp-html-previous-tag))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * ruby
-(ptrv/after ruby-mode
-  ;; smartparens
-  (require 'smartparens-ruby))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * multiple-cursors
