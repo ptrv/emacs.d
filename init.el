@@ -2538,6 +2538,9 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
+(ptrv/after browse-kill-ring
+  (setq browse-kill-ring-show-preview nil))
+
 (global-set-key (kbd "M-C-y") 'browse-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
