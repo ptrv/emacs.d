@@ -248,7 +248,7 @@ file `PATTERNS'."
     htmlize
     mwe-log-commands
     diminish
-    kill-ring-search
+    browse-kill-ring
     ;; tools
     ag
     ack-and-a-half
@@ -2545,6 +2545,10 @@ collapsed buffer"
 (global-set-key (kbd "C-o") 'ace-jump-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * browse-kill-ring
+(global-set-key (kbd "M-C-y") 'browse-kill-ring)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * bindings
 ;; (global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
@@ -2556,8 +2560,6 @@ collapsed buffer"
 (global-set-key [f7] 'split-window-vertically)
 (global-set-key [f8] 'delete-window)
 (global-set-key [f9] 'delete-other-windows)
-
-(global-set-key (kbd "M-C-y") 'kill-ring-search)
 
 ;;diff shortcuts
 (defvar ptrv/diff-map
