@@ -2382,17 +2382,6 @@ collapsed buffer"
 (ptrv/after cc-mode
   (message "Load config: cc-mode...")
 
-  (ptrv/after company
-    (defun ptrv/cc-mode-company--init ()
-      (make-local-variable 'company-begin-commands)
-      (dolist (it '(c-electric-lt-gt c-electric-colon))
-        (add-to-list 'company-begin-commands it))
-      ;; (setq-local company-backends '((company-clang
-      ;;                                 company-gtags
-      ;;                                 company-dabbrev-code)))
-      )
-    (ptrv/hook-into-modes 'ptrv/cc-mode-company--init '(c-mode c++-mode)))
-
   (c-add-style "my-cc-mode"
                '("bsd"
                  (c-basic-offset . 4)
