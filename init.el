@@ -195,7 +195,7 @@ file `PATTERNS'."
     git-messenger
     diff-hl
     ;; editor
-    smartparens
+    paredit
     iflipb
     iedit
     starter-kit-eshell
@@ -480,6 +480,15 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
    (*is-mac* (executable-find "afplay"))
    (*is-linux* (executable-find "paplay"))))
 
+;; Electric pairing and code layout
+(electric-pair-mode)
+(electric-layout-mode)
+
+;; Show matching parens
+(show-paren-mode)
+(ptrv/after paren
+  (setq show-paren-style 'mixed))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * email
 (setq user-full-name "Peter Vasil"
@@ -659,75 +668,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (global-company-mode +1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * smartparens
-(require 'smartparens-config)
-
-(ptrv/after smartparens
-  (let ((map smartparens-mode-map))
-    ;; Movement and navigation
-    (define-key map (kbd "C-M-f") #'sp-forward-sexp)
-    (define-key map (kbd "C-M-b") #'sp-backward-sexp)
-    (define-key map (kbd "C-M-u") #'sp-backward-up-sexp)
-    (define-key map (kbd "C-M-d") #'sp-down-sexp)
-    (define-key map (kbd "C-M-p") #'sp-backward-down-sexp)
-    (define-key map (kbd "C-M-n") #'sp-up-sexp)
-    ;; Deleting and killing
-    (define-key map (kbd "C-M-k") #'sp-kill-sexp)
-    (define-key map (kbd "C-M-w") #'sp-copy-sexp)
-    ;; Depth changing
-    (define-key map (kbd "M-s") #'sp-splice-sexp)
-    (define-key map (kbd "M-<up>") #'sp-splice-sexp-killing-backward)
-    (define-key map (kbd "M-<down>") #'sp-splice-sexp-killing-forward)
-    (define-key map (kbd "M-r") #'sp-splice-sexp-killing-around)
-    (define-key map (kbd "M-?") #'sp-convolute-sexp)
-    ;; Barfage & Slurpage
-    (define-key map (kbd "C-)")  #'sp-forward-slurp-sexp)
-    (define-key map (kbd "C-<right>") #'sp-forward-slurp-sexp)
-    (define-key map (kbd "C-}")  #'sp-forward-barf-sexp)
-    (define-key map (kbd "C-<left>") #'sp-forward-barf-sexp)
-    (define-key map (kbd "C-(")  #'sp-backward-slurp-sexp)
-    (define-key map (kbd "C-M-<left>") #'sp-backward-slurp-sexp)
-    (define-key map (kbd "C-{")  #'sp-backward-barf-sexp)
-    (define-key map (kbd "C-M-<right>") #'sp-backward-barf-sexp)
-    ;; Miscellaneous commands
-    (define-key map (kbd "M-S") #'sp-split-sexp)
-    (define-key map (kbd "M-J") #'sp-join-sexp)
-    (define-key map (kbd "C-M-t") #'sp-transpose-sexp))
-
-  ;; Some additional bindings for strict mode
-  (let ((map smartparens-strict-mode-map))
-    (define-key map (kbd "M-q") #'sp-indent-defun)
-    (define-key map (kbd "C-j") #'sp-newline)))
-
-(smartparens-global-mode)
-(show-smartparens-global-mode)
-
-(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-
-(defun ptrv/smartparens-setup-lisp-modes (modes)
-  "Setup Smartparens Lisp support in MODES.
-
-Add Lisp pairs and tags to MODES, and use the a special, more strict
-keymap `ptrv/smartparens-lisp-mode-map'."
-  (when (symbolp modes)
-    (setq modes (list modes)))
-  (sp-local-pair modes "(" nil :bind "M-(")
-  (dolist (mode modes)
-    (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook 'smartparens-strict-mode))))
-
-;;"Enable `smartparens-mode' in the minibuffer, during
-;;`eval-expression'."
-(defun turn-on-sp ()
-  "Turn on smartparens-mode."
-  (smartparens-mode))
-(if (boundp 'eval-expression-minibuffer-setup-hook)
-    (add-hook 'eval-expression-minibuffer-setup-hook 'turn-on-sp)
-  (add-hook 'minibuffer-setup-hook
-            #'(lambda ()
-                (when (eq this-command 'eval-expression)
-                  (turn-on-sp)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lisp
@@ -750,7 +690,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
 (defvar ptrv/emacs-lisp-common-modes
   (append
-   '(turn-on-elisp-slime-nav-mode
+   '(paredit-mode
+     turn-on-elisp-slime-nav-mode
      turn-on-eldoc-mode)
    ptrv/lisp-common-modes)
   "Common modes for Emacs Lisp editing.")
@@ -776,22 +717,18 @@ keymap `ptrv/smartparens-lisp-mode-map'."
               #'(lambda ()
                   (if (file-exists-p (concat buffer-file-name "c"))
                       (delete-file (concat buffer-file-name "c"))))
-              nil :local))
-
-  (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
-                                       lisp-interaction-mode
-                                       lisp-mode)))
+              nil :local)))
 
 (ptrv/after ielm
   (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
-  (ptrv/smartparens-setup-lisp-modes '(inferior-emacs-lisp-mode)))
+  (add-hook 'inferior-emacs-lisp-mode-hook 'pare))
 
 (ptrv/after inf-lisp
-  (ptrv/smartparens-setup-lisp-modes '(inferior-lisp-mode)))
+  (add-hook 'inf-lisp-mode-hook 'paredit-mode))
 
-(ptrv/after nrepl-eval-sexp-fu
-  (setq nrepl-eval-sexp-fu-flash-duration 0.5))
-(require 'nrepl-eval-sexp-fu)
+;; (ptrv/after nrepl-eval-sexp-fu
+;;   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
+;; (require 'nrepl-eval-sexp-fu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
@@ -803,7 +740,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
   (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
 
-  (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
+  (add-hook 'clojure-mode-hook 'paredit-mode)
 
   (defun ptrv/clojure-mode-init ()
     (yas-minor-mode 1))
@@ -826,7 +763,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (ptrv/after cider-repl-mode
   (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
-  (ptrv/smartparens-setup-lisp-modes '(cider-repl-mode)))
+  (add-hook 'cider-repl-mode-hook 'paredit-mode))
 
 (ptrv/after cider-mode
   (message "cider-mode config has been loaded!!!")
@@ -1380,10 +1317,6 @@ See also `toggle-frame-maximized'."
   ;; Use fundamental mode when editing plantuml blocks with C-c '
   (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
   (add-to-list 'org-src-lang-modes '("sam" . sam))
-
-  ;; smartparens
-  (dolist (it '("*" "/" "=" "~"))
-    (sp-local-pair 'org-mode it it))
 
   ;; org publish projects file
   (ptrv/after ox
@@ -2492,14 +2425,6 @@ collapsed buffer"
     (local-set-key (kbd "C-c C-d") 'lua-send-proc)
     (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line))
   (add-hook 'lua-mode-hook 'ptrv/lua-mode-init))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * html
-(ptrv/after sgml-mode
-  (require 'smartparens-html)
-  (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
-  (define-key html-mode-map (kbd "C-c C-f") 'sp-html-next-tag)
-  (define-key html-mode-map (kbd "C-c C-b") 'sp-html-previous-tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * multiple-cursors
