@@ -651,7 +651,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;; Start eshell or switch to it if it's active.
 (global-set-key (kbd "C-x m") 'eshell)
 ;; Start a new eshell even if one is active.
-(global-set-key (kbd "C-x M") #'(lambda () (interactive) (eshell t)))
+(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
@@ -714,9 +714,9 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (defun ptrv/remove-elc-on-save ()
     "If you’re saving an elisp file, likely the .elc is no longer valid."
     (add-hook 'after-save-hook
-              #'(lambda ()
-                  (if (file-exists-p (concat buffer-file-name "c"))
-                      (delete-file (concat buffer-file-name "c"))))
+              (lambda ()
+                (if (file-exists-p (concat buffer-file-name "c"))
+                    (delete-file (concat buffer-file-name "c"))))
               nil :local)))
 
 (ptrv/after ielm
@@ -777,12 +777,12 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
 (setq backup-enable-predicate
-      #'(lambda (name)
-          (and (normal-backup-enable-predicate name)
-               (not
-                (let ((method (file-remote-p name 'method)))
-                  (when (stringp method)
-                    (member method '("su" "sudo"))))))))
+      (lambda (name)
+        (and (normal-backup-enable-predicate name)
+             (not
+              (let ((method (file-remote-p name 'method)))
+                (when (stringp method)
+                  (member method '("su" "sudo"))))))))
 
 (ptrv/after tramp
   (setq tramp-backup-directory-alist backup-directory-alist
@@ -820,9 +820,9 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq ibuffer-show-empty-filter-groups nil))
 
 (add-hook 'ibuffer-mode-hook
-          #'(lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-switch-to-saved-filter-groups "default")))
+          (lambda ()
+            (ibuffer-auto-mode 1)
+            (ibuffer-switch-to-saved-filter-groups "default")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
@@ -843,9 +843,9 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;; newline after 72 chars in magit-log-edit-mode
 (ptrv/after magit
   (add-hook 'magit-log-edit-mode-hook
-            #'(lambda ()
-                (set-fill-column 72)
-                (auto-fill-mode 1)))
+            (lambda ()
+              (set-fill-column 72)
+              (auto-fill-mode 1)))
 
   ;; http://whattheemacsd.com/setup-magit.el-01.html
   ;; full screen magit-status
@@ -890,9 +890,9 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (ptrv/after git-commit-mode
   (add-hook 'git-commit-mode-hook
-            #'(lambda ()
-                (set-fill-column 72)
-                (auto-fill-mode 1)))
+            (lambda ()
+              (set-fill-column 72)
+              (auto-fill-mode 1)))
 
   ;; ;; close popup when commiting
   ;; (defadvice git-commit-commit (after delete-window activate)
@@ -1378,8 +1378,7 @@ See also `toggle-frame-maximized'."
                                        reftex-mode
                                        auto-fill-mode))
 
-  (add-hook 'LaTeX-mode-hook #'(lambda ()
-                                 (setq TeX-command-default "latexmk")))
+  (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
 
   ;; clean intermediate files from latexmk
   (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
@@ -1513,9 +1512,9 @@ See also `toggle-frame-maximized'."
   (ptrv/after company
     (ptrv/with-library company-go
       (setq company-go-show-annotation t)
-      (add-hook 'go-mode-hook #'(lambda ()
-                                  (setq-local company-backends
-                                              '((company-go :with company-yasnippet)))))))
+      (add-hook 'go-mode-hook
+                (lambda () (setq-local company-backends
+                                       '((company-go :with company-yasnippet)))))))
 
   ;; compile fucntions
   (defun ptrv/go-build ()
@@ -1608,11 +1607,11 @@ See also `toggle-frame-maximized'."
 If ARG is not nil, create package in current directory"
   (interactive "sInsert new package name: \nP")
   (let ((name (remove ?\s name))
-        (get-root-dir #'(lambda ()
-                          (concat (car (split-string (getenv "GOPATH") ":"))
-                                  "/src/" (completing-read
-                                           "Use namespace:"
-                                           ptrv/go-default-namespaces)))))
+        (get-root-dir (lambda ()
+                        (concat (car (split-string (getenv "GOPATH") ":"))
+                                "/src/" (completing-read
+                                         "Use namespace:"
+                                         ptrv/go-default-namespaces)))))
     (if (not (string-equal "" name))
         (progn
           (unless arg
@@ -1686,14 +1685,14 @@ If ARG is not nil, create package in current directory"
 (ptrv/after erc
   ;;change wrap width when window is resized
   (add-hook 'window-configuration-change-hook
-            #'(lambda ()
-                (save-excursion
-                  (walk-windows
-                   (lambda (w)
-                     (let ((buffer (window-buffer w)))
-                       (set-buffer buffer)
-                       (when (eq major-mode 'erc-mode)
-                         (setq erc-fill-column (- (window-width w) 2)))))))))
+            (lambda ()
+              (save-excursion
+                (walk-windows
+                 (lambda (w)
+                   (let ((buffer (window-buffer w)))
+                     (set-buffer buffer)
+                     (when (eq major-mode 'erc-mode)
+                       (setq erc-fill-column (- (window-width w) 2)))))))))
 
   (setq erc-hide-list '("JOIN" "PART" "QUIT")))
 
@@ -1967,8 +1966,9 @@ prompt for the command to use."
 (add-hook 'after-init-hook 'global-flycheck-mode)
 
 ;; disable flycheck for some modes
-(ptrv/hook-into-modes #'(lambda () (flycheck-mode -1))
-                      '(emacs-lisp-mode lisp-interaction-mode))
+(ptrv/hook-into-modes (lambda () (flycheck-mode -1))
+                      '(;; emacs-lisp-mode
+                        lisp-interaction-mode))
 
 (ptrv/after flycheck
   (setq flycheck-highlighting-mode 'lines))
@@ -2481,18 +2481,18 @@ collapsed buffer"
   (let ((map (make-sparse-keymap)))
     (define-key map "s" 'swap-windows)
     (define-key map "r" 'rotate-windows)
-    (define-key map "." #'(lambda () (interactive) (shrink-window-horizontally 4)))
-    (define-key map "," #'(lambda () (interactive) (enlarge-window-horizontally 4)))
-    (define-key map (kbd "<down>") #'(lambda () (interactive) (enlarge-window -4)))
-    (define-key map (kbd "<up>") #'(lambda () (interactive) (enlarge-window 4)))
+    (define-key map "." (lambda () (interactive) (shrink-window-horizontally 4)))
+    (define-key map "," (lambda () (interactive) (enlarge-window-horizontally 4)))
+    (define-key map (kbd "<down>") (lambda () (interactive) (enlarge-window -4)))
+    (define-key map (kbd "<up>") (lambda () (interactive) (enlarge-window 4)))
     (define-key map "b" 'winner-undo)
     (define-key map "f" 'winner-redo)
     map)
   "Keymap for window manipulation.")
 
 ;;fast vertical naviation
-(global-set-key  (kbd "M-U") #'(lambda () (interactive) (forward-line -10)))
-(global-set-key  (kbd "M-D") #'(lambda () (interactive) (forward-line 10)))
+(global-set-key  (kbd "M-U") (lambda () (interactive) (forward-line -10)))
+(global-set-key  (kbd "M-D") (lambda () (interactive) (forward-line 10)))
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
@@ -2506,11 +2506,11 @@ collapsed buffer"
 
 ;; Activate occur easily inside isearch
 (define-key isearch-mode-map (kbd "C-o")
-  #'(lambda () (interactive)
-      (let ((case-fold-search isearch-case-fold-search))
-        (occur (if isearch-regexp
-                   isearch-string
-                 (regexp-quote isearch-string))))))
+  (lambda () (interactive)
+    (let ((case-fold-search isearch-case-fold-search))
+      (occur (if isearch-regexp
+                 isearch-string
+               (regexp-quote isearch-string))))))
 
 (global-set-key "\C-m" 'newline-and-indent)
 
@@ -2524,9 +2524,7 @@ collapsed buffer"
 
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
-(global-set-key (kbd "M-j") #'(lambda ()
-                                (interactive)
-                                (join-line -1)))
+(global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 (global-set-key (kbd "C-M-z") 'indent-defun)
@@ -2541,9 +2539,7 @@ collapsed buffer"
 (global-set-key (kbd "C-h C-l") 'find-library)
 
 ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
-(global-set-key (kbd "C-x O") #'(lambda ()
-                                  (interactive)
-                                  (other-window -1)))
+(global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
 
 ;; registers
 (global-set-key (kbd "C-x r T") 'string-insert-rectangle)
