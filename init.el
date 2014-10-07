@@ -759,7 +759,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq nrepl-buffer-name-show-port t))
 
 (ptrv/after cider-interaction
-  (setq cider-popup-stacktraces nil))
+  (setq cider-show-error-buffer nil))
 
 (ptrv/after cider-repl-mode
   (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
