@@ -1486,12 +1486,7 @@ See also `toggle-frame-maximized'."
 (ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$" "\\.mkd$")
 
 (ptrv/after markdown-mode
-  (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir))
-  (sp-with-modes '(markdown-mode gfm-mode)
-    (sp-local-pair "*" "*" :bind "C-*")
-    (sp-local-pair "`" "`")
-    (sp-local-tag "s" "```scheme" "```")
-    (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags)))
+  (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
