@@ -2486,9 +2486,11 @@ collapsed buffer"
         (lua-send-region (region-beginning) (region-end))
       (lua-send-current-line)))
   (defun ptrv/lua-mode-init ()
+    (ggtags-mode +1)
     (yas-minor-mode +1)
     (local-set-key (kbd "C-c C-d") 'lua-send-proc)
-    (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line))
+    (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line)
+    (local-set-key (kbd "C-c C-p") 'lua-start-process))
   (add-hook 'lua-mode-hook 'ptrv/lua-mode-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
