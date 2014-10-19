@@ -44,3 +44,6 @@
 [submodule "site-lisp/company-sclang"]
 	path = site-lisp/company-sclang
 	url = https://github.com/ptrv/company-sclang.git
+[submodule "site-lisp/company-statistics"]
+	path = site-lisp/company-statistics
+	url = https://github.com/company-mode/company-statistics.git

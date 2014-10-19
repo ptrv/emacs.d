@@ -655,7 +655,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq company-transformers '(company-sort-by-occurrence))
 
   (ptrv/after company-dabbrev
-    (setq company-dabbrev-downcase nil)))
+    (setq company-dabbrev-downcase nil))
+
+  (ptrv/with-library company-statistics
+    (company-statistics-mode)))
 
 (global-company-mode +1)
 
