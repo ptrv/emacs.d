@@ -969,6 +969,48 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * vc-git
+(when (eval-when-compile (version-list-<
+                          (version-to-list emacs-version)
+                          '(25 0 50 0)))
+  (defun vc-git-conflicted-files (directory)
+    "Return the list of files with conflicts in DIRECTORY."
+    (let* ((status
+            (vc-git--run-command-string directory "status" "--porcelain" "--"))
+           (lines (split-string status "\n" 'omit-nulls))
+           files)
+      (dolist (line lines files)
+        (when (string-match "\\([ MADRCU?!][ MADRCU?!]\\) \\(.+\\)\\(?: -> \\(.+\\)\\)?"
+                            line)
+          (let ((state (match-string 1 line))
+                (file (match-string 2 line)))
+            ;; See git-status(1).
+            (when (member state '("AU" "UD" "UA" ;; "DD"
+                                  "DU" "AA" "UU"))
+              (push file files)))))))
+
+  (defun vc-git-resolve-when-done ()
+    "Call \"git add\" if the conflict markers have been removed."
+    (save-excursion
+      (goto-char (point-min))
+      (unless (re-search-forward "^<<<<<<< " nil t)
+        (vc-git-command nil 0 buffer-file-name "add")
+        ;; Remove the hook so that it is not called multiple times.
+        (remove-hook 'after-save-hook 'vc-git-resolve-when-done t))))
+
+  (defun vc-git-find-file-hook ()
+    "Activate `smerge-mode' if there is a conflict."
+    (when (and buffer-file-name
+               (vc-git-conflicted-files buffer-file-name)
+               (save-excursion
+                 (goto-char (point-min))
+                 (re-search-forward "^<<<<<<< " nil 'noerror)))
+      (vc-file-setprop buffer-file-name 'vc-state 'conflict)
+      (smerge-start-session)
+      (add-hook 'after-save-hook 'vc-git-resolve-when-done nil 'local)
+      (message "There are unresolved conflicts in this file"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * git-messanger
 (ptrv/after git-messenger
   (setq git-messenger:show-detail t))
