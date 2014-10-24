@@ -667,6 +667,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
+(let ((map smartparens-strict-mode-map))
+  (dolist (it sp-paredit-bindings)
+    (define-key map (read-kbd-macro (car it)) (cdr it))))
+
 (defun ptrv/smartparens-setup-lisp-modes (modes)
   "Setup Smartparens Lisp support in MODES.
 
@@ -677,10 +681,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (sp-local-pair modes "(" nil :bind "M-(")
   (dolist (mode modes)
     (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook (lambda ()
-                       (dolist (it sp-paredit-bindings)
-                         (local-set-key (read-kbd-macro (car it)) (cdr it)))
-                       (smartparens-strict-mode +1))))))
+      (add-hook hook 'smartparens-strict-mode))))
 
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
