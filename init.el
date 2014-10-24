@@ -1,5 +1,8 @@
 ;;; init.el --- ptrv init file
 
+(when (version-list-< (version-to-list emacs-version) '(24 4))
+  (error "This configuration needs Emacs 24.4, but this is %s!" emacs-version))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * basic init stuff
 (setq initial-scratch-message ";;
@@ -65,14 +68,6 @@
 (require 'cl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * macros
-(unless (fboundp 'with-eval-after-load)
-  (defmacro with-eval-after-load (file &rest body)
-    "Execute BODY after FILE is loaded.
-
-Forward compatibility wrapper."
-    `(eval-after-load ,file
-       `(funcall (function ,(lambda () ,@body))))))
-
 (defmacro ptrv/after (feature &rest forms)
   "After FEATURE is loaded, evaluate FORMS.
 
@@ -108,8 +103,7 @@ FEATURE may be a named feature or a file name, see
               "\\>[ \t']*\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
      (1 font-lock-keyword-face)
      (2 font-lock-constant-face))
-    (,(concat "(" (regexp-opt '("with-eval-after-load"
-                                "ptrv/expose"
+    (,(concat "(" (regexp-opt '("ptrv/expose"
                                 "ptrv/hook-into-modes"
                                 "ptrv/add-to-hook")
                               'symbols))
@@ -164,17 +158,6 @@ file `PATTERNS'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * package
 (require 'package)
-(when (eval-when-compile (version-list-<
-                          (version-to-list emacs-version)
-                          '(24 3 50 0)))
-  (defadvice package-compute-transaction
-    (before
-     package-compute-transaction-reverse (package-list requirements)
-     activate compile)
-    "reverse the requirements"
-    (setq requirements (reverse requirements))
-    (print requirements)))
-
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/"))
 
@@ -303,28 +286,6 @@ file `PATTERNS'."
 
 (ptrv/install-packages)
 
-;; from carton.el and modified
-(when (eval-when-compile (version-list-<
-                          (version-to-list emacs-version)
-                          '(24 3 50 0)))
-  (defun ptrv/package-upgrade ()
-    "Upgrade packages."
-    (interactive)
-    (with-temp-buffer
-      (package-refresh-contents)
-      (package-initialize)
-      (package-menu--generate nil t) ;; WTF ELPA, really???
-      (let ((upgrades (package-menu--find-upgrades)))
-        (dolist (upgrade upgrades)
-          (let ((name (car upgrade)))
-            (package-install name)))
-        ;; Delete obsolete packages
-        (dolist (pkg package-obsolete-alist)
-          (package-delete (symbol-name (car pkg))
-                          (package-version-join (caadr pkg))))
-        (message "%d package%s has been upgraded."
-                 (length upgrades)
-                 (if (= (length upgrades) 1) "" "s"))))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
 (defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
@@ -723,15 +684,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;"Enable `smartparens-mode' in the minibuffer, during
 ;;`eval-expression'."
-(defun turn-on-sp ()
-  "Turn on smartparens-mode."
-  (smartparens-mode))
-(if (boundp 'eval-expression-minibuffer-setup-hook)
-    (add-hook 'eval-expression-minibuffer-setup-hook 'turn-on-sp)
-  (add-hook 'minibuffer-setup-hook
-            (lambda ()
-              (when (eq this-command 'eval-expression)
-                (turn-on-sp)))))
+(add-hook 'eval-expression-minibuffer-setup-hook
+          'smartparens-strict-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lisp
@@ -1090,54 +1044,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                   (abbreviate-file-name (buffer-file-name))
                 "%b")))
 
-;; for emacs <= 24.3 support of toggle-frame-maximized/fullscreen
-(unless (fboundp 'toggle-frame-maximized)
-  (message "toggle-frame-maximized has been defined for compatibility!")
-  (defun toggle-frame-maximized ()
-    "Toggle maximization state of the selected frame.
-Maximize the selected frame or un-maximize if it is already maximized.
-Respect window manager screen decorations.
-If the frame is in fullscreen mode, don't change its mode,
-just toggle the temporary frame parameter `maximized',
-so the frame will go to the right maximization state
-after disabling fullscreen mode.
-See also `toggle-frame-fullscreen'."
-    (interactive)
-    (if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
-        (modify-frame-parameters
-         nil
-         `((maximized
-            . ,(unless (eq (frame-parameter nil 'maximized) 'maximized)
-                 'maximized))))
-      (modify-frame-parameters
-       nil
-       `((fullscreen
-          . ,(unless (eq (frame-parameter nil 'fullscreen) 'maximized)
-               'maximized)))))))
 ;; defalias
 (defalias 'toggle-fullscreen 'toggle-frame-maximized)
-
-(unless (fboundp 'toggle-frame-fullscreen)
-  (message "toggle-frame-fullscreen has been defined for compatibility!")
-  (defun toggle-frame-fullscreen ()
-    "Toggle fullscreen mode of the selected frame.
-Enable fullscreen mode of the selected frame or disable if it is
-already fullscreen.  Ignore window manager screen decorations.
-When turning on fullscreen mode, remember the previous value of the
-maximization state in the temporary frame parameter `maximized'.
-Restore the maximization state when turning off fullscreen mode.
-See also `toggle-frame-maximized'."
-    (interactive)
-    (modify-frame-parameters
-     nil
-     `((maximized
-        . ,(unless (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
-             (frame-parameter nil 'fullscreen)))
-       (fullscreen
-        . ,(if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
-               (if (eq (frame-parameter nil 'maximized) 'maximized)
-                   'maximized)
-             'fullscreen))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
