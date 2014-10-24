@@ -167,6 +167,7 @@ and source-file directory for your debugger."
   (run-hooks 'lldb-mode-hook)
   )
 
+;; tooltip
 (defun gud-lldb-tooltip-print-command (expr)
   "Return a suitable command to print the expression EXPR."
   (pcase gud-minor-mode
@@ -179,6 +180,17 @@ and source-file directory for your debugger."
     (`sdb (concat expr "/"))))
 
 (advice-add 'gud-tooltip-print-command :override #'gud-lldb-tooltip-print-command)
+
+;; menu
+(setcdr (nth 2 (nth 7 (assoc 'nexti gud-menu-map))) '((lldb gdbmi gdb dbx)))
+(setcdr (nth 2 (nth 7 (assoc 'stepi gud-menu-map))) '((lldb gdbmi gdb dbx)))
+(setcdr (nth 2 (nth 7 (assoc 'finish gud-menu-map))) '((lldb gdbmi gdb guiler xdb jdb pdb)))
+(setcdr (nth 2 (nth 7 (assoc 'print* gud-menu-map))) '((lldb gdbmi gdb jdb)))
+(setcdr (nth 2 (nth 7 (assoc 'down gud-menu-map))) '((lldb gdbmi gdb guiler dbx xdb jdb pdb)))
+(setcdr (nth 2 (nth 7 (assoc 'up gud-menu-map))) '((lldb gdbmi gdb guiler dbx xdb jdb pdb)))
+(setcdr (nth 2 (nth 7 (assoc 'tbreak gud-menu-map))) '((lldb gdbmi gdb sdb xdb)))
+(setcdr (nth 2 (nth 7 (assoc 'run gud-menu-map))) '((lldb gdbmi gdb dbx jdb)))
+(setcdr (nth 2 (nth 7 (assoc 'tooltips gud-menu-map))) '((lldb gdbmi guiler dbx sdb xdb pdb)))
 
 
 (provide 'gud-lldb)
