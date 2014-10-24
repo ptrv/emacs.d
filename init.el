@@ -175,7 +175,7 @@ file `PATTERNS'."
     (setq requirements (reverse requirements))
     (print requirements)))
 
-(dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
+(dolist (source '(("melpa" . "http://melpa.org/packages/")
                   ("marmalade" . "http://marmalade-repo.org/packages/")
                   ("elpa" . "http://tromey.com/elpa/")))
   (add-to-list 'package-archives source t))
