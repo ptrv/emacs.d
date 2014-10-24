@@ -167,6 +167,20 @@ and source-file directory for your debugger."
   (run-hooks 'lldb-mode-hook)
   )
 
+(defun gud-lldb-tooltip-print-command (expr)
+  "Return a suitable command to print the expression EXPR."
+  (pcase gud-minor-mode
+    ;; '-o' to print the objc object description if available
+    (`lldb (concat "expression -o -- " expr))
+    (`gdbmi (concat "-data-evaluate-expression \"" expr "\""))
+    (`guiler expr)
+    (`dbx (concat "print " expr))
+    ((or `xdb `pdb) (concat "p " expr))
+    (`sdb (concat expr "/"))))
+
+(advice-add 'gud-tooltip-print-command :override #'gud-lldb-tooltip-print-command)
+
+
 (provide 'gud-lldb)
 
 ;;; gud-lldb.el ends here
