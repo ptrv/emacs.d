@@ -660,7 +660,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (ptrv/with-library company-statistics
     (company-statistics-mode)))
 
-(global-company-mode +1)
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
