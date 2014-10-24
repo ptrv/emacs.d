@@ -2084,15 +2084,6 @@ prompt for the command to use."
   (setq flycheck-highlighting-mode 'lines))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * flymake
-(defvar flymake-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "M-n") 'flymake-goto-next-error)
-    (define-key map (kbd "M-p") 'flymake-goto-prev-error)
-    map))
-(add-to-list 'minor-mode-map-alist `(flymake-mode . ,flymake-mode-map) t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
 (ptrv/hook-into-modes 'hs-minor-mode '(emacs-lisp-mode
                                        lisp-mode c-mode-common
