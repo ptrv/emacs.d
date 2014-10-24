@@ -973,6 +973,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (when (eval-when-compile (version-list-<
                           (version-to-list emacs-version)
                           '(25 0 50 0)))
+  (message "Some vc-git functions from Emacs 25 have been defined...")
   (defun vc-git-conflicted-files (directory)
     "Return the list of files with conflicts in DIRECTORY."
     (let* ((status
