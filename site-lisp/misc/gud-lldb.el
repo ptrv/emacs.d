@@ -167,19 +167,19 @@ and source-file directory for your debugger."
   (run-hooks 'lldb-mode-hook)
   )
 
-;; tooltip
-(defun gud-lldb-tooltip-print-command (expr)
-  "Return a suitable command to print the expression EXPR."
-  (pcase gud-minor-mode
-    ;; '-o' to print the objc object description if available
-    (`lldb (concat "expression -o -- " expr))
-    (`gdbmi (concat "-data-evaluate-expression \"" expr "\""))
-    (`guiler expr)
-    (`dbx (concat "print " expr))
-    ((or `xdb `pdb) (concat "p " expr))
-    (`sdb (concat expr "/"))))
+;; ;; tooltip
+;; (defun gud-lldb-tooltip-print-command (expr)
+;;   "Return a suitable command to print the expression EXPR."
+;;   (pcase gud-minor-mode
+;;     ;; '-o' to print the objc object description if available
+;;     (`lldb (concat "expression -o -- " expr))
+;;     (`gdbmi (concat "-data-evaluate-expression \"" expr "\""))
+;;     (`guiler expr)
+;;     (`dbx (concat "print " expr))
+;;     ((or `xdb `pdb) (concat "p " expr))
+;;     (`sdb (concat expr "/"))))
 
-(advice-add 'gud-tooltip-print-command :override #'gud-lldb-tooltip-print-command)
+;; (advice-add 'gud-tooltip-print-command :override #'gud-lldb-tooltip-print-command)
 
 ;; menu
 (setcdr (nth 2 (nth 7 (assoc 'nexti gud-menu-map))) '((lldb gdbmi gdb dbx)))
@@ -190,7 +190,7 @@ and source-file directory for your debugger."
 (setcdr (nth 2 (nth 7 (assoc 'up gud-menu-map))) '((lldb gdbmi gdb guiler dbx xdb jdb pdb)))
 (setcdr (nth 2 (nth 7 (assoc 'tbreak gud-menu-map))) '((lldb gdbmi gdb sdb xdb)))
 (setcdr (nth 2 (nth 7 (assoc 'run gud-menu-map))) '((lldb gdbmi gdb dbx jdb)))
-(setcdr (nth 2 (nth 7 (assoc 'tooltips gud-menu-map))) '((lldb gdbmi guiler dbx sdb xdb pdb)))
+;; (setcdr (nth 2 (nth 7 (assoc 'tooltips gud-menu-map))) '((lldb gdbmi guiler dbx sdb xdb pdb)))
 
 
 (provide 'gud-lldb)
