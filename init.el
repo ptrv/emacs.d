@@ -1241,9 +1241,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (progn
         (setq unkillable-scratch-buffer-erase nil)
         (message "Disable scratch-buffer erase on kill!"))
-    (progn
-      (setq unkillable-scratch-buffer-erase t)
-      (message "Enable scratch-buffer erase on kill!"))))
+    (setq unkillable-scratch-buffer-erase t)
+    (message "Enable scratch-buffer erase on kill!")))
 
 (defun unkillable-scratch-buffer ()
   "Make scratch buffer unkillable."
@@ -1989,11 +1988,10 @@ prompt for the command to use."
                              (htmlize-buffer))))
               (if arg
                   (switch-to-buffer htmlbuf)
-                (progn
-                  (with-current-buffer htmlbuf
-                    (clipboard-kill-ring-save (point-min) (point-max)))
-                  (kill-buffer htmlbuf)
-                  (message "Copied as HTML to clipboard")))))
+                (with-current-buffer htmlbuf
+                  (clipboard-kill-ring-save (point-min) (point-max)))
+                (kill-buffer htmlbuf)
+                (message "Copied as HTML to clipboard"))))
         (message (concat "Copy as HTML failed, because current "
                          "buffer is not a Processing buffer."))))
     (define-key processing-mode-map (kbd "C-c C-p z") 'processing-copy-as-html)
@@ -2658,10 +2656,9 @@ when it inserts comment at the end of the line."
   (interactive)
   (if (string= "eshell-mode" major-mode)
       (jump-to-register :eshell-fullscreen)
-    (progn
-      (window-configuration-to-register :eshell-fullscreen)
-      (eshell)
-      (delete-other-windows))))
+    (window-configuration-to-register :eshell-fullscreen)
+    (eshell)
+    (delete-other-windows)))
 
 ;; https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun swap-windows ()
@@ -2814,9 +2811,8 @@ With a prefix ARG open line above the current line."
   (interactive "P")
   (if arg
       (ptrv/smart-open-line-above)
-    (progn
-      (move-end-of-line nil)
-      (newline-and-indent))))
+    (move-end-of-line nil)
+    (newline-and-indent)))
 
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line
@@ -2900,9 +2896,8 @@ number input."
         (progn
           (indent-region (region-beginning) (region-end))
           (message "Indented selected region."))
-      (progn
-        (indent-buffer)
-        (message "Indented buffer.")))))
+      (indent-buffer)
+      (message "Indented buffer."))))
 
 ;; http://emacsredux.com/blog/2013/03/28/indent-defun/
 (defun indent-defun ()
