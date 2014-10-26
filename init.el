@@ -1471,7 +1471,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;; Snippets
 (autoload 'snippet-mode "yasnippet")
-(ptrv/add-auto-mode 'snippet-mode "snippets/" "\\.yasnippet$")
+(ptrv/add-auto-mode 'snippet-mode "\\.yasnippet$")
 
 ;; pd-mode
 (autoload 'pd-mode "pd-mode" "autoloaded" t)
