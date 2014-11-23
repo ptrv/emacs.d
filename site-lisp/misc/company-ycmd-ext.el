@@ -51,14 +51,10 @@
   (let ((from 0)
         (to 0)
         placeholders)
-    (while (string-match "\\([^,]+\\),?" params from)
+    (while (string-match "\\([^,]+\\),?" params to)
       (setq from (match-beginning 0))
       (setq to (match-end 0))
-      (setq placeholders (append placeholders `(,(1+ from) ,(1- to))))
-      (setq from to)
-      ;; (message "%s" (match-string 0 test-string))
-      )
-    ;; (message "%s" placeholders)
+      (setq placeholders (append placeholders `(,(1+ from) ,(1- to)))))
     placeholders))
 
 (defun company-ycmd-ext-templatify (params)
@@ -66,19 +62,32 @@
     (if (and placeholders (irony-snippet-available-p))
         (irony-snippet-expand
          (company-ycmd-ext--post-complete-yas-snippet params placeholders))
-      ;; (insert (substring str 0 (car placeholders)))
+      ;; (insert (substring params 0 (car placeholders)))
       )))
 
-(defun ptrv/company-ycmd--post-completion (arg)
+(defun index-beyond-last-close-paren (str)
+  "Get index of last close paren in STR or nil."
+  (let ((index 0)
+        found)
+    (while (string-match ")" str index)
+      (setq index (match-end 0))
+      (setq found t))
+    (when found
+      index)))
+
+(defun company-ycmd-ext--post-completion (arg)
   (let ((params (company-ycmd--params arg)))
     (when (and company-ycmd-insert-arguments params)
-      (unless (company-ycmd-ext-templatify params)
-        (insert params)
-        (company-template-c-like-templatify
-         (concat arg params))))))
+      (let ((close-paren-index (index-beyond-last-close-paren
+                                params)))
+        (unless (and close-paren-index
+                     (company-ycmd-ext-templatify
+                      (substring params 0 close-paren-index)))
+          (insert params)
+          (company-template-c-like-templatify params))))))
 
 (advice-add 'company-ycmd--post-completion :override
-            #'ptrv/company-ycmd--post-completion)
+            #'company-ycmd-ext--post-completion)
 
 (provide 'company-ycmd-ext)
 ;;; company-ycmd-ext ends here
