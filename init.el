@@ -1383,8 +1383,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * org2blog
 (ptrv/with-library org2blog-autoloads
   (ptrv/after org2blog
-    (ptrv/after my-secrets
-      (load "~/.org-blogs.el" 'noerror))))
+    (load "~/.org-blogs.el" 'noerror)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * latex
@@ -1685,43 +1684,46 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
-(ptrv/after my-secrets
-  (defun erc-connect ()
-    "Start up erc and connect to freedonde"
-    (interactive)
-    (erc :server "irc.freenode.net"
-         :full-name "Peter V."
-         :port 6667
-         :nick freenode-user))
+(defun erc-connect ()
+  "Start up erc and connect to freedonde."
+  (interactive)
+  (erc :server "irc.freenode.net"
+       :full-name "Peter V."
+       :port 6667
+       :nick "ptrv"))
 
-  (ptrv/after erc
-    (ptrv/after erc-services
-      (setq erc-prompt-for-nickserv-password nil)
+(ptrv/after erc
+  (ptrv/after erc-services
+    (setq erc-prompt-for-nickserv-password nil)
+    (let ((freenode-credentials (netrc-credentials "freenode"))
+          (oftc-credentials (netrc-credentials "oftc")))
       (setq erc-nickserv-passwords
-            `((freenode ((,freenode-user . ,freenode-pass)))
-              (oftc ((,oftc-user . ,oftc-pass))))))
-    (erc-services-mode +1)
+            `((freenode (,(cons (car freenode-credentials)
+                                (cadr freenode-credentials))))
+              (oftc (,(cons (car oftc-credentials)
+                            (cadr oftc-credentials))))))))
+  (erc-services-mode +1)
 
-    ;;IRC
-    (ptrv/after erc-join
-      (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs")))
+  ;;IRC
+  (ptrv/after erc-join
+    (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs")))
 
-      (cond ((string= system-name "alderaan")
-             (setq erc-autojoin-channels-alist
-                   (list (append (car erc-autojoin-channels-alist)
-                                 '("#supercollider" "#archlinux")))))
-            ((string= system-name "anoth")
-             (setq erc-autojoin-channels-alist
-                   (list (append (car erc-autojoin-channels-alist)
-                                 '("#supercollider" "#archlinux")))))
-            ;; (t (setq erc-autojoin-channels-alist
-            ;;          '(("freenode.net" "#emacs" "#clojure" "overtone"))))
-            ))
-    (erc-autojoin-mode +1)
+    (cond ((string= system-name "alderaan")
+           (setq erc-autojoin-channels-alist
+                 (list (append (car erc-autojoin-channels-alist)
+                               '("#supercollider" "#archlinux")))))
+          ((string= system-name "anoth")
+           (setq erc-autojoin-channels-alist
+                 (list (append (car erc-autojoin-channels-alist)
+                               '("#supercollider" "#archlinux")))))
+          ;; (t (setq erc-autojoin-channels-alist
+          ;;          '(("freenode.net" "#emacs" "#clojure" "overtone"))))
+          ))
+  (erc-autojoin-mode +1)
 
-    (ptrv/after erc-match
-      (setq erc-keywords `(,freenode-user)))
-    (erc-match-mode +1)))
+  (ptrv/after erc-match
+    (setq erc-keywords '("ptrv")))
+  (erc-match-mode +1))
 
 (ptrv/after erc-track
   (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
@@ -3010,12 +3012,6 @@ This checks in turn:
 (require 'server)
 (unless (server-running-p)
   (server-start))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * secrets
-(unless (require 'my-secrets "~/.secrets.gpg" t)
-  (message "Could not load secrets file!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
