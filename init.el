@@ -689,7 +689,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   ;; Some additional bindings for strict mode
   (let ((map smartparens-strict-mode-map))
     (define-key map (kbd "M-q") #'sp-indent-defun)
-    (define-key map (kbd "C-j") #'sp-newline)))
+    (define-key map (kbd "C-j") #'sp-newline)
+    (define-key map (kbd "M-?") #'sp-convolute-sexp)))
 
 (smartparens-global-mode)
 (show-smartparens-global-mode)
