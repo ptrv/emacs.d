@@ -231,7 +231,6 @@ file `PATTERNS'."
     rainbow-delimiters
     elisp-slime-nav
     clojure-mode
-    clojure-test-mode
     cider
     align-cljlet
     litable
