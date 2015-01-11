@@ -260,7 +260,6 @@ file `PATTERNS'."
     browse-kill-ring
     ;; tools
     ag
-    ack-and-a-half
     exec-path-from-shell
     ;; python
     anaconda-mode
@@ -1081,8 +1080,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * iflipb
 (ptrv/after iflipb
   (setq iflipb-ignore-buffers
-        '("*Ack-and-a-half*"
-          "*Help*"
+        '("*Help*"
           "*Compile-Log*"
           "*Ibuffer*"
           "*Messages*"
@@ -1107,19 +1105,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * search
-;; ack-and-a-half
-(defalias 'ack 'ack-and-a-half)
-(defalias 'ack-same 'ack-and-a-half-same)
-(defalias 'ack-find-file 'ack-and-a-half-find-file)
-(defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
-
-(defvar ptrv/ack-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") 'ack-and-a-half)
-    (define-key map (kbd "s") 'ack-and-a-half-same)
-    map)
-  "Keymap for ack commands.")
-
 (defvar ptrv/search-map
   (let ((map search-map))
     (define-key map "O" 'multi-occur)
@@ -2599,7 +2584,6 @@ collapsed buffer"
 ;; Keymap for characters following C-c
 (let ((map mode-specific-map))
   (define-key map "G" ptrv/gist-map)
-  ;; (define-key map "A" ptrv/ack-map)
   (define-key map "A" 'org-agenda)
   (define-key map "D" ptrv/diff-map)
   (define-key map "a" ptrv/ag-map)
