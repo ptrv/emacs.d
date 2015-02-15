@@ -89,86 +89,6 @@
 (make-directory ptrv/backups-dir t)
 (make-directory ptrv/pscratch-dir t)
 
-;; Add every subdirectory of ~/.emacs.d/site-lisp to the load path
-(dolist (project (directory-files (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
-  (when (and (file-directory-p project))
-    (add-to-list 'load-path project)))
-
-(require 'cl)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * macros
-(defmacro ptrv/after (feature &rest forms)
-  "After FEATURE is loaded, evaluate FORMS.
-
-FORMS is byte compiled.
-
-FEATURE may be a named feature or a file name, see
-`eval-after-load' for details."
-  (declare (indent 1) (debug t))
-  ;; Byte compile the body.  If the feature is not available, ignore warnings.
-  ;; Taken from
-  ;; http://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg01262.html
-  `(,(if (or (not (boundp 'byte-compile-current-file))
-             (not byte-compile-current-file)
-             (if (symbolp feature)
-                 (require feature nil :no-error)
-               (load feature :no-message :no-error)))
-         'progn
-       (message "ptrv/after: cannot find %s" feature)
-       'with-no-warnings)
-    (with-eval-after-load ',feature ,@forms)))
-
-(defmacro ptrv/with-library (feature &rest body)
-  "If require FEATURE is successful evaluate BODY."
-  (declare (indent defun))
-  `(when (require ',feature nil t)
-     ,@body))
-
-(defconst ptrv/font-lock-keywords
-  `((,(concat "(" (regexp-opt '("ptrv/after"
-                                "ptrv/with-library"
-                                "ptrv/add-auto-mode")
-                              'symbols)
-              "\\>[ \t']*\\_<\\(\\(?:\\sw\\|\\s_\\)+\\)\\_>")
-     (1 font-lock-keyword-face)
-     (2 font-lock-constant-face))
-    (,(concat "(" (regexp-opt '("ptrv/expose"
-                                "ptrv/hook-into-modes"
-                                "ptrv/add-to-hook")
-                              'symbols))
-     (1 font-lock-keyword-face))))
-
-(ptrv/after lisp-mode
-  (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
-    (font-lock-add-keywords mode ptrv/font-lock-keywords :append)))
-(ptrv/after ielm
-  (font-lock-add-keywords 'inferior-emacs-lisp-mode
-                          ptrv/font-lock-keywords :append))
-
-(defun ptrv/add-auto-mode (mode &rest patterns)
-  "Add entries to `auto-mode-alist' and use `MODE' for all given
-file `PATTERNS'."
-  (declare (indent defun))
-  (dolist (pattern patterns)
-    (add-to-list 'auto-mode-alist (cons pattern mode))))
-
-(defun ptrv/expose (function)
-  "Return an interactive version of FUNCTION."
-  (lexical-let ((lex-func function))
-    (lambda ()
-      (interactive)
-      (funcall lex-func))))
-
-(defmacro ptrv/hook-into-modes (func modes)
-  "Add FUNC to list of MODES."
-  `(dolist (mode ,modes)
-     (add-hook (intern (format "%s-hook" (symbol-name mode))) ,func)))
-
-(defmacro ptrv/add-to-hook (hook funcs)
-  "Add FUNCS to HOOK."
-  `(dolist (f ,funcs)
-     (add-hook ,hook f)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
 (setq auto-save-list-file-name
@@ -186,143 +106,26 @@ file `PATTERNS'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * package
+(setq load-prefer-newer t)
+
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/"))
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
 (package-initialize)
 
-(defvar ptrv/packages
-  '(dash
-    s
-    ;;vcs
-    magit
-    ahg
-    git-commit-mode
-    gitignore-mode
-    gitconfig-mode
-    yagist
-    git-messenger
-    diff-hl
-    ;; editor
-    smartparens
-    iflipb
-    iedit
-    starter-kit-eshell
-    multiple-cursors
-    expand-region
-    move-text
-    undo-tree
-    flycheck
-    flymake-cursor
-    ace-jump-mode
-    key-chord
-    ;; ido
-    smex
-    ido-ubiquitous
-    idomenu
-    ;; completion
-    company
-    pcmpl-git
-    ;; snippets
-    dropdown-list
-    yasnippet
-    ;; lisp
-    rainbow-delimiters
-    elisp-slime-nav
-    clojure-mode
-    cider
-    align-cljlet
-    litable
-    lexbind-mode
-    nrepl-eval-sexp-fu
-    ;; markup
-    markdown-mode
-    pandoc-mode
-    metaweblog
-    ;; ui
-    alert
-    popwin
-    rainbow-mode
-    highlight
-    zenburn-theme
-    ;; utilities
-    xml-rpc
-    refheap
-    pomodoro
-    edit-server
-    edit-server-htmlize
-    tea-time
-    google-this
-    htmlize
-    mwe-log-commands
-    diminish
-    browse-kill-ring
-    ;; tools
-    ag
-    exec-path-from-shell
-    ;; python
-    anaconda-mode
-    company-anaconda
-    python-info
-    pyenv-mode
-    highlight-indentation
-    ;; major modes
-    glsl-mode
-    apache-mode
-    yaml-mode
-    ;;cmake-mode
-    lua-mode
-    json-mode
-    ;;gnuplot
-    pkgbuild-mode
-    ;; project
-    find-file-in-project
-    projectile
-    ;; minor-modes
-    love-minor-mode
-    whitespace-cleanup-mode
-    ;; golang
-    go-mode
-    go-eldoc
-    go-errcheck
-    ;; c++
-    ggtags
-    irony
-    company-irony)
-  "A list of packages to ensure are installed at launch.")
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-(when *is-mac*
-  (add-to-list 'ptrv/packages 'dash-at-point))
-
-(defun ptrv/packages-installed-p ()
-  "Check whether all packages in `ptrv/packages' are installed."
-  (every 'package-installed-p ptrv/packages))
-
-(defun ptrv/install-packages ()
-  "Install all packages defined in `ptrv/packages'."
-  (unless (ptrv/packages-installed-p)
-    ;; check for new packages (package versions)
-    (message "%s" "Refresh package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    ;; install the missing packages
-    (dolist (p ptrv/packages)
-      (unless (package-installed-p p)
-        (package-install p)))))
-
-(ptrv/install-packages)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * custom settings
-(defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
-(ptrv/after cus-edit
-  (setq custom-file ptrv/custom-file))
-(load ptrv/custom-file :no-error :no-message)
+(require 'use-package)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
-(exec-path-from-shell-initialize)
+(use-package exec-path-from-shell
+  :ensure t
+  :init (exec-path-from-shell-initialize))
 
 (when *is-mac*
   (defun ptrv/homebrew-prefix (&optional formula)
@@ -341,6 +144,14 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         prefix))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * custom settings
+(defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
+(use-package cus-edit
+  :defer t
+  :init (load ptrv/custom-file :no-error :no-message)
+  :config (setq custom-file ptrv/custom-file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
               indent-tabs-mode nil ; And force use of spaces
@@ -353,7 +164,9 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
    (*is-mac* (executable-find "open"))
    (*is-linux* (executable-find "x-www-browser"))))
 
-(ptrv/after browse-url
+(use-package browse-url
+  :defer t
+  :config
   (setq browse-url-generic-program (ptrv/get-default-url-program)
         browse-url-browser-function 'browse-url-generic))
 
@@ -365,13 +178,16 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         (ansi-color-apply-on-region (point-min) (point-max)))))
 
 ;; Compilation from Emacs
-(ptrv/after compile
-  ;; Colorize output of Compilation Mode, see
-  ;; http://stackoverflow.com/a/3072831/355252
-  (require 'ansi-color)
-  (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
-  ;; other settings
-  (setq compilation-scroll-output t))
+(use-package compile
+  :defer t
+  :config
+  (progn
+    ;; Colorize output of Compilation Mode, see
+    ;; http://stackoverflow.com/a/3072831/355252
+    (require 'ansi-color)
+    (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
+    ;; other settings
+    (setq compilation-scroll-output t)))
 
 (setq initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
@@ -400,64 +216,88 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
       mouse-yank-at-point t
       url-configuration-directory (expand-file-name "url" ptrv/tmp-dir))
 
-(ptrv/after apropos
-  (setq apropos-do-all t))
+(use-package apropos
+  :defer t
+  :bind (("C-c h a" . apropos)
+         ("C-c h A" . apropos-command)))
 
-(auto-insert-mode 1)
-(auto-compression-mode t)
-(winner-mode 1)
-(windmove-default-keybindings 'super)
+(use-package autoinsert
+  :init (auto-insert-mode))
+(use-package jka-cmpr-hook
+  :init (auto-compression-mode))
+(use-package winner
+  :init (winner-mode)
+  :config
+  (progn
+    (bind-key "C-c w b" 'winner-undo)
+    (bind-key "C-c w f" 'winner-redo)))
 
-(ptrv/after recentf
+(use-package windmove
+  :config (windmove-default-keybindings 'super))
+
+(use-package recentf
+  :defer t
+  :init (recentf-mode)
+  :config
   (setq recentf-save-file (expand-file-name "recentf" ptrv/tmp-dir)
         recentf-max-saved-items 100))
-(recentf-mode t)
 
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward
-      uniquify-separator "/"
-      uniquify-after-kill-buffer-p t
-      uniquify-ignore-buffers-re "^\\*")
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator "/"
+        uniquify-after-kill-buffer-p t
+        uniquify-ignore-buffers-re "^\\*"))
 
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name "places" ptrv/tmp-dir))
+(use-package saveplace
+  :config
+  (progn
+    (setq-default save-place t)
+    (setq save-place-file (expand-file-name "places" ptrv/tmp-dir))))
 
 ;; savehist keeps track of some history
-(ptrv/after savehist
+(use-package savehist
+  :init (savehist-mode)
+  :config
   (setq savehist-additional-variables '(search ring regexp-search-ring)
         savehist-autosave-interval 60
         savehist-file (expand-file-name "savehist" ptrv/tmp-dir)))
-(savehist-mode t)
 
 ;; desktop.el
-(ptrv/after desktop
-  (setq desktop-save 'if-exists))
-(desktop-save-mode 1)
+(use-package desktop
+  :init (desktop-save-mode)
+  :config (setq desktop-save 'if-exists))
 
-(ptrv/after whitespace
+(use-package whitespace
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook 'whitespace-mode))
+  :config
   ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
   ;; portions of lines via faces.  Also indicate tabs via characters
   (setq whitespace-style '(face indentation space-after-tab space-before-tab
                                 tab-mark empty trailing)
         whitespace-line-column nil))    ; Use `fill-column' for overlong lines
 
-(ptrv/after whitespace-cleanup-mode
+(use-package whitespace-cleanup-mode
+  :ensure t
+  :init
+  (dolist (it '(prog-mode-hook text-mode-hook))
+    (add-hook it 'whitespace-cleanup-mode))
+  :config
   (setq whitespace-cleanup-mode-only-if-initially-clean t))
-
-(dolist (it '(prog-mode-hook text-mode-hook))
-  (add-hook it 'whitespace-mode)
-  (add-hook it 'whitespace-cleanup-mode))
 
 ;; disabled commands
 (setq disabled-command-function nil)
 
 ;;enable cua-mode for rectangular selections
-;; (cua-mode 1)
-(ptrv/after cua-base
-  (setq cua-enable-cua-keys nil))
+(use-package cua-base
+  :defer t
+  :config (setq cua-enable-cua-keys nil))
 
-(ptrv/after bookmark
+(use-package bookmark
+  :defer t
+  :config
   (setq bookmark-default-file (expand-file-name "bookmarks" ptrv/tmp-dir)))
 
 (defun ptrv/get-default-sound-command ()
@@ -470,9 +310,15 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;; * email
 (setq user-full-name "Peter Vasil"
       user-mail-address "mail@petervasil.net")
-(ptrv/after message
+
+(use-package message
+  :defer t
+  :config
   (setq message-send-mail-function 'smtpmail-send-it))
-(ptrv/after smtpmail
+
+(use-package smtpmail
+  :defer t
+  :config
   (setq smtpmail-smtp-user user-mail-address
         smtpmail-stream-type 'starttls
         smtpmail-default-smtp-server "mail.petervasil.net"
@@ -481,56 +327,65 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ediff
-(ptrv/after ediff
+(use-package ediff
+  :defer t
+  :config
   (setq ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * spelling
-(ptrv/after ispell
+(use-package ispell
+  :defer t
+  :config
   (setq ispell-program-name "aspell" ; use aspell instead of ispell
         ;; ispell-extra-args '("--sug-mode=ultra")
         ispell-dictionary "en"          ; default dictionary
         ispell-silently-savep t))       ; Don't ask when saving the private dict
 
-(ptrv/after flyspell
-  (setq flyspell-use-meta-tab nil
-        flyspell-issue-welcome-flag nil
-        flyspell-issue-message-flag nil)
-  (define-key flyspell-mode-map "\M-\t" nil)
-  (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
-  (define-key flyspell-mode-map (kbd "C-.") 'ispell-word))
+(use-package flyspell
+  :defer t
+  :config
+  (progn
+    (setq flyspell-use-meta-tab nil
+          flyspell-issue-welcome-flag nil
+          flyspell-issue-message-flag nil)
+    (define-key flyspell-mode-map "\M-\t" nil)
+    (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
+    (define-key flyspell-mode-map (kbd "C-.") 'ispell-word)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hippie-expand
 ;; http://trey-jackson.blogspot.de/2007/12/emacs-tip-5-hippie-expand.html
-(setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-file-name-partially
-        try-complete-file-name
-        try-expand-all-abbrevs
-        try-expand-list
-        try-expand-line
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
+(use-package hippie-exp
+  :bind ("M-/" . hippie-expand)
+  :config
+  (setq hippie-expand-try-functions-list
+        '(try-expand-dabbrev
+          try-expand-dabbrev-all-buffers
+          try-expand-dabbrev-from-kill
+          try-complete-file-name-partially
+          try-complete-file-name
+          try-expand-all-abbrevs
+          try-expand-list
+          try-expand-line
+          try-complete-lisp-symbol-partially
+          try-complete-lisp-symbol)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * look-and-feel
+(use-package rainbow-mode
+  :ensure t
+  :diminish rainbow-mode)
+
 (setq column-number-mode t)
-(global-hl-line-mode 1)
+(use-package hl-line
+  :init (global-hl-line-mode))
 
-;; (defvar ptrv/themes-dir (locate-user-emacs-file "themes/"))
-;; (add-to-list 'custom-theme-load-path
-;;              (concat ptrv/themes-dir "gandalf-theme-emacs"))
-;; (load-theme 'gandalf :no-confirm)
-(load-theme 'zenburn :no-confirm)
-
-(ptrv/hook-into-modes 'rainbow-mode '(lisp-mode
-                                      emacs-lisp-mode
-                                      lisp-interaction-mode
-                                      css-mode))
+(use-package zeburn
+  :ensure zenburn-theme
+  :defer t
+  :init (load-theme 'zenburn :no-confirm))
 
 (defvar todo-comment-face 'todo-comment-face)
 (defvar headline-face 'headline-face)
@@ -566,7 +421,11 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
-(ptrv/after ido
+(use-package ido
+  :init (ido-mode)
+  :bind (("C-c f r" . ptrv/ido-recentf-open)
+         ("C-x M-f" . ido-find-file-other-window))
+  :config
   (setq ido-enable-prefix nil
         ido-enable-flex-matching t
         ido-create-new-buffer 'always
@@ -574,12 +433,13 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         ido-default-file-method 'selected-window
         ido-max-directory-size 100000
         ido-save-directory-list-file (expand-file-name "ido.last" ptrv/tmp-dir)))
-(ido-mode t)
-(icomplete-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido-ubiquitous
-(ptrv/after ido-ubiquitous
+(use-package ido-ubiquitous
+  :ensure t
+  :init (ido-ubiquitous-mode)
+  :config
   (dolist (cmd '(sh-set-shell
                  ispell-change-dictionary
                  add-dir-local-variable
@@ -588,241 +448,245 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
                  sclang-dump-full-interface
                  kill-ring-search
                  tmm-menubar
-                 erc-iswitchb))
+                 erc-iswitchb
+                 iswitchb-buffer))
     (add-to-list 'ido-ubiquitous-command-overrides
                  `(disable exact ,(symbol-name cmd)))))
-(ido-ubiquitous-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smex
-(global-set-key (kbd "M-x") 'smex)
-(ptrv/after smex
-  (setq smex-save-file (expand-file-name "smex-items" ptrv/tmp-dir))
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands))
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(use-package smex
+  :ensure t
+  :bind (([remap execute-extended-command] . smex)
+         ("M-X" . smex-major-mode-commands))
+  :config
+  (setq smex-save-file (expand-file-name "smex-items" ptrv/tmp-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * idomenu
-(global-set-key (kbd "C-x C-i") 'idomenu)
+(use-package idomenu
+  :ensure t
+  :bind (("C-x C-i" . idomenu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Eshell
-(ptrv/after eshell
-  (message "Eshell config has been loaded !!!")
-  (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
+(use-package eshell
+  :bind (("C-x m" . eshell))
+  :commands (pcomplete/go pcomplete/lein)
+  :config
+  (progn
+    (message "Eshell config has been loaded !!!")
+    (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
 
-  (defun eshell/clear ()
-    "04Dec2001 - sailor, to clear the eshell buffer."
-    (interactive)
-    (let ((inhibit-read-only t))
-      (erase-buffer)))
+    (bind-key "C-x M" (lambda () (interactive) (eshell t)))
 
-  (defun eshell/e (file)
-    (find-file file))
+    (defun eshell/clear ()
+      "04Dec2001 - sailor, to clear the eshell buffer."
+      (interactive)
+      (let ((inhibit-read-only t))
+        (erase-buffer)))
 
-  (autoload 'pcomplete/go "pcmpl-go" nil nil)
-  (autoload 'pcomplete/lein "pcmpl-lein" nil nil)
-  (require 'pcmpl-cask))
+    (defun eshell/e (file)
+      (find-file file))
 
-;; Start eshell or switch to it if it's active.
-(global-set-key (kbd "C-x m") 'eshell)
-;; Start a new eshell even if one is active.
-(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
+    (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
-(ptrv/after company
-  (setq company-idle-delay 0.5)
-  (setq company-tooltip-limit 10)
-  (setq company-minimum-prefix-length 2)
-  (setq company-show-numbers t)
-  (setq company-global-modes '(not magit-status-mode))
-  (setq company-transformers '(company-sort-by-occurrence))
+(use-package company
+  :ensure t
+  :defer t
+  :idle (global-company-mode)
+  :config
+  (progn
+    (setq company-idle-delay 0.5
+          company-tooltip-limit 10
+          company-minimum-prefix-length 2
+          company-show-numbers t
+          company-global-modes '(not magit-status-mode)
+          ;; company-transformers '(company-sort-by-occurrence))
+          )
+    (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+    (bind-key [remap complete-symbol] #'company-complete company-mode-map)))
 
-  (ptrv/after company-dabbrev
-    (setq company-dabbrev-downcase nil))
+;; (use-package company-statistics
+;;   :ensure t
+;;   :defer t
+;;   :init (company-statistics-mode))
 
-  (ptrv/with-library company-statistics
-    (company-statistics-mode)))
+(use-package company-dabbrev
+  :ensure company
+  :defer t
+  :config (setq company-dabbrev-downcase nil))
 
-(add-hook 'after-init-hook 'global-company-mode)
+(use-package company-quickhelp
+  :ensure company
+  :defer t
+  :init (company-quickhelp-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
-(require 'smartparens-config)
+(use-package smartparens
+  :ensure t
+  :init
+  (progn
+    (require 'smartparens-config)
+    (smartparens-global-mode)
+    (show-smartparens-global-mode))
+  :config
+  (progn
+    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
-(ptrv/after smartparens
-  ;; (let ((map smartparens-mode-map))
-  ;;   ;; Movement and navigation
-  ;;   (define-key map (kbd "C-M-f") #'sp-forward-sexp)
-  ;;   (define-key map (kbd "C-M-b") #'sp-backward-sexp)
-  ;;   (define-key map (kbd "C-M-u") #'sp-backward-up-sexp)
-  ;;   (define-key map (kbd "C-M-d") #'sp-down-sexp)
-  ;;   (define-key map (kbd "C-M-p") #'sp-backward-down-sexp)
-  ;;   (define-key map (kbd "C-M-n") #'sp-up-sexp)
-  ;;   ;; Deleting and killing
-  ;;   (define-key map (kbd "C-M-k") #'sp-kill-sexp)
-  ;;   (define-key map (kbd "C-M-w") #'sp-copy-sexp)
-  ;;   ;; Depth changing
-  ;;   (define-key map (kbd "M-s") #'sp-splice-sexp)
-  ;;   (define-key map (kbd "M-<up>") #'sp-splice-sexp-killing-backward)
-  ;;   (define-key map (kbd "M-<down>") #'sp-splice-sexp-killing-forward)
-  ;;   (define-key map (kbd "M-r") #'sp-splice-sexp-killing-around)
-  ;;   (define-key map (kbd "M-?") #'sp-convolute-sexp)
-  ;;   ;; Barfage & Slurpage
-  ;;   (define-key map (kbd "C-)")  #'sp-forward-slurp-sexp)
-  ;;   (define-key map (kbd "C-<right>") #'sp-forward-slurp-sexp)
-  ;;   (define-key map (kbd "C-}")  #'sp-forward-barf-sexp)
-  ;;   (define-key map (kbd "C-<left>") #'sp-forward-barf-sexp)
-  ;;   (define-key map (kbd "C-(")  #'sp-backward-slurp-sexp)
-  ;;   (define-key map (kbd "C-M-<left>") #'sp-backward-slurp-sexp)
-  ;;   (define-key map (kbd "C-{")  #'sp-backward-barf-sexp)
-  ;;   (define-key map (kbd "C-M-<right>") #'sp-backward-barf-sexp)
-  ;;   ;; Miscellaneous commands
-  ;;   (define-key map (kbd "M-S") #'sp-split-sexp)
-  ;;   (define-key map (kbd "M-J") #'sp-join-sexp)
-  ;;   (define-key map (kbd "C-M-t") #'sp-transpose-sexp))
+    (let ((map smartparens-strict-mode-map))
+      (dolist (it sp-paredit-bindings)
+        (define-key map (read-kbd-macro (car it)) (cdr it))))
 
-  ;; Some additional bindings for strict mode
-  (let ((map smartparens-strict-mode-map))
-    (define-key map (kbd "M-q") #'sp-indent-defun)
-    (define-key map (kbd "C-j") #'sp-newline)
-    (define-key map (kbd "M-?") #'sp-convolute-sexp)))
+    (bind-key "M-q" #'sp-indent-defun smartparens-strict-mode-map)
+    (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
+    (bind-key "M-?" #'sp-convolute-sexp smartparens-strict-mode-map)
 
-(smartparens-global-mode)
-(show-smartparens-global-mode)
+    ;;"Enable `smartparens-mode' in the minibuffer, during
+    ;;`eval-expression'."
+    (add-hook 'eval-expression-minibuffer-setup-hook
+              'smartparens-strict-mode)
 
-(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-
-(let ((map smartparens-strict-mode-map))
-  (dolist (it sp-paredit-bindings)
-    (define-key map (read-kbd-macro (car it)) (cdr it))))
-
-(defun ptrv/smartparens-setup-lisp-modes (modes)
-  "Setup Smartparens Lisp support in MODES.
+    (defun ptrv/smartparens-setup-lisp-modes (modes)
+      "Setup Smartparens Lisp support in MODES.
 
 Add Lisp pairs and tags to MODES, and use the a special, more strict
 keymap `ptrv/smartparens-lisp-mode-map'."
-  (when (symbolp modes)
-    (setq modes (list modes)))
-  (sp-local-pair modes "(" nil :bind "M-(")
-  (dolist (mode modes)
-    (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-      (add-hook hook 'smartparens-strict-mode))))
-
-;;"Enable `smartparens-mode' in the minibuffer, during
-;;`eval-expression'."
-(add-hook 'eval-expression-minibuffer-setup-hook
-          'smartparens-strict-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * lisp
-(defvar ptrv/lisp-common-modes
-  '(rainbow-delimiters-mode))
+      (when (symbolp modes)
+        (setq modes (list modes)))
+      (sp-local-pair modes "(" nil :bind "M-(")
+      (dolist (mode modes)
+        (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+          (add-hook hook 'smartparens-strict-mode))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
-(defun imenu-elisp-sections ()
-  "Add custom expression to imenu."
-  (setq imenu-prev-index-position-function nil)
-  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
-(add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
+(use-package lisp-mode
+  :defer t
+  :mode (("\\.el$" . emacs-lisp-mode)
+         ("/Cask$" . emacs-lisp-mode))
+  :config
+  (progn
+    (with-eval-after-load 'company
+      (defun ptrv/company-elisp--init ()
+        (setq-local company-backends '((company-capf :with company-dabbrev))))
+      (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
 
-(ptrv/after company
-  (defun ptrv/company-elisp--init ()
-    (setq-local company-backends '((company-capf :with company-dabbrev))))
-  (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
+    (defun imenu-elisp-sections ()
+      "Add custom expression to imenu."
+      (setq imenu-prev-index-position-function nil)
+      (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
+    (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-(ptrv/add-auto-mode 'emacs-lisp-mode "\\.el$")
-(defvar ptrv/emacs-lisp-common-modes
-  (append
-   '(turn-on-elisp-slime-nav-mode
-     turn-on-eldoc-mode)
-   ptrv/lisp-common-modes)
-  "Common modes for Emacs Lisp editing.")
-(ptrv/after lisp-mode
-  (dolist (mode ptrv/emacs-lisp-common-modes)
-    (add-hook 'emacs-lisp-mode-hook mode)
-    (add-hook 'lisp-interaction-mode-hook mode))
+    (defun ptrv/remove-elc-on-save ()
+      "If you’re saving an elisp file, likely the .elc is no longer valid."
+      (add-hook 'after-save-hook
+                (lambda ()
+                  (if (file-exists-p (concat buffer-file-name "c"))
+                      (delete-file (concat buffer-file-name "c"))))
+                nil :local))
 
-  (define-key emacs-lisp-mode-map (kbd "C-c C-z") 'switch-to-ielm)
-  (let ((map lisp-mode-shared-map))
-    (define-key map (kbd "RET") 'reindent-then-newline-and-indent)
-    (define-key map (kbd "C-c C-e") 'eval-and-replace)
-    (define-key map (kbd "C-c C-p") 'eval-print-last-sexp)
-    (define-key map (kbd "M-RET") 'ptrv/lisp-describe-thing-at-point))
+    (dolist (hook '(ptrv/remove-elc-on-save fontify-headline))
+      (add-hook 'emacs-lisp-mode-hook hook))
 
-  (ptrv/add-to-hook 'emacs-lisp-mode-hook '(lexbind-mode
-                                            ptrv/remove-elc-on-save
-                                            fontify-headline))
+    (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
+                                         lisp-interaction-mode
+                                         lisp-mode))
 
-  (defun ptrv/remove-elc-on-save ()
-    "If you’re saving an elisp file, likely the .elc is no longer valid."
-    (add-hook 'after-save-hook
-              (lambda ()
-                (if (file-exists-p (concat buffer-file-name "c"))
-                    (delete-file (concat buffer-file-name "c"))))
-              nil :local))
+    (bind-key "C-c C-z" 'switch-to-ielm emacs-lisp-mode-map)
 
-  (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
-                                       lisp-interaction-mode
-                                       lisp-mode)))
+    (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
+    (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
+    (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
+    (bind-key "M-RET" 'ptrv/lisp-describe-thing-at-point lisp-mode-shared-map)))
 
-(ptrv/after ielm
-  (ptrv/add-to-hook 'ielm-mode-hook ptrv/emacs-lisp-common-modes)
+(use-package elisp-slime-nav            ; Jump to definition of symbol at point
+  :ensure t
+  :defer t
+  :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
+  :diminish elisp-slime-nav-mode)
+
+(use-package eldoc                      ; Documentation in minibuffer
+  :defer t
+  ;; Enable Eldoc for `eval-expression', too
+  :init (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
+  :config
+  (setq-default eldoc-documentation-function #'describe-char-eldoc)
+  :diminish eldoc-mode)
+
+(use-package rainbow-delimiters         ; Highlight delimiters by depth
+  :ensure t
+  :defer t
+  :init (dolist (hook '(text-mode-hook prog-mode-hook))
+          (add-hook hook #'rainbow-delimiters-mode)))
+
+(use-package lexbind-mode
+  :ensure t
+  :defer t
+  :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
+
+(use-package ielm
+  :defer t
+  :config
   (ptrv/smartparens-setup-lisp-modes '(inferior-emacs-lisp-mode)))
 
-(ptrv/after inf-lisp
+(use-package inf-lisp
+  :defer t
+  :config
   (ptrv/smartparens-setup-lisp-modes '(inferior-lisp-mode)))
 
-(ptrv/after nrepl-eval-sexp-fu
-  (setq nrepl-eval-sexp-fu-flash-duration 0.5))
-(require 'nrepl-eval-sexp-fu)
+;; (use-package nrepl-eval-sexp-fu
+;;   :ensure t
+;;   :init (require 'nrepl-eval-sexp-fu)
+;;   :config
+;;   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
-(ptrv/after find-file-in-project
-  (add-to-list 'ffip-patterns "*.clj"))
+;; (ptrv/after find-file-in-project
+;;   (add-to-list 'ffip-patterns "*.clj"))
 
-(ptrv/after clojure-mode
-  (message "clojure config has been loaded !!!")
+;; (ptrv/after clojure-mode
+;;   (message "clojure config has been loaded !!!")
 
-  (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
+;;   (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
 
-  (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
+;;   (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
 
-  (defun ptrv/clojure-mode-init ()
-    (yas-minor-mode 1))
-  (add-hook 'clojure-mode-hook 'ptrv/clojure-mode-init))
+;;   (defun ptrv/clojure-mode-init ()
+;;     (yas-minor-mode 1))
+;;   (add-hook 'clojure-mode-hook 'ptrv/clojure-mode-init))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * nrepl
-(add-to-list 'same-window-buffer-names "*cider*")
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;; * nrepl
+;; (add-to-list 'same-window-buffer-names "*cider*")
 
-(ptrv/after cider-repl
-  (setq cider-repl-pop-to-buffer-on-connect t)
-  (setq cider-repl-popup-stacktraces t))
+;; (ptrv/after cider-repl
+;;   (setq cider-repl-pop-to-buffer-on-connect t)
+;;   (setq cider-repl-popup-stacktraces t))
 
-(ptrv/after nrepl-client
-  ;; (setq nrepl-port "4555")
-  (setq nrepl-buffer-name-show-port t))
+;; (ptrv/after nrepl-client
+;;   ;; (setq nrepl-port "4555")
+;;   (setq nrepl-buffer-name-show-port t))
 
-(ptrv/after cider-interaction
-  (setq cider-show-error-buffer nil))
+;; (ptrv/after cider-interaction
+;;   (setq cider-show-error-buffer nil))
 
-(ptrv/after cider-repl-mode
-  (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
-  (ptrv/smartparens-setup-lisp-modes '(cider-repl-mode)))
+;; (ptrv/after cider-repl-mode
+;;   (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
+;;   (ptrv/smartparens-setup-lisp-modes '(cider-repl-mode)))
 
-(ptrv/after cider-mode
-  (message "cider-mode config has been loaded!!!")
+;; (ptrv/after cider-mode
+;;   (message "cider-mode config has been loaded!!!")
 
-  (ptrv/hook-into-modes 'cider-turn-on-eldoc-mode
-                        '(cider-mode))
+;;   (ptrv/hook-into-modes 'cider-turn-on-eldoc-mode
+;;                         '(cider-mode))
 
-  ;; Show documentation/information with M-RET
-  (define-key cider-mode-map (kbd "M-RET") 'cider-doc))
+;;   ;; Show documentation/information with M-RET
+;;   (define-key cider-mode-map (kbd "M-RET") 'cider-doc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
@@ -834,9 +698,14 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                 (when (stringp method)
                   (member method '("su" "sudo"))))))))
 
-(ptrv/after tramp
-  (setq tramp-backup-directory-alist backup-directory-alist
-        tramp-persistency-file-name (expand-file-name "tramp" ptrv/tmp-dir)))
+(use-package tramp
+  :defer t
+  :config
+  (setq tramp-backup-directory-alist backup-directory-alist))
+(use-package tramp-cache
+  :defer t
+  :config
+  (setq tramp-persistency-file-name (expand-file-name "tramp" ptrv/tmp-dir)))
 
 (defun sudo-edit (&optional arg)
   "Edit buffer with superuser privileges."
@@ -848,8 +717,11 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ibuffer
-(ptrv/after ibuf-ext
-  (setq ibuffer-saved-filter-groups
+(use-package ibuf-ext
+  :defer t
+  :config
+  (setq ibuffer-show-empty-filter-groups nil
+        ibuffer-saved-filter-groups
         '(("default"
            ("IRC"      (mode . erc-mode))
            ("emacs" (or (name . "^\\*scratch\\*$")
@@ -866,89 +738,84 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                        (name . "\\*info\\*")))
            ("#!-config" (filename . ".cb-config"))
            ("ssh" (filename . "^/ssh.*"))
-           ("root" (filename . "^/sudo:root.*")))))
+           ("root" (filename . "^/sudo:root.*"))))))
 
-  (setq ibuffer-show-empty-filter-groups nil))
-
-(add-hook 'ibuffer-mode-hook
-          (lambda ()
-            (ibuffer-auto-mode 1)
-            (ibuffer-switch-to-saved-filter-groups "default")))
+(use-package ibuffer
+  :bind (([remap list-buffers] . ibuffer))
+  :init (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-auto-mode 1)
+              (ibuffer-switch-to-saved-filter-groups "default"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
-(ptrv/after yagist
-  (setq yagist-view-gist t))
-
-;; A key map for Gisting
-(defvar ptrv/gist-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "c" 'yagist-region-or-buffer)
-    (define-key map "p" 'yagist-region-or-buffer-private)
-    (define-key map "l" 'yagist-list)
-    map)
-  "Keymap for Gists.")
+(use-package yagist
+  :ensure t
+  :bind(("C-c G c" . yagist-region-or-buffer)
+        ("C-c G p" . yagist-region-or-buffer-private)
+        ("C-c G l" . yagist-list))
+  :config (setq yagist-view-gist t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * magit
 ;; newline after 72 chars in magit-log-edit-mode
-(ptrv/after magit
-  (add-hook 'magit-log-edit-mode-hook
-            (lambda ()
-              (set-fill-column 72)
-              (auto-fill-mode 1)))
+(use-package magit
+  :ensure t
+  :defer t
+  :bind (("C-x g" . magit-status))
+  :config
+  (progn
+    (add-hook 'magit-log-edit-mode-hook
+              (lambda ()
+                (set-fill-column 72)
+                (auto-fill-mode 1)))
 
-  ;; http://whattheemacsd.com/setup-magit.el-01.html
-  ;; full screen magit-status
-  (defadvice magit-status (around magit-fullscreen activate)
-    (window-configuration-to-register :magit-fullscreen)
-    ad-do-it
-    (delete-other-windows))
-  (defun magit-quit-session (&optional kill-buffer)
-    "Restores the previous window configuration and kills the magit buffer"
-    (interactive "P")
-    (if kill-buffer
-        (kill-buffer)
-      (bury-buffer))
-    (jump-to-register :magit-fullscreen))
-  (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
-  (define-key magit-status-mode-map (kbd "Q")
-    (ptrv/expose (apply-partially 'magit-quit-session t)))
+    ;; http://whattheemacsd.com/setup-magit.el-01.html
+    ;; full screen magit-status
+    (defadvice magit-status (around magit-fullscreen activate)
+      (window-configuration-to-register :magit-fullscreen)
+      ad-do-it
+      (delete-other-windows))
+    (defun magit-quit-session (&optional kill-buffer)
+      "Restores the previous window configuration and kills the magit buffer"
+      (interactive "P")
+      (if kill-buffer
+          (kill-buffer)
+        (bury-buffer))
+      (jump-to-register :magit-fullscreen))
+    (bind-keys :map magit-status-mode-map
+               ("q" . magit-quit-session)
+               ("Q" . (lambda () (interactive) (magit-quit-session t))))
 
-  (defun magit-toggle-whitespace ()
-    (interactive)
-    (if (member "-w" magit-diff-options)
-        (magit-dont-ignore-whitespace)
-      (magit-ignore-whitespace)))
+    (defun magit-toggle-whitespace ()
+      (interactive)
+      (if (member "-w" magit-diff-options)
+          (magit-dont-ignore-whitespace)
+        (magit-ignore-whitespace)))
 
-  (defun magit-ignore-whitespace ()
-    (interactive)
-    (add-to-list 'magit-diff-options "-w")
-    (magit-refresh))
+    (defun magit-ignore-whitespace ()
+      (interactive)
+      (add-to-list 'magit-diff-options "-w")
+      (magit-refresh))
 
-  (defun magit-dont-ignore-whitespace ()
-    (interactive)
-    (setq magit-diff-options (remove "-w" magit-diff-options))
-    (magit-refresh))
+    (defun magit-dont-ignore-whitespace ()
+      (interactive)
+      (setq magit-diff-options (remove "-w" magit-diff-options))
+      (magit-refresh))
 
-  (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
+    (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 
-  (setq magit-auto-revert-mode nil
-        magit-set-upstream-on-push t
-        magit-completing-read-function 'magit-ido-completing-read))
+    (setq magit-auto-revert-mode nil
+          magit-set-upstream-on-push t
+          magit-completing-read-function 'magit-ido-completing-read)))
 
-(global-set-key (kbd "C-x g") 'magit-status)
-
-(ptrv/after git-commit-mode
-  (add-hook 'git-commit-mode-hook
-            (lambda ()
-              (set-fill-column 72)
-              (auto-fill-mode 1)))
-
-  ;; ;; close popup when commiting
-  ;; (defadvice git-commit-commit (after delete-window activate)
-  ;;   (delete-window))
-  )
+(use-package git-commit-mode
+  :ensure t
+  :defer t
+  :init (add-hook 'git-commit-mode-hook
+                  (lambda ()
+                    (set-fill-column 72)
+                    (auto-fill-mode 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc-git
@@ -995,75 +862,111 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * git-messanger
-(ptrv/after git-messenger
-  (setq git-messenger:show-detail t))
-(global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
+(use-package git-messenger
+  :ensure t
+  :defer t
+  :bind (("C-x v p" . git-messenger:popup-message))
+  :config (setq git-messenger:show-detail t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diff-hl
-(global-diff-hl-mode +1)
+(use-package diff-hl
+  :ensure t
+  :init (global-diff-hl-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
-(require 'ahg nil t)
+(use-package ahg
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * yasnippet
 ;; (yas-global-mode 1)
-(ptrv/after yasnippet
-  (setq yas-prompt-functions '(yas-x-prompt
-                               yas-ido-prompt
-                               yas-completing-prompt))
-  (ptrv/with-library dropdown-list
-    (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))
+(use-package yasnippet
+  :ensure t
+  :defer t
+  :mode ("\\.yasnippet$" . yasnippet-mode)
+  :config
+  (progn
+    (setq yas-prompt-functions '(yas-x-prompt
+                                 yas-ido-prompt
+                                 yas-completing-prompt))
 
-  (unless yas-global-mode (yas-reload-all)))
+    (unless yas-global-mode (yas-reload-all))))
+
+(use-package dropdown-list
+  :ensure yasnippet
+  :defer t
+  :config (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * undo-tree
-(global-undo-tree-mode)
+(use-package undo-tree
+  :ensure t
+  :init (global-undo-tree-mode)
+  :diminish undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * insert-time.el
-(ptrv/with-library insert-time
-  (setq insert-date-format "%Y-%m-%d")
-  (setq insert-time-format "%H:%M:%S"))
+(use-package insert-time
+  :load-path "site-lisp/insert-time"
+  :config
+  (setq insert-date-format "%Y-%m-%d"
+        insert-time-format "%H:%M:%S"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pomodoro.el
-(ptrv/after pomodoro
-  (pomodoro-add-to-mode-line)
-  (setq pomodoro-sound-player (ptrv/get-default-sound-command))
-  (setq pomodoro-break-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))
-  (setq pomodoro-work-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)))
+(use-package pomodoro
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (pomodoro-add-to-mode-line)
+    (setq pomodoro-sound-player (ptrv/get-default-sound-command)
+          pomodoro-break-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)
+          pomodoro-work-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sql-mode
-(ptrv/after sql
-  (define-key sql-mode-map (kbd "C-c C-p p") 'sql-set-product)
-  (define-key sql-mode-map (kbd "C-c C-p i") 'sql-set-sqli-buffer))
+(use-package sql
+  :defer t
+  :config
+  (progn
+    (bind-key "C-c C-p p" 'sql-set-product sql-mode-map)
+    (bind-key "C-c C-p i" 'sql-set-sqli-buffer sql-mode-map)))
 
-(autoload 'sql-spatialite "sql-spatialite-ext"
-  "Run spatialite as an inferior process." t)
+(use-package sql-spatialite-ext
+  :defer t
+  :commands (sql-spatialite))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tea-time
-(autoload 'tea-time "tea-time" nil t)
-(ptrv/after tea-time
-  (setq tea-time-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))
-  (setq tea-time-sound-command (concat
+(use-package tea-time
+  :ensure t
+  :defer t
+  :commands (tea-time)
+  :config
+  (setq tea-time-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)
+        tea-time-sound-command (concat
                                 (ptrv/get-default-sound-command) " %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * xah lee modes
-(autoload 'xmsi-mode "xmsi-math-symbols-input"
-  "Load xmsi minor mode for inputting math/Unicode symbols." t)
-(ptrv/after xmsi-math-symbols-input
-  (define-key xmsi-keymap (kbd "S-SPC") 'nil)
-  (define-key xmsi-keymap (kbd "C-c C-8") 'xmsi-change-to-symbol))
+(use-package xmsi-math-symbols-input
+  :load-path "site-lisp/misc"
+  :defer t
+  :commands (xmsi-mode)
+  :config
+  (progn
+    (bind-key "S-SPC" 'nil xmsi-keymap)
+    ;; (bind-key "C-c C-8" 'xmsi-change-to-symbol xmsi-keymap)
+    ))
 
 ;; xub-mode
-(autoload 'xub-mode "xub-mode" "Load xub-mode for browsing Unicode." t)
+(use-package xub-mode
+  :load-path "site-lisp/misc"
+  :defer t
+  :commands (xub-mode))
 (defalias 'unicode-browser 'xub-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1079,7 +982,14 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
-(ptrv/after iflipb
+(use-package iflipb
+  :ensure t
+  :defer t
+  :bind (("C-<next>" . iflipb-next-buffer)
+         ("C-<prior>" . iflipb-previous-buffer)
+         ("<XF86Forward>" . iflipb-next-buffer)
+         ("<XF86Back>" . iflipb-previous-buffer))
+  :config
   (setq iflipb-ignore-buffers
         '("*Help*"
           "*Compile-Log*"
@@ -1096,121 +1006,122 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           " output*"
           "*tramp/"
           "*project-status*"
-          "SCLang:PostBuffer*"))
-  (setq iflipb-wrap-around t))
+          "SCLang:PostBuffer*")
+        iflipb-wrap-around t))
 
-(global-set-key (kbd "C-<next>") 'iflipb-next-buffer)
-(global-set-key (kbd "C-<prior>") 'iflipb-previous-buffer)
-(global-set-key (kbd "<XF86Forward>") 'iflipb-next-buffer)
-(global-set-key (kbd "<XF86Back>") 'iflipb-previous-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * search
-(defvar ptrv/search-map
-  (let ((map search-map))
-    (define-key map "O" 'multi-occur)
-    map)
-  "Keymap for searching.")
+(bind-key "C-c s" search-map)
+(bind-key "O" 'multi-occur search-map)
 
 ;; the silver searcher
-(ptrv/after ag
+(use-package ag
+  :ensure t
+  :defer t
+  :bind(("C-c a a" . ag)
+        ("C-c a A" . ag-regexp)
+        ("C-c a d" . ag-dired-regexp)
+        ("C-c a D" . ag-dired)
+        ("C-c a f" . ag-files)
+        ("C-c a k" . ag-kill-other-buffers)
+        ("C-c a K" . ag-kill-buffers))
+  :config
   (setq ag-highlight-search t
         ag-reuse-buffers t))
 
-(defvar ptrv/ag-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") 'ag-regexp)
-    (define-key map (kbd "A") 'ag)
-    (define-key map (kbd "d") 'ag-dired-regexp)
-    (define-key map (kbd "D") 'ag-dired)
-    (define-key map (kbd "f") 'ag-files)
-    (define-key map (kbd "k") 'ag-kill-other-buffers)
-    (define-key map (kbd "K") 'ag-kill-buffers)
-    map)
-  "Keymap for Ag")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * edit-server
-(ptrv/after edit-server
-  (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode)))
-  (setq edit-server-new-frame nil))
-(add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-(add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
-(edit-server-start)
+(use-package edit-server
+  :ensure t
+  :init
+  (progn
+    (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
+    (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
+    (edit-server-start))
+  :config
+  (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))
+        edit-server-new-frame nil))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iedit
-(setq iedit-toggle-key-default (kbd "C-;"))
-(define-key global-map iedit-toggle-key-default 'iedit-mode)
-(define-key isearch-mode-map iedit-toggle-key-default 'iedit-mode-from-isearch)
-(define-key esc-map iedit-toggle-key-default 'iedit-execute-last-modification)
-(define-key help-map iedit-toggle-key-default 'iedit-mode-toggle-on-function)
+(use-package iedit
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * google-this
-(google-this-mode 1)
+(use-package google-this
+  :ensure t
+  :init (google-this-mode)
+  :diminish google-this-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * popwin
-(defun ptrv/get-popwin-height (&optional size)
-  (let* ((default-values (cond ((>= (display-pixel-height) 1000) '(30 20 15))
-                               ((and (< (display-pixel-height) 1000)
-                                     (>= (display-pixel-height) 900)) '(25 20 15))
-                               ((< (display-pixel-height) 900) '(20 15 10)))))
-    (cond ((eq size 'small) (nth 2 default-values))
-          ((eq size 'medium) (nth 1 default-values))
-          ((eq size 'big) (car default-values))
-          (:else (car default-values)))))
+(use-package popwin
+  :ensure t
+  :init (popwin-mode)
+  :config
+  (progn
+    (bind-key "C-z" popwin:keymap)
 
-(require 'popwin)
-(ptrv/after popwin
-  (global-set-key (kbd "C-z") popwin:keymap)
-  (setq popwin:special-display-config
-      `((help-mode :height ,(ptrv/get-popwin-height) :stick t)
-        ("*Completions*" :noselect t)
-        ("*compilation*" :noselect t)
-        ("*Messages*")
-        ("*Occur*" :noselect t)
-        ("\\*Slime Description.*" :noselect t :regexp t :height ,(ptrv/get-popwin-height))
-        ("*magit-commit*" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
-        ("COMMIT_EDITMSG" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
-        ("*magit-diff*" :noselect t :height ,(ptrv/get-popwin-height) :width 80)
-        ("*magit-edit-log*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
-        ("*magit-process*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
-        ("\\*Slime Inspector.*" :regexp t :height ,(ptrv/get-popwin-height))
-        ("*Ido Completions*" :noselect t :height ,(ptrv/get-popwin-height))
-        ;;("*eshell*" :height 20)
-        ("\\*ansi-term\\*.*" :regexp t :height ,(ptrv/get-popwin-height))
-        ("*shell*" :height ,(ptrv/get-popwin-height))
-        (".*overtone.log" :regexp t :height ,(ptrv/get-popwin-height))
-        ("*gists*" :height ,(ptrv/get-popwin-height))
-        ("*sldb.*":regexp t :height ,(ptrv/get-popwin-height))
-        ("*Gofmt Errors*" :noselect t)
-        ("\\*godoc" :regexp t :height ,(ptrv/get-popwin-height))
-        ("*Shell Command Output*" :noselect t)
-        ("*nrepl-error*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
-        ("*nrepl-doc*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
-        ("*nrepl-src*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
-        ("\\*nrepl " :regexp t :height ,(ptrv/get-popwin-height 'medium) :stick t)
-        ("*Kill Ring*" :height ,(ptrv/get-popwin-height))
-        ("*project-status*" :noselect t)
-        ("*pytest*" :noselect t)
-        ("*Python*" :stick t)
-        ("*Python Doc*" :noselect t)
-        ("*jedi:doc*" :noselect t)
-        ("*Registers*" :noselect t)
-        ("*ielm*" :stick t)
-        ("*Flycheck errors*" :stick t :noselect t)
-        ("*processing-compilation*" :noselect t)
-        ("*anaconda-doc*" :noselect t))))
-(popwin-mode 1)
+    (defun ptrv/get-popwin-height (&optional size)
+      (let* ((default-values (cond ((>= (display-pixel-height) 1000) '(30 20 15))
+                                   ((and (< (display-pixel-height) 1000)
+                                         (>= (display-pixel-height) 900)) '(25 20 15))
+                                   ((< (display-pixel-height) 900) '(20 15 10)))))
+        (cond ((eq size 'small) (nth 2 default-values))
+              ((eq size 'medium) (nth 1 default-values))
+              ((eq size 'big) (car default-values))
+              (:else (car default-values)))))
+
+    (setq popwin:special-display-config
+          `((help-mode :height ,(ptrv/get-popwin-height) :stick t)
+            ("*Completions*" :noselect t)
+            ("*compilation*" :noselect t)
+            ("*Messages*")
+            ("*Occur*" :noselect t)
+            ("\\*Slime Description.*" :noselect t :regexp t :height ,(ptrv/get-popwin-height))
+            ("*magit-commit*" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
+            ("COMMIT_EDITMSG" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
+            ("*magit-diff*" :noselect t :height ,(ptrv/get-popwin-height) :width 80)
+            ("*magit-edit-log*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
+            ("*magit-process*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
+            ("\\*Slime Inspector.*" :regexp t :height ,(ptrv/get-popwin-height))
+            ("*Ido Completions*" :noselect t :height ,(ptrv/get-popwin-height))
+            ;;("*eshell*" :height 20)
+            ("\\*ansi-term\\*.*" :regexp t :height ,(ptrv/get-popwin-height))
+            ("*shell*" :height ,(ptrv/get-popwin-height))
+            (".*overtone.log" :regexp t :height ,(ptrv/get-popwin-height))
+            ("*gists*" :height ,(ptrv/get-popwin-height))
+            ("*sldb.*":regexp t :height ,(ptrv/get-popwin-height))
+            ("*Gofmt Errors*" :noselect t)
+            ("\\*godoc" :regexp t :height ,(ptrv/get-popwin-height))
+            ("*Shell Command Output*" :noselect t)
+            ("*nrepl-error*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
+            ("*nrepl-doc*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
+            ("*nrepl-src*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
+            ("\\*nrepl " :regexp t :height ,(ptrv/get-popwin-height 'medium) :stick t)
+            ("*Kill Ring*" :height ,(ptrv/get-popwin-height))
+            ("*project-status*" :noselect t)
+            ("*pytest*" :noselect t)
+            ("*Python*" :stick t)
+            ("*Python Doc*" :noselect t)
+            ("*jedi:doc*" :noselect t)
+            ("*Registers*" :noselect t)
+            ("*ielm*" :stick t)
+            ("*Flycheck errors*" :stick t :noselect t)
+            ("*processing-compilation*" :noselect t)
+            ("*anaconda-doc*" :noselect t)
+            ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
-(global-auto-revert-mode t)
-
-;; Also auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t
-      auto-revert-verbose nil)
+(use-package autorevert
+  :init (global-auto-revert-mode)
+  :config
+  ;; Also auto refresh dired, but be quiet about it
+  (setq global-auto-revert-non-file-buffers t
+        auto-revert-verbose nil))
 
 (setq tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
                         68 72 76 80 84 88 92 96 100 104 108 112 116 120))
@@ -1245,500 +1156,539 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-;; use ibuffer
-(global-set-key [remap list-buffers] 'ibuffer)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org
-(ptrv/add-auto-mode 'org-mode "\\.org\\'")
+(use-package org
+  :defer t
+  :mode ("\\.org\\'" . org-mode)
+  :bind (("C-c A" . org-agenda)
+         ("C-c b" . org-iswitchb)
+         ("C-c c" . org-capture)
+         ("C-c l" . org-store-link))
+  :config
+  (progn
+    (message "Org config has been loaded !!!")
 
-(ptrv/after org
-  (message "Org config has been loaded !!!")
+    (setq org-outline-path-complete-in-steps nil
+          org-completion-use-iswitchb nil
+          org-completion-use-ido t
+          org-log-done t
+          org-src-fontify-natively nil
+          ;; Set agenda files in custom.el or use default
+          ;; org-directory "~/Dropbox/org"
+          org-default-notes-file (expand-file-name "captures.org" org-directory)
+          ;; org-agenda-files `(,(expand-file-name "ptrv.org" org-directory))
+          org-link-mailto-program '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s")
+          )
 
-  (setq org-outline-path-complete-in-steps nil
-        org-completion-use-iswitchb nil
-        org-completion-use-ido t
-        org-log-done t
-        org-src-fontify-natively nil
-        ;; Set agenda files in custom.el or use default
-        ;; org-directory "~/Dropbox/org"
-        org-default-notes-file (expand-file-name "captures.org" org-directory)
-        ;; org-agenda-files '((concat org-directory "/ptrv.org"))
-        )
+    (with-eval-after-load 'yasnippet
+      (defun yas-org-very-safe-expand ()
+        (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
 
-  (ptrv/after org-clock
-    (setq org-clock-into-drawer t))
+      (defun org-mode-yasnippet-workaround ()
+        (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
+      (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround)
 
-  (setq org-link-mailto-program
-        '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
+      (defun org-mode-init ()
+        (turn-off-flyspell))
+      (add-hook 'org-mode-hook 'org-mode-init)
 
-  (ptrv/after org-mobile
-    (setq org-mobile-directory "~/Dropbox/MobileOrg"
-          org-mobile-files '("~/Dropbox/org/ptrv.org"
-                             "~/Dropbox/org/notes.org"
-                             "~/Dropbox/org/journal.org")
-          org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org"))
+      (bind-key "C-c g" 'org-sparse-tree org-mode-map))))
 
-  ;; yasnippet workaround
-  (ptrv/after yasnippet
-    (defun yas-org-very-safe-expand ()
-      (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
+(use-package org-clock
+  :ensure org
+  :defer t
+  :config (setq org-clock-into-drawer t))
 
-    (defun org-mode-yasnippet-workaround ()
-      (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
-    (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround))
+(use-package org-mobile
+  :ensure org
+  :defer t
+  :config
+  (setq org-mobile-directory "~/Dropbox/MobileOrg"
+        org-mobile-files '("~/Dropbox/org/ptrv.org"
+                           "~/Dropbox/org/notes.org"
+                           "~/Dropbox/org/journal.org")
+        org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org"))
 
-  (defun org-mode-init ()
-    (turn-off-flyspell))
+(use-package org-agenda
+  :ensure org
+  :defer t
+  :config
+  (setq org-agenda-custom-commands
+        '(("P" "Projects"
+           ((tags "PROJECT")))
+          ("H" "Home Lists"
+           ((tags "HOME")
+            (tags "COMPUTER")
+            (tags "DVD")
+            (tags "READING")))
+          ("W" "Work Lists"
+           ((tags "WORK")))
+          ("D" "Daily Action List"
+           ((agenda "" ((org-agenda-ndays 1)
+                        (org-agenda-sorting-strategy
+                         '((agenda time-up priority-down tag-up)))
+                        (org-deadline-warning-days 0))))))))
 
-  (add-hook 'org-mode-hook 'org-mode-init)
+(use-package org-capture
+  :ensure org
+  :defer t
+  :config
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
+           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
+          ("j" "Journal" entry (file+datetree (expand-file-name "journal.org" org-directory))
+           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1))))
 
-  (define-key org-mode-map (kbd "C-c g") 'org-sparse-tree)
+(use-package ob-core
+  :ensure org
+  :defer t
+  :config
+  (progn
+    (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+    ;; Make babel results blocks lowercase
+    (setq org-babel-results-keyword "results")
+    (defun bh/display-inline-images ()
+      (condition-case nil
+          (org-display-inline-images)
+        (error nil)))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((sh . t)
+       (python . t)
+       (C . t)
+       (octave . t)
+       (emacs-lisp . t)
+       (latex . t)
+       (dot . t)
+       (gnuplot . t)))))
 
-  (ptrv/after org-agenda
-    (setq org-agenda-custom-commands
-          '(("P" "Projects"
-             ((tags "PROJECT")))
-            ("H" "Home Lists"
-             ((tags "HOME")
-              (tags "COMPUTER")
-              (tags "DVD")
-              (tags "READING")))
-            ("W" "Work Lists"
-             ((tags "WORK")))
-            ("D" "Daily Action List"
-             ((agenda "" ((org-agenda-ndays 1)
-                          (org-agenda-sorting-strategy
-                           '((agenda time-up priority-down tag-up)))
-                          (org-deadline-warning-days 0))))))))
+(use-package ox
+  :ensure org
+  :defer t
+  :config (load "~/.org-publish-projects.el" 'noerror))
 
-  (ptrv/after org-capture
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
-             "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
-            ("j" "Journal" entry (file+datetree (expand-file-name "journal.org" org-directory))
-             "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1))))
-
-  (ptrv/after org-ditaa
-    (setq org-ditaa-jar-path "~/applications/ditaa.jar"))
-  (ptrv/after org-platuml
-    (setq org-plantuml-jar-path "~/applications/plantuml.jar"))
-
-  (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
-
-  ;; Make babel results blocks lowercase
-  (setq org-babel-results-keyword "results")
-
-  (defun bh/display-inline-images ()
-    (condition-case nil
-        (org-display-inline-images)
-      (error nil)))
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((sh . t)
-     (python . t)
-     (C . t)
-     (octave . t)
-     (emacs-lisp . t)
-     (latex . t)
-     (ditaa . t)
-     (dot . t)
-     (plantuml . t)
-     (gnuplot . t)))
-
-  ;; Use fundamental mode when editing plantuml blocks with C-c '
-  (add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
-  (add-to-list 'org-src-lang-modes '("sam" . sam))
-
-  ;; smartparens
-  (dolist (it '("*" "/" "=" "~"))
-    (sp-local-pair 'org-mode it it))
-
-  ;; org publish projects file
-  (ptrv/after ox
-    (load "~/.org-publish-projects.el" 'noerror)))
-
-;; autoload org-bookmark-jump-unhide to fix compile warning
-(autoload 'org-bookmark-jump-unhide "org" nil nil)
-
-(ptrv/after calendar
-  (setq calendar-week-start-day 1))
+(use-package calendar
+  :defer t
+  :config (setq calendar-week-start-day 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org2blog
-(ptrv/with-library org2blog-autoloads
-  (ptrv/after org2blog
-    (load "~/.org-blogs.el" 'noerror)))
+(use-package org2blog
+  :load-path "site-lisp"
+  :defer t
+  :config (load "~/.org-blogs.el" 'noerror))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * info-look
+(use-package info-look
+  :commands info-lookup-add-help)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * latex
-(load "auctex.el" 'noerror t t)
-(load "preview-latex.el" 'noerror t t)
+(use-package tex-site
+  :ensure auctex)
 
-(ptrv/after tex
-  (message "TeX config has been loaded !!!")
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        TeX-source-correlate-method 'synctex
-        TeX-source-correlate-mode t)
+(use-package tex
+  :ensure auctex
+  :defer t
+  :config
+  (progn
+    (message "TeX config has been loaded !!!")
+    (setq TeX-auto-save t
+          TeX-parse-self t
+          TeX-source-correlate-method 'synctex
+          TeX-source-correlate-mode t)
 
-  (setq-default TeX-master nil
-                TeX-PDF-mode t
-                TeX-command-default "latexmk")
+    (setq-default TeX-master nil
+                  TeX-PDF-mode t
+                  TeX-command-default "latexmk")
 
-  (dolist (cmd '(("latexmk" "latexmk %s" TeX-run-TeX nil
-                  (latex-mode doctex-mode) :help "Run latexmk")
-                 ("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
-                  (latex-mode doctex-mode) :help "Run latexmk -c")
-                 ("latexmk cleanall" "latexmk -C %s" TeX-run-TeX nil
-                  (latex-mode doctex-mode) :help "Run latexmk -C")))
-    (add-to-list 'TeX-command-list cmd t))
+    (dolist (cmd '(("latexmk" "latexmk %s" TeX-run-TeX nil
+                    (latex-mode doctex-mode) :help "Run latexmk")
+                   ("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
+                    (latex-mode doctex-mode) :help "Run latexmk -c")
+                   ("latexmk cleanall" "latexmk -C %s" TeX-run-TeX nil
+                    (latex-mode doctex-mode) :help "Run latexmk -C")))
+      (add-to-list 'TeX-command-list cmd t))
 
-  ;; Replace the rotten Lacheck with Chktex
-  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
+    ;; Replace the rotten Lacheck with Chktex
+    (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
 
-  (cond (*is-linux*
-         (add-to-list 'TeX-expand-list '("%C" (lambda () (buffer-file-name))) t)
-         (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
-         (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
-        (*is-mac*
-         (setq TeX-view-program-selection '((output-pdf "Skim")))
-         (setq TeX-view-program-list
-               '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b"))))))
+    (cond (*is-linux*
+           (add-to-list 'TeX-expand-list '("%C" (lambda () (buffer-file-name))) t)
+           (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
+           (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
+          (*is-mac*
+           (setq TeX-view-program-selection '((output-pdf "Skim")))
+           (setq TeX-view-program-list
+                 '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))))
 
-(ptrv/after latex
-  (message "LaTeX config has been loaded !!!")
+(use-package latex
+  :ensure auctex
+  :defer t
+  :config
+  (progn
+    (message "LaTeX config has been loaded !!!")
 
-  (ptrv/add-to-hook 'LaTeX-mode-hook '(LaTeX-math-mode
-                                       reftex-mode
-                                       auto-fill-mode))
+    (dolist (hook '(LaTeX-math-mode reftex-mode auto-fill-mode))
+      (add-hook 'LaTeX-mode-hook hook))
 
-  (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
+    (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
 
-  ;; clean intermediate files from latexmk
-  (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
-    (add-to-list 'LaTeX-clean-intermediate-suffixes suffix))
+    ;; clean intermediate files from latexmk
+    (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
+      (add-to-list 'LaTeX-clean-intermediate-suffixes suffix))
 
-  (autoload 'info-lookup-add-help "info-look" nil nil)
-  (info-lookup-add-help
-   :mode 'latex-mode
-   :regexp ".*"
-   :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
-   :doc-spec '(("(latex2e)Concept Index" )
-               ("(latex2e)Command Index")))
+    (info-lookup-add-help
+     :mode 'latex-mode
+     :regexp ".*"
+     :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
+     :doc-spec '(("(latex2e)Concept Index" )
+                 ("(latex2e)Command Index")))))
 
-  (require 'pstricks))
+(use-package pstricks
+  :load-path "site-lisp/misc"
+  :ensure auctex
+  :defer t)
 
-(ptrv/after reftex
-  (message "RefTeX config has been loaded !!!")
-
+(use-package reftex
+  :ensure auctex
+  :defer t
+  :config
   (setq reftex-plug-into-AUCTeX t
         ;; Recommended optimizations
         reftex-enable-partial-scans t
         reftex-save-parse-info t
-        reftex-use-multiple-selection-buffers t)
-
-  (setq reftex-ref-style-default-list '("Hyperref")))
+        reftex-use-multiple-selection-buffers t
+        reftex-ref-style-default-list '("Hyperref")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * filetypes
-(ptrv/add-auto-mode 'shell-script-mode
-  "\\.zsh-template$" "\\.zsh$" "zsh\\.*")
+(use-package sh-script
+  :mode (("\\.zsh-template$" . shell-script-mode)
+         ("\\.zsh$" . shell-script-mode)
+         ("zsh\\.*" . shell-script-mode)))
 
-(ptrv/add-auto-mode 'css-mode "\\.css$")
-;; (ptrv/add-auto-mode 'js2-mode "\\.js\\(on\\)?$")
-(ptrv/add-auto-mode 'nxml-mode "\\.xml$")
+(use-package css-mode
+  :mode ("\\.css$" . css-mode))
 
-(ptrv/add-auto-mode 'ruby-mode "\\.rb$" "Rakefile$")
-(ptrv/add-auto-mode 'yaml-mode
-  "\\.yml$" "\\.yaml$" "\\.ya?ml$")
-
-;; Snippets
-(autoload 'snippet-mode "yasnippet")
-(ptrv/add-auto-mode 'snippet-mode "\\.yasnippet$")
+(use-package yaml-mode
+  :ensure t
+  :mode (("\\.yml$" . yaml-mode)
+         ("\\.yaml$" .  yaml-mode)
+         ("\\.ya?ml$" .  yaml-mode)))
 
 ;; pd-mode
-(autoload 'pd-mode "pd-mode" "autoloaded" t)
-(ptrv/add-auto-mode 'pd-mode "\\.pat$" "\\.pd$")
+(use-package pd-mode
+  :mode (("\\.pat$" . pd-mode)
+         ("\\.pd$" . pd-mode)))
 
 ;; gitconfig
-(ptrv/add-auto-mode 'gitconfig-mode "gitconfig*")
+(use-package gitconfig-mode
+  :ensure t
+  :mode ("gitconfig*" . gitconfig-mode))
 
 ;; cmake
-(autoload 'cmake-mode "cmake-mode" "cmake-mode" t)
-(ptrv/add-auto-mode 'cmake-mode "CMakeLists\\.txt\\'" "\\.cmake\\'")
+(use-package cmake-mode
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+         ("\\.cmake\\'" . cmake-mode)))
 
 ;; desktop-entry-mode
-(autoload 'desktop-entry-mode "desktop-entry-mode" "Desktop Entry mode" t)
-(ptrv/add-auto-mode 'desktop-entry-mode "\\.desktop\\(\\.in\\)?$")
-(add-hook 'desktop-entry-mode-hook 'turn-on-font-lock)
+(use-package desktop-entry-mode
+  :load-path "site-lisp/misc"
+  :init (add-hook 'desktop-entry-mode-hook 'turn-on-font-lock)
+  :commands (desktop-entry-mode)
+  :mode ("\\.desktop\\(\\.in\\)?$" . desktop-entry-mode))
 
 ;; glsl-mode
-(autoload 'glsl-mode "glsl-mode" nil t)
-(ptrv/add-auto-mode 'glsl-mode
-  "\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'")
+(use-package glsl-mode
+  :ensure t
+  :mode (("\\.glsl\\'" . glsl-mode)
+         ("\\.vert\\'" . glsl-mode)
+         ("\\.frag\\'" . glsl-mode)
+         ("\\.geom\\'" . glsl-mode)))
 
 ;; IanniX
-(ptrv/add-auto-mode 'js-mode "\\.nxscript$")
+(use-package js-mode
+  :mode ("\\.nxscript$" . js-mode))
 
 ;; ChucK
-(autoload 'chuck-mode "chuck-mode" nil t)
-(ptrv/add-auto-mode 'chuck-mode "\\.ck$")
+(use-package chuck-mode
+  :load-path "site-lisp/chuck-mode"
+  :mode ("\\.ck$" . chuck-mode))
 
 ;; arduino
-(autoload 'arduino-mode "arduino-mode" nil t)
-(ptrv/add-auto-mode 'arduino-mode "\\.ino\\'")
+(use-package arduino-mode
+  :load-path "site-lisp/arduino-mode"
+  :mode ("\\.ino\\'" . arduino-mode))
 
 ;; arch linux
-(ptrv/add-auto-mode 'pkgbuild-mode "/PKGBUILD$")
-(ptrv/add-auto-mode 'shell-script-mode "\\.install$")
-(ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$")
+(use-package pkgbuild-mode
+  :ensure t
+  :mode ("/PKGBUILD$" . pkgbuild-mode))
+;; (ptrv/add-auto-mode 'shell-script-mode "\\.install$")
+;; (ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$")
 
 ;; json
-(ptrv/add-auto-mode 'json-mode "\\.json$")
-
-;; Carton
-(ptrv/add-auto-mode 'emacs-lisp-mode "/Carton$" "/Cask$")
+(use-package json-mode
+  :ensure t
+  :mode ("\\.json$" . json-mode))
 
 ;; gnuplot
-(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-(autoload 'gnuplot-make-buffer "gnuplot"
-  "open a buffer in gnuplot mode" t)
-(ptrv/add-auto-mode 'gnuplot-mode "\\.gp$")
+(use-package gnuplot
+  :defer t
+  :commands (gnuplot-mode gnuplot-make-buffer)
+  :mode ("\\.gp$" . gnuplot-mode))
 
 ;;;; * abbrev
-(define-abbrev-table 'global-abbrev-table
-  '(
-    ;; typo corrections
-    ("teh" "the")
-    ))
-(setq save-abbrevs nil)              ; stop asking whether to save newly
-                                     ; added abbrev when quitting emacs
-(setq-default abbrev-mode t)            ; turn on abbrev mode globally
+(use-package abbrev
+  :defer t
+  :init (setq-default abbrev-mode t)
+  :config
+  (progn
+    (define-abbrev-table 'global-abbrev-table
+      '(
+        ;; typo corrections
+        ("teh" "the")
+        ))
+    (setq save-abbrevs nil))
+  :diminish abbrev-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * markdown
-(ptrv/add-auto-mode 'markdown-mode "\\.md$" "\\.markdown$" "\\.mkd$")
-
-(ptrv/after markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :defer t
+  :mode (("\\.md$" . markdown-mode)
+         ("\\.markdown$" . markdown-mode)
+         ("\\.mkd$" . markdown-mode))
+  :config
   (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
-(add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-(add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)
-(ptrv/add-auto-mode 'markdown-mode "\\.text$")
+(use-package pandoc-mode
+  :ensure t
+  :defer t
+  :mode ("\\.text$" . markdown-mode)
+  :pre-load
+  (progn
+    (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+    (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * golang
-(ptrv/after go-mode
-  (message "go-mode config has been loaded !!!")
 
-  (defun ptrv/locate-godoc-src-file (f)
-    (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
+(use-package go-mode
+  :ensure t
+  :commands (ptrv/go-create-package)
+  :bind (("M-." . godef-jump)
+         ("C-c i" . go-goto-imports)
+         ("C-c C-r" . go-remove-unused-imports)
+         ("C-c C-p" . ptrv/go-create-package)
+         ("C-c C-c c" . ptrv/go-run)
+         ("C-c C-c r" . ptrv/go-run-buffer)
+         ("C-c C-c b" . ptrv/go-build)
+         ("C-c C-c t" . ptrv/go-test))
+  :defer t
+  :config
+  (progn
+    (message "go-mode config has been loaded !!!")
 
-  (add-to-list 'load-path (ptrv/locate-godoc-src-file
-                           "github.com/nsf/gocode/emacs-company"))
-  (ptrv/after company
-    (ptrv/with-library company-go
-      (setq company-go-show-annotation t)
-      (add-hook 'go-mode-hook
-                (lambda () (setq-local company-backends
-                                       '((company-go :with company-yasnippet)))))))
+    ;; (defun ptrv/locate-godoc-src-file (f)
+    ;;   (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
 
-  ;; compile fucntions
-  (defun ptrv/go-build ()
-    "compile project"
-    (interactive)
-    (compile "go build"))
+    ;; (add-to-list 'load-path (ptrv/locate-godoc-src-file
+    ;;                          "github.com/nsf/gocode/emacs-company"))
 
-  (defun ptrv/go-test (arg)
-    "test project"
-    (interactive "P")
-    (compile (concat "go test" (if arg " -v"))))
+    ;; compile fucntions
+    (defun ptrv/go-build ()
+      "compile project"
+      (interactive)
+      (compile "go build"))
 
-  ;; (defun ptrv/go-chk ()
-  ;;   "gocheck project"
-  ;;   (interactive)
-  ;;   (compile "go test -gocheck.vv"))
+    (defun ptrv/go-test (arg)
+      "test project"
+      (interactive "P")
+      (compile (concat "go test" (if arg " -v"))))
 
-  (defun ptrv/read-compile--cmd (default-cmd read-cmd?)
-    (if read-cmd? (compilation-read-command default-cmd) default-cmd))
+    ;; (defun ptrv/go-chk ()
+    ;;   "gocheck project"
+    ;;   (interactive)
+    ;;   (compile "go test -gocheck.vv"))
 
-  (defun ptrv/go-run (arg)
-    "go run current package"
-    (interactive "p")
-    (let (files-list
-          go-list-result
-          go-list-result-list
-          (rawresult (process-lines
-                      "go" "list" "-f"
-                      "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}")))
-      (when rawresult
-        ;; get package files as list
-        (setq go-list-result-list
-              (s-split ","
-                       (car (process-lines
-                             "go" "list" "-f"
-                             "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}"))
-                       t))
-        ;; escape space in file names
-        (when go-list-result-list)
-        (setq go-list-result
-              (mapcar
-               (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
-        (setq files-list (s-join " " go-list-result))
-        (compile (concat (ptrv/read-compile--cmd "go run" (= arg 16)) " " files-list
-                         (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))))
+    (defun ptrv/read-compile--cmd (default-cmd read-cmd?)
+      (if read-cmd? (compilation-read-command default-cmd) default-cmd))
 
-  (defun ptrv/go-run-buffer (arg)
-    "go run current buffer"
-    (interactive "p")
-    (compile (concat
-              (ptrv/read-compile--cmd "go run" (= arg 16)) " " buffer-file-name
-              (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))
+    (defun ptrv/go-run (arg)
+      "go run current package"
+      (interactive "p")
+      (let (files-list
+            go-list-result
+            go-list-result-list
+            (rawresult (process-lines
+                        "go" "list" "-f"
+                        "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}")))
+        (when rawresult
+          ;; get package files as list
+          (setq go-list-result-list
+                (s-split ","
+                         (car (process-lines
+                               "go" "list" "-f"
+                               "{{range .GoFiles}}{{.}},{{end}}{{range .CgoFiles}}{{.}},{{end}}"))
+                         t))
+          ;; escape space in file names
+          (when go-list-result-list)
+          (setq go-list-result
+                (mapcar
+                 (lambda (x) (s-replace " " "\\ " x)) go-list-result-list))
+          (setq files-list (s-join " " go-list-result))
+          (compile (concat (ptrv/read-compile--cmd "go run" (= arg 16)) " " files-list
+                           (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))))
 
-  (defun ptrv/go-mode-init ()
-    (yas-minor-mode +1)
-    (add-hook 'before-save-hook 'gofmt-before-save nil :local)
-    (hs-minor-mode +1)
-    (go-eldoc-setup)
-    (setq-local flycheck-check-syntax-automatically '(save))
-    (whitespace-mode -1)
-    (whitespace-cleanup-mode -1))
+    (defun ptrv/go-run-buffer (arg)
+      "go run current buffer"
+      (interactive "p")
+      (compile (concat
+                (ptrv/read-compile--cmd "go run" (= arg 16)) " " buffer-file-name
+                (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))
 
-  (add-hook 'go-mode-hook 'ptrv/go-mode-init)
+    (defun ptrv/go-mode-init ()
+      (yas-minor-mode +1)
+      (add-hook 'before-save-hook 'gofmt-before-save nil :local)
+      (hs-minor-mode +1)
+      (go-eldoc-setup)
+      (setq-local flycheck-check-syntax-automatically '(save))
+      (whitespace-mode -1)
+      (whitespace-cleanup-mode -1))
 
-  (defvar ptrv/go-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "c" 'ptrv/go-run)
-      (define-key map "r" 'ptrv/go-run-buffer)
-      (define-key map "b" 'ptrv/go-build)
-      (define-key map "t" 'ptrv/go-test)
-      ;; (define-key map "g" 'ptrv/go-chk)
-      map)
-    "Keymap for some custom go-mode fns.")
+    (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
-  (let ((map go-mode-map))
-    (define-key map (kbd "M-.") 'godef-jump)
-    (define-key map (kbd "C-c i") 'go-goto-imports)
-    (define-key map (kbd "C-c C-r") 'go-remove-unused-imports)
-    (define-key map (kbd "C-c C-p") 'ptrv/go-create-package)
-    (define-key map (kbd "C-c C-c") ptrv/go-mode-map))
+    (with-eval-after-load 'find-file-in-project
+      (add-to-list 'ffip-patterns "*.go"))
 
-  (ptrv/after find-file-in-project
-    (add-to-list 'ffip-patterns "*.go")))
+    (defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
 
-(defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
-
-(defun ptrv/go-create-package (name &optional arg)
-  "Create a new sketch with NAME under GOPATH src folder.
+    (defun ptrv/go-create-package (name &optional arg)
+      "Create a new sketch with NAME under GOPATH src folder.
 
 If ARG is not nil, create package in current directory"
-  (interactive "sInsert new package name: \nP")
-  (let ((name (remove ?\s name))
-        (get-root-dir (lambda ()
-                        (concat (car (split-string (getenv "GOPATH") ":"))
-                                "/src/" (completing-read
-                                         "Use namespace:"
-                                         ptrv/go-default-namespaces)))))
-    (if (not (string-equal "" name))
-        (progn
-          (unless arg
-            (setq name (concat (file-name-as-directory (funcall get-root-dir)) name)))
-          (make-directory name)
-          (find-file (concat (file-name-as-directory name)
-                             (read-from-minibuffer "File name: " "main.go"))))
-      (error "Please insert a package name"))))
+      (interactive "sInsert new package name: \nP")
+      (let ((name (remove ?\s name))
+            (get-root-dir (lambda ()
+                            (concat (car (split-string (getenv "GOPATH") ":"))
+                                    "/src/" (completing-read
+                                             "Use namespace:"
+                                             ptrv/go-default-namespaces)))))
+        (if (not (string-equal "" name))
+            (progn
+              (unless arg
+                (setq name (concat (file-name-as-directory (funcall get-root-dir)) name)))
+              (make-directory name)
+              (find-file (concat (file-name-as-directory name)
+                                 (read-from-minibuffer "File name: " "main.go"))))
+          (error "Please insert a package name"))))))
+
+(use-package company-go
+  :ensure go-mode
+  :defer t
+  :init (add-hook 'go-mode-hook
+                  (lambda () (setq-local company-backends
+                                         '((company-go :with company-yasnippet)))))
+  :config (setq company-go-show-annotation nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * xml
-(ptrv/add-auto-mode 'nxml-mode "\\.gpx$")
+(use-package nxml-mode
+  :mode (("\\.xml$" . nxml-mode)
+         ("\\.gpx$" . nxml-mode))
+  :defer t
+  :config
+  (progn
+    (defun gpx-setup ()
+      (when (and (stringp buffer-file-name)
+                 (string-match "\\.gpx\\'" buffer-file-name))
+        (setq-local nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
+        (setq-local nxml-heading-element-name-regexp "name\\|time")))
+    (add-hook 'nxml-mode-hook 'gpx-setup)
 
-(ptrv/after nxml-mode
-  ;; make nxml outline work with gpx files
-  (defun gpx-setup ()
-    (when (and (stringp buffer-file-name)
-               (string-match "\\.gpx\\'" buffer-file-name))
-      (setq-local nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
-      (setq-local nxml-heading-element-name-regexp "name\\|time")))
-  (add-hook 'nxml-mode-hook 'gpx-setup)
-
-  (setq nxml-slash-auto-complete-flag t
-        nxml-sexp-element-flag t))
+    (setq nxml-slash-auto-complete-flag t
+          nxml-sexp-element-flag t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
-(defun erc-connect ()
-  "Start up erc and connect to freedonde."
-  (interactive)
-  (erc :server "irc.freenode.net"
-       :full-name "Peter V."
-       :port 6667
-       :nick "ptrv"))
+;; (defun erc-connect ()
+;;   "Start up erc and connect to freedonde."
+;;   (interactive)
+;;   (require 'erc)
+;;   (erc :server "irc.freenode.net"
+;;        :full-name "Peter V."
+;;        :port 6667
+;;        :nick "ptrv"))
 
-(ptrv/after erc
-  (ptrv/after erc-services
-    (setq erc-prompt-for-nickserv-password nil)
-    (let ((freenode-credentials (netrc-credentials "freenode"))
-          (oftc-credentials (netrc-credentials "oftc")))
-      (setq erc-nickserv-passwords
-            `((freenode (,(cons (car freenode-credentials)
-                                (cadr freenode-credentials))))
-              (oftc (,(cons (car oftc-credentials)
-                            (cadr oftc-credentials))))))))
-  (erc-services-mode +1)
+;; (ptrv/after erc
+;;   (ptrv/after erc-services
+;;     (setq erc-prompt-for-nickserv-password nil)
+;;     (let ((freenode-credentials (netrc-credentials "freenode"))
+;;           (oftc-credentials (netrc-credentials "oftc")))
+;;       (setq erc-nickserv-passwords
+;;             `((freenode (,(cons (car freenode-credentials)
+;;                                 (cadr freenode-credentials))))
+;;               (oftc (,(cons (car oftc-credentials)
+;;                             (cadr oftc-credentials))))))))
+;;   (erc-services-mode +1)
 
-  ;;IRC
-  (ptrv/after erc-join
-    (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs")))
+;;   ;;IRC
+;;   (ptrv/after erc-join
+;;     (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs")))
 
-    (cond ((string= system-name "alderaan")
-           (setq erc-autojoin-channels-alist
-                 (list (append (car erc-autojoin-channels-alist)
-                               '("#supercollider" "#archlinux")))))
-          ((string= system-name "anoth")
-           (setq erc-autojoin-channels-alist
-                 (list (append (car erc-autojoin-channels-alist)
-                               '("#supercollider" "#archlinux")))))
-          ;; (t (setq erc-autojoin-channels-alist
-          ;;          '(("freenode.net" "#emacs" "#clojure" "overtone"))))
-          ))
-  (erc-autojoin-mode +1)
+;;     (cond ((string= system-name "alderaan")
+;;            (setq erc-autojoin-channels-alist
+;;                  (list (append (car erc-autojoin-channels-alist)
+;;                                '("#supercollider" "#archlinux")))))
+;;           ((string= system-name "anoth")
+;;            (setq erc-autojoin-channels-alist
+;;                  (list (append (car erc-autojoin-channels-alist)
+;;                                '("#supercollider" "#archlinux")))))
+;;           ;; (t (setq erc-autojoin-channels-alist
+;;           ;;          '(("freenode.net" "#emacs" "#clojure" "overtone"))))
+;;           ))
+;;   (erc-autojoin-mode +1)
 
-  (ptrv/after erc-match
-    (setq erc-keywords '("ptrv")))
-  (erc-match-mode +1))
+;;   (ptrv/after erc-match
+;;     (setq erc-keywords '("ptrv")))
+;;   (erc-match-mode +1))
 
-(ptrv/after erc-track
-  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                  "324" "329" "332" "333" "353" "477")))
+;; (ptrv/after erc-track
+;;   (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+;;                                   "324" "329" "332" "333" "353" "477")))
 
-(make-variable-buffer-local 'erc-fill-column)
-(ptrv/after erc
-  ;;change wrap width when window is resized
-  (add-hook 'window-configuration-change-hook
-            (lambda ()
-              (save-excursion
-                (walk-windows
-                 (lambda (w)
-                   (let ((buffer (window-buffer w)))
-                     (set-buffer buffer)
-                     (when (eq major-mode 'erc-mode)
-                       (setq erc-fill-column (- (window-width w) 2)))))))))
+;; (make-variable-buffer-local 'erc-fill-column)
+;; (ptrv/after erc
+;;   ;;change wrap width when window is resized
+;;   (add-hook 'window-configuration-change-hook
+;;             (lambda ()
+;;               (save-excursion
+;;                 (walk-windows
+;;                  (lambda (w)
+;;                    (let ((buffer (window-buffer w)))
+;;                      (set-buffer buffer)
+;;                      (when (eq major-mode 'erc-mode)
+;;                        (setq erc-fill-column (- (window-width w) 2)))))))))
 
-  (setq erc-hide-list '("JOIN" "PART" "QUIT")))
+;;   (setq erc-hide-list '("JOIN" "PART" "QUIT")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode
-(ptrv/add-auto-mode 'faust-mode "\\.dsp$")
-(autoload 'faust-mode "faust-mode" "FAUST editing mode." t)
+(use-package faust-mode
+  :load-path "site-lisp/emacs-faust-mode"
+  :mode ("\\.dsp$" . faust-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Synth-A-Modeler mode
-(ptrv/add-auto-mode 'sam-mode "\\.mdl$")
-(autoload 'sam-mode "sam-mode" "Synth-A-Modeler editing mode." t)
+(use-package sam-mode
+  :load-path "site-lisp/misc"
+  :mode ("\\.mdl$" . sam-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * editing
@@ -1768,18 +1718,21 @@ point reaches the beginning or end of the buffer, stop there."
       (move-beginning-of-line 1))))
 
 ;; remap C-a to `smarter-move-beginning-of-line'
-(global-set-key [remap move-beginning-of-line]
-                'smarter-move-beginning-of-line)
+(bind-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
 
 ;;(global-subword-mode 1)
 (add-hook 'prog-mode-hook 'subword-mode)
 
 (delete-selection-mode)
 
+(add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
-(global-set-key [C-S-up] 'move-text-up)
-(global-set-key [C-S-down] 'move-text-down)
+(use-package move-text
+  :ensure t
+  :bind (([C-S-up] . move-text-up)
+         ([C-S-down] . move-text-down)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * file commands
@@ -1882,189 +1835,182 @@ prompt for the command to use."
   (interactive)
   (find-file user-init-file))
 
-(defvar ptrv/file-commands-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "o" 'ptrv/open-with)
-    (define-key map "d" 'ptrv/launch-directory)
-    (define-key map "r" 'ptrv/ido-recentf-open)
-    (define-key map "R" 'ptrv/rename-current-buffer-file)
-    (define-key map "D" 'ptrv/delete-file-and-buffer)
-    (define-key map "w" 'ptrv/copy-file-name-to-clipboard)
-    (define-key map "i" 'ptrv/find-user-init-file)
-    (define-key map (kbd "b i") 'ptrv/byte-recompile-init)
-    (define-key map (kbd "b s") 'ptrv/byte-recompile-site-lisp)
-    (define-key map (kbd "b e") 'ptrv/byte-recompile-elpa)
-    (define-key map (kbd "b h") 'ptrv/byte-recompile-home)
-    map)
-  "Keymap for file functions.")
+(bind-key "C-c f o" 'ptrv/open-with)
+(bind-key "C-c f d" 'ptrv/launch-directory)
+(bind-key "C-c f r" 'ptrv/ido-recentf-open)
+(bind-key "C-c f R" 'ptrv/rename-current-buffer-file)
+(bind-key "C-c f D" 'ptrv/delete-file-and-buffer)
+(bind-key "C-c f w" 'ptrv/copy-file-name-to-clipboard)
+(bind-key "C-c f i" 'ptrv/find-user-init-file)
+(bind-key "C-c f b i" 'ptrv/byte-recompile-init)
+(bind-key "C-c f b s" 'ptrv/byte-recompile-site-lisp)
+(bind-key "C-c f b e" 'ptrv/byte-recompile-elpa)
+(bind-key "C-c f b h" 'ptrv/byte-recompile-home)
 
-(ptrv/after dired
-  (require 'dired-x)
-
-  (setq dired-auto-revert-buffer t
-        dired-listing-switches "-ahl"))
+(use-package dired
+  :defer t
+  :config
+  (progn
+    (require 'dired-x)
+    (setq dired-auto-revert-buffer t
+          dired-listing-switches "-ahl")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * projectile
-(ptrv/after projectile
-  (dolist (file '(".ropeproject" "setup.py"))
-    (add-to-list 'projectile-project-root-files file t)))
-(setq projectile-known-projects-file (expand-file-name
-                                      "projectile-bookmarks.eld"
-                                      ptrv/tmp-dir)
-      projectile-cache-file (expand-file-name "projectile.cache" ptrv/tmp-dir))
-(projectile-global-mode)
+(use-package projectile
+  :ensure t
+  :init (projectile-global-mode)
+  :config
+  (progn
+    (setq projectile-known-projects-file (expand-file-name
+                                          "projectile-bookmarks.eld"
+                                          ptrv/tmp-dir)
+          projectile-cache-file (expand-file-name "projectile.cache" ptrv/tmp-dir))
+
+    (dolist (file '(".ropeproject" "setup.py"))
+      (add-to-list 'projectile-project-root-files file t)))
+  :diminish projectile-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ffip
-(setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py" "project.clj"))
-(global-set-key (kbd "C-x f") 'ffip)
+(use-package find-file-in-project
+  :ensure t
+  :bind ("C-x f" . ffip)
+  :config
+  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py" "project.clj")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * processing
-(autoload 'processing-mode "processing-mode" "Processing mode" t)
-(autoload 'processing-snippets-initialize "processing-snippets" nil nil nil)
-(autoload 'processing-find-sketch "processing-mode" nil t)
-(ptrv/add-auto-mode 'processing-mode "\\.pde$")
+(use-package processing-mode
+  :load-path "site-lisp/processing2-emacs"
+  :mode ("\\.pde$" . processing-mode)
+  :commands (processing-snippets-initialize processing-find-sketch)
+  :defer t
+  :config
+  (progn
+    (with-eval-after-load 'yasnippet
+      (processing-snippets-initialize))
 
-(ptrv/after processing-mode
-  (message "Processing config has been loaded !!!")
+    (cond (*is-mac*
+           (setq processing-location "/usr/bin/processing-java")
+           (setq processing-application-dir "/Applications/Processing.app")
+           (setq processing-sketchbook-dir "~/Documents/Processing"))
+          (*is-linux*
+           (setq processing-location "~/applications/processing/processing-java")
+           (setq processing-application-dir "~/applications/processing")
+           (setq processing-sketchbook-dir "~/sketchbook")))
 
-  (ptrv/after yasnippet
-    (processing-snippets-initialize))
+    (defvar ptrv/processing-keywords
+      (cons 'processing-mode (append processing-functions
+                                     processing-builtins
+                                     processing-constants)))
 
-  (cond (*is-mac*
-         (setq processing-location "/usr/bin/processing-java")
-         (setq processing-application-dir "/Applications/Processing.app")
-         (setq processing-sketchbook-dir "~/Documents/Processing"))
-        (*is-linux*
-         (setq processing-location "~/applications/processing/processing-java")
-         (setq processing-application-dir "~/applications/processing")
-         (setq processing-sketchbook-dir "~/sketchbook")))
+    (defun ptrv/processing-company--init ()
+      (setq-local company-backends '((company-keywords :with company-yasnippet)))
+      (make-local-variable 'company-keywords-alist)
+      (add-to-list 'company-keywords-alist ptrv/processing-keywords))
+    (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
 
-  (defvar ptrv/processing-keywords
-    (cons 'processing-mode (append processing-functions
-                                   processing-builtins
-                                   processing-constants)))
+    (defun ptrv/processing-mode-init ()
+      (yas-minor-mode +1))
+    (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
 
-  (defun ptrv/processing-company--init ()
-    (setq-local company-backends '((company-keywords :with company-yasnippet)))
-    (make-local-variable 'company-keywords-alist)
-    (add-to-list 'company-keywords-alist ptrv/processing-keywords))
-  (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
+    (let ((map processing-mode-map))
+      (define-key map (kbd "C-c C-c") 'processing-sketch-run)
+      (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
 
-  (defun ptrv/processing-mode-init ()
-    (yas-minor-mode +1))
-  (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
-
-  (let ((map processing-mode-map))
-    (define-key map (kbd "C-c C-c") 'processing-sketch-run)
-    (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
-
-  ;; If htmlize is installed, provide this function to copy buffer or
-  ;; region to clipboard
-  (when (and (fboundp 'htmlize-buffer)
-             (fboundp 'htmlize-region))
-    (defun processing-copy-as-html (&optional arg)
-      ""
-      (interactive "P")
-      (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
-              'processing-mode)
-          (save-excursion
-            (let ((htmlbuf (if (region-active-p)
-                               (htmlize-region (region-beginning) (region-end))
-                             (htmlize-buffer))))
-              (if arg
-                  (switch-to-buffer htmlbuf)
-                (with-current-buffer htmlbuf
-                  (clipboard-kill-ring-save (point-min) (point-max)))
-                (kill-buffer htmlbuf)
-                (message "Copied as HTML to clipboard"))))
-        (message (concat "Copy as HTML failed, because current "
-                         "buffer is not a Processing buffer."))))
-    (define-key processing-mode-map (kbd "C-c C-p z") 'processing-copy-as-html)
-    (easy-menu-add-item processing-mode-menu nil (list "---"))
-    (easy-menu-add-item processing-mode-menu nil
-                        ["Copy as HTML" processing-copy-as-html
-                         :help "Copy buffer or region as HTML to clipboard"])))
+    ;; If htmlize is installed, provide this function to copy buffer or
+    ;; region to clipboard
+    (when (and (fboundp 'htmlize-buffer)
+               (fboundp 'htmlize-region))
+      (defun processing-copy-as-html (&optional arg)
+        ""
+        (interactive "P")
+        (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
+                'processing-mode)
+            (save-excursion
+              (let ((htmlbuf (if (region-active-p)
+                                 (htmlize-region (region-beginning) (region-end))
+                               (htmlize-buffer))))
+                (if arg
+                    (switch-to-buffer htmlbuf)
+                  (with-current-buffer htmlbuf
+                    (clipboard-kill-ring-save (point-min) (point-max)))
+                  (kill-buffer htmlbuf)
+                  (message "Copied as HTML to clipboard"))))
+          (message (concat "Copy as HTML failed, because current "
+                           "buffer is not a Processing buffer."))))
+      (define-key processing-mode-map (kbd "C-c C-p z") 'processing-copy-as-html)
+      (easy-menu-add-item processing-mode-menu nil (list "---"))
+      (easy-menu-add-item processing-mode-menu nil
+                          ["Copy as HTML" processing-copy-as-html
+                           :help "Copy buffer or region as HTML to clipboard"]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * flycheck
-(unless (and (>= emacs-major-version 24)
-             (>= emacs-minor-version 3))
-  (add-to-list 'debug-ignored-errors "\\`No more Flycheck errors\\'")
-  (add-to-list 'debug-ignored-errors "\\`Flycheck mode disabled\\'")
-  (add-to-list 'debug-ignored-errors "\\`Configured syntax checker .* cannot be used\\'"))
-
-(add-hook 'after-init-hook 'global-flycheck-mode)
-
-;; disable flycheck for some modes
-(ptrv/hook-into-modes (lambda () (flycheck-mode -1))
-                      '(;; emacs-lisp-mode
-                        lisp-interaction-mode))
-
-(ptrv/after flycheck
-  (setq flycheck-highlighting-mode 'lines))
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode)
+  :config
+  (progn
+    (setq flycheck-highlighting-mode 'lines)
+    (dolist (it '(;; emacs-lisp-mode-hook
+                  lisp-interaction-mode-hook))
+      (add-hook it (lambda () (flycheck-mode -1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
-(ptrv/hook-into-modes 'hs-minor-mode '(emacs-lisp-mode
-                                       lisp-mode c-mode-common
-                                       perl-mode sh-mode python-mode))
+(use-package hideshow
+  :defer t
+  :bind (("<f11>" . hs-toggle-hiding)
+         ("S-<f11>" . hs-toggle-hiding-all))
+  :config
+  (progn
+    (dolist (hook '(emacs-lisp-mode-hook
+                    lisp-mode-hook c-mode-common-hook
+                    perl-mode-hook sh-mode-hook
+                    python-mode-hook))
+      (add-hook hook 'hs-minor-mode))
 
-(ptrv/after hideshow
-  (defvar ptrv/hs-minor-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "C-c @ h")   'hs-hide-block)
-      (define-key map (kbd "C-c @ H")   'hs-show-block)
-      (define-key map (kbd "C-c @ s")   'hs-hide-all)
-      (define-key map (kbd "C-c @ S")   'hs-show-all)
-      (define-key map (kbd "C-c @ l")   'hs-hide-level)
-      (define-key map (kbd "C-c @ c")   'hs-toggle-hiding)
-      (define-key map [(shift mouse-2)] 'hs-mouse-toggle-hiding)
-      map))
+    (bind-keys* :map hs-minor-mode-map
+                ("C-c @ h" . hs-hide-block)
+                ("C-c @ H" . hs-show-block)
+                ("C-c @ s" . hs-hide-all)
+                ("C-c @ S" . hs-show-all)
+                ("C-c @ l" . hs-hide-level)
+                ("C-c @ c" . hs-toggle-hiding)
+                ([(shift mouse-2)] . hs-mouse-toggle-hiding))
 
-  ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
-  (setq hs-isearch-open t)
+    ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
+    (setq hs-isearch-open t)
 
-  (global-set-key (kbd "<f11>") 'hs-toggle-hiding)
-  (global-set-key (kbd "S-<f11>") 'hs-toggle-hiding-all)
+    (defvar hs-hide-all nil
+      "Current state of hideshow for toggling all.")
+    (defun ptrv/hideshow-init ()
+      (ptrv/set-variables-local '(hs-hide-all))
+      (add-to-list 'minor-mode-overriding-map-alist
+                   (cons 'hs-minor-mode-map ptrv/hs-minor-mode-map)))
+    (add-hook 'hs-minor-mode-hook 'ptrv/hideshow-init)
 
-  (defvar hs-hide-all nil
-    "Current state of hideshow for toggling all.")
-  (defun ptrv/hideshow-init ()
-    (ptrv/set-variables-local '(hs-hide-all))
-    (add-to-list 'minor-mode-overriding-map-alist
-                 (cons 'hs-minor-mode-map ptrv/hs-minor-mode-map)))
-  (add-hook 'hs-minor-mode-hook 'ptrv/hideshow-init)
+    (defun hs-toggle-hiding-all ()
+      "Toggle hideshow all."
+      (interactive)
+      (setq hs-hide-all (not hs-hide-all))
+      (if hs-hide-all
+          (hs-hide-all)
+        (hs-show-all)))
 
-  (defun hs-toggle-hiding-all ()
-    "Toggle hideshow all."
-    (interactive)
-    (setq hs-hide-all (not hs-hide-all))
-    (if hs-hide-all
-        (hs-hide-all)
-      (hs-show-all)))
-
-  (defadvice goto-line
-    (after
-     expand-after-goto-line
-     activate compile)
-    "hideshow-expand affected block when using goto-line in a
+    (defadvice goto-line
+        (after
+         expand-after-goto-line
+         activate compile)
+      "hideshow-expand affected block when using goto-line in a
 collapsed buffer"
-    (save-excursion
-      (hs-show-block))))
+      (save-excursion
+        (hs-show-block)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
-(ptrv/after eldoc (diminish 'eldoc-mode))
-(ptrv/after abbrev (diminish 'abbrev-mode))
-(ptrv/after undo-tree (diminish 'undo-tree-mode))
-(ptrv/after elisp-slime-nav (diminish 'elisp-slime-nav-mode))
-(ptrv/after projectile (diminish 'projectile-mode))
-(ptrv/after google-this (diminish 'google-this-mode))
-(ptrv/after rainbow-mode (diminish 'rainbow-mode))
-
 (defmacro rename-modeline (package-name mode new-name)
   "Rename modeline for PACKAGE-NAME and MODE to NEW-NAME."
   `(eval-after-load ,package-name
@@ -2080,7 +2026,9 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * osx
 (when *is-mac*
-  (ptrv/after ns-win
+  (use-package ns-win
+    :defer t
+    :config
     (setq mac-option-key-is-meta nil
           mac-command-key-is-meta t
           mac-command-modifier 'meta
@@ -2120,18 +2068,24 @@ collapsed buffer"
   (add-to-list 'ido-ignore-files "\\.DS_Store")
 
   ;;GNU ls and find
-  (ptrv/after files
+  (use-package files
+    :defer t
+    :config
     (let ((gls (executable-find "gls")))
       (if gls
           (setq insert-directory-program gls)
         (message "GNU coreutils not found. Install coreutils with homebrew."))))
 
-  (ptrv/after grep
+  (use-package grep
+    :defer t
+    :config
     (let ((gfind (executable-find "gfind")))
       (when gfind
         (setq find-program gfind))))
 
-  (ptrv/after locate
+  (use-package locate
+    :defer t
+    :config
     (let ((mdfind (executable-find "mdfind")))
       (when mdfind
         (setq locate-command mdfind)))))
@@ -2140,8 +2094,6 @@ collapsed buffer"
 ;;;; * linux
 (when *is-linux*
   (set-frame-font "Inconsolata-12" nil t)
-  (ptrv/after eshell
-    (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil))
 
   (defun setup-frame-hook (frame)
     ;; (run-with-idle-timer 0.2 nil 'toggle-frame-maximized)
@@ -2150,185 +2102,193 @@ collapsed buffer"
   (add-hook 'after-make-frame-functions 'setup-frame-hook)
 
   ;; erc notification
-  (ptrv/after erc
-    (defun my-notify-erc (match-type nickuserhost message)
-      "Notify when a message is received."
-      (unless (posix-string-match "^\\** *Users on #" message)
-        (alert (replace-regexp-in-string " +" " " message)
-         :title (format "%s in %s"
-                        ;; Username of sender
-                        (car (split-string nickuserhost "!"))
-                        ;; Channel
-                        (or (erc-default-target) "#unknown")))))
+  ;; (ptrv/after erc
+  ;;   (defun my-notify-erc (match-type nickuserhost message)
+  ;;     "Notify when a message is received."
+  ;;     (unless (posix-string-match "^\\** *Users on #" message)
+  ;;       (alert (replace-regexp-in-string " +" " " message)
+  ;;        :title (format "%s in %s"
+  ;;                       ;; Username of sender
+  ;;                       (car (split-string nickuserhost "!"))
+  ;;                       ;; Channel
+  ;;                       (or (erc-default-target) "#unknown")))))
 
-    (add-hook 'erc-text-matched-hook 'my-notify-erc))
+  ;;   (add-hook 'erc-text-matched-hook 'my-notify-erc))
 
   ;; typeriter-mode
-  (autoload 'typewriter-mode "typewriter-mode" nil t)
-  (ptrv/after typewriter-mode
+  (use-package typewriter-mode
+    :defer t
+    :config
     (setq typewriter-play-command (concat
                                    (ptrv/get-default-sound-command)
-                                   " %s"))
-    (setq typewriter-sound-default (concat
+                                   " %s")
+          typewriter-sound-default (concat
                                     ptrv/etc-dir
-                                    "sounds/9744__horn__typewriter.wav"))
-    (setq typewriter-sound-end (concat
+                                    "sounds/9744__horn__typewriter.wav")
+          typewriter-sound-end (concat
                                 ptrv/etc-dir
-                                "sounds/eol-bell.wav"))
-    (setq typewriter-sound-return (concat
+                                "sounds/eol-bell.wav")
+          typewriter-sound-return (concat
                                    ptrv/etc-dir
                                    "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
-(defun ptrv/sclang-mode-loader ()
-  "Load sclang-mode."
-  (unless (featurep 'sclang)
-    (require 'sclang)
-    (ptrv/after sclang
-      (sclang-mode)
-      (ptrv/sclang-mode-loader--remove))))
-(defun ptrv/sclang-mode-loader--remove ()
-  "Remove `ptrv/sclang-mode-loader' from `auto-mode-alist'."
-  (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
-          auto-mode-alist))
-(ptrv/add-auto-mode 'ptrv/sclang-mode-loader "\\.\\(sc\\|scd\\)$")
+;; (defun ptrv/sclang-mode-loader ()
+;;   "Load sclang-mode."
+;;   (unless (featurep 'sclang)
+;;     (require 'sclang)
+;;     (sclang-mode)
+;;     (ptrv/sclang-mode-loader--remove)))
+;; (defun ptrv/sclang-mode-loader--remove ()
+;;   "Remove `ptrv/sclang-mode-loader' from `auto-mode-alist'."
+;;   (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
+;;           auto-mode-alist))
+;; (ptrv/add-auto-mode 'ptrv/sclang-mode-loader "\\.\\(sc\\|scd\\)$")
 
-(defun ptrv/sclang ()
-  "Start sclang-mode."
-  (interactive)
-  (if (require 'sclang nil t)
-      (progn
-        (ptrv/after sclang
-          (sclang-start))
-        (ptrv/sclang-mode-loader--remove))
-    (message "SCLang is not installed!")))
+;; (defun ptrv/sclang ()
+;;   "Start sclang-mode."
+;;   (interactive)
+;;   (if (require 'sclang nil t)
+;;       (progn
+;;         (sclang-start)
+;;         (ptrv/sclang-mode-loader--remove))
+;;     (message "SCLang is not installed!")))
 
-(ptrv/after sclang
-  (message "sclang config has been loaded !!!")
-  (setq sclang-auto-scroll-post-buffer nil
-        sclang-eval-line-forward nil
-        ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
-        sclang-library-configuration-file "~/.sclang.cfg"
-        sclang-runtime-directory "~/scwork/"
-        sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
+;; ;; (use-package sclang)
+;; (use-package sclang-mode
+;;   :config
+;;   (progn
+;;     (message "sclang config has been loaded !!!")
+;;     (setq sclang-auto-scroll-post-buffer nil
+;;           sclang-eval-line-forward nil
+;;           ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
+;;           sclang-library-configuration-file "~/.sclang.cfg"
+;;           sclang-runtime-directory "~/scwork/"
+;;           sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-  (ptrv/after company
-    (ptrv/with-library company-sclang
-      (defun ptrv/sclang-company--init()
-        (setq-local company-backends '((company-sclang
-                                        company-yasnippet
-                                        company-dabbrev-code)))
-        (make-local-variable 'company-dabbrev-code-modes)
-        (add-to-list 'company-dabbrev-code-modes 'sclang-mode))
-      (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init)))
+;;     (with-eval-after-load 'company
+;;       (add-to-list 'load-path (locate-user-emacs-file "site-lisp/company-sclang"))
+;;       (require 'company-sclang)
+;;       (defun ptrv/sclang-company--init()
+;;         (setq-local company-backends '((company-sclang
+;;                                         company-yasnippet
+;;                                         company-dabbrev-code)))
+;;         (make-local-variable 'company-dabbrev-code-modes)
+;;         (add-to-list 'company-dabbrev-code-modes 'sclang-mode))
+;;       (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
 
-  (defun ptrv/sclang-init ()
-    (yas-minor-mode +1)
-    (setq indent-tabs-mode nil)
-    (subword-mode +1))
-  (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
-  ;; (add-hook 'sclang-mode-hook 'sclang-extensions-mode)
+;;     (defun ptrv/sclang-init ()
+;;       (yas-minor-mode +1)
+;;       (setq indent-tabs-mode nil)
+;;       (subword-mode +1))
+;;     (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
+;;     ;; (add-hook 'sclang-mode-hook 'sclang-extensions-mode)
 
-  (defun ptrv/sclang-all-windows-to-front ()
-    "Raise all supercollider windows."
-    (interactive)
-    (sclang-eval-string "Window.allWindows.do(_.front);"))
+;;     (defun ptrv/sclang-all-windows-to-front ()
+;;       "Raise all supercollider windows."
+;;       (interactive)
+;;       (sclang-eval-string "Window.allWindows.do(_.front);"))
 
-  (defun ptrv/sclang-ido-switch-to-buffer ()
-    (interactive)
-    (let* ((blist (buffer-list))
-           (predicate (lambda (b)
-                        (with-current-buffer b
-                          (derived-mode-p 'sclang-mode))))
-           (sc-buffers (delq nil (mapcar
-                                  (lambda (b)
-                                    (if (funcall predicate b) b nil))
-                                  blist))))
-      (pop-to-buffer-same-window
-       (ido-completing-read "SCLang buffers: "
-                            (mapcar 'list (mapcar 'buffer-name sc-buffers))))))
+;;     (defun ptrv/sclang-ido-switch-to-buffer ()
+;;       (interactive)
+;;       (let* ((blist (buffer-list))
+;;              (predicate (lambda (b)
+;;                           (with-current-buffer b
+;;                             (derived-mode-p 'sclang-mode))))
+;;              (sc-buffers (delq nil (mapcar
+;;                                     (lambda (b)
+;;                                       (if (funcall predicate b) b nil))
+;;                                     blist))))
+;;         (pop-to-buffer-same-window
+;;          (ido-completing-read "SCLang buffers: "
+;;                               (mapcar 'list (mapcar 'buffer-name sc-buffers))))))
 
-  (let ((map sclang-mode-map))
-    (define-key map (kbd "C-c ]") 'sclang-pop-definition-mark)
-    (define-key map (kbd "C-c F") 'ptrv/sclang-all-windows-to-front)
-    (define-key map (kbd "s-.") 'sclang-main-stop)
-    (define-key map (kbd "<s-return>") 'sclang-eval-region-or-line)
-    (define-key map (kbd "C-c C-b") 'ptrv/sclang-ido-switch-to-buffer))
+;;     (with-eval-after-load 'sclang-mode
+;;       (bind-keys :map sclang-mode-map
+;;                  ("C-c ]" . sclang-pop-definition-mark)
+;;                  ("C-c F" . ptrv/sclang-all-windows-to-front)
+;;                  ("s-." . sclang-main-stop)
+;;                  ("<s-return>" . sclang-eval-region-or-line)
+;;                  ("C-c C-b" . ptrv/sclang-ido-switch-to-buffer)))
 
-  (defun ptrv/sclang--show-window (win-cmd-str transparent? &optional alpha)
-    ""
-    (let* ((alpha-val (or alpha 0.6))
-           (transparency-code (if transparent?
-                                  (concat
-                                   ".window.alpha = "
-                                   (number-to-string alpha-val)))))
-      (sclang-eval-string (concat win-cmd-str transparency-code ";"))))
+;;     (defun ptrv/sclang--show-window (win-cmd-str transparent? &optional alpha)
+;;       ""
+;;       (let* ((alpha-val (or alpha 0.6))
+;;              (transparency-code (if transparent?
+;;                                     (concat
+;;                                      ".window.alpha = "
+;;                                      (number-to-string alpha-val)))))
+;;         (sclang-eval-string (concat win-cmd-str transparency-code ";"))))
 
-  (defun ptrv/sclang-show-meter (arg)
-    "Show level meter."
-    (interactive "P")
-    (ptrv/sclang--show-window "Server.default.meter" arg))
-  (defun ptrv/sclang-show-scope (arg)
-    "Show scope."
-    (interactive "P")
-    (ptrv/sclang--show-window "Server.default.scope(numChannels: 2)" arg))
-  (defun ptrv/sclang-show-helper-window (arg)
-    "Show helper window."
-    (interactive "P")
-    (ptrv/sclang--show-window "HelperWindow.new" arg))
-  (defun ptrv/sclang-show-node-tree ()
-    "Show tree window."
-    (interactive)
-    (sclang-eval-string "Server.default.plotTree;"))
+;;     (defun ptrv/sclang-show-meter (arg)
+;;       "Show level meter."
+;;       (interactive "P")
+;;       (ptrv/sclang--show-window "Server.default.meter" arg))
+;;     (defun ptrv/sclang-show-scope (arg)
+;;       "Show scope."
+;;       (interactive "P")
+;;       (ptrv/sclang--show-window "Server.default.scope(numChannels: 2)" arg))
+;;     (defun ptrv/sclang-show-helper-window (arg)
+;;       "Show helper window."
+;;       (interactive "P")
+;;       (ptrv/sclang--show-window "HelperWindow.new" arg))
+;;     (defun ptrv/sclang-show-node-tree ()
+;;       "Show tree window."
+;;       (interactive)
+;;       (sclang-eval-string "Server.default.plotTree;"))
 
-  (let ((map sclang-server-key-map))
-    (define-key map [?l] 'ptrv/sclang-show-meter)
-    (define-key map [?s] 'ptrv/sclang-show-scope)
-    (define-key map [?h] 'ptrv/sclang-show-helper-window)
-    (define-key map [?t] 'ptrv/sclang-show-node-tree))
+;;     (with-eval-after-load 'sclang-server
+;;       (bind-keys :map sclang-server-key-map
+;;                  ("l" . ptrv/sclang-show-meter)
+;;                  ("s" . ptrv/sclang-show-scope)
+;;                  ("h" . ptrv/sclang-show-helper-window)
+;;                  ("t" . ptrv/sclang-show-node-tree)))
 
-  ;; snippets
-  (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
-  (ptrv/after yasnippet
-    (sclang-snippets-initialize)))
+;;     ;; snippets
+;;     (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
+;;     (ptrv/after yasnippet
+;;       (sclang-snippets-initialize))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
-(ptrv/after python
+(use-package python
+  :defer t
+  :config
+  (progn
+    (setq python-check-command "flake8")
+    (add-hook 'python-mode-hook 'eldoc-mode)
 
-  (setq python-check-command "flake8")
+    ;; info
+    (info-lookup-add-help
+     :mode 'python-mode
+     :regexp "[[:alnum:]_]+"
+     :doc-spec
+     '(("(python)Index" nil "")))))
 
-  (defun ptrv/python-mode-init ()
-    (anaconda-mode +1)
-    (eldoc-mode)
-    (setq-local company-backends '((company-anaconda :with company-yasnippet)))
-    (pyenv-mode +1)
-    (highlight-indentation-mode +1))
-  (add-hook 'python-mode-hook 'ptrv/python-mode-init)
+(use-package anaconda-mode
+  :ensure t
+  :commands (anaconda-mode)
+  :init (add-hook 'python-mode-hook 'anaconda-mode))
 
-  ;; pytest
-  ;; (autoload 'pytest-all "pytest" nil t)
-  ;; (autoload 'pytest-module "pytest" nil t)
-  ;; (autoload 'pytest-one "pytest" nil t)
-  ;; (autoload 'pytest-directory "pytest" nil t)
-  ;; (setq pytest-global-name "py.test")
-  ;; (let ((map python-mode-map))
-  ;;   (define-key map (kbd "C-c C-t a") 'pytest-all)
-  ;;   (define-key map (kbd "C-c C-t m") 'pytest-module)
-  ;;   (define-key map (kbd "C-c C-t o") 'pytest-one)
-  ;;   (define-key map (kbd "C-c C-t d") 'pytest-directory)
-  ;;   (define-key map (kbd "C-c C-t p a") 'pytest-pdb-all)
-  ;;   (define-key map (kbd "C-c C-t p m") 'pytest-pdb-module)
-  ;;   (define-key map (kbd "C-c C-t p o") 'pytest-pdb-one))
+(use-package company-anaconda
+  :ensure t
+  :config
+  (progn
+    (defun ptrv/company-anaconda--init ()
+      (setq-local company-backends
+                  '((company-anaconda :with company-yasnippet))))
+    (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
 
-  ;; info
-  (autoload 'info-lookup-add-help "info-look" nil nil)
-  (info-lookup-add-help
-   :mode 'python-mode
-   :regexp "[[:alnum:]_]+"
-   :doc-spec
-   '(("(python)Index" nil ""))))
+(use-package highlight-indentation
+  :ensure t
+  :commands (highlight-indentation-mode)
+  :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
+
+(use-package pyenv-mode
+  :ensure t
+  :commands (pyenv-mode)
+  :init (add-hook 'python-mode-hook 'pyenv-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
@@ -2336,272 +2296,290 @@ collapsed buffer"
                         (awk-mode . "awk")
                         (other . "bsd")))
 
-(ptrv/after cc-mode
-  (message "Load config: cc-mode...")
+(use-package cc-mode
+  :defer t
+  :config
+  (progn
+    (message "Load config: cc-mode...")
 
-  (c-add-style "my-cc-mode"
-               '("bsd"
-                 (c-basic-offset . 4)
-                 (c-offsets-alist . ((innamespace . 0)))))
+    (c-add-style "my-cc-mode"
+                 '("bsd"
+                   (c-basic-offset . 4)
+                   (c-offsets-alist . ((innamespace . 0)))))
 
-  (defun ptrv/cc-mode-init ()
-    (c-set-style "my-cc-mode")
-    (setq c-basic-offset 4
-          tab-width 4
-          ;;c-indent-level 4
-          c-default-style "bsd"
-          indent-tabs-mode nil)
-    (local-set-key (kbd "C-c o") 'ff-find-other-file)
-    (eldoc-mode +1)
-    (ggtags-mode +1)
-    (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
-    (local-set-key (kbd "C-c C-c") 'compile)
-    (setq-local split-width-threshold nil))
+    (defun ptrv/cc-mode-init ()
+      (c-set-style "my-cc-mode")
+      (setq c-basic-offset 4
+            tab-width 4
+            ;;c-indent-level 4
+            c-default-style "bsd"
+            indent-tabs-mode nil)
+      (local-set-key (kbd "C-c o") 'ff-find-other-file)
+      (eldoc-mode +1)
+      (ggtags-mode +1)
+      (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
+      (local-set-key (kbd "C-c C-c") 'compile)
+      (setq-local split-width-threshold nil))
 
-  (ptrv/hook-into-modes 'ptrv/cc-mode-init '(c-mode c++-mode))
+    (dolist (it '(c-mode-hook c++-mode-hook))
+      (add-hook it 'ptrv/cc-mode-init))
 
-  ;; doxymacs
-  (defvar ptrv/doxymacs-path
-    (cond
-     (*is-mac*
-      (concat (ptrv/homebrew-prefix "doxymacs")
-              "/share/emacs/site-lisp"))
-     (*is-linux*
-      (locate-user-emacs-file
-       "site-lisp/_extras/doxymacs/lisp"))
-     (t nil)))
+    ;; doxymacs
+    (defvar ptrv/doxymacs-path
+      (cond
+       (*is-mac*
+        (concat (ptrv/homebrew-prefix "doxymacs")
+                "/share/emacs/site-lisp"))
+       (*is-linux*
+        (locate-user-emacs-file
+         "site-lisp/_extras/doxymacs/lisp"))
+       (t nil)))
 
-  (when ptrv/doxymacs-path
-    (add-to-list 'load-path ptrv/doxymacs-path)
-    (autoload 'doxymacs-mode "doxymacs" nil t))
-  (ptrv/after doxymacs
-    (when *is-linux*
-      (setq doxymacs-external-xml-parser-executable
-            (locate-user-emacs-file
-             "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
-      (unless (file-exists-p doxymacs-external-xml-parser-executable)
-        (warn "The doxymacs_parser executable does not exist!")))
+    (when ptrv/doxymacs-path
+      (add-to-list 'load-path ptrv/doxymacs-path)
+      (autoload 'doxymacs-mode "doxymacs" nil t))
+    (with-eval-after-load 'doxymacs
+      (when *is-linux*
+        (setq doxymacs-external-xml-parser-executable
+              (locate-user-emacs-file
+               "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
+        (unless (file-exists-p doxymacs-external-xml-parser-executable)
+          (warn "The doxymacs_parser executable does not exist!")))
 
-    (defun ptrv/doxymacs-font-lock-hook ()
-      (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-          (doxymacs-font-lock)))
-    (add-hook 'font-lock-mode-hook 'ptrv/doxymacs-font-lock-hook))
+      (defun ptrv/doxymacs-font-lock-hook ()
+        (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+            (doxymacs-font-lock)))
+      (add-hook 'font-lock-mode-hook 'ptrv/doxymacs-font-lock-hook))
 
-  (defun ptrv/c++-mode-init ()
-    ;; (doxymacs-mode +1)
-    (flycheck-mode -1)
-    (yas-minor-mode +1))
-  (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
+    (defun ptrv/c++-mode-init ()
+      ;; (doxymacs-mode +1)
+      ;; (flycheck-mode -1)
+      (yas-minor-mode +1))
+    (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
 
-  (defun ptrv/c-mode-init()
-    (local-set-key (kbd "RET") 'newline-and-indent)
-    (local-set-key (kbd "C-c C-c") 'compile))
-  (add-hook 'c-mode-hook 'ptrv/c-mode-init)
+    (defun ptrv/c-mode-init()
+      (local-set-key (kbd "RET") 'newline-and-indent)
+      (local-set-key (kbd "C-c C-c") 'compile))
+    (add-hook 'c-mode-hook 'ptrv/c-mode-init)
 
-  ;; (add-hook 'c-mode-common-hook 'linum-mode)
+    ;; (add-hook 'c-mode-common-hook 'linum-mode)
 
-  ;; C++11 keywords
-  (font-lock-add-keywords
-   'c++-mode
-   `(;; complete some fundamental keywords
-     ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
-     ;; add the new C++11 keywords
-     ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
-     ("\\<\\(char[0-9]+_t\\)\\>" . font-lock-keyword-face)
-     ;; PREPROCESSOR_CONSTANT
-     ("\\<[A-Z]+[A-Z_]+\\>" . font-lock-constant-face)
-     ;; hexadecimal numbers
-     ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
-     ;; integer/float/scientific numbers
-     ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
-     ;; user-types (customize!)
-     ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(t\\|type\\|ptr\\)\\>" . font-lock-type-face)
-     ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
-     ) :append)
-  )
+    ;; C++11 keywords
+    (font-lock-add-keywords
+     'c++-mode
+     `(;; complete some fundamental keywords
+       ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
+       ;; add the new C++11 keywords
+       ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
+       ("\\<\\(char[0-9]+_t\\)\\>" . font-lock-keyword-face)
+       ;; PREPROCESSOR_CONSTANT
+       ("\\<[A-Z]+[A-Z_]+\\>" . font-lock-constant-face)
+       ;; hexadecimal numbers
+       ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
+       ;; integer/float/scientific numbers
+       ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
+       ;; user-types (customize!)
+       ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(t\\|type\\|ptr\\)\\>" . font-lock-type-face)
+       ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
+       ) :append)))
 
-(when *is-mac*
-  ;; LLDB support for gud
-  (autoload 'lldb "gud-lldb" nil t))
+(use-package gud-lldb
+  :if *is-mac*
+  :commands (lldb))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * irony
-(ptrv/after cc-mode
-  (message "Load config: Irony...")
+;; (ptrv/after cc-mode
+;;   (message "Load config: Irony...")
 
-  (defun ptrv/company-irony--init ()
-    (setq-local company-backends '(company-irony company-clang))
-    (local-set-key (kbd "<f12>") 'company-complete-common))
-  (ptrv/add-to-hook 'c++-mode-hook '(irony-mode ptrv/company-irony--init))
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands))
+;;   (defun ptrv/company-irony--init ()
+;;     (setq-local company-backends '(company-irony company-clang))
+;;     (local-set-key (kbd "<f12>") 'company-complete-common)
+;;     (irony-cdb-autosetup-compile-options))
+;;   (ptrv/add-to-hook 'c++-mode-hook '(irony-mode ptrv/company-irony--init))
+;;   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+;;   (ptrv/after flycheck
+;;     (add-to-list 'flycheck-checkers 'irony)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * ycmd
+(use-package ycmd
+  :load-path "~/src/emacs-ycmd"
+  :defer t
+  :init (add-hook 'c++-mode-hook 'ycmd-mode))
+
+(use-package company-ycmd
+  :load-path "~/src/emacs-ycmd"
+  :init (company-ycmd-setup))
+
+(use-package flycheck-ycmd
+  :load-path "~/src/emacs-ycmd"
+  :init (flycheck-ycmd-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
-(ptrv/after lua-mode
-  (defun ptrv/lua-send-region-or-current-line ()
-    "Send current region or line to lua process."
-    (interactive)
-    (if (region-active-p)
-        (lua-send-region (region-beginning) (region-end))
-      (lua-send-current-line)))
-  (defun ptrv/lua-mode-init ()
-    (ggtags-mode +1)
-    (yas-minor-mode +1)
-    (local-set-key (kbd "C-c C-d") 'lua-send-proc)
-    (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line)
-    (local-set-key (kbd "C-c C-p") 'lua-start-process))
-  (add-hook 'lua-mode-hook 'ptrv/lua-mode-init))
+(use-package lua-mode
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (defun ptrv/lua-send-region-or-current-line ()
+      "Send current region or line to lua process."
+      (interactive)
+      (if (region-active-p)
+          (lua-send-region (region-beginning) (region-end))
+        (lua-send-current-line)))
+    (defun ptrv/lua-mode-init ()
+      (ggtags-mode +1)
+      (yas-minor-mode +1)
+      (local-set-key (kbd "C-c C-d") 'lua-send-proc)
+      (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line)
+      (local-set-key (kbd "C-c C-p") 'lua-start-process)
+      (ycmd-mode +1)
+      (setq-local company-backends '((company-ycmd :with company-yasnippet))))
+    (add-hook 'lua-mode-hook 'ptrv/lua-mode-init)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
-(ptrv/after sgml-mode
-  (require 'smartparens-html)
-  (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
-  (define-key html-mode-map (kbd "C-c C-f") 'sp-html-next-tag)
-  (define-key html-mode-map (kbd "C-c C-b") 'sp-html-previous-tag))
+(use-package sgml-mode
+  :defer t
+  :config
+  (progn
+    (require 'smartparens-html)
+    (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
+    (bind-keys :map html-mode-map
+               ("C-c C-f" . sp-html-next-tag)
+               ("C-c C-b" . sp-html-previous-tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * multiple-cursors
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(ptrv/after multiple-cursors-core
-  (setq mc/list-file (expand-file-name "mc-lists.el" ptrv/tmp-dir)))
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this))
+  :config
+  (with-eval-after-load 'multiple-cursors-core
+    (setq mc/list-file (expand-file-name "mc-lists.el" ptrv/tmp-dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
-(global-set-key (kbd "C-=") 'er/expand-region)
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * key-chord
-(key-chord-mode 1)
-(key-chord-define-global "JJ" 'switch-to-previous-buffer)
-(key-chord-define-global "BB" 'ido-switch-buffer)
+(use-package key-chord
+  :ensure t
+  :init (key-chord-mode 1)
+  :config
+  (progn
+    (key-chord-define-global "JJ" 'switch-to-previous-buffer)
+    (key-chord-define-global "BB" 'ido-switch-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Ace jump mode
-(global-set-key (kbd "C-o") 'ace-jump-mode)
+(use-package ace-jump-mode
+  :ensure t
+  :bind ("C-o" . ace-jump-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
-(ptrv/after browse-kill-ring
+(use-package browse-kill-ring
+  :ensure t
+  :bind ("M-C-y" . browse-kill-ring)
+  :config
   (setq browse-kill-ring-show-preview nil))
-
-(global-set-key (kbd "M-C-y") 'browse-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * bindings
-;; (global-set-key (kbd "C-x f") 'ptrv/ido-recentf-open)
-(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
+(use-package find-func
+  :init (find-function-setup-keys)
+  :bind (;; Help should search more than just commands
+         ("C-h C-f" . find-function)
+         ("C-h C-k" . find-function-on-key)
+         ("C-h C-v" . find-variable)
+         ("C-h C-l" . find-library)))
 
-(global-set-key [f5] 'refresh-file)
+(bind-key "<f5>" 'refresh-file)
 
 ;; Split Windows
-(global-set-key [f6] 'split-window-horizontally)
-(global-set-key [f7] 'split-window-vertically)
-(global-set-key [f8] 'delete-window)
-(global-set-key [f9] 'delete-other-windows)
+(use-package window
+  :bind (("<f6>" . split-window-horizontally)
+         ("<f7>" . split-window-vertically)
+         ("<f8>" . delete-window)
+         ("<f9>" . delete-other-windows))
+  :config
+  (progn
+    (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
+    (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
+    (bind-key "<down>" (lambda () (interactive) (enlarge-window -4)))
+    (bind-key "<up>" (lambda () (interactive) (enlarge-window 4)))))
 
 ;;diff shortcuts
-(defvar ptrv/diff-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "d" 'diff)
-    (define-key map "f" 'diff-buffer-with-file)
-    map)
-  "Keymap for diff commands.")
+(bind-key "C-c D d" 'diff)
+(bind-key "C-c D f" 'diff-buffer-with-file)
 
-(defvar ptrv/windows-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "s" 'swap-windows)
-    (define-key map "r" 'rotate-windows)
-    (define-key map "." (lambda () (interactive) (shrink-window-horizontally 4)))
-    (define-key map "," (lambda () (interactive) (enlarge-window-horizontally 4)))
-    (define-key map (kbd "<down>") (lambda () (interactive) (enlarge-window -4)))
-    (define-key map (kbd "<up>") (lambda () (interactive) (enlarge-window 4)))
-    (define-key map "b" 'winner-undo)
-    (define-key map "f" 'winner-redo)
-    map)
-  "Keymap for window manipulation.")
+(bind-key "C-c w s" 'swap-windows)
+(bind-key "C-c w r" 'rotate-windows)
 
 ;;fast vertical naviation
-(global-set-key  (kbd "M-U") (lambda () (interactive) (forward-line -10)))
-(global-set-key  (kbd "M-D") (lambda () (interactive) (forward-line 10)))
+(bind-key "M-U" (lambda () (interactive) (forward-line -10)))
+(bind-key "M-D" (lambda () (interactive) (forward-line 10)))
 
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(global-set-key (kbd "M-%") 'query-replace-regexp)
-(global-set-key (kbd "C-M-s") 'isearch-forward)
-(global-set-key (kbd "C-M-r") 'isearch-backward)
-(global-set-key (kbd "M-C-%") 'query-replace)
+(bind-key "C-s" 'isearch-forward-regexp)
+(bind-key "C-r" 'isearch-backward-regexp)
+(bind-key "M-%" 'query-replace-regexp)
+(bind-key "C-M-s" 'isearch-forward)
+(bind-key "C-M-r" 'isearch-backward)
+(bind-key "M-C-%" 'query-replace)
 
 ;; Align your code in a pretty way.
-(global-set-key (kbd "C-x \\") 'align-regexp)
+(bind-key "C-x \\" 'align-regexp)
 
 ;; Activate occur easily inside isearch
-(define-key isearch-mode-map (kbd "C-o")
-  (lambda () (interactive)
-    (let ((case-fold-search isearch-case-fold-search))
-      (occur (if isearch-regexp
-                 isearch-string
-               (regexp-quote isearch-string))))))
+(bind-key "C-o" (lambda () (interactive)
+                  (let ((case-fold-search isearch-case-fold-search))
+                    (occur (if isearch-regexp
+                               isearch-string
+                             (regexp-quote isearch-string)))))
+          isearch-mode-map)
 
-(global-set-key "\C-m" 'newline-and-indent)
+(bind-key "C-m" 'newline-and-indent)
 
-(global-set-key (kbd "M-;") 'comment-dwim-line)
+(bind-key "M-;" 'comment-dwim-line)
 
-(global-set-key (kbd "M-/") 'hippie-expand)
+(bind-key "<S-return>" 'ptrv/smart-open-line)
+(bind-key "M-o" 'ptrv/smart-open-line)
+(bind-key "<C-S-return>" 'ptrv/smart-open-line-above)
 
-(global-set-key (kbd "<S-return>") 'ptrv/smart-open-line)
-(global-set-key (kbd "M-o") 'ptrv/smart-open-line)
-(global-set-key (kbd "<C-S-return>") 'ptrv/smart-open-line-above)
+(bind-key [remap goto-line] 'goto-line-with-feedback)
 
-(global-set-key [remap goto-line] 'goto-line-with-feedback)
+(bind-key "M-j" (lambda () (interactive) (join-line -1)))
 
-(global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
-
-(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
-(global-set-key (kbd "C-M-z") 'indent-defun)
-
-;; Help should search more than just commands
-(define-key 'help-command "a" 'apropos)
-(define-key 'help-command "A" 'apropos-command)
-
-(global-set-key (kbd "C-h C-f") 'find-function)
-(global-set-key (kbd "C-h C-k") 'find-function-on-key)
-(global-set-key (kbd "C-h C-v") 'find-variable)
-(global-set-key (kbd "C-h C-l") 'find-library)
+(bind-key "C-M-\\" 'indent-region-or-buffer)
+(bind-key "C-M-z" 'indent-defun)
 
 ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
-(global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
+(bind-key "C-x O" (lambda () (interactive) (other-window -1)))
 
 ;; registers
-(global-set-key (kbd "C-x r T") 'string-insert-rectangle)
-(global-set-key (kbd "C-x r v") 'ptrv/list-registers)
+(bind-key "C-x r v" 'ptrv/list-registers)
 
-(global-set-key (kbd "C-M-=") 'increment-number-at-point)
-(global-set-key (kbd "C-M--") 'decrement-number-at-point)
+(bind-key "C-M-=" 'increment-number-at-point)
+(bind-key "C-M--" 'decrement-number-at-point)
 
-;; Keymap for characters following C-c
-(let ((map mode-specific-map))
-  (define-key map "G" ptrv/gist-map)
-  (define-key map "A" 'org-agenda)
-  (define-key map "D" ptrv/diff-map)
-  (define-key map "a" ptrv/ag-map)
-  (define-key map "b" 'org-iswitchb)
-  (define-key map "c" 'org-capture)
-  (define-key map "d" 'ptrv/duplicate-current-line-or-region)
-  (define-key map (kbd "M-d")
-    'ptrv/duplicate-and-comment-current-line-or-region)
-  (define-key map "f" ptrv/file-commands-map)
-  (define-key map "l" 'org-store-link)
-  (define-key map "q" 'exit-emacs-client)
-  (define-key map "s" ptrv/search-map)
-  (define-key map "t" 'ptrv/eshell-or-restore)
-  (define-key map "u" 'ptrv/browse-url)
-  (define-key map "v" 'halve-other-window-height-or-width)
-  (define-key map "w" ptrv/windows-map)
-  (define-key map "y" 'ptrv/display-yank-menu))
+(bind-key "C-c d" 'ptrv/duplicate-current-line-or-region)
+(bind-key "C-c M-d"
+          'ptrv/duplicate-and-comment-current-line-or-region)
+
+(bind-key "C-c q" 'exit-emacs-client)
+(bind-key "C-c t" 'ptrv/eshell-or-restore)
+(bind-key "C-c u" 'ptrv/browse-url)
+(bind-key "C-c v" 'halve-other-window-height-or-width)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
@@ -2994,9 +2972,8 @@ This checks in turn:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+(use-package server
+  :init (unless (server-running-p) (server-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
