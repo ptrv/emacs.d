@@ -1964,14 +1964,14 @@ prompt for the command to use."
   :defer t
   :bind (("<f11>" . hs-toggle-hiding)
          ("S-<f11>" . hs-toggle-hiding-all))
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook
+                  lisp-mode-hook c-mode-common-hook
+                  perl-mode-hook sh-mode-hook
+                  python-mode-hook))
+    (add-hook hook 'hs-minor-mode))
   :config
   (progn
-    (dolist (hook '(emacs-lisp-mode-hook
-                    lisp-mode-hook c-mode-common-hook
-                    perl-mode-hook sh-mode-hook
-                    python-mode-hook))
-      (add-hook hook 'hs-minor-mode))
-
     (bind-keys* :map hs-minor-mode-map
                 ("C-c @ h" . hs-hide-block)
                 ("C-c @ H" . hs-show-block)
@@ -1986,11 +1986,6 @@ prompt for the command to use."
 
     (defvar hs-hide-all nil
       "Current state of hideshow for toggling all.")
-    (defun ptrv/hideshow-init ()
-      (ptrv/set-variables-local '(hs-hide-all))
-      (add-to-list 'minor-mode-overriding-map-alist
-                   (cons 'hs-minor-mode-map ptrv/hs-minor-mode-map)))
-    (add-hook 'hs-minor-mode-hook 'ptrv/hideshow-init)
 
     (defun hs-toggle-hiding-all ()
       "Toggle hideshow all."
