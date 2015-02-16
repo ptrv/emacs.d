@@ -11,3 +11,15 @@ eshell/lastdir
 # manually installed stable org-mode
 site-lisp/_extras/org-*
 /locals.el
+/recentf
+/savehist
+/projectile-bookmarks.eld
+/projectile.cache
+/places
+/mc-lists.el
+/ido.last
+/history
+/company-statistics-cache.el
+/.emacs.desktop
+/.emacs.desktop.lock
+/smex-items
