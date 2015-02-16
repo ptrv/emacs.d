@@ -121,6 +121,9 @@
 
 (require 'use-package)
 
+(use-package paradox
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
 (use-package exec-path-from-shell
