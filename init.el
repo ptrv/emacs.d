@@ -2024,9 +2024,7 @@ collapsed buffer"
   (use-package ns-win
     :defer t
     :config
-    (setq mac-option-key-is-meta nil
-          mac-command-key-is-meta t
-          mac-command-modifier 'meta
+    (setq mac-command-modifier 'meta
           mac-option-modifier 'super
           mac-function-modifier 'hyper
           ;; mac-right-command-modifier 'super
@@ -2034,9 +2032,10 @@ collapsed buffer"
           ))
 
   (when *is-cocoa-emacs*
-    (set-frame-font "Inconsolata-16" nil t)
-    (set-frame-size (selected-frame) 110 53)
-    (set-frame-position (selected-frame) 520 24))
+    (set-frame-font "Inconsolata-15" nil t)
+    ;; (set-frame-size (selected-frame) 110 53)
+    ;; (set-frame-position (selected-frame) 520 24)
+    )
 
   (setq default-input-method "MacOSX")
 
@@ -2066,24 +2065,30 @@ collapsed buffer"
   (use-package files
     :defer t
     :config
-    (let ((gls (executable-find "gls")))
-      (if gls
-          (setq insert-directory-program gls)
-        (message "GNU coreutils not found. Install coreutils with homebrew."))))
+    (when *is-mac*
+      (let ((gnu-ls (executable-find "gls")))
+        (if gnu-ls
+            (setq insert-directory-program gnu-ls)
+          (message "GNU coreutils not found. Install coreutils with homebrew.")))))
 
   (use-package grep
     :defer t
     :config
-    (let ((gfind (executable-find "gfind")))
-      (when gfind
-        (setq find-program gfind))))
+    (when *is-mac*
+      (let ((gnu-find (executable-find "gfind")))
+        (when gnu-find
+          (setq find-program gnu-find)))
+      (let ((gnu-xargs (executable-find "gxargs")))
+        (when gnu-xargs
+          (setq xargs-program gnu-xargs)))))
 
   (use-package locate
     :defer t
     :config
-    (let ((mdfind (executable-find "mdfind")))
-      (when mdfind
-        (setq locate-command mdfind)))))
+    (when *is-mac*
+      (let ((mdfind (executable-find "mdfind")))
+        (when mdfind
+          (setq locate-command mdfind))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * linux
