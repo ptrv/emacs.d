@@ -29,6 +29,9 @@
 
 ;;; Code:
 
+;;; Debugging
+(setq message-log-max 10000)
+
 (when (version-list-< (version-to-list emacs-version) '(24 4))
   (error "This configuration needs Emacs 24.4, but this is %s!" emacs-version))
 
