@@ -173,6 +173,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq browse-url-generic-program (ptrv/get-default-url-program)
         browse-url-browser-function 'browse-url-generic))
 
+(use-package url
+  :defer t
+  :config
+  (setq url-configuration-directory (expand-file-name "url" ptrv/tmp-dir)))
 
 ;; Compilation from Emacs
 (use-package compile
@@ -216,8 +220,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
       ;; from https://github.com/technomancy/better-defaults
       x-select-enable-primary nil
       save-interprogram-paste-before-kill t
-      mouse-yank-at-point t
-      url-configuration-directory (expand-file-name "url" ptrv/tmp-dir))
+      mouse-yank-at-point t)
 
 (use-package apropos
   :defer t
