@@ -516,7 +516,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;; (use-package company-statistics
 ;;   :ensure t
 ;;   :defer t
-;;   :init (company-statistics-mode))
+;;   :init (company-statistics-mode)
+;;   :config
+;;   (setq company-statistics-file
+;;         (expand-file-name "company-statistics-cache.el" ptrv/tmp-dir)))
 
 (use-package company-dabbrev
   :ensure company
