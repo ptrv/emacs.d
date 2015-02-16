@@ -78,25 +78,11 @@
 
 ;; set all dirs
 (defvar ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc")))
-(defvar ptrv/tmp-dir      (file-name-as-directory (locate-user-emacs-file "tmp")))
-(defvar ptrv/autosaves-dir(file-name-as-directory (concat ptrv/tmp-dir "autosaves")))
-(defvar ptrv/backups-dir  (file-name-as-directory (concat ptrv/tmp-dir "backups")))
-(defvar ptrv/pscratch-dir (file-name-as-directory (concat ptrv/tmp-dir "pscratch")))
-
-;; create tmp dirs if necessary
-(make-directory ptrv/tmp-dir t)
-(make-directory ptrv/autosaves-dir t)
-(make-directory ptrv/backups-dir t)
-(make-directory ptrv/pscratch-dir t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
-(setq auto-save-list-file-name
-      (expand-file-name "autosave-list" ptrv/autosaves-dir))
-(setq auto-save-file-name-transforms
-      `((".*" ,(concat ptrv/autosaves-dir "\\1") t)))
-(setq backup-directory-alist
-      `((".*" . ,ptrv/backups-dir)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+      backup-directory-alist `((".*" . ,(locate-user-emacs-file ".backup"))))
 
 (setq backup-by-copying t
       delete-old-versions t
