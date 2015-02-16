@@ -1559,7 +1559,7 @@ If ARG is not nil, create package in current directory"
           (error "Please insert a package name"))))))
 
 (use-package company-go
-  :ensure go-mode
+  :ensure t
   :defer t
   :init (add-hook 'go-mode-hook
                   (lambda () (setq-local company-backends
