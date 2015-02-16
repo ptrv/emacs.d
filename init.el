@@ -674,7 +674,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package tramp
   :defer t
   :config
-  (setq tramp-backup-directory-alist backup-directory-alist))
+  (setq tramp-backup-directory-alist backup-directory-alist
+        tramp-auto-save-directory (locate-user-emacs-file "tramp-auto-save")))
 
 (defun sudo-edit (&optional arg)
   "Edit buffer with superuser privileges."
