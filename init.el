@@ -173,11 +173,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (setq browse-url-generic-program (ptrv/get-default-url-program)
         browse-url-browser-function 'browse-url-generic))
 
-(use-package url
-  :defer t
-  :config
-  (setq url-configuration-directory (expand-file-name "url" ptrv/tmp-dir)))
-
 ;; Compilation from Emacs
 (use-package compile
   :defer t
@@ -243,8 +238,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :defer t
   :init (recentf-mode)
   :config
-  (setq recentf-save-file (expand-file-name "recentf" ptrv/tmp-dir)
-        recentf-max-saved-items 100))
+  (setq recentf-max-saved-items 100))
 
 (use-package uniquify
   :config
@@ -254,18 +248,15 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
-  :config
-  (progn
-    (setq-default save-place t)
-    (setq save-place-file (expand-file-name "places" ptrv/tmp-dir))))
+  :config (setq-default save-place t))
 
 ;; savehist keeps track of some history
 (use-package savehist
-  :init (savehist-mode)
+  :init (savehist-mode t)
   :config
   (setq savehist-additional-variables '(search ring regexp-search-ring)
         savehist-autosave-interval 60
-        savehist-file (expand-file-name "savehist" ptrv/tmp-dir)))
+        savehist-save-minibuffer-history t))
 
 ;; desktop.el
 (use-package desktop
@@ -298,11 +289,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package cua-base
   :defer t
   :config (setq cua-enable-cua-keys nil))
-
-(use-package bookmark
-  :defer t
-  :config
-  (setq bookmark-default-file (expand-file-name "bookmarks" ptrv/tmp-dir)))
 
 (defun ptrv/get-default-sound-command ()
   "Get default command for playing sound files."
@@ -435,8 +421,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         ido-create-new-buffer 'always
         ido-max-prospects 10
         ido-default-file-method 'selected-window
-        ido-max-directory-size 100000
-        ido-save-directory-list-file (expand-file-name "ido.last" ptrv/tmp-dir)))
+        ido-max-directory-size 100000))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido-ubiquitous
@@ -462,9 +447,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package smex
   :ensure t
   :bind (([remap execute-extended-command] . smex)
-         ("M-X" . smex-major-mode-commands))
-  :config
-  (setq smex-save-file (expand-file-name "smex-items" ptrv/tmp-dir)))
+         ("M-X" . smex-major-mode-commands)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * idomenu
@@ -516,10 +499,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;; (use-package company-statistics
 ;;   :ensure t
 ;;   :defer t
-;;   :init (company-statistics-mode)
-;;   :config
-;;   (setq company-statistics-file
-;;         (expand-file-name "company-statistics-cache.el" ptrv/tmp-dir)))
+;;   :init (company-statistics-mode))
 
 (use-package company-dabbrev
   :ensure company
@@ -709,10 +689,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :defer t
   :config
   (setq tramp-backup-directory-alist backup-directory-alist))
-(use-package tramp-cache
-  :defer t
-  :config
-  (setq tramp-persistency-file-name (expand-file-name "tramp" ptrv/tmp-dir)))
 
 (defun sudo-edit (&optional arg)
   "Edit buffer with superuser privileges."
@@ -1869,11 +1845,6 @@ prompt for the command to use."
   :init (projectile-global-mode)
   :config
   (progn
-    (setq projectile-known-projects-file (expand-file-name
-                                          "projectile-bookmarks.eld"
-                                          ptrv/tmp-dir)
-          projectile-cache-file (expand-file-name "projectile.cache" ptrv/tmp-dir))
-
     (dolist (file '(".ropeproject" "setup.py"))
       (add-to-list 'projectile-project-root-files file t)))
   :diminish projectile-mode)
@@ -2466,10 +2437,7 @@ collapsed buffer"
   :bind (("C-S-c C-S-c" . mc/edit-lines)
          ("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this))
-  :config
-  (with-eval-after-load 'multiple-cursors-core
-    (setq mc/list-file (expand-file-name "mc-lists.el" ptrv/tmp-dir))))
+         ("C-c C-<" . mc/mark-all-like-this)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
