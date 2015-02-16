@@ -111,7 +111,8 @@
 (require 'use-package)
 
 (use-package paradox
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
@@ -253,6 +254,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :config (setq desktop-save 'if-exists))
 
 (use-package whitespace
+  :defer t
   :init
   (dolist (hook '(prog-mode-hook text-mode-hook))
     (add-hook hook 'whitespace-mode))
@@ -265,6 +267,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (use-package whitespace-cleanup-mode
   :ensure t
+  :defer t
   :init
   (dolist (it '(prog-mode-hook text-mode-hook))
     (add-hook it 'whitespace-cleanup-mode))
@@ -2217,13 +2220,14 @@ collapsed buffer"
 
 (use-package anaconda-mode
   :ensure t
-  :commands (anaconda-mode)
+  :defer t
   :init (add-hook 'python-mode-hook 'anaconda-mode))
 
 (use-package company-anaconda
   :ensure t
+  :defer t
   :config
-  (progn
+  (with-eval-after-load 'company
     (defun ptrv/company-anaconda--init ()
       (setq-local company-backends
                   '((company-anaconda :with company-yasnippet))))
@@ -2231,12 +2235,12 @@ collapsed buffer"
 
 (use-package highlight-indentation
   :ensure t
-  :commands (highlight-indentation-mode)
+  :defer t
   :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
 
 (use-package pyenv-mode
   :ensure t
-  :commands (pyenv-mode)
+  :defer t
   :init (add-hook 'python-mode-hook 'pyenv-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2360,11 +2364,19 @@ collapsed buffer"
 
 (use-package company-ycmd
   :load-path "~/src/emacs-ycmd"
-  :init (company-ycmd-setup))
+  :defer t
+  :commands (company-ycmd-setup)
+  :init
+  (with-eval-after-load 'company
+    (company-ycmd-setup)))
 
 (use-package flycheck-ycmd
   :load-path "~/src/emacs-ycmd"
-  :init (flycheck-ycmd-setup))
+  :defer t
+  :commands (flycheck-ycmd-setup)
+  :init
+  (with-eval-after-load 'ycmd
+    (flycheck-ycmd-setup)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
