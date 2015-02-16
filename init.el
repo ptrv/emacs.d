@@ -920,25 +920,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                                 (ptrv/get-default-sound-command) " %s")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * xah lee modes
-(use-package xmsi-math-symbols-input
-  :load-path "site-lisp/misc"
-  :defer t
-  :commands (xmsi-mode)
-  :config
-  (progn
-    (bind-key "S-SPC" 'nil xmsi-keymap)
-    ;; (bind-key "C-c C-8" 'xmsi-change-to-symbol xmsi-keymap)
-    ))
-
-;; xub-mode
-(use-package xub-mode
-  :load-path "site-lisp/misc"
-  :defer t
-  :commands (xub-mode))
-(defalias 'unicode-browser 'xub-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * frames
 ;; display visited file's path as frame title
 (setq frame-title-format
