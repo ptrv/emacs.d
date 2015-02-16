@@ -233,10 +233,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :init (auto-compression-mode))
 (use-package winner
   :init (winner-mode)
-  :config
-  (progn
-    (bind-key "C-c w b" 'winner-undo)
-    (bind-key "C-c w f" 'winner-redo)))
+  :bind (("C-c w b" . winner-undo)
+         ("C-c w f" . winner-redo)))
 
 (use-package windmove
   :config (windmove-default-keybindings 'super))
@@ -789,9 +787,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
           (kill-buffer)
         (bury-buffer))
       (jump-to-register :magit-fullscreen))
-    (bind-keys :map magit-status-mode-map
-               ("q" . magit-quit-session)
-               ("Q" . (lambda () (interactive) (magit-quit-session t))))
 
     (defun magit-toggle-whitespace ()
       (interactive)
@@ -809,7 +804,10 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (setq magit-diff-options (remove "-w" magit-diff-options))
       (magit-refresh))
 
-    (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
+    (bind-keys :map magit-status-mode-map
+               ("q" . magit-quit-session)
+               ("Q" . (lambda () (interactive) (magit-quit-session t)))
+               ("W" . magit-toggle-whitespace))
 
     (setq magit-auto-revert-mode nil
           magit-set-upstream-on-push t
@@ -937,9 +935,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package sql
   :defer t
   :config
-  (progn
-    (bind-key "C-c C-p p" 'sql-set-product sql-mode-map)
-    (bind-key "C-c C-p i" 'sql-set-sqli-buffer sql-mode-map)))
+  (bind-keys :map sql-mode-map
+             ("C-c C-p p" . sql-set-product)
+             ("C-c C-p i" . sql-set-sqli-buffer)))
 
 (use-package sql-spatialite-ext
   :defer t
