@@ -2408,15 +2408,20 @@ collapsed buffer"
       (if (region-active-p)
           (lua-send-region (region-beginning) (region-end))
         (lua-send-current-line)))
-    (defun ptrv/lua-mode-init ()
-      (ggtags-mode +1)
-      (yas-minor-mode +1)
-      (local-set-key (kbd "C-c C-d") 'lua-send-proc)
-      (local-set-key (kbd "C-c C-c") 'ptrv/lua-send-region-or-current-line)
-      (local-set-key (kbd "C-c C-p") 'lua-start-process)
-      (ycmd-mode +1)
-      (setq-local company-backends '((company-ycmd :with company-yasnippet))))
-    (add-hook 'lua-mode-hook 'ptrv/lua-mode-init)))
+    (with-eval-after-load 'ycmd
+      (add-hook 'lua-mode-hook 'ycmd-mode))
+    (with-eval-after-load 'company-ycmd
+      (defun ptrv/lua-mode-company-ycmd--init ()
+        (setq-local company-backends '((company-ycmd :with company-yasnippet))))
+      (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
+    (with-eval-after-load 'ggtags
+      (add-hook 'lua-mode-hook 'ggtags-mode))
+    (with-eval-after-load 'yasnippet
+      (add-hook 'lua-mode-hook 'yas-minor-mode))
+    (bind-keys :map lua-mode-map
+               ("C-c C-d" . lua-send-proc)
+               ("C-c C-c" . ptrv/lua-send-region-or-current-line)
+               ("C-c C-p" . lua-start-process))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
