@@ -1683,7 +1683,12 @@ point reaches the beginning or end of the buffer, stop there."
 
 (delete-selection-mode)
 
-(add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+(use-package bug-reference
+  :defer t
+  :init
+  (progn
+    (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+    (add-hook 'text-mode-hook 'bug-reference-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
