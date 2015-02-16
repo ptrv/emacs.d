@@ -332,9 +332,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
     (setq flyspell-use-meta-tab nil
           flyspell-issue-welcome-flag nil
           flyspell-issue-message-flag nil)
-    (define-key flyspell-mode-map "\M-\t" nil)
-    (define-key flyspell-mode-map (kbd "C-:") 'flyspell-auto-correct-word)
-    (define-key flyspell-mode-map (kbd "C-.") 'ispell-word)))
+    (bind-keys :map flyspell-mode-map
+               ("\M-\t" . nil)
+               ("C-:" . flyspell-auto-correct-word)
+               ("C-." . ispell-word))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hippie-expand
