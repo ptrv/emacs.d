@@ -520,7 +520,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :config (setq company-dabbrev-downcase nil))
 
 (use-package company-quickhelp
-  :ensure company
+  :ensure t
   :defer t
   :init (company-quickhelp-mode))
 
