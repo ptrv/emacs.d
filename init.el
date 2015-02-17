@@ -1035,7 +1035,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iedit
 (use-package iedit
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * google-this
@@ -2312,6 +2313,7 @@ collapsed buffer"
 ;;;; * key-chord
 (use-package key-chord
   :ensure t
+  :defer t
   :init (key-chord-mode 1)
   :config
   (progn
