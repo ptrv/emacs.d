@@ -2182,12 +2182,13 @@ collapsed buffer"
          "site-lisp/_extras/doxymacs/lisp"))))
 
     (when ptrv/doxymacs-path
+      (add-to-list 'load-path ptrv/doxymacs-path)
       (use-package doxymacs
-        :load-path ,ptrv/doxymacs-path
         :commands (doxymacs-mode)
         :config
         (progn
           (when *is-linux*
+            (defvar doxymacs-external-xml-parser-executable)
             (setq doxymacs-external-xml-parser-executable
                   (locate-user-emacs-file
                    "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
