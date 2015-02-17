@@ -2229,32 +2229,29 @@ collapsed buffer"
      :mode 'python-mode
      :regexp "[[:alnum:]_]+"
      :doc-spec
-     '(("(python)Index" nil "")))))
+     '(("(python)Index" nil "")))
 
-(use-package anaconda-mode
-  :ensure t
-  :defer t
-  :init (add-hook 'python-mode-hook 'anaconda-mode))
+    (use-package anaconda-mode
+      :ensure t
+      :defer t
+      :init (add-hook 'python-mode-hook 'anaconda-mode))
 
-(use-package company-anaconda
-  :ensure t
-  :defer t
-  :config
-  (with-eval-after-load 'company
-    (defun ptrv/company-anaconda--init ()
-      (setq-local company-backends
-                  '((company-anaconda :with company-yasnippet))))
-    (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
+    (use-package company-anaconda
+      :ensure t
+      :init
+      (with-eval-after-load 'company
+        (defun ptrv/company-anaconda--init ()
+          (setq-local company-backends
+                      '((company-anaconda :with company-yasnippet))))
+        (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
 
-(use-package highlight-indentation
-  :ensure t
-  :defer t
-  :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
+    (use-package highlight-indentation
+      :ensure t
+      :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
 
-(use-package pyenv-mode
-  :ensure t
-  :defer t
-  :init (add-hook 'python-mode-hook 'pyenv-mode))
+    (use-package pyenv-mode
+      :ensure t
+      :init (pyenv-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
