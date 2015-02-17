@@ -2563,6 +2563,8 @@ collapsed buffer"
 (bind-key "C-c v" 'halve-other-window-height-or-width)
 
 (bind-key "C-c T d" #'toggle-debug-on-error)
+(bind-key "C-c h b" #'describe-personal-keybindings)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
 (defun ptrv/ido-recentf-open ()
