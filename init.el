@@ -588,12 +588,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
   :diminish elisp-slime-nav-mode)
 
-(use-package eldoc                      ; Documentation in minibuffer
+(use-package eldoc
   :defer t
-  ;; Enable Eldoc for `eval-expression', too
   :init (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
-  :config
-  (setq-default eldoc-documentation-function #'describe-char-eldoc)
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
