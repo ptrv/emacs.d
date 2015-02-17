@@ -1464,12 +1464,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   (progn
     (message "go-mode config has been loaded !!!")
 
-    ;; (defun ptrv/locate-godoc-src-file (f)
-    ;;   (concat (car (split-string (getenv "GOPATH") ":")) "/src/" f))
-
-    ;; (add-to-list 'load-path (ptrv/locate-godoc-src-file
-    ;;                          "github.com/nsf/gocode/emacs-company"))
-
     ;; compile fucntions
     (defun ptrv/go-build ()
       "compile project"
@@ -1480,11 +1474,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       "test project"
       (interactive "P")
       (compile (concat "go test" (if arg " -v"))))
-
-    ;; (defun ptrv/go-chk ()
-    ;;   "gocheck project"
-    ;;   (interactive)
-    ;;   (compile "go test -gocheck.vv"))
 
     (defun ptrv/read-compile--cmd (default-cmd read-cmd?)
       (if read-cmd? (compilation-read-command default-cmd) default-cmd))
@@ -1523,17 +1512,35 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                 (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))
 
     (defun ptrv/go-mode-init ()
-      (yas-minor-mode +1)
       (add-hook 'before-save-hook 'gofmt-before-save nil :local)
-      (hs-minor-mode +1)
-      (go-eldoc-setup)
-      (setq-local flycheck-check-syntax-automatically '(save))
-      (whitespace-mode -1)
-      (whitespace-cleanup-mode -1))
-
+      (whitespace-mode -1))
     (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
+    (use-package company-go
+      :ensure t
+      :init (add-hook 'go-mode-hook
+                      (lambda () (setq-local company-backends
+                                             '((company-go :with company-yasnippet)))))
+      :config (setq company-go-show-annotation nil))
+
+    (use-package go-eldoc
+      :ensure t
+      :init (add-hook 'go-mode-hook #'go-eldoc-setup))
+
+    (with-eval-after-load 'yasnippet
+      (add-hook 'go-mode-hook #'yas-minor-mode))
+    (with-eval-after-load 'hideshow
+      (add-hook 'go-mode-hook #'hs-minor-mode))
+    (with-eval-after-load 'flycheck
+      (defvar flycheck-check-syntax-automatically)
+      (defun ptrv/go-mode-flycheck--init ()
+        (setq-local flycheck-check-syntax-automatically '(save)))
+      (add-hook 'go-mode-hook 'ptrv/go-mode-flycheck--init))
+    (with-eval-after-load 'whitespace-cleanup-mode
+      (add-hook 'go-mode-hook (lambda () (whitespace-cleanup-mode -1))))
+
     (with-eval-after-load 'find-file-in-project
+      (defvar ffip-patterns)
       (add-to-list 'ffip-patterns "*.go"))
 
     (defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
@@ -1556,15 +1563,7 @@ If ARG is not nil, create package in current directory"
               (make-directory name)
               (find-file (concat (file-name-as-directory name)
                                  (read-from-minibuffer "File name: " "main.go"))))
-          (error "Please insert a package name"))))
-
-    (use-package company-go
-      :ensure t
-      :defer t
-      :init (add-hook 'go-mode-hook
-                      (lambda () (setq-local company-backends
-                                             '((company-go :with company-yasnippet)))))
-      :config (setq company-go-show-annotation nil))))
+          (error "Please insert a package name"))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
