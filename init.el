@@ -991,11 +991,12 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * edit-server
 (use-package edit-server
   :ensure t
+  :defer t
+  :idle (edit-server-start)
   :init
   (progn
     (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-    (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
-    (edit-server-start))
+    (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer))
   :config
   (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))
         edit-server-new-frame nil))
@@ -2940,7 +2941,8 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
 (use-package server
-  :init (unless (server-running-p) (server-start)))
+  :defer t
+  :idle (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
