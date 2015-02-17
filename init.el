@@ -2147,6 +2147,12 @@ collapsed buffer"
       :init (pyenv-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * ggtags
+(use-package ggtags
+  :ensure t
+  :defer t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
 (setq c-default-style '((java-mode . "java")
                         (awk-mode . "awk")
@@ -2171,10 +2177,10 @@ collapsed buffer"
             c-default-style "bsd"
             indent-tabs-mode nil)
       (local-set-key (kbd "C-c o") 'ff-find-other-file)
-      (eldoc-mode +1)
-      (ggtags-mode +1)
-      (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
       (local-set-key (kbd "C-c C-c") 'compile)
+      (eldoc-mode)
+      (ggtags-mode)
+      (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
       (setq-local split-width-threshold nil))
 
     (dolist (it '(c-mode-hook c++-mode-hook))
@@ -2188,24 +2194,24 @@ collapsed buffer"
                 "/share/emacs/site-lisp"))
        (*is-linux*
         (locate-user-emacs-file
-         "site-lisp/_extras/doxymacs/lisp"))
-       (t nil)))
+         "site-lisp/_extras/doxymacs/lisp"))))
 
     (when ptrv/doxymacs-path
-      (add-to-list 'load-path ptrv/doxymacs-path)
-      (autoload 'doxymacs-mode "doxymacs" nil t))
-    (with-eval-after-load 'doxymacs
-      (when *is-linux*
-        (setq doxymacs-external-xml-parser-executable
-              (locate-user-emacs-file
-               "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
-        (unless (file-exists-p doxymacs-external-xml-parser-executable)
-          (warn "The doxymacs_parser executable does not exist!")))
-
-      (defun ptrv/doxymacs-font-lock-hook ()
-        (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-            (doxymacs-font-lock)))
-      (add-hook 'font-lock-mode-hook 'ptrv/doxymacs-font-lock-hook))
+      (use-package doxymacs
+        :load-path ,ptrv/doxymacs-path
+        :commands (doxymacs-mode)
+        :config
+        (progn
+          (when *is-linux*
+            (setq doxymacs-external-xml-parser-executable
+                  (locate-user-emacs-file
+                   "site-lisp/_extras/doxymacs/c/doxymacs_parser"))
+            (unless (file-exists-p doxymacs-external-xml-parser-executable)
+              (warn "The doxymacs_parser executable does not exist!")))
+          (add-hook 'font-lock-mode-hook
+                    (lambda ()
+                      (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+                          (doxymacs-font-lock)))))))
 
     (defun ptrv/c++-mode-init ()
       ;; (doxymacs-mode +1)
@@ -2214,11 +2220,8 @@ collapsed buffer"
     (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
 
     (defun ptrv/c-mode-init()
-      (local-set-key (kbd "RET") 'newline-and-indent)
-      (local-set-key (kbd "C-c C-c") 'compile))
+      (local-set-key (kbd "RET") 'newline-and-indent))
     (add-hook 'c-mode-hook 'ptrv/c-mode-init)
-
-    ;; (add-hook 'c-mode-common-hook 'linum-mode)
 
     ;; C++11 keywords
     (font-lock-add-keywords
@@ -2242,21 +2245,6 @@ collapsed buffer"
 (use-package gud-lldb
   :if *is-mac*
   :commands (lldb))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * irony
-;; (ptrv/after cc-mode
-;;   (message "Load config: Irony...")
-
-;;   (defun ptrv/company-irony--init ()
-;;     (setq-local company-backends '(company-irony company-clang))
-;;     (local-set-key (kbd "<f12>") 'company-complete-common)
-;;     (irony-cdb-autosetup-compile-options))
-;;   (ptrv/add-to-hook 'c++-mode-hook '(irony-mode ptrv/company-irony--init))
-;;   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-
-;;   (ptrv/after flycheck
-;;     (add-to-list 'flycheck-checkers 'irony)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ycmd
