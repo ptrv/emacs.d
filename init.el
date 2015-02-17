@@ -2230,6 +2230,7 @@ collapsed buffer"
 
 (use-package gud-lldb
   :if *is-mac*
+  :load-path "site-lisp/misc"
   :commands (lldb))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
