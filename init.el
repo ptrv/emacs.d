@@ -252,7 +252,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :config (setq desktop-save 'if-exists))
 
 (use-package whitespace
-  :defer t
+  :bind ("C-c T w" . whitespace-mode)
   :init
   (dolist (hook '(prog-mode-hook text-mode-hook))
     (add-hook hook 'whitespace-mode))
@@ -265,10 +265,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (use-package whitespace-cleanup-mode
   :ensure t
-  :defer t
+  :bind ("C-c T W" . whitespace-cleanup-mode)
   :init
-  (dolist (it '(prog-mode-hook text-mode-hook))
-    (add-hook it 'whitespace-cleanup-mode))
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook 'whitespace-cleanup-mode))
   :config
   (setq whitespace-cleanup-mode-only-if-initially-clean t))
 
@@ -357,6 +357,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;; * look-and-feel
 (use-package rainbow-mode
   :ensure t
+  :bind ("C-c T r" . rainbow-mode)
   :diminish rainbow-mode)
 
 (setq column-number-mode t)
@@ -1808,6 +1809,10 @@ prompt for the command to use."
 (bind-key "C-c f b e" 'ptrv/byte-recompile-elpa)
 (bind-key "C-c f b h" 'ptrv/byte-recompile-home)
 
+(bind-key "C-c f v d" #'add-dir-local-variable)
+(bind-key "C-c f v l" #'add-file-local-variable)
+(bind-key "C-c f v p" #'add-file-local-variable-prop-line)
+
 (use-package dired
   :defer t
   :config
@@ -2487,8 +2492,9 @@ collapsed buffer"
     (bind-key "<up>" (lambda () (interactive) (enlarge-window 4)))))
 
 ;;diff shortcuts
-(bind-key "C-c D d" 'diff)
-(bind-key "C-c D f" 'diff-buffer-with-file)
+(use-package diff
+  :bind (("C-c D d" . diff)
+         ("C-c D f" . diff-buffer-with-file)))
 
 (bind-key "C-c w s" 'swap-windows)
 (bind-key "C-c w r" 'rotate-windows)
@@ -2496,13 +2502,6 @@ collapsed buffer"
 ;;fast vertical naviation
 (bind-key "M-U" (lambda () (interactive) (forward-line -10)))
 (bind-key "M-D" (lambda () (interactive) (forward-line 10)))
-
-(bind-key "C-s" 'isearch-forward-regexp)
-(bind-key "C-r" 'isearch-backward-regexp)
-(bind-key "M-%" 'query-replace-regexp)
-(bind-key "C-M-s" 'isearch-forward)
-(bind-key "C-M-r" 'isearch-backward)
-(bind-key "M-C-%" 'query-replace)
 
 ;; Align your code in a pretty way.
 (bind-key "C-x \\" 'align-regexp)
@@ -2548,6 +2547,7 @@ collapsed buffer"
 (bind-key "C-c u" 'ptrv/browse-url)
 (bind-key "C-c v" 'halve-other-window-height-or-width)
 
+(bind-key "C-c T d" #'toggle-debug-on-error)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
 (defun ptrv/ido-recentf-open ()
