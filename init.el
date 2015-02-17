@@ -734,7 +734,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * magit
-;; newline after 72 chars in magit-log-edit-mode
 (use-package magit
   :ensure t
   :defer t
@@ -792,6 +791,22 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                   (lambda ()
                     (set-fill-column 72)
                     (auto-fill-mode 1))))
+
+(use-package gitconfig-mode
+  :ensure t
+  :defer t)
+
+(use-package gitignore-mode
+  :ensure t
+  :defer t)
+
+(use-package gitattributes-mode
+  :ensure t
+  :defer t)
+
+(use-package git-rebase-mode
+  :ensure t
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc-git
@@ -1341,11 +1356,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package pd-mode
   :mode (("\\.pat$" . pd-mode)
          ("\\.pd$" . pd-mode)))
-
-;; gitconfig
-(use-package gitconfig-mode
-  :ensure t
-  :mode ("gitconfig*" . gitconfig-mode))
 
 ;; cmake
 (use-package cmake-mode
