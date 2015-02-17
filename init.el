@@ -217,9 +217,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package jka-cmpr-hook
   :init (auto-compression-mode))
 (use-package winner
-  :init (winner-mode)
-  :bind (("C-c w b" . winner-undo)
-         ("C-c w f" . winner-redo)))
+  :init (winner-mode))
 
 (use-package windmove
   :config (windmove-default-keybindings 'super))
