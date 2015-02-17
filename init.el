@@ -1546,15 +1546,16 @@ If ARG is not nil, create package in current directory"
               (make-directory name)
               (find-file (concat (file-name-as-directory name)
                                  (read-from-minibuffer "File name: " "main.go"))))
-          (error "Please insert a package name"))))))
+          (error "Please insert a package name"))))
 
-(use-package company-go
-  :ensure t
-  :defer t
-  :init (add-hook 'go-mode-hook
-                  (lambda () (setq-local company-backends
-                                         '((company-go :with company-yasnippet)))))
-  :config (setq company-go-show-annotation nil))
+    (use-package company-go
+      :ensure t
+      :defer t
+      :init (add-hook 'go-mode-hook
+                      (lambda () (setq-local company-backends
+                                             '((company-go :with company-yasnippet)))))
+      :config (setq company-go-show-annotation nil))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * xml
