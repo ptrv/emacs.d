@@ -864,7 +864,10 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package diff-hl
   :ensure t
   :defer t
-  :init (global-diff-hl-mode))
+  :init
+  (progn
+    (global-diff-hl-mode)
+    (add-hook 'dired-mode-hook 'diff-hl-dired-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
