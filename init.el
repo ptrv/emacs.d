@@ -848,11 +848,13 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * diff-hl
 (use-package diff-hl
   :ensure t
+  :defer t
   :init (global-diff-hl-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
 (use-package ahg
+  :disabled t
   :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1010,6 +1012,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;;; * google-this
 (use-package google-this
   :ensure t
+  :defer t
   :init (google-this-mode)
   :diminish google-this-mode)
 
