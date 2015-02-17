@@ -451,7 +451,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;; * Eshell
 (use-package eshell
   :bind (("C-x m" . eshell))
-  :commands (pcomplete/go pcomplete/lein)
   :config
   (progn
     (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
@@ -467,7 +466,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
     (defun eshell/e (file)
       (find-file file))
 
-    (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)))
+    (use-package pcmpl-lein
+      :load-path "site-lisp/pcomplete-plugins")))
 
 (use-package pcmpl-git
   :ensure t)
