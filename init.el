@@ -1858,68 +1858,29 @@ prompt for the command to use."
 ;;;; * processing
 (use-package processing-mode
   :load-path "site-lisp/processing2-emacs"
-  :mode ("\\.pde$" . processing-mode)
-  :commands (processing-snippets-initialize processing-find-sketch)
   :defer t
+  :mode ("\\.pde$" . processing-mode)
+  :commands (processing-find-sketch)
   :config
   (progn
     (with-eval-after-load 'yasnippet
-      (processing-snippets-initialize))
+      (add-hook 'processing-mode-hook #'yas-minor-mode))
 
-    (cond (*is-mac*
-           (setq processing-location "/usr/bin/processing-java")
-           (setq processing-application-dir "/Applications/Processing.app")
-           (setq processing-sketchbook-dir "~/Documents/Processing"))
-          (*is-linux*
-           (setq processing-location "~/applications/processing/processing-java")
-           (setq processing-application-dir "~/applications/processing")
-           (setq processing-sketchbook-dir "~/sketchbook")))
+    (use-package processing-snippets
+      :load-path "site-lisp/processing2-emacs"
+      :commands (processing-snippets-initialize)
+      :init (with-eval-after-load 'yasnippet
+              (processing-snippets-initialize)))
 
-    (defvar ptrv/processing-keywords
-      (cons 'processing-mode (append processing-functions
-                                     processing-builtins
-                                     processing-constants)))
+    (use-package processing-company
+      :load-path "site-lisp/processing2-emacs"
+      :commands (processing-company-setup)
+      :init (with-eval-after-load 'company
+              (processing-company-setup)))
 
-    (defun ptrv/processing-company--init ()
-      (setq-local company-backends '((company-keywords :with company-yasnippet)))
-      (make-local-variable 'company-keywords-alist)
-      (add-to-list 'company-keywords-alist ptrv/processing-keywords))
-    (add-hook 'processing-mode-hook 'ptrv/processing-company--init)
-
-    (defun ptrv/processing-mode-init ()
-      (yas-minor-mode +1))
-    (add-hook 'processing-mode-hook 'ptrv/processing-mode-init)
-
-    (let ((map processing-mode-map))
-      (define-key map (kbd "C-c C-c") 'processing-sketch-run)
-      (define-key map (kbd "C-c C-d") 'processing-find-in-reference))
-
-    ;; If htmlize is installed, provide this function to copy buffer or
-    ;; region to clipboard
-    (when (and (fboundp 'htmlize-buffer)
-               (fboundp 'htmlize-region))
-      (defun processing-copy-as-html (&optional arg)
-        ""
-        (interactive "P")
-        (if (eq (buffer-local-value 'major-mode (get-buffer (current-buffer)))
-                'processing-mode)
-            (save-excursion
-              (let ((htmlbuf (if (region-active-p)
-                                 (htmlize-region (region-beginning) (region-end))
-                               (htmlize-buffer))))
-                (if arg
-                    (switch-to-buffer htmlbuf)
-                  (with-current-buffer htmlbuf
-                    (clipboard-kill-ring-save (point-min) (point-max)))
-                  (kill-buffer htmlbuf)
-                  (message "Copied as HTML to clipboard"))))
-          (message (concat "Copy as HTML failed, because current "
-                           "buffer is not a Processing buffer."))))
-      (define-key processing-mode-map (kbd "C-c C-p z") 'processing-copy-as-html)
-      (easy-menu-add-item processing-mode-menu nil (list "---"))
-      (easy-menu-add-item processing-mode-menu nil
-                          ["Copy as HTML" processing-copy-as-html
-                           :help "Copy buffer or region as HTML to clipboard"]))))
+    (bind-keys :map processing-mode-map
+               ("C-c C-c" . processing-sketch-run)
+               ("C-c C-d" . processing-find-in-reference))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * flycheck
