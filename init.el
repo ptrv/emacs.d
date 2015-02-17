@@ -1332,9 +1332,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (use-package yaml-mode
   :ensure t
-  :mode (("\\.yml$" . yaml-mode)
-         ("\\.yaml$" .  yaml-mode)
-         ("\\.ya?ml$" .  yaml-mode)))
+  :defer t)
 
 ;; pd-mode
 (use-package pd-mode
@@ -1678,8 +1676,10 @@ point reaches the beginning or end of the buffer, stop there."
 ;; remap C-a to `smarter-move-beginning-of-line'
 (bind-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
 
-;;(global-subword-mode 1)
-(add-hook 'prog-mode-hook 'subword-mode)
+(use-package subword-mode
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook 'subword-mode))
 
 (delete-selection-mode)
 
