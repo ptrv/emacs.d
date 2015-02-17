@@ -112,7 +112,8 @@
 
 (use-package paradox
   :ensure t
-  :defer t)
+  :bind (("C-c l p" . paradox-list-packages)
+         ("C-c l P" . paradox-list-packages-no-fetch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
@@ -162,6 +163,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :config
   (setq browse-url-generic-program (ptrv/get-default-url-program)
         browse-url-browser-function 'browse-url-generic))
+
+(use-package bookmark
+  :bind ("C-c l b" . list-bookmarks)
+  :config (setq bookmark-save-flag t))
 
 ;; Compilation from Emacs
 (use-package compile
@@ -1149,7 +1154,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :bind (("C-c A" . org-agenda)
          ("C-c b" . org-iswitchb)
          ("C-c c" . org-capture)
-         ("C-c l" . org-store-link))
+         ("C-c l o" . org-store-link))
   :config
   (progn
     (setq org-outline-path-complete-in-steps nil
