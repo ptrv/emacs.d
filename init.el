@@ -2370,23 +2370,23 @@ collapsed buffer"
 (use-package ycmd
   :load-path "~/src/emacs-ycmd"
   :defer t
-  :init (add-hook 'c++-mode-hook 'ycmd-mode))
+  :commands (ycmd-mode)
+  :init (add-hook 'c++-mode-hook 'ycmd-mode)
+  :config
+  (progn
+    (use-package company-ycmd
+      :load-path "~/src/emacs-ycmd"
+      :commands (company-ycmd-setup)
+      :init
+      (with-eval-after-load 'company
+        (company-ycmd-setup)))
 
-(use-package company-ycmd
-  :load-path "~/src/emacs-ycmd"
-  :defer t
-  :commands (company-ycmd-setup)
-  :init
-  (with-eval-after-load 'company
-    (company-ycmd-setup)))
-
-(use-package flycheck-ycmd
-  :load-path "~/src/emacs-ycmd"
-  :defer t
-  :commands (flycheck-ycmd-setup)
-  :init
-  (with-eval-after-load 'ycmd
-    (flycheck-ycmd-setup)))
+    (use-package flycheck-ycmd
+      :load-path "~/src/emacs-ycmd"
+      :commands (flycheck-ycmd-setup)
+      :init
+      (with-eval-after-load 'flycheck
+        (flycheck-ycmd-setup)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
