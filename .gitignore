@@ -30,3 +30,7 @@ site-lisp/_extras/org-*
 /semanticdb/
 /xkcd/
 /calc.el
+/.mc-lists.el
+/games/
+/url/
+/tutorial/
