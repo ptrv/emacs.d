@@ -23,3 +23,10 @@ site-lisp/_extras/org-*
 /.emacs.desktop
 /.emacs.desktop.lock
 /smex-items
+/bookmarks
+/auto-save-list/
+/.backup/
+/irony/
+/semanticdb/
+/xkcd/
+/calc.el
