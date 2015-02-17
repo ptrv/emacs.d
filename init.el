@@ -454,7 +454,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :commands (pcomplete/go pcomplete/lein)
   :config
   (progn
-    (message "Eshell config has been loaded !!!")
     (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
 
     (bind-key "C-x M" (lambda () (interactive) (eshell t)))
@@ -1143,8 +1142,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
          ("C-c l" . org-store-link))
   :config
   (progn
-    (message "Org config has been loaded !!!")
-
     (setq org-outline-path-complete-in-steps nil
           org-completion-use-iswitchb nil
           org-completion-use-ido t
@@ -1269,7 +1266,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :defer t
   :config
   (progn
-    (message "TeX config has been loaded !!!")
     (setq TeX-auto-save t
           TeX-parse-self t
           TeX-source-correlate-method 'synctex
@@ -1304,8 +1300,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :defer t
   :config
   (progn
-    (message "LaTeX config has been loaded !!!")
-
     (dolist (hook '(LaTeX-math-mode reftex-mode auto-fill-mode))
       (add-hook 'LaTeX-mode-hook hook))
 
@@ -1462,8 +1456,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :defer t
   :config
   (progn
-    (message "go-mode config has been loaded !!!")
-
     ;; compile fucntions
     (defun ptrv/go-build ()
       "compile project"
@@ -2059,7 +2051,6 @@ collapsed buffer"
   :defer t
   :config
   (progn
-    (message "sclang config has been loaded !!!")
     (ptrv/sclang-mode-loader--remove)
 
     (setq sclang-auto-scroll-post-buffer nil
@@ -2142,8 +2133,6 @@ collapsed buffer"
   :defer t
   :config
   (progn
-    (message "Load config: cc-mode...")
-
     (c-add-style "my-cc-mode"
                  '("bsd"
                    (c-basic-offset . 4)
