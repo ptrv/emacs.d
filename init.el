@@ -469,6 +469,12 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
     (autoload 'pcomplete/apt-get "pcmpl-apt" nil nil)))
 
+(use-package pcmpl-git
+  :ensure t)
+
+(use-package starter-kit-eshell
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
 (use-package company
@@ -1016,6 +1022,10 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :config
   (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))
         edit-server-new-frame nil))
+
+(use-package edit-server-htmlize
+  :ensure t
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iedit
