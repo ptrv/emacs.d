@@ -2035,20 +2035,18 @@ collapsed buffer"
 
   ;; typeriter-mode
   (use-package typewriter-mode
-    :defer t
+    :if *is-linux*
+    :load-path "site-lisp/misc"
+    :commands (typewriter-mode)
     :config
-    (setq typewriter-play-command (concat
-                                   (ptrv/get-default-sound-command)
-                                   " %s")
-          typewriter-sound-default (concat
-                                    ptrv/etc-dir
-                                    "sounds/9744__horn__typewriter.wav")
-          typewriter-sound-end (concat
-                                ptrv/etc-dir
-                                "sounds/eol-bell.wav")
-          typewriter-sound-return (concat
-                                   ptrv/etc-dir
-                                   "sounds/carriage-return.wav"))))
+    (setq typewriter-play-command
+          (concat (ptrv/get-default-sound-command) " %s")
+          typewriter-sound-default
+          (concat ptrv/etc-dir "sounds/9744__horn__typewriter.wav")
+          typewriter-sound-end
+          (concat ptrv/etc-dir "sounds/eol-bell.wav")
+          typewriter-sound-return
+          (concat ptrv/etc-dir "sounds/carriage-return.wav"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
