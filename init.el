@@ -2245,16 +2245,14 @@ collapsed buffer"
     (use-package company-ycmd
       :load-path "~/src/emacs-ycmd"
       :commands (company-ycmd-setup)
-      :init
-      (with-eval-after-load 'company
-        (company-ycmd-setup)))
+      :init (with-eval-after-load 'company
+              (company-ycmd-setup)))
 
     (use-package flycheck-ycmd
       :load-path "~/src/emacs-ycmd"
       :commands (flycheck-ycmd-setup)
-      :init
-      (with-eval-after-load 'flycheck
-        (flycheck-ycmd-setup)))))
+      :init (with-eval-after-load 'flycheck
+              (flycheck-ycmd-setup)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
