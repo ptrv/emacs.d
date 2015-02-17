@@ -2070,121 +2070,43 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
-;; (defun ptrv/sclang-mode-loader ()
-;;   "Load sclang-mode."
-;;   (unless (featurep 'sclang)
-;;     (require 'sclang)
-;;     (sclang-mode)
-;;     (ptrv/sclang-mode-loader--remove)))
-;; (defun ptrv/sclang-mode-loader--remove ()
-;;   "Remove `ptrv/sclang-mode-loader' from `auto-mode-alist'."
-;;   (delete (rassq 'ptrv/sclang-mode-loader auto-mode-alist)
-;;           auto-mode-alist))
-;; (ptrv/add-auto-mode 'ptrv/sclang-mode-loader "\\.\\(sc\\|scd\\)$")
+(use-package ptrv-sclang
+  :load-path "site-lisp/misc"
+  :commands (ptrv/sclang-start)
+  :mode ("\\.\\(sc\\|scd\\)$" . ptrv/sclang-mode-loader))
 
-;; (defun ptrv/sclang ()
-;;   "Start sclang-mode."
-;;   (interactive)
-;;   (if (require 'sclang nil t)
-;;       (progn
-;;         (sclang-start)
-;;         (ptrv/sclang-mode-loader--remove))
-;;     (message "SCLang is not installed!")))
+(use-package sclang
+  :defer t
+  :config
+  (progn
+    (message "sclang config has been loaded !!!")
+    (ptrv/sclang-mode-loader--remove)
 
-;; ;; (use-package sclang)
-;; (use-package sclang-mode
-;;   :config
-;;   (progn
-;;     (message "sclang config has been loaded !!!")
-;;     (setq sclang-auto-scroll-post-buffer nil
-;;           sclang-eval-line-forward nil
-;;           ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
-;;           sclang-library-configuration-file "~/.sclang.cfg"
-;;           sclang-runtime-directory "~/scwork/"
-;;           sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
+    (setq sclang-auto-scroll-post-buffer nil
+          sclang-eval-line-forward nil
+          ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
+          sclang-library-configuration-file "~/.sclang.cfg"
+          sclang-runtime-directory "~/scwork/"
+          sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-;;     (with-eval-after-load 'company
-;;       (add-to-list 'load-path (locate-user-emacs-file "site-lisp/company-sclang"))
-;;       (require 'company-sclang)
-;;       (defun ptrv/sclang-company--init()
-;;         (setq-local company-backends '((company-sclang
-;;                                         company-yasnippet
-;;                                         company-dabbrev-code)))
-;;         (make-local-variable 'company-dabbrev-code-modes)
-;;         (add-to-list 'company-dabbrev-code-modes 'sclang-mode))
-;;       (add-to-list 'sclang-mode-hook 'ptrv/sclang-company--init))
+    (add-hook 'sclang-mode-hook #'yas-minor-mode)
+    (add-hook 'sclang-mode-hook #'subword-mode)
+    (bind-keys :map sclang-mode-map
+               ("C-c ]" . sclang-pop-definition-mark)
+               ("s-." . sclang-main-stop)
+               ("<s-return>" . sclang-eval-region-or-line))
 
-;;     (defun ptrv/sclang-init ()
-;;       (yas-minor-mode +1)
-;;       (setq indent-tabs-mode nil)
-;;       (subword-mode +1))
-;;     (add-hook 'sclang-mode-hook 'ptrv/sclang-init)
-;;     ;; (add-hook 'sclang-mode-hook 'sclang-extensions-mode)
+    (use-package company-sclang
+      :load-path "site-lisp/company-sclang"
+      :commands (company-sclang-setup)
+      :init (with-eval-after-load 'company
+              (company-sclang-setup)))
 
-;;     (defun ptrv/sclang-all-windows-to-front ()
-;;       "Raise all supercollider windows."
-;;       (interactive)
-;;       (sclang-eval-string "Window.allWindows.do(_.front);"))
-
-;;     (defun ptrv/sclang-ido-switch-to-buffer ()
-;;       (interactive)
-;;       (let* ((blist (buffer-list))
-;;              (predicate (lambda (b)
-;;                           (with-current-buffer b
-;;                             (derived-mode-p 'sclang-mode))))
-;;              (sc-buffers (delq nil (mapcar
-;;                                     (lambda (b)
-;;                                       (if (funcall predicate b) b nil))
-;;                                     blist))))
-;;         (pop-to-buffer-same-window
-;;          (ido-completing-read "SCLang buffers: "
-;;                               (mapcar 'list (mapcar 'buffer-name sc-buffers))))))
-
-;;     (with-eval-after-load 'sclang-mode
-;;       (bind-keys :map sclang-mode-map
-;;                  ("C-c ]" . sclang-pop-definition-mark)
-;;                  ("C-c F" . ptrv/sclang-all-windows-to-front)
-;;                  ("s-." . sclang-main-stop)
-;;                  ("<s-return>" . sclang-eval-region-or-line)
-;;                  ("C-c C-b" . ptrv/sclang-ido-switch-to-buffer)))
-
-;;     (defun ptrv/sclang--show-window (win-cmd-str transparent? &optional alpha)
-;;       ""
-;;       (let* ((alpha-val (or alpha 0.6))
-;;              (transparency-code (if transparent?
-;;                                     (concat
-;;                                      ".window.alpha = "
-;;                                      (number-to-string alpha-val)))))
-;;         (sclang-eval-string (concat win-cmd-str transparency-code ";"))))
-
-;;     (defun ptrv/sclang-show-meter (arg)
-;;       "Show level meter."
-;;       (interactive "P")
-;;       (ptrv/sclang--show-window "Server.default.meter" arg))
-;;     (defun ptrv/sclang-show-scope (arg)
-;;       "Show scope."
-;;       (interactive "P")
-;;       (ptrv/sclang--show-window "Server.default.scope(numChannels: 2)" arg))
-;;     (defun ptrv/sclang-show-helper-window (arg)
-;;       "Show helper window."
-;;       (interactive "P")
-;;       (ptrv/sclang--show-window "HelperWindow.new" arg))
-;;     (defun ptrv/sclang-show-node-tree ()
-;;       "Show tree window."
-;;       (interactive)
-;;       (sclang-eval-string "Server.default.plotTree;"))
-
-;;     (with-eval-after-load 'sclang-server
-;;       (bind-keys :map sclang-server-key-map
-;;                  ("l" . ptrv/sclang-show-meter)
-;;                  ("s" . ptrv/sclang-show-scope)
-;;                  ("h" . ptrv/sclang-show-helper-window)
-;;                  ("t" . ptrv/sclang-show-node-tree)))
-
-;;     ;; snippets
-;;     (autoload 'sclang-snippets-initialize "sclang-snippets" nil nil)
-;;     (ptrv/after yasnippet
-;;       (sclang-snippets-initialize))))
+    (use-package sclang-snippets
+      :load-path "site-lisp/sclang-snippets"
+      :commands (sclang-snippets-initialize)
+      :init (with-eval-after-load 'yasnippet
+              (sclang-snippets-initialize)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
