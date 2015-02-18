@@ -310,6 +310,10 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         smtpmail-smtp-server "mail.petervasil.net"
         smtpmail-smtp-service 587))
 
+(use-package tbemail
+  :load-path "site-lisp"
+  :mode ("\.eml$" . tbemail-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ediff
 (use-package ediff
