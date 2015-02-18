@@ -584,7 +584,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                                          lisp-interaction-mode
                                          lisp-mode))
 
-    (bind-key "C-c C-z" 'switch-to-ielm emacs-lisp-mode-map)
+    (bind-key "C-c C-z" 'ptrv/switch-to-ielm emacs-lisp-mode-map)
 
     (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
     (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
@@ -725,9 +725,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package ibuffer
   :bind (([remap list-buffers] . ibuffer))
   :init (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-switch-to-saved-filter-groups "default"))))
+                  (lambda ()
+                    (ibuffer-auto-mode 1)
+                    (ibuffer-switch-to-saved-filter-groups "default"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
@@ -1666,32 +1666,6 @@ If ARG is not nil, create package in current directory"
 ;;;; * editing
 (setq sentence-end-double-space nil)
 
-(defun smarter-move-beginning-of-line (arg)
-  "Move point back to indentation of beginning of line.
-
-Move point to the first non-whitespace character on this line.
-If point is already there, move to the beginning of the line.
-Effectively toggle between the first non-whitespace character and
-the beginning of the line.
-
-If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-point reaches the beginning or end of the buffer, stop there."
-  (interactive "^p")
-  (setq arg (or arg 1))
-
-  ;; Move lines first
-  (when (/= arg 1)
-    (let ((line-move-visual nil))
-      (forward-line (1- arg))))
-
-  (let ((orig-point (point)))
-    (back-to-indentation)
-    (when (= orig-point (point))
-      (move-beginning-of-line 1))))
-
-;; remap C-a to `smarter-move-beginning-of-line'
-(bind-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
-
 (use-package subword-mode
   :defer t
   :init
@@ -1717,7 +1691,8 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;; * file commands
 (use-package ptrv-files
   :load-path "site-lisp/misc"
-  :bind (("C-c f r" . ptrv/ido-recentf-open)
+  :bind (("<f5>" . ptrv/refresh-file)
+         ("C-c f r" . ptrv/ido-recentf-open)
          ("C-c f o" . ptrv/open-with)
          ("C-c f d" . ptrv/launch-directory)
          ("C-c f R" . ptrv/rename-current-buffer-file)
@@ -2219,7 +2194,7 @@ collapsed buffer"
   :init (key-chord-mode 1)
   :config
   (progn
-    (key-chord-define-global "JJ" 'switch-to-previous-buffer)
+    (key-chord-define-global "JJ" 'ptrv/switch-to-previous-buffer)
     (key-chord-define-global "BB" 'ido-switch-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2237,7 +2212,7 @@ collapsed buffer"
   (setq browse-kill-ring-show-preview nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * bindings
+;;;; * find-func
 (use-package find-func
   :init (find-function-setup-keys)
   :bind (;; Help should search more than just commands
@@ -2246,9 +2221,8 @@ collapsed buffer"
          ("C-h C-v" . find-variable)
          ("C-h C-l" . find-library)))
 
-(bind-key "<f5>" 'refresh-file)
-
-;; Split Windows
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * windows
 (use-package window
   :bind (("<f6>" . split-window-horizontally)
          ("<f7>" . split-window-vertically)
@@ -2266,9 +2240,22 @@ collapsed buffer"
   :bind (("C-c D d" . diff)
          ("C-c D f" . diff-buffer-with-file)))
 
-(bind-key "C-c w s" 'swap-windows)
-(bind-key "C-c w r" 'rotate-windows)
+(use-package ptrv-window
+  :load-path "site-lisp/misc"
+  :bind (("C-c w s" . ptrv/swap-windows)
+         ("C-c w r" . ptrv/rotate-windows)
+         ("C-c t" . ptrv/eshell-or-restore)
+         ("C-c v" . ptrv/halve-other-window-height-or-width)))
 
+(use-package ptrv-buffers
+  :load-path "site-lisp/misc"
+  :commands (ptrv/create-scratch-buffer)
+  :bind (("C-M-\\" . ptrv/indent-region-or-buffer)
+         ("C-M-z" . ptrv/indent-defun)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; *bindings
 ;;fast vertical naviation
 (bind-key "M-U" (lambda () (interactive) (forward-line -10)))
 (bind-key "M-D" (lambda () (interactive) (forward-line 10)))
@@ -2286,109 +2273,41 @@ collapsed buffer"
 
 (bind-key "C-m" 'newline-and-indent)
 
-(bind-key "M-;" 'comment-dwim-line)
-
-(bind-key "<S-return>" 'ptrv/smart-open-line)
-(bind-key "M-o" 'ptrv/smart-open-line)
-(bind-key "<C-S-return>" 'ptrv/smart-open-line-above)
-
-(bind-key [remap goto-line] 'goto-line-with-feedback)
-
 (bind-key "M-j" (lambda () (interactive) (join-line -1)))
-
-(bind-key "C-M-\\" 'indent-region-or-buffer)
-(bind-key "C-M-z" 'indent-defun)
 
 ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
 (bind-key "C-x O" (lambda () (interactive) (other-window -1)))
-
-;; registers
-(bind-key "C-x r v" 'ptrv/list-registers)
-
-(bind-key "C-M-=" 'increment-number-at-point)
-(bind-key "C-M--" 'decrement-number-at-point)
-
-(bind-key "C-c d" 'ptrv/duplicate-current-line-or-region)
-(bind-key "C-c M-d"
-          'ptrv/duplicate-and-comment-current-line-or-region)
-
-(bind-key "C-c q" 'exit-emacs-client)
-(bind-key "C-c t" 'ptrv/eshell-or-restore)
-(bind-key "C-c u" 'ptrv/browse-url)
-(bind-key "C-c v" 'halve-other-window-height-or-width)
 
 (bind-key "C-c T d" #'toggle-debug-on-error)
 (bind-key "C-c h b" #'describe-personal-keybindings)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * simple
+(use-package ptrv-simple
+  :load-path "site-lisp/misc"
+  :commands (lorem xml-format)
+  :bind (([remap goto-line] . ptrv/goto-line-with-feedback)
+         ("<S-return>" . ptrv/smart-open-line)
+         ("M-o" . ptrv/smart-open-line)
+         ("<C-S-return>" . ptrv/smart-open-line-above)
+         ("C-M-=" . ptrv/increment-number-at-point)
+         ("C-M--" . ptrv/decrement-number-at-point)
+         ("C-c d" . ptrv/duplicate-current-line-or-region)
+         ("C-c M-d" . ptrv/duplicate-and-comment-current-line-or-region)
+         ("C-x r v" . ptrv/list-registers)
+         ("C-c u" . ptrv/browse-url)
+         ("C-c q" . ptrv/exit-emacs-client)
+         ("M-;" . ptrv/comment-dwim-line)
+         ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
-(defun refresh-file ()
-  "Revert file in current buffer."
+;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
+(defun ptrv/switch-to-previous-buffer ()
+  "Switch to previous open buffer.
+Repeated invocation toggle between the two most recently open buffers."
   (interactive)
-  (revert-buffer nil t)
-  (message "Buffer reverted!"))
-
-;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
-(defun comment-dwim-line (&optional arg)
-  "Replacement for the `comment-dwim' command.
-
-Pass ARG to `comment-dwim'.  If no region is selected and current
-line is not blank and we are not at the end of the line, then
-comment current line.  Replaces default behaviour of `comment-dwim,'
-when it inserts comment at the end of the line."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (comment-dwim arg)))
-
-;; http://irreal.org/blog/?p=1742
-(defun ptrv/eshell-or-restore ()
-  "Bring up a full-screen eshell or restore previous config."
-  (interactive)
-  (if (string= "eshell-mode" major-mode)
-      (jump-to-register :eshell-fullscreen)
-    (window-configuration-to-register :eshell-fullscreen)
-    (eshell)
-    (delete-other-windows)))
-
-;; https://sites.google.com/site/steveyegge2/my-dot-emacs-file
-(defun swap-windows ()
-  "If you have 2 windows, it swaps them."
-  (interactive)
-  (cond ((not (= (count-windows) 2)) (message "You need exactly 2 windows to do this."))
-        (t
-         (let* ((w1 (first (window-list)))
-                (w2 (second (window-list)))
-                (b1 (window-buffer w1))
-                (b2 (window-buffer w2))
-                (s1 (window-start w1))
-                (s2 (window-start w2)))
-           (set-window-buffer w1 b2)
-           (set-window-buffer w2 b1)
-           (set-window-start w1 s2)
-           (set-window-start w2 s1)))))
-
-;; https://github.com/banister/window-rotate-for-emacs
-(defun rotate-windows-helper(x d)
-  (if (equal (cdr x) nil) (set-window-buffer (car x) d)
-    (set-window-buffer (car x) (window-buffer (cadr x))) (rotate-windows-helper (cdr x) d)))
-
-(defun rotate-windows ()
-  "Rotate windows."
-  (interactive)
-  (rotate-windows-helper (window-list) (window-buffer (car (window-list))))
-  (select-window (car (last (window-list)))))
-
-;; Recreate scratch buffer
-(defun create-scratch-buffer nil
-  "Create a scratch buffer."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (lisp-interaction-mode)
-  (when (zerop (buffer-size))
-    (insert initial-scratch-message)
-    (set-buffer-modified-p nil)))
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -2400,179 +2319,6 @@ when it inserts comment at the end of the line."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-(defun ptrv/duplicate-current-line-or-region (arg &optional do-comment)
-  "Duplicates the current line or region ARG times.
-If there's no region, the current line will be duplicated.
-However, if there's a region, all lines that region covers will
-be duplicated.  If DO-COMMENT is non-nil, comment current line or
-region."
-  (interactive "p")
-  (let (beg end (origin (point)))
-    (if (and mark-active (> (point) (mark)))
-        (exchange-point-and-mark))
-    (setq beg (line-beginning-position))
-    (if mark-active
-        (exchange-point-and-mark))
-    (setq end (line-end-position))
-    (let ((region (buffer-substring-no-properties beg end))
-          (end-orig end) end-comment)
-      (when do-comment
-        (comment-or-uncomment-region beg end)
-        (setq end (line-end-position))
-        (setq end-comment end))
-      (let ((it 0))
-        (while (< it arg)
-          (goto-char end)
-          (newline)
-          (insert region)
-          (setq end (point))
-          (setq it (1+ it))))
-      (goto-char (+ origin (* (length region) arg) arg
-                    ;; when commenting, advance current point with
-                    ;; number of comment characters times marked lines
-                    ;; to maintain cursor position
-                    (if do-comment
-                        (- end-comment end-orig) 0))))))
-
-(defun ptrv/duplicate-and-comment-current-line-or-region (arg)
-  "Duplicates and comments the current line or region ARG times.
-If there's no region, the current line will be duplicated.
-However, if there's a region, all lines that region covers will
-be duplicated."
-  (interactive "p")
-  (ptrv/duplicate-current-line-or-region arg t))
-
-;; define function to shutdown emacs server instance
-(defun server-shutdown ()
-  "Save buffers, Quit, and Shutdown (kill) server."
-  (interactive)
-  (save-some-buffers)
-  (kill-emacs))
-
-(defun exit-emacs-client ()
-  "Consistent exit emacsclient.
-
-If not in emacs client, echo a message in minibuffer, don't exit
-emacs.  If in server mode and editing file, do C-x # server-edit
-else do C-x 5 0 delete-frame"
-  (interactive)
-  (if server-buffer-clients
-      (server-edit)
-    (delete-frame)))
-
-(defun ptrv/smart-open-line-above ()
-  "Insert an empty line above the current line.
-Position the cursor at it's beginning, according to the current mode."
-  (interactive)
-  (move-beginning-of-line nil)
-  (newline-and-indent)
-  (forward-line -1)
-  (indent-according-to-mode))
-
-(defun ptrv/smart-open-line (arg)
-  "Insert an empty line after the current line.
-Position the cursor at its beginning, according to the current mode.
-
-With a prefix ARG open line above the current line."
-  (interactive "P")
-  (if arg
-      (ptrv/smart-open-line-above)
-    (move-end-of-line nil)
-    (newline-and-indent)))
-
-(defun goto-line-with-feedback ()
-  "Show line numbers temporarily, while prompting for the line
-number input."
-  (interactive)
-  (let ((line-numbers-off-p (if (boundp 'linum-mode)
-                                (not linum-mode)
-                              t)))
-    (unwind-protect
-        (progn
-          (when line-numbers-off-p
-            (linum-mode 1))
-          (call-interactively 'goto-line))
-      (when line-numbers-off-p
-        (linum-mode -1))))
-  (save-excursion
-    (hs-show-block)))
-
-(defun toggle-window-split ()
-  "Toggle window split."
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-
-(defun lorem ()
-  "Insert a lorem ipsum."
-  (interactive)
-  (insert "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
-          "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim"
-          "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
-          "aliquip ex ea commodo consequat. Duis aute irure dolor in "
-          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
-          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
-          "culpa qui officia deserunt mollit anim id est laborum."))
-
-;; http://stackoverflow.com/a/4988206
-(defun halve-other-window-height-or-width (arg)
-  "Expand current window to use half of the other window's lines."
-  (interactive "P")
-  (let ((win-dim-fn (if arg 'window-width 'window-height))
-        (win-division-factor (if arg 4 2)))
-    (enlarge-window (/ (funcall win-dim-fn (next-window)) win-division-factor) arg)))
-
-(defun xml-format ()
-  "Format XML file with xmllint."
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-
-;; http://emacsredux.com/blog/2013/03/27/indent-region-or-buffer/
-(defun indent-buffer ()
-  "Indent the currently visited buffer."
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun indent-region-or-buffer ()
-  "Indent a region if selected, otherwise the whole buffer."
-  (interactive)
-  (save-excursion
-    (if (region-active-p)
-        (progn
-          (indent-region (region-beginning) (region-end))
-          (message "Indented selected region."))
-      (indent-buffer)
-      (message "Indented buffer."))))
-
-;; http://emacsredux.com/blog/2013/03/28/indent-defun/
-(defun indent-defun ()
-  "Indent the current defun."
-  (interactive)
-  (save-excursion
-    (mark-defun)
-    (indent-region (region-beginning) (region-end))))
-
 (defun ptrv/user-first-name ()
   "Get user's first name."
   (let* ((first-name (car (split-string user-full-name))))
@@ -2582,60 +2328,6 @@ number input."
 (defun ptrv/user-first-name-p ()
   "Check whether the user name is provided."
   (not (string-equal "" (ptrv/user-first-name))))
-
-;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
-(defun kill-other-buffers ()
-  "Kill all buffers but the current one.
-Don't mess with special buffers."
-  (interactive)
-  (dolist (buffer (buffer-list))
-    (unless (or (eql buffer (current-buffer)) (not (buffer-file-name buffer)))
-      (kill-buffer buffer))))
-
-;; Don't sort the registers list because it might contain keywords
-(defun ptrv/list-registers ()
-  "Display a list of nonempty registers saying briefly what they contain."
-  (interactive)
-  (let ((list (copy-sequence register-alist)))
-    ;;(setq list (sort list (lambda (a b) (< (car a) (car b)))))
-    (with-output-to-temp-buffer "*Registers*"
-      (dolist (elt list)
-        (when (get-register (car elt))
-          (describe-register-1 (car elt))
-          (terpri))))))
-
-;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
-(defun switch-to-previous-buffer ()
-  "Switch to previous open buffer.
-Repeated invocation toggle between the two most recently open buffers."
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
-
-(defun switch-to-ielm ()
-  "Switch to an ielm window.
-Create a new ielm process if required."
-  (interactive)
-  (pop-to-buffer (get-buffer-create "*ielm*"))
-  (ielm))
-
-;;http://www.emacswiki.org/emacs/IncrementNumber
-(defun ptrv/change-number-at-point (change)
-  "Change number at point with CHANGE fn."
-  (save-excursion
-    (save-match-data
-      (or (looking-at "[0123456789]")
-          (error "No number at point"))
-      (replace-match
-       (number-to-string
-        (mod (funcall change (string-to-number (match-string 0))) 10))))))
-(defun increment-number-at-point ()
-  "Increment number at point."
-  (interactive)
-  (ptrv/change-number-at-point '1+))
-(defun decrement-number-at-point ()
-  "Decrement number at point."
-  (interactive)
-  (ptrv/change-number-at-point '1-))
 
 (defun ptrv/lisp-describe-thing-at-point ()
   "Show the documentation of the Elisp function and variable near point.
@@ -2665,11 +2357,12 @@ This checks in turn:
     (error "You have to pass a list to this function"))
   (mapc (lambda (x) (make-local-variable x)) var-list))
 
-(defun ptrv/browse-url ()
-  "Open rlf in default browser."
+(defun ptrv/switch-to-ielm ()
+  "Switch to an ielm window.
+Create a new ielm process if required."
   (interactive)
-  (let ((url (thing-at-point-url-at-point)))
-    (if url (browse-url url) (message "No URL at point!"))))
+  (pop-to-buffer (get-buffer-create "*ielm*"))
+  (ielm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server

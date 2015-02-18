@@ -160,5 +160,11 @@ prompt for the command to use."
   (ptrv/byte-recompile-elpa)
   (ptrv/byte-recompile-init))
 
+(defun ptrv/refresh-file ()
+  "Revert file in current buffer."
+  (interactive)
+  (revert-buffer nil t)
+  (message "Buffer reverted!"))
+
 (provide 'ptrv-files)
 ;;; ptrv-files.el ends here
