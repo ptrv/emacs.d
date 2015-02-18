@@ -690,7 +690,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
         tramp-auto-save-directory (locate-user-emacs-file "tramp-auto-save")))
 
 (defun sudo-edit (&optional arg)
-  "Edit buffer with superuser privileges."
+  "Edit buffer with superuser privileges.
+If ARG is non-nil prompt for filename."
   (interactive "P")
   (let (auth-sources)
     (if (or arg (not buffer-file-name))
