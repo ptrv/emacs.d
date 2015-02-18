@@ -240,6 +240,13 @@ point reaches the beginning or end of the buffer, stop there."
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 
+(defun ptrv/insert-current-date (iso)
+  "Insert the current date at point.
+
+When ISO is non-nil, insert the date in ISO 8601 format.
+Otherwise insert the date as Mar 04, 2014."
+  (interactive "P")
+  (insert (format-time-string (if iso "%F" "%b %d, %Y"))))
 
 (provide 'ptrv-simple)
 ;;; ptrv-simple.el ends here

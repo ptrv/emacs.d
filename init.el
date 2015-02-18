@@ -2279,7 +2279,8 @@ collapsed buffer"
          ("M-;" . ptrv/comment-dwim-line)
          ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
-         ("C-M-z" . ptrv/indent-defun)))
+         ("C-M-z" . ptrv/indent-defun)
+         ("C-c i d" . ptrv/insert-current-date)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
