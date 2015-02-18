@@ -1119,29 +1119,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 ;;  'tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
 ;;                     68 72 76 80 84 88 92 96 100 104 108 112 116 120))
 
-;; Do not allow to kill the *scratch* buffer
-(defvar unkillable-scratch-buffer-erase)
-(setq unkillable-scratch-buffer-erase nil)
-(defun toggle-unkillable-scratch-buffer-erase ()
-  (interactive)
-  (if unkillable-scratch-buffer-erase
-      (progn
-        (setq unkillable-scratch-buffer-erase nil)
-        (message "Disable scratch-buffer erase on kill!"))
-    (setq unkillable-scratch-buffer-erase t)
-    (message "Enable scratch-buffer erase on kill!")))
-
-(defun unkillable-scratch-buffer ()
-  "Make scratch buffer unkillable."
-  (if (equal (buffer-name (current-buffer)) "*scratch*")
-      (progn
-        (if unkillable-scratch-buffer-erase
-            (delete-region (point-min) (point-max)))
-        nil
-        )
-    t))
-(add-hook 'kill-buffer-query-functions 'unkillable-scratch-buffer)
-
 ;; make file executabable on save if has shebang
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
@@ -2258,9 +2235,12 @@ collapsed buffer"
 
 (use-package ptrv-buffers
   :load-path "site-lisp/misc"
-  :commands (ptrv/create-scratch-buffer)
+  :commands (ptrv/do-not-kill-important-buffers)
   :bind (("C-M-\\" . ptrv/indent-region-or-buffer)
-         ("C-M-z" . ptrv/indent-defun)))
+         ("C-M-z" . ptrv/indent-defun))
+  :init
+  (add-hook 'kill-buffer-query-functions
+            #'ptrv/do-not-kill-important-buffers))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

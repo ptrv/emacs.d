@@ -24,6 +24,19 @@
 
 ;;; Code:
 
+;; Don't kill the important buffers
+(defconst ptrv/do-not-kill-buffer-names '("*scratch*" "*Messages*")
+  "Names of buffers that should not be killed.")
+
+(defun ptrv/do-not-kill-important-buffers ()
+  "Inhibit killing of important buffers.
+Add this to `kill-buffer-query-functions'."
+  (if (not (member (buffer-name) ptrv/do-not-kill-buffer-names))
+      t
+    (message "Not allowed to kill %s, burying instead" (buffer-name))
+    (bury-buffer)
+    nil))
+
 ;; Recreate scratch buffer
 (defun ptrv/create-scratch-buffer nil
   "Create a scratch buffer."
