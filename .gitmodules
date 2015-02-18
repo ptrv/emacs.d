@@ -1,6 +1,3 @@
-[submodule "site-lisp/_extras/yasnippet-snippets"]
-	path = site-lisp/_extras/yasnippet-snippets
-	url = https://github.com/ptrv/yasnippet-snippets.git
 [submodule "site-lisp/emacs-faust-mode"]
 	path = site-lisp/emacs-faust-mode
 	url = https://github.com/ptrv/emacs-faust-mode.git
@@ -28,3 +25,6 @@
 [submodule "site-lisp/company-statistics"]
 	path = site-lisp/company-statistics
 	url = https://github.com/company-mode/company-statistics.git
+[submodule "etc/yasnippet-snippets"]
+	path = etc/yasnippet-snippets
+	url = https://github.com/ptrv/yasnippet-snippets.git
