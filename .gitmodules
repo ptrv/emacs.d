@@ -15,10 +15,6 @@
 [submodule "site-lisp/sclang-snippets"]
 	path = site-lisp/sclang-snippets
 	url = https://github.com/ptrv/sclang-snippets.git
-[submodule "site-lisp/_extras/doxymacs"]
-	path = site-lisp/_extras/doxymacs
-	url = git://git.code.sf.net/p/doxymacs/code
-    ignore = untracked
 [submodule "site-lisp/company-sclang"]
 	path = site-lisp/company-sclang
 	url = https://github.com/ptrv/company-sclang.git
