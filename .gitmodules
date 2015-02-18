@@ -28,3 +28,6 @@
 [submodule "etc/yasnippet-snippets"]
 	path = etc/yasnippet-snippets
 	url = https://github.com/ptrv/yasnippet-snippets.git
+[submodule "snippets/lua-mode"]
+	path = snippets/lua-mode
+	url = https://github.com/ptrv/yasnippet-lua-mode.git
