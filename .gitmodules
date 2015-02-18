@@ -16,10 +16,6 @@
 	path = site-lisp/org2blog
 	url = https://github.com/punchagan/org2blog.git
     ignore = untracked
-[submodule "site-lisp/insert-time"]
-	path = site-lisp/insert-time
-	url = https://github.com/rmm5t/insert-time.el.git
-    ignore = untracked
 [submodule "site-lisp/chuck-mode"]
 	path = site-lisp/chuck-mode
 	url = https://github.com/ptrv/chuck-mode.git

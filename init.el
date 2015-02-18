@@ -909,14 +909,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :diminish undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * insert-time.el
-(use-package insert-time
-  :load-path "site-lisp/insert-time"
-  :config
-  (setq insert-date-format "%Y-%m-%d"
-        insert-time-format "%H:%M:%S"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pomodoro.el
 (use-package pomodoro
   :ensure t
