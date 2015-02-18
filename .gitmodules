@@ -12,10 +12,6 @@
 [submodule "site-lisp/arduino-mode"]
 	path = site-lisp/arduino-mode
 	url = https://github.com/ptrv/arduino-mode.git
-[submodule "site-lisp/org2blog"]
-	path = site-lisp/org2blog
-	url = https://github.com/punchagan/org2blog.git
-    ignore = untracked
 [submodule "site-lisp/chuck-mode"]
 	path = site-lisp/chuck-mode
 	url = https://github.com/ptrv/chuck-mode.git

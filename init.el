@@ -1233,7 +1233,7 @@ If ARG is non-nil prompt for filename."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org2blog
 (use-package org2blog
-  :load-path "site-lisp"
+  :ensure t
   :defer t
   :config (load "~/.org-blogs.el" 'noerror))
 
