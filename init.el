@@ -410,8 +410,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;; * ido
 (use-package ido
   :init (ido-mode)
-  :bind (("C-c f r" . ptrv/ido-recentf-open)
-         ("C-x M-f" . ido-find-file-other-window))
+  :bind (("C-x M-f" . ido-find-file-other-window))
   :config
   (setq ido-enable-prefix nil
         ido-enable-flex-matching t
@@ -1716,116 +1715,19 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * file commands
-(defun ptrv/get-standard-open-command ()
-  "Get the standard command to open a file."
-  (cond
-   (*is-mac* "open")
-   (*is-linux* "xdg-open")))
-
-;; http://emacsredux.com/blog/2013/03/27/open-file-in-external-program/
-(defun ptrv/open-with (arg)
-  "Open the file visited by the current buffer externally.
-
-Use the standard program to open the file.  With prefix ARG,
-prompt for the command to use."
-  (interactive "P")
-  (let* ((file-list (if (eq major-mode 'dired-mode)
-                        (let ((marked-files (dired-get-marked-files)))
-                          (if marked-files
-                              marked-files
-                            (directory-file-name (dired-current-directory))))
-                      (list (buffer-file-name))))
-         (doIt (if (<= (length file-list) 5)
-                   t
-                 (y-or-n-p "Open more than 5 files?"))))
-    (when doIt
-      (unless (car file-list)
-        (user-error "This buffer is not visiting a file"))
-      (let ((command (unless arg (ptrv/get-standard-open-command))))
-        (unless command
-          (setq command (read-shell-command "Open current file with: ")))
-        (let ((open-fn (lambda (file-path)
-                         (cond
-                          (*is-linux*
-                           (let ((process-connection-type nil))
-                             (start-process "" nil command (shell-quote-argument file-path))))
-                          (*is-mac*
-                           (shell-command
-                            (concat command " " (shell-quote-argument file-path))))))))
-          (mapc open-fn file-list))))))
-
-(defun ptrv/launch-directory ()
-  "Open parent directory in external file manager."
-  (interactive)
-  (let ((command (ptrv/get-standard-open-command))
-        (dir (if (buffer-file-name)
-                 (file-name-directory (buffer-file-name))
-                (expand-file-name default-directory))))
-    (cond
-     (*is-linux*
-      (let ((process-connection-type nil))
-        (start-process "" nil command dir)))
-     (*is-mac*
-      (shell-command (concat command " " dir))))))
-
-;; http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
-(defun ptrv/copy-file-name-to-clipboard ()
-  "Copy the current buffer file name to the clipboard."
-  (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
-    (when filename
-      (kill-new filename)
-      (message "Copied buffer file name '%s' to the clipboard." filename))))
-
-;; http://whattheemacsd.com/file-defuns.el-01.html
-(defun ptrv/rename-current-buffer-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (let ((new-name (read-file-name "New name: " filename)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists!" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
-
-(defun ptrv/delete-file-and-buffer ()
-  "Delete the current file and kill the buffer."
-  (interactive)
-  (when (y-or-n-p "Delete file and its buffer?")
-    (let ((filename (buffer-file-name)))
-      (cond
-       ((not filename) (kill-buffer))
-       ((vc-backend filename) (vc-delete-file filename))
-       (:else
-        (delete-file filename)
-        (kill-buffer))))))
-
-;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
-(defun ptrv/find-user-init-file ()
-  "Edit the `user-init-file', in another window."
-  (interactive)
-  (find-file user-init-file))
-
-(bind-key "C-c f o" 'ptrv/open-with)
-(bind-key "C-c f d" 'ptrv/launch-directory)
-(bind-key "C-c f r" 'ptrv/ido-recentf-open)
-(bind-key "C-c f R" 'ptrv/rename-current-buffer-file)
-(bind-key "C-c f D" 'ptrv/delete-file-and-buffer)
-(bind-key "C-c f w" 'ptrv/copy-file-name-to-clipboard)
-(bind-key "C-c f i" 'ptrv/find-user-init-file)
-(bind-key "C-c f b i" 'ptrv/byte-recompile-init)
-(bind-key "C-c f b s" 'ptrv/byte-recompile-site-lisp)
-(bind-key "C-c f b e" 'ptrv/byte-recompile-elpa)
-(bind-key "C-c f b h" 'ptrv/byte-recompile-home)
+(use-package ptrv-files
+  :load-path "site-lisp/misc"
+  :bind (("C-c f r" . ptrv/ido-recentf-open)
+         ("C-c f o" . ptrv/open-with)
+         ("C-c f d" . ptrv/launch-directory)
+         ("C-c f R" . ptrv/rename-current-buffer-file)
+         ("C-c f D" . ptrv/delete-file-and-buffer)
+         ("C-c f w" . ptrv/copy-file-name-to-clipboard)
+         ("C-c f i" . ptrv/find-user-init-file)
+         ("C-c f b i" . ptrv/byte-recompile-init)
+         ("C-c f b s" . ptrv/byte-recompile-site-lisp)
+         ("C-c f b e" . ptrv/byte-recompile-elpa)
+         ("C-c f b h" . ptrv/byte-recompile-home)))
 
 (bind-key "C-c f v d" #'add-dir-local-variable)
 (bind-key "C-c f v l" #'add-file-local-variable)
@@ -2420,23 +2322,11 @@ collapsed buffer"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
-(defun ptrv/ido-recentf-open ()
-  "Find a recent file using ido."
-  (interactive)
-  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
-    (when file
-      (find-file file))))
-
 (defun refresh-file ()
   "Revert file in current buffer."
   (interactive)
   (revert-buffer nil t)
   (message "Buffer reverted!"))
-
-(defun ptrv/display-yank-menu ()
-  "Open function `yank-menu' popup."
-  (interactive)
-  (popup-menu 'yank-menu))
 
 ;; http://www.opensubscriber.com/message/emacs-devel@gnu.org/10971693.html
 (defun comment-dwim-line (&optional arg)
@@ -2489,32 +2379,6 @@ when it inserts comment at the end of the line."
   (interactive)
   (rotate-windows-helper (window-list) (window-buffer (car (window-list))))
   (select-window (car (last (window-list)))))
-
-(defun ptrv/byte-recompile-site-lisp ()
-  "Recompile user site-lisp directory."
-  (interactive)
-  (dolist (project (directory-files
-                    (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
-    (when (file-directory-p project)
-      (byte-recompile-directory project 0))))
-
-(defun ptrv/byte-recompile-elpa ()
-  "Recompile elpa directory."
-  (interactive)
-  (when (boundp 'package-user-dir)
-    (byte-recompile-directory package-user-dir 0)))
-
-(defun ptrv/byte-recompile-init ()
-  "Recompile user's init file."
-  (interactive)
-  (byte-recompile-file (locate-user-emacs-file "init.el") t 0))
-
-(defun ptrv/byte-recompile-home ()
-  "Recompile all relevant files in user's Emacs dir."
-  (interactive)
-  (ptrv/byte-recompile-site-lisp)
-  (ptrv/byte-recompile-elpa)
-  (ptrv/byte-recompile-init))
 
 ;; Recreate scratch buffer
 (defun create-scratch-buffer nil
