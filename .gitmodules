@@ -18,9 +18,6 @@
 [submodule "site-lisp/sclang-snippets"]
 	path = site-lisp/sclang-snippets
 	url = https://github.com/ptrv/sclang-snippets.git
-[submodule "themes/gandalf-theme-emacs"]
-	path = themes/gandalf-theme-emacs
-	url = https://github.com/ptrv/gandalf-theme-emacs.git
 [submodule "site-lisp/_extras/doxymacs"]
 	path = site-lisp/_extras/doxymacs
 	url = git://git.code.sf.net/p/doxymacs/code
