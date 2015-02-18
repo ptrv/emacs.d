@@ -2236,8 +2236,6 @@ collapsed buffer"
 (use-package ptrv-buffers
   :load-path "site-lisp/misc"
   :commands (ptrv/do-not-kill-important-buffers)
-  :bind (("C-M-\\" . ptrv/indent-region-or-buffer)
-         ("C-M-z" . ptrv/indent-defun))
   :init
   (add-hook 'kill-buffer-query-functions
             #'ptrv/do-not-kill-important-buffers))
@@ -2287,7 +2285,9 @@ collapsed buffer"
          ("C-c u" . ptrv/browse-url)
          ("C-c q" . ptrv/exit-emacs-client)
          ("M-;" . ptrv/comment-dwim-line)
-         ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)))
+         ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
+         ("C-M-\\" . ptrv/indent-region-or-buffer)
+         ("C-M-z" . ptrv/indent-defun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns

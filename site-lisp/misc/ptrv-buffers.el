@@ -47,31 +47,6 @@ Add this to `kill-buffer-query-functions'."
     (insert initial-scratch-message)
     (set-buffer-modified-p nil)))
 
-;; http://emacsredux.com/blog/2013/03/27/indent-region-or-buffer/
-(defun ptrv/indent-buffer ()
-  "Indent the currently visited buffer."
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun ptrv/indent-region-or-buffer ()
-  "Indent a region if selected, otherwise the whole buffer."
-  (interactive)
-  (save-excursion
-    (if (region-active-p)
-        (progn
-          (indent-region (region-beginning) (region-end))
-          (message "Indented selected region."))
-      (ptrv/indent-buffer)
-      (message "Indented buffer."))))
-
-;; http://emacsredux.com/blog/2013/03/28/indent-defun/
-(defun ptrv/indent-defun ()
-  "Indent the current defun."
-  (interactive)
-  (save-excursion
-    (mark-defun)
-    (indent-region (region-beginning) (region-end))))
-
 ;; http://emacsredux.com/blog/2013/03/30/kill-other-buffers/
 (defun ptrv/kill-other-buffers ()
   "Kill all buffers but the current one.
