@@ -1429,18 +1429,20 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package go-mode
   :ensure t
   :commands (ptrv/go-create-package)
-  :bind (("M-." . godef-jump)
-         ("C-c i" . go-goto-imports)
-         ("C-c C-r" . go-remove-unused-imports)
-         ("C-c C-p" . ptrv/go-create-package)
-         ("C-c C-c c" . ptrv/go-run)
-         ("C-c C-c r" . ptrv/go-run-buffer)
-         ("C-c C-c b" . ptrv/go-build)
-         ("C-c C-c t" . ptrv/go-test))
   :defer t
   :config
   (progn
-    ;; compile fucntions
+    (bind-keys :map go-mode-map
+               ("M-." . godef-jump)
+               ("C-c C-i" . go-goto-imports)
+               ("C-c C-r" . go-remove-unused-imports)
+               ("C-c C-p" . ptrv/go-create-package)
+               ("C-c C-c c" . ptrv/go-run)
+               ("C-c C-c r" . ptrv/go-run-buffer)
+               ("C-c C-c b" . ptrv/go-build)
+               ("C-c C-c t" . ptrv/go-test))
+
+    ;; compile functions
     (defun ptrv/go-build ()
       "compile project"
       (interactive)
