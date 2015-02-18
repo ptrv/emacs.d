@@ -1302,7 +1302,7 @@ If ARG is non-nil prompt for filename."
                  ("(latex2e)Command Index")))))
 
 (use-package pstricks
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :ensure auctex
   :defer t)
 
@@ -1343,7 +1343,7 @@ If ARG is non-nil prompt for filename."
 
 ;; desktop-entry-mode
 (use-package desktop-entry-mode
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :init (add-hook 'desktop-entry-mode-hook 'turn-on-font-lock)
   :commands (desktop-entry-mode)
   :mode ("\\.desktop\\(\\.in\\)?$" . desktop-entry-mode))
@@ -1631,7 +1631,7 @@ If ARG is not nil, create package in current directory"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Synth-A-Modeler mode
 (use-package sam-mode
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :mode ("\\.mdl$" . sam-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1662,7 +1662,7 @@ If ARG is not nil, create package in current directory"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * file commands
 (use-package ptrv-files
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :bind (("<f5>" . ptrv/refresh-file)
          ("C-c f r" . ptrv/ido-recentf-open)
          ("C-c f o" . ptrv/open-with)
@@ -1902,7 +1902,7 @@ collapsed buffer"
   ;; typeriter-mode
   (use-package typewriter-mode
     :if *is-linux*
-    :load-path "site-lisp/misc"
+    :load-path "site-lisp"
     :commands (typewriter-mode)
     :config
     (setq typewriter-play-command
@@ -1917,7 +1917,7 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
 (use-package ptrv-sclang
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :commands (ptrv/sclang-start)
   :mode ("\\.\\(sc\\|scd\\)$" . ptrv/sclang-mode-loader))
 
@@ -2076,7 +2076,7 @@ collapsed buffer"
 
 (use-package gud-lldb
   :if *is-mac*
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :commands (lldb))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2210,14 +2210,14 @@ collapsed buffer"
          ("C-c D f" . diff-buffer-with-file)))
 
 (use-package ptrv-window
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :bind (("C-c w s" . ptrv/swap-windows)
          ("C-c w r" . ptrv/rotate-windows)
          ("C-c t" . ptrv/eshell-or-restore)
          ("C-c v" . ptrv/halve-other-window-height-or-width)))
 
 (use-package ptrv-buffers
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :commands (ptrv/do-not-kill-important-buffers)
   :init
   (add-hook 'kill-buffer-query-functions
@@ -2254,7 +2254,7 @@ collapsed buffer"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * simple
 (use-package ptrv-simple
-  :load-path "site-lisp/misc"
+  :load-path "site-lisp"
   :commands (lorem xml-format)
   :bind (([remap goto-line] . ptrv/goto-line-with-feedback)
          ("<S-return>" . ptrv/smart-open-line)
