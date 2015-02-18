@@ -471,13 +471,13 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
       (find-file file))
 
     (use-package pcmpl-lein
-      :load-path "site-lisp/pcomplete-plugins")))
+      :load-path "site-lisp/pcomplete-plugins")
 
-(use-package pcmpl-git
-  :ensure t)
+    (use-package pcmpl-git
+      :ensure t)
 
-(use-package starter-kit-eshell
-  :ensure t)
+    (use-package starter-kit-eshell
+      :ensure t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
