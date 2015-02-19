@@ -1125,9 +1125,9 @@ If ARG is non-nil prompt for filename."
 (use-package org
   :defer t
   :mode ("\\.org\\'" . org-mode)
-  :bind (("C-c A" . org-agenda)
-         ("C-c b" . org-iswitchb)
-         ("C-c c" . org-capture)
+  :bind (("C-c l a" . org-agenda)
+         ("C-c l b" . org-iswitchb)
+         ("C-c l c" . org-capture)
          ("C-c l o" . org-store-link))
   :config
   (progn
