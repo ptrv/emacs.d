@@ -533,9 +533,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (progn
     (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
-    (let ((map smartparens-strict-mode-map))
-      (dolist (it sp-paredit-bindings)
-        (define-key map (read-kbd-macro (car it)) (cdr it))))
+    (dolist (it sp-paredit-bindings)
+      (bind-key (car it) (cdr it) smartparens-strict-mode-map))
 
     (bind-key "M-q" #'sp-indent-defun smartparens-strict-mode-map)
     (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
