@@ -1721,6 +1721,11 @@ If ARG is not nil, create package in current directory"
   (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py" "project.clj")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * find-file
+(use-package find-file
+  :bind ("C-c o" . ff-find-other-file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * processing
 (use-package processing-mode
   :load-path "site-lisp/processing2-emacs"
@@ -2023,7 +2028,6 @@ collapsed buffer"
             ;;c-indent-level 4
             c-default-style "bsd"
             indent-tabs-mode nil)
-      (local-set-key (kbd "C-c o") 'ff-find-other-file)
       (local-set-key (kbd "C-c C-c") 'compile)
       (eldoc-mode)
       (ggtags-mode)
