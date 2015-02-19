@@ -573,16 +573,7 @@ keymap `ptrv/smartparens-lisp-mode-map'."
       (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
     (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-    (defun ptrv/remove-elc-on-save ()
-      "If you’re saving an elisp file, likely the .elc is no longer valid."
-      (add-hook 'after-save-hook
-                (lambda ()
-                  (if (file-exists-p (concat buffer-file-name "c"))
-                      (delete-file (concat buffer-file-name "c"))))
-                nil :local))
-
-    (dolist (hook '(ptrv/remove-elc-on-save fontify-headline))
-      (add-hook 'emacs-lisp-mode-hook hook))
+    (add-hook 'emacs-lisp-mode-hook 'fontify-headline)
 
     (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
                                          lisp-interaction-mode
