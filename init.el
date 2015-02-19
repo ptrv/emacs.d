@@ -2227,6 +2227,12 @@ collapsed buffer"
   (add-hook 'kill-buffer-query-functions
             #'ptrv/do-not-kill-important-buffers))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; *align
+(use-package align
+  :bind (("C-c A a" . align)
+         ("C-c A c" . align-current)
+         ("C-c A r" . align-regexp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; *bindings
