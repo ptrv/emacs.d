@@ -901,12 +901,13 @@ If ARG is non-nil prompt for filename."
                                  yas-ido-prompt
                                  yas-completing-prompt))
 
-    (unless yas-global-mode (yas-reload-all))))
+    (unless yas-global-mode (yas-reload-all))
 
-(use-package dropdown-list
-  :ensure yasnippet
-  :defer t
-  :config (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))
+    (use-package dropdown-list
+      :ensure t
+      :defer t
+      :init
+      (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * undo-tree
