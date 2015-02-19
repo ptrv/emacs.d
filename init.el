@@ -170,7 +170,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 ;; Compilation from Emacs
 (use-package compile
-  :defer t
+  :bind (("C-c c" . compile)
+         ("C-c C" . recompile))
   :config
   (progn
     (defun ptrv/colorize-compilation-buffer ()
@@ -184,7 +185,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
     (require 'ansi-color)
     (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
     ;; other settings
-    (setq compilation-scroll-output t)))
+    (setq compilation-scroll-output t
+          compilation-always-kill t)))
 
 (setq initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
@@ -2028,7 +2030,6 @@ collapsed buffer"
             ;;c-indent-level 4
             c-default-style "bsd"
             indent-tabs-mode nil)
-      (local-set-key (kbd "C-c C-c") 'compile)
       (eldoc-mode)
       (ggtags-mode)
       (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
