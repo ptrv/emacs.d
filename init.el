@@ -168,26 +168,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :bind ("C-c l b" . list-bookmarks)
   :config (setq bookmark-save-flag t))
 
-;; Compilation from Emacs
-(use-package compile
-  :bind (("C-c c" . compile)
-         ("C-c C" . recompile))
-  :config
-  (progn
-    (defun ptrv/colorize-compilation-buffer ()
-      "Taken from `https://github.com/lunaryorn/.emacs.d'"
-      (interactive)
-      (when (eq major-mode 'compilation-mode)
-        (let ((inhibit-read-only t))
-          (ansi-color-apply-on-region (point-min) (point-max)))))
-    ;; Colorize output of Compilation Mode, see
-    ;; http://stackoverflow.com/a/3072831/355252
-    (require 'ansi-color)
-    (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
-    ;; other settings
-    (setq compilation-scroll-output t
-          compilation-always-kill t)))
-
 (setq initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
       column-number-mode t
@@ -292,6 +272,28 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   (cond
    (*is-mac* (executable-find "afplay"))
    (*is-linux* (executable-find "paplay"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * compilation
+;; Compilation from Emacs
+(use-package compile
+  :bind (("C-c c" . compile)
+         ("C-c C" . recompile))
+  :config
+  (progn
+    (defun ptrv/colorize-compilation-buffer ()
+      "Taken from `https://github.com/lunaryorn/.emacs.d'"
+      (interactive)
+      (when (eq major-mode 'compilation-mode)
+        (let ((inhibit-read-only t))
+          (ansi-color-apply-on-region (point-min) (point-max)))))
+    ;; Colorize output of Compilation Mode, see
+    ;; http://stackoverflow.com/a/3072831/355252
+    (require 'ansi-color)
+    (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
+    ;; other settings
+    (setq compilation-scroll-output t
+          compilation-always-kill t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * email
