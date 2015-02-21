@@ -1804,15 +1804,6 @@ If ARG is not nil, create package in current directory"
   :init (add-hook 'prog-mode-hook #'hs-minor-mode)
   :config
   (progn
-    (bind-keys* :map hs-minor-mode-map
-                ("C-c @ h" . hs-hide-block)
-                ("C-c @ H" . hs-show-block)
-                ("C-c @ s" . hs-hide-all)
-                ("C-c @ S" . hs-show-all)
-                ("C-c @ l" . hs-hide-level)
-                ("C-c @ c" . hs-toggle-hiding)
-                ([(shift mouse-2)] . hs-mouse-toggle-hiding))
-
     ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
     (setq hs-isearch-open t)
 
