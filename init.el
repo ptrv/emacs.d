@@ -2099,6 +2099,29 @@ If ARG is not nil, create package in current directory"
        ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
        ) :append)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * gud
+(use-package gud
+  :commands gud-gdb
+  :init
+  (progn
+    (defun ptrv/show-debugger ()
+      (interactive)
+      (let ((gud-buf
+             (catch 'found
+               (dolist (buf (buffer-list))
+                 (when (string-match "\\*gud-" (buffer-name buf))
+                   (throw 'found buf))))))
+        (if gud-buf
+            (switch-to-buffer-other-window gud-buf)
+          (call-interactively 'gud-gdb))))
+    (bind-key "C-. g" #'ptrv/show-debugger))
+  :config
+  (bind-keys ("<f9>"    . gud-cont)
+             ("<f10>"   . gud-next)
+             ("<f11>"   . gud-step)
+             ("S-<f11>" . gud-finish)))
+
 (use-package gud-lldb
   :if *is-mac*
   :load-path "site-lisp"
