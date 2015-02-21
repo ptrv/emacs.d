@@ -1658,10 +1658,11 @@ If ARG is not nil, create package in current directory"
 
 (use-package subword-mode
   :defer t
-  :init
-  (add-hook 'prog-mode-hook 'subword-mode))
+  :init (add-hook 'prog-mode-hook 'subword-mode))
 
-(delete-selection-mode)
+(use-package delsel
+  :defer t
+  :init (delete-selection-mode))
 
 (use-package bug-reference
   :defer t
