@@ -1424,9 +1424,10 @@ If ARG is non-nil prompt for filename."
 (use-package markdown-mode
   :ensure t
   :defer t
-  :mode (("\\.md$" . markdown-mode)
-         ("\\.markdown$" . markdown-mode)
-         ("\\.mkd$" . markdown-mode))
+  :mode (("\\.md$"        . markdown-mode)
+         ("\\.markdown$"  . markdown-mode)
+         ("\\.mkd$"       . markdown-mode)
+         ("\\README\\.md" . gfm-mode))
   :config
   (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir)))
 
