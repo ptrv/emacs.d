@@ -210,6 +210,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package jka-cmpr-hook
   :init (auto-compression-mode))
 (use-package winner
+  :bind (("M-N" . winner-redo)
+         ("M-P" . winner-undo))
   :init (winner-mode))
 
 (use-package windmove
