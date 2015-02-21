@@ -1790,8 +1790,8 @@ If ARG is not nil, create package in current directory"
 ;;;; * hideshow
 (use-package hideshow
   :defer t
-  :bind (("<f11>"   . hs-toggle-hiding)
-         ("S-<f11>" . hs-toggle-hiding-all))
+  :bind (("<f12>"   . hs-toggle-hiding)
+         ("S-<f12>" . hs-toggle-hiding-all))
   :init (add-hook 'prog-mode-hook #'hs-minor-mode)
   :config
   (progn
