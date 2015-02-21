@@ -288,18 +288,27 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package compile
   :bind (("C-c c" . compile)
          ("C-c C" . recompile))
+  :init
+  (progn
+    (defun ptrv/show-compilation ()
+      (interactive)
+      (let ((compile-buf
+             (catch 'found
+               (dolist (buf (buffer-list))
+                 (when (string-match "\\*compilation\\*" (buffer-name buf))
+                   (throw 'found buf))))))
+        (if compile-buf
+            (switch-to-buffer-other-window compile-buf)
+          (call-interactively 'compile))))
+    (bind-key "M-O" #'ptrv/show-compilation))
   :config
   (progn
-    (defun ptrv/colorize-compilation-buffer ()
-      "Taken from `https://github.com/lunaryorn/.emacs.d'"
-      (interactive)
-      (when (eq major-mode 'compilation-mode)
-        (let ((inhibit-read-only t))
-          (ansi-color-apply-on-region (point-min) (point-max)))))
-    ;; Colorize output of Compilation Mode, see
-    ;; http://stackoverflow.com/a/3072831/355252
     (require 'ansi-color)
-    (add-hook 'compilation-filter-hook 'ptrv/colorize-compilation-buffer)
+    (defun ptrv/colorize-compilation-buffer ()
+      (ansi-color-process-output nil)
+      (setq-local comint-last-output-start (point-marker)))
+    (add-hook 'compilation-filter-hook
+              #'ptrv/colorize-compilation-buffer)
     ;; other settings
     (setq compilation-scroll-output t
           compilation-always-kill t)))
@@ -1077,7 +1086,7 @@ If ARG is non-nil prompt for filename."
     (setq popwin:special-display-config
           `((help-mode :height ,(ptrv/get-popwin-height) :stick t)
             ("*Completions*" :noselect t)
-            ("*compilation*" :noselect t)
+            ("*compilation*" :noselect t :height ,(ptrv/get-popwin-height))
             ("*Messages*")
             ("*Occur*" :noselect t)
             ("\\*Slime Description.*" :noselect t :regexp t :height ,(ptrv/get-popwin-height))
