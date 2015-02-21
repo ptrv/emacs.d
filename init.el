@@ -1816,7 +1816,8 @@ If ARG is not nil, create package in current directory"
       (setq hs-hide-all (not hs-hide-all))
       (if hs-hide-all
           (hs-hide-all)
-        (hs-show-all)))))
+        (hs-show-all))))
+  :diminish hs-minor-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
