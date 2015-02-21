@@ -256,7 +256,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   ;; portions of lines via faces.  Also indicate tabs via characters
   (setq whitespace-style '(face indentation space-after-tab space-before-tab
                                 tab-mark empty trailing)
-        whitespace-line-column nil))    ; Use `fill-column' for overlong lines
+        whitespace-line-column nil)    ; Use `fill-column' for overlong lines
+  :diminish whitespace-mode)
 
 (use-package whitespace-cleanup-mode
   :ensure t
