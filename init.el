@@ -345,8 +345,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
           flyspell-issue-message-flag nil)
     (bind-keys :map flyspell-mode-map
                ("\M-\t" . nil)
-               ("C-:" . flyspell-auto-correct-word)
-               ("C-." . ispell-word))))
+               ("C-:"   . flyspell-auto-correct-word)
+               ("C-."   . ispell-word))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hippie-expand
@@ -1442,10 +1442,10 @@ If ARG is non-nil prompt for filename."
   :config
   (progn
     (bind-keys :map go-mode-map
-               ("M-." . godef-jump)
-               ("C-c C-i" . go-goto-imports)
-               ("C-c C-r" . go-remove-unused-imports)
-               ("C-c C-p" . ptrv/go-create-package)
+               ("M-."       . godef-jump)
+               ("C-c C-i"   . go-goto-imports)
+               ("C-c C-r"   . go-remove-unused-imports)
+               ("C-c C-p"   . ptrv/go-create-package)
                ("C-c C-c c" . ptrv/go-run)
                ("C-c C-c r" . ptrv/go-run-buffer)
                ("C-c C-c b" . ptrv/go-build)
@@ -1671,14 +1671,14 @@ If ARG is not nil, create package in current directory"
 ;;;; * file commands
 (use-package ptrv-files
   :load-path "site-lisp"
-  :bind (("<f5>" . ptrv/refresh-file)
-         ("C-c f r" . ptrv/ido-recentf-open)
-         ("C-c f o" . ptrv/open-with)
-         ("C-c f d" . ptrv/launch-directory)
-         ("C-c f R" . ptrv/rename-current-buffer-file)
-         ("C-c f D" . ptrv/delete-file-and-buffer)
-         ("C-c f w" . ptrv/copy-file-name-to-clipboard)
-         ("C-c f i" . ptrv/find-user-init-file)
+  :bind (("<f5>"      . ptrv/refresh-file)
+         ("C-c f r"   . ptrv/ido-recentf-open)
+         ("C-c f o"   . ptrv/open-with)
+         ("C-c f d"   . ptrv/launch-directory)
+         ("C-c f R"   . ptrv/rename-current-buffer-file)
+         ("C-c f D"   . ptrv/delete-file-and-buffer)
+         ("C-c f w"   . ptrv/copy-file-name-to-clipboard)
+         ("C-c f i"   . ptrv/find-user-init-file)
          ("C-c f b i" . ptrv/byte-recompile-init)
          ("C-c f b s" . ptrv/byte-recompile-site-lisp)
          ("C-c f b e" . ptrv/byte-recompile-elpa)
@@ -2233,8 +2233,8 @@ collapsed buffer"
   :load-path "site-lisp"
   :bind (("C-c w s" . ptrv/swap-windows)
          ("C-c w r" . ptrv/rotate-windows)
-         ("C-c t" . ptrv/eshell-or-restore)
-         ("C-c v" . ptrv/halve-other-window-height-or-width)))
+         ("C-c t"   . ptrv/eshell-or-restore)
+         ("C-c v"   . ptrv/halve-other-window-height-or-width)))
 
 (use-package ptrv-buffers
   :load-path "site-lisp"
