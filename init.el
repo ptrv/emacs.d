@@ -987,10 +987,10 @@ If ARG is non-nil prompt for filename."
 (use-package iflipb
   :ensure t
   :defer t
-  :bind (("C-<next>" . iflipb-next-buffer)
-         ("C-<prior>" . iflipb-previous-buffer)
+  :bind (("C-<next>"      . iflipb-next-buffer)
+         ("C-<prior>"     . iflipb-previous-buffer)
          ("<XF86Forward>" . iflipb-next-buffer)
-         ("<XF86Back>" . iflipb-previous-buffer))
+         ("<XF86Back>"    . iflipb-previous-buffer))
   :config
   (setq iflipb-ignore-buffers
         '("*Help*"
@@ -1684,7 +1684,7 @@ If ARG is not nil, create package in current directory"
 ;;;; * move-text
 (use-package move-text
   :ensure t
-  :bind (([C-S-up] . move-text-up)
+  :bind (([C-S-up]   . move-text-up)
          ([C-S-down] . move-text-down)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1963,8 +1963,8 @@ If ARG is not nil, create package in current directory"
     (add-hook 'sclang-mode-hook #'yas-minor-mode)
     (add-hook 'sclang-mode-hook #'subword-mode)
     (bind-keys :map sclang-mode-map
-               ("C-c ]" . sclang-pop-definition-mark)
-               ("s-." . sclang-main-stop)
+               ("C-c ]"      . sclang-pop-definition-mark)
+               ("s-."        . sclang-main-stop)
                ("<s-return>" . sclang-eval-region-or-line))
 
     (use-package company-sclang
