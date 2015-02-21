@@ -1761,13 +1761,19 @@ If ARG is not nil, create package in current directory"
 ;;;; * flycheck
 (use-package flycheck
   :ensure t
+  :commands (flycheck-get-checker-for-buffer
+             flycheck-may-enable-mode)
   :init (global-flycheck-mode)
   :config
   (progn
     (setq flycheck-highlighting-mode 'lines)
-    (dolist (it '(;; emacs-lisp-mode-hook
-                  lisp-interaction-mode-hook))
-      (add-hook it (lambda () (flycheck-mode -1))))))
+
+    (defun ptrv/flycheck-mode-on-safe ()
+      (when (and (flycheck-may-enable-mode)
+                 (flycheck-get-checker-for-buffer))
+        (flycheck-mode)))
+    (advice-add 'flycheck-mode-on-safe :override
+                #'ptrv/flycheck-mode-on-safe)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
@@ -2058,7 +2064,6 @@ collapsed buffer"
 
     (defun ptrv/c++-mode-init ()
       ;; (doxymacs-mode +1)
-      ;; (flycheck-mode -1)
       (yas-minor-mode +1))
     (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
 
