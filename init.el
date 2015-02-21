@@ -2222,7 +2222,8 @@ If ARG is not nil, create package in current directory"
 ;;;; * Ace jump mode
 (use-package ace-jump-mode
   :ensure t
-  :bind ("C-o" . ace-jump-mode))
+  :bind (("C-o"   . ace-jump-mode)
+         ("C-S-o" . ace-jump-word-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
@@ -2284,6 +2285,8 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; *bindings
+(bind-key "C-<return>" #'other-window)
+
 ;;fast vertical naviation
 (bind-key "M-U" (lambda () (interactive) (forward-line -10)))
 (bind-key "M-D" (lambda () (interactive) (forward-line 10)))
