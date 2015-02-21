@@ -146,6 +146,12 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :config (setq custom-file ptrv/custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * ctl-period-map
+(defvar ctl-period-map)
+(define-prefix-command 'ctl-period-map)
+(bind-key "C-." 'ctl-period-map)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
               indent-tabs-mode nil ; And force use of spaces
