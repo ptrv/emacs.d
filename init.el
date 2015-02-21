@@ -2025,19 +2025,12 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
-(setq c-default-style '((java-mode . "java")
-                        (awk-mode . "awk")
-                        (other . "bsd")))
+
 
 (use-package cc-mode
   :defer t
-  :config
+  :init
   (progn
-    (c-add-style "my-cc-mode"
-                 '("bsd"
-                   (c-basic-offset . 4)
-                   (c-offsets-alist . ((innamespace . 0)))))
-
     (defun ptrv/cc-mode-init ()
       (c-set-style "my-cc-mode")
       (setq c-basic-offset 4
@@ -2051,7 +2044,16 @@ If ARG is not nil, create package in current directory"
       (setq-local split-width-threshold nil))
 
     (dolist (it '(c-mode-hook c++-mode-hook))
-      (add-hook it 'ptrv/cc-mode-init))
+      (add-hook it 'ptrv/cc-mode-init)))
+  :config
+  (progn
+    (setq c-default-style '((java-mode . "java")
+                            (awk-mode . "awk")
+                            (other . "bsd")))
+    (c-add-style "my-cc-mode"
+                 '("bsd"
+                   (c-basic-offset . 4)
+                   (c-offsets-alist . ((innamespace . 0)))))
 
     ;; doxymacs
     (use-package doxymacs
