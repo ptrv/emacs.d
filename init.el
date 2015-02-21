@@ -1779,14 +1779,9 @@ If ARG is not nil, create package in current directory"
 ;;;; * hideshow
 (use-package hideshow
   :defer t
-  :bind (("<f11>" . hs-toggle-hiding)
+  :bind (("<f11>"   . hs-toggle-hiding)
          ("S-<f11>" . hs-toggle-hiding-all))
-  :init
-  (dolist (hook '(emacs-lisp-mode-hook
-                  lisp-mode-hook c-mode-common-hook
-                  perl-mode-hook sh-mode-hook
-                  python-mode-hook))
-    (add-hook hook 'hs-minor-mode))
+  :init (add-hook 'prog-mode-hook #'hs-minor-mode)
   :config
   (progn
     (bind-keys* :map hs-minor-mode-map
@@ -1810,16 +1805,7 @@ If ARG is not nil, create package in current directory"
       (setq hs-hide-all (not hs-hide-all))
       (if hs-hide-all
           (hs-hide-all)
-        (hs-show-all)))
-
-    (defadvice goto-line
-        (after
-         expand-after-goto-line
-         activate compile)
-      "hideshow-expand affected block when using goto-line in a
-collapsed buffer"
-      (save-excursion
-        (hs-show-block)))))
+        (hs-show-all)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
