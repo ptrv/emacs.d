@@ -2032,7 +2032,6 @@ If ARG is not nil, create package in current directory"
 
     (use-package anaconda-mode
       :ensure t
-      :defer t
       :init (add-hook 'python-mode-hook 'anaconda-mode))
 
     (use-package company-anaconda
