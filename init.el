@@ -2049,7 +2049,14 @@ If ARG is not nil, create package in current directory"
 
     (use-package pyenv-mode
       :ensure t
-      :init (pyenv-mode))))
+      :init (pyenv-mode)
+      :config
+      (progn
+        (unbind-key "C-c C-s" pyenv-mode-map)
+        (unbind-key "C-c C-u" pyenv-mode-map)
+        (bind-keys :map pyenv-mode-map
+                   ("C-. C-s" . pyenv-mode-set)
+                   ("C-. C-u" . pyenv-mode-unset))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ggtags
