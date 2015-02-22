@@ -588,22 +588,15 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
     (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
     (bind-key "M-?" #'sp-convolute-sexp smartparens-strict-mode-map)
 
-    ;;"Enable `smartparens-mode' in the minibuffer, during
-    ;;`eval-expression'."
+    (sp-with-modes sp--lisp-modes
+      (sp-local-pair "(" nil :bind "M-("))
+
+    (dolist (mode sp--lisp-modes)
+      (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+        (add-hook hook 'smartparens-strict-mode)))
+
     (add-hook 'eval-expression-minibuffer-setup-hook
-              'smartparens-strict-mode)
-
-    (defun ptrv/smartparens-setup-lisp-modes (modes)
-      "Setup Smartparens Lisp support in MODES.
-
-Add Lisp pairs and tags to MODES, and use the a special, more strict
-keymap `ptrv/smartparens-lisp-mode-map'."
-      (when (symbolp modes)
-        (setq modes (list modes)))
-      (sp-local-pair modes "(" nil :bind "M-(")
-      (dolist (mode modes)
-        (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-          (add-hook hook 'smartparens-strict-mode))))))
+              'smartparens-strict-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
@@ -635,11 +628,15 @@ keymap `ptrv/smartparens-lisp-mode-map'."
     (dolist (it '(ptrv/remove-elc-on-save fontify-headline))
       (add-hook 'emacs-lisp-mode-hook it))
 
-    (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
-                                         lisp-interaction-mode
-                                         lisp-mode))
-
-    (bind-key "C-c C-z" 'ptrv/switch-to-ielm emacs-lisp-mode-map)
+    (use-package ielm
+      :defer t
+      :init
+      (progn
+        (defun ptrv/switch-to-ielm ()
+          (interactive)
+          (pop-to-buffer (get-buffer-create "*ielm*"))
+          (ielm))
+        (bind-key "C-c C-z" 'ptrv/switch-to-ielm emacs-lisp-mode-map)))
 
     (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
     (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
@@ -672,16 +669,6 @@ keymap `ptrv/smartparens-lisp-mode-map'."
   :ensure t
   :defer t
   :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
-
-(use-package ielm
-  :defer t
-  :config
-  (ptrv/smartparens-setup-lisp-modes '(inferior-emacs-lisp-mode)))
-
-(use-package inf-lisp
-  :defer t
-  :config
-  (ptrv/smartparens-setup-lisp-modes '(inferior-lisp-mode)))
 
 ;; (use-package nrepl-eval-sexp-fu
 ;;   :ensure t
@@ -2421,13 +2408,6 @@ This checks in turn:
   (unless (listp var-list)
     (error "You have to pass a list to this function"))
   (mapc (lambda (x) (make-local-variable x)) var-list))
-
-(defun ptrv/switch-to-ielm ()
-  "Switch to an ielm window.
-Create a new ielm process if required."
-  (interactive)
-  (pop-to-buffer (get-buffer-create "*ielm*"))
-  (ielm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
