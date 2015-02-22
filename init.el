@@ -2291,10 +2291,10 @@ If ARG is not nil, create package in current directory"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * windows
 (use-package window
-  :bind (("<f6>" . split-window-horizontally)
-         ("<f7>" . split-window-vertically)
-         ("<f8>" . delete-window)
-         ("<f9>" . delete-other-windows))
+  :bind (("<f6>"  . split-window-horizontally)
+         ("<f7>"  . split-window-vertically)
+         ("<f8>"  . delete-window)
+         ("C-. z" . delete-other-windows))
   :config
   (progn
     (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
