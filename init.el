@@ -962,6 +962,7 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :idle (global-undo-tree-mode)
+  :idle-priority 1
   :diminish undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1067,6 +1068,7 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :idle (edit-server-start)
+  :idle-priority 10
   :init
   (progn
     (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
