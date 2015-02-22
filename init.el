@@ -1984,6 +1984,7 @@ If ARG is not nil, create package in current directory"
   :defer t
   :config
   (progn
+    (require 'ptrv-sclang)
     (ptrv/sclang-mode-loader--remove)
 
     (setq sclang-auto-scroll-post-buffer nil
@@ -2004,7 +2005,8 @@ If ARG is not nil, create package in current directory"
       :load-path "site-lisp/company-sclang"
       :commands (company-sclang-setup)
       :init (with-eval-after-load 'company
-              (company-sclang-setup)))
+              (company-sclang-setup))
+      :config (unbind-key "C-M-i" sclang-mode-map))
 
     (use-package sclang-snippets
       :load-path "site-lisp/sclang-snippets"

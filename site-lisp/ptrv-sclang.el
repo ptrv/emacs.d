@@ -28,9 +28,10 @@
   "Load sclang-mode."
   (unless (featurep 'sclang)
     (if (require 'sclang nil t)
-        (sclang-mode)
-      (message "SCLang is not installed!"))
-    (ptrv/sclang-mode-loader--remove)))
+        (progn
+          (sclang-mode)
+          (ptrv/sclang-mode-loader--remove))
+      (message "SCLang is not installed!"))))
 
 (defun ptrv/sclang-mode-loader--remove ()
   "Remove `ptrv/sclang-mode-loader' from `auto-mode-alist'."
