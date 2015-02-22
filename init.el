@@ -641,12 +641,18 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
     (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
     (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
     (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
-    (bind-key "M-RET" 'ptrv/lisp-describe-thing-at-point lisp-mode-shared-map)))
+    (bind-key "M-RET" 'ptrv/lisp-describe-thing-at-point lisp-mode-shared-map)
 
-(use-package elisp-slime-nav            ; Jump to definition of symbol at point
+    (use-package lexbind-mode
+      :ensure t
+      :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))))
+
+(use-package elisp-slime-nav
   :ensure t
   :defer t
-  :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
+  :init
+  (ptrv/hook-into-modes #'elisp-slime-nav-mode
+                        '(emacs-lisp-mode-hook ielm-mode-hook))
   :diminish elisp-slime-nav-mode)
 
 (use-package eldoc
@@ -664,11 +670,6 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :init
   (ptrv/hook-into-modes #'rainbow-delimiters-mode
                         '(text-mode-hook prog-mode-hook)))
-
-(use-package lexbind-mode
-  :ensure t
-  :defer t
-  :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
 
 ;; (use-package nrepl-eval-sexp-fu
 ;;   :ensure t
