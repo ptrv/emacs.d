@@ -300,7 +300,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
         (if compile-buf
             (switch-to-buffer-other-window compile-buf)
           (call-interactively 'compile))))
-    (bind-key "M-O" #'ptrv/show-compilation))
+    (bind-key "C-. c" #'ptrv/show-compilation))
   :config
   (progn
     (require 'ansi-color)
