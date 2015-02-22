@@ -186,12 +186,6 @@ when it inserts comment at the end of the line."
           "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
           "culpa qui officia deserunt mollit anim id est laborum."))
 
-(defun xml-format ()
-  "Format XML file with xmllint."
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-
 (defun ptrv/smarter-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 

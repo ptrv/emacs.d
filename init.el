@@ -1599,7 +1599,15 @@ If ARG is not nil, create package in current directory"
     (add-hook 'nxml-mode-hook 'gpx-setup)
 
     (setq nxml-slash-auto-complete-flag t
-          nxml-sexp-element-flag t)))
+          nxml-sexp-element-flag t)
+
+    (defun xml-format ()
+      "Format XML file with xmllint."
+      (interactive)
+      (save-excursion
+        (shell-command-on-region (point-min) (point-max)
+                                 "xmllint --format -" (buffer-name) t)))
+    (bind-key "C-c M-h" 'xml-format nxml-mode-map)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
@@ -2313,7 +2321,7 @@ If ARG is not nil, create package in current directory"
 ;;;; * simple
 (use-package ptrv-simple
   :load-path "site-lisp"
-  :commands (lorem xml-format)
+  :commands (lorem)
   :bind (([remap goto-line] . ptrv/goto-line-with-feedback)
          ("<S-return>" . ptrv/smart-open-line)
          ("M-o" . ptrv/smart-open-line)
