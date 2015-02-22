@@ -2294,7 +2294,7 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; *bindings
-(bind-key "C-<return>" #'other-window)
+(bind-key* "C-<return>" #'other-window)
 
 ;;fast vertical naviation
 (bind-key "M-U" (lambda () (interactive) (forward-line -10)))
