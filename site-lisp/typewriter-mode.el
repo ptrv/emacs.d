@@ -24,20 +24,32 @@
 
 ;;; Code:
 
+(defgroup typewriter nil
+  "Typewriter-mode."
+  :group 'multimedia)
+
 (defcustom typewriter-sound-default ""
-  "Typing sound file path")
+  "Typing sound file path."
+  :group 'typewriter)
+
 (defcustom typewriter-sound-end ""
-  "End of line sound file path")
+  "End of line sound file path."
+  :group 'typewriter)
+
 (defcustom typewriter-sound-return ""
-  "Carriage return sound file path")
+  "Carriage return sound file path."
+  :group 'typewriter)
+
 (defcustom typewriter-end-column 80
-  "End of line column number")
+  "End of line column number."
+  :group 'typewriter)
 
 (defcustom typewriter-play-command nil
-  "Sound player command")
+  "Sound player command."
+  :group 'typewriter)
 
 (defun typewriter-play-sound (sound-file)
-  "Play sound"
+  "Play SOUND-FILE."
   (if typewriter-play-command
 	  (start-process-shell-command "typewriter-sound" nil
                                    (format typewriter-play-command
