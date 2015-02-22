@@ -2023,12 +2023,19 @@ If ARG is not nil, create package in current directory"
     (setq python-check-command "flake8")
     (add-hook 'python-mode-hook 'eldoc-mode)
 
-    ;; info
     (info-lookup-add-help
      :mode 'python-mode
-     :regexp "[[:alnum:]_]+"
+     :regexp "[a-zA-Z_0-9.]+"
      :doc-spec
-     '(("(python)Index" nil "")))
+     '(("(python)Python Module Index" )
+       ("(python)Index"
+        (lambda
+          (item)
+          (cond
+           ((string-match
+             "\\([A-Za-z0-9_]+\\)() (in module \\([A-Za-z0-9_.]+\\))" item)
+            (format "%s.%s" (match-string 2 item)
+                    (match-string 1 item))))))))
 
     (use-package anaconda-mode
       :ensure t
