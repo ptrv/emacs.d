@@ -968,7 +968,8 @@ If ARG is non-nil prompt for filename."
 ;;;; * undo-tree
 (use-package undo-tree
   :ensure t
-  :init (global-undo-tree-mode)
+  :defer t
+  :idle (global-undo-tree-mode)
   :diminish undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
