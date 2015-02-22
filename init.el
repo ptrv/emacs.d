@@ -82,6 +82,11 @@
 ;; set all dirs
 (defvar ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc")))
 
+(defmacro ptrv/hook-into-modes (func modes)
+  "Add FUNC to list of MODES."
+  `(dolist (mode-hook ,modes)
+     (add-hook mode-hook ,func)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
@@ -248,9 +253,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 
 (use-package whitespace
   :bind ("C-c T w" . whitespace-mode)
-  :init
-  (dolist (hook '(prog-mode-hook text-mode-hook))
-    (add-hook hook 'whitespace-mode))
+  :init (ptrv/hook-into-modes #'whitespace-mode
+                              '(prog-mode-hook text-mode-hook))
   :config
   ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
   ;; portions of lines via faces.  Also indicate tabs via characters
@@ -262,9 +266,8 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package whitespace-cleanup-mode
   :ensure t
   :bind ("C-c T W" . whitespace-cleanup-mode)
-  :init
-  (dolist (hook '(prog-mode-hook text-mode-hook))
-    (add-hook hook 'whitespace-cleanup-mode))
+  :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
+                              '(prog-mode-hook text-mode-hook))
   :config
   (setq whitespace-cleanup-mode-only-if-initially-clean t))
 
@@ -613,8 +616,8 @@ keymap `ptrv/smartparens-lisp-mode-map'."
                       (delete-file (concat buffer-file-name "c"))))
                 nil :local))
 
-    (dolist (hook '(ptrv/remove-elc-on-save fontify-headline))
-      (add-hook 'emacs-lisp-mode-hook hook))
+    (dolist (it '(ptrv/remove-elc-on-save fontify-headline))
+      (add-hook 'emacs-lisp-mode-hook it))
 
     (ptrv/smartparens-setup-lisp-modes '(emacs-lisp-mode
                                          lisp-interaction-mode
@@ -641,8 +644,9 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
   :ensure t
   :defer t
-  :init (dolist (hook '(text-mode-hook prog-mode-hook))
-          (add-hook hook #'rainbow-delimiters-mode)))
+  :init
+  (ptrv/hook-into-modes #'rainbow-delimiters-mode
+                        '(text-mode-hook prog-mode-hook)))
 
 (use-package lexbind-mode
   :ensure t
@@ -1322,8 +1326,8 @@ If ARG is non-nil prompt for filename."
   :defer t
   :config
   (progn
-    (dolist (hook '(LaTeX-math-mode reftex-mode auto-fill-mode))
-      (add-hook 'LaTeX-mode-hook hook))
+    (dolist (it '(LaTeX-math-mode reftex-mode auto-fill-mode))
+      (add-hook 'LaTeX-mode-hook it))
 
     (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
 
@@ -2053,8 +2057,8 @@ If ARG is not nil, create package in current directory"
       (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
       (setq-local split-width-threshold nil))
 
-    (dolist (it '(c-mode-hook c++-mode-hook))
-      (add-hook it 'ptrv/cc-mode-init)))
+    (ptrv/hook-into-modes #'ptrv/cc-mode-init
+                          '(c-mode-hook c++-mode-hook)))
   :config
   (progn
     (setq c-default-style '((java-mode . "java")
