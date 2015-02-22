@@ -179,31 +179,38 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
   :bind ("C-c l b" . list-bookmarks)
   :config (setq bookmark-save-flag t))
 
+(use-package simple
+  :bind ("C-x p" . pop-to-mark-command)
+  :config
+  (setq set-mark-command-repeat-pop t
+        column-number-mode t
+        transient-mark-mode t
+        shift-select-mode t
+        next-error-highlight t
+        next-error-highlight-no-select t
+        save-interprogram-paste-before-kill t))
+
 (setq initial-major-mode 'lisp-interaction-mode
       redisplay-dont-pause t
-      column-number-mode t
       echo-keystrokes 0.02
       inhibit-startup-message t
-      transient-mark-mode t
-      shift-select-mode t
       require-final-newline t
       truncate-partial-width-windows nil
       delete-by-moving-to-trash t
       confirm-nonexistent-file-or-buffer nil
       query-replace-highlight t
-      next-error-highlight t
-      next-error-highlight-no-select t
       font-lock-maximum-decoration t
       ;; color-theme-is-global t
       ring-bell-function 'ignore
-      vc-follow-symlinks t
-      diff-switches "-u"
-      completion-cycle-threshold 5
       x-select-enable-clipboard t
       ;; from https://github.com/technomancy/better-defaults
       x-select-enable-primary nil
-      save-interprogram-paste-before-kill t
       mouse-yank-at-point t)
+
+(use-package minibuffer
+  :defer t
+  :config
+  (setq completion-cycle-threshold 5))
 
 (use-package apropos
   :defer t
@@ -338,6 +345,15 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package tbemail
   :load-path "site-lisp"
   :mode ("\.eml$" . tbemail-mode))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * diff
+(use-package diff
+  :bind (("C-c D d" . diff)
+         ("C-c D f" . diff-buffer-with-file))
+  :config
+  (setq diff-switches "-u"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ediff
@@ -855,6 +871,11 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * vc
+(use-package vc-hooks
+  :defer t
+  :config (setq vc-follow-symlinks)) t
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc-git
 (when (eval-when-compile (version-list-<
@@ -2266,11 +2287,6 @@ If ARG is not nil, create package in current directory"
     (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
     (bind-key "<down>" (lambda () (interactive) (enlarge-window -4)))
     (bind-key "<up>" (lambda () (interactive) (enlarge-window 4)))))
-
-;;diff shortcuts
-(use-package diff
-  :bind (("C-c D d" . diff)
-         ("C-c D f" . diff-buffer-with-file)))
 
 (use-package ptrv-window
   :load-path "site-lisp"
