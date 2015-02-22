@@ -480,7 +480,18 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Eshell
 (use-package eshell
-  :bind (("C-x m" . eshell))
+  :bind (("C-x m" . eshell)
+         ("C-. t" . ptrv/eshell-or-restore))
+  :init
+  ;; http://irreal.org/blog/?p=1742
+  (defun ptrv/eshell-or-restore ()
+    "Bring up a full-screen eshell or restore previous config."
+    (interactive)
+    (if (string= "eshell-mode" major-mode)
+        (jump-to-register :eshell-fullscreen)
+      (window-configuration-to-register :eshell-fullscreen)
+      (eshell)
+      (delete-other-windows)))
   :config
   (progn
     (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
@@ -2253,7 +2264,6 @@ If ARG is not nil, create package in current directory"
   :load-path "site-lisp"
   :bind (("C-c w s" . ptrv/swap-windows)
          ("C-c w r" . ptrv/rotate-windows)
-         ("C-c t"   . ptrv/eshell-or-restore)
          ("C-c v"   . ptrv/halve-other-window-height-or-width)))
 
 (use-package ptrv-buffers

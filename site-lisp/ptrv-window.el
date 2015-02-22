@@ -24,16 +24,6 @@
 
 ;;; Code:
 
-;; http://irreal.org/blog/?p=1742
-(defun ptrv/eshell-or-restore ()
-  "Bring up a full-screen eshell or restore previous config."
-  (interactive)
-  (if (string= "eshell-mode" major-mode)
-      (jump-to-register :eshell-fullscreen)
-    (window-configuration-to-register :eshell-fullscreen)
-    (eshell)
-    (delete-other-windows)))
-
 ;; https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun ptrv/swap-windows ()
   "If you have 2 windows, it swaps them."
