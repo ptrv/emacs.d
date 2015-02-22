@@ -654,7 +654,11 @@ keymap `ptrv/smartparens-lisp-mode-map'."
 
 (use-package eldoc
   :defer t
-  :init (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
+  :init (ptrv/hook-into-modes
+         #'eldoc-mode '(emacs-lisp-mode-hook
+                        lisp-interaction-mode-hook
+                        ielm-mode-hook
+                        eval-expression-minibuffer-setup-hook))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
