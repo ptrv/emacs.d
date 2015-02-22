@@ -1708,6 +1708,9 @@ If ARG is not nil, create package in current directory"
   :defer t
   :init (add-hook 'prog-mode-hook 'subword-mode))
 
+(with-eval-after-load 'subword
+  (diminish 'subword-mode))
+
 (use-package delsel
   :defer t
   :init (delete-selection-mode))
