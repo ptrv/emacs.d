@@ -10,10 +10,14 @@
 * [bodil/emacs.d][2]
 * [magnars/.emacs.d][3]
 * [milkypostman/dotemacs][4]
-* [lunaryorn/stante-pede][5]
+* [lunaryorn/.emacs.d][5]
+* [jwiegley/dot-emacs][6]
+* [sachac/.emacs.d][7]
 
 [1]: https://github.com/overtone/emacs-live
 [2]: https://github.com/bodil/emacs.d
 [3]: https://github.com/magnars/.emacs.d
 [4]: https://github.com/milkypostman/dotemacs
-[5]: https://github.com/lunaryorn/stante-pede
+[5]: https://github.com/lunaryorn/.emacs.d
+[6]: https://github.com/jwiegley/dot-emacs
+[7]: https://github.com/sachac/.emacs.d
