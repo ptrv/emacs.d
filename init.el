@@ -245,7 +245,7 @@ Source: `https://github.com/lunaryorn/.emacs.d'"
 (use-package saveplace
   :config (setq-default save-place t))
 
-;; savehist keeps track of some history
+(setq history-length 1000)
 (use-package savehist
   :init (savehist-mode t)
   :config
