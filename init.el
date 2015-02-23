@@ -2139,7 +2139,7 @@ If ARG is not nil, create package in current directory"
                    (throw 'found buf))))))
         (if gud-buf
             (switch-to-buffer-other-window gud-buf)
-          (call-interactively 'gud-gdb))))
+          (call-interactively (if *is-mac* 'lldb 'gud-gdb)))))
     (bind-key "C-. g" #'ptrv/show-debugger))
   :config
   (bind-keys ("<f9>"    . gud-cont)
