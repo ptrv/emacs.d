@@ -1876,9 +1876,6 @@ If ARG is not nil, create package in current directory"
   :if *is-mac*
   :config
   (progn
-    (when *is-cocoa-emacs*
-      (set-frame-font "Inconsolata-15" nil t))
-
     (setq default-input-method "MacOSX")
 
     ;; Make cut and paste work with the OS X clipboard
