@@ -1922,28 +1922,7 @@ If ARG is not nil, create package in current directory"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * linux
 (when *is-linux*
-  (set-frame-font "Inconsolata-12" nil t)
-
-  (defun setup-frame-hook (frame)
-    ;; (run-with-idle-timer 0.2 nil 'toggle-frame-maximized)
-    ;;(run-with-idle-timer 0.2 nil 'toggle-fullscreen)
-    )
-  (add-hook 'after-make-frame-functions 'setup-frame-hook)
-
-  ;; typeriter-mode
-  (use-package typewriter-mode
-    :if *is-linux*
-    :load-path "site-lisp"
-    :commands (typewriter-mode)
-    :config
-    (setq typewriter-play-command
-          (concat (ptrv/get-default-sound-command) " %s")
-          typewriter-sound-default
-          (concat ptrv/etc-dir "sounds/9744__horn__typewriter.wav")
-          typewriter-sound-end
-          (concat ptrv/etc-dir "sounds/eol-bell.wav")
-          typewriter-sound-return
-          (concat ptrv/etc-dir "sounds/carriage-return.wav"))))
+  (set-frame-font "Inconsolata-12" nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
