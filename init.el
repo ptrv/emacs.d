@@ -1994,7 +1994,8 @@ If ARG is not nil, create package in current directory"
           sclang-runtime-directory "~/scwork/"
           sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-    (add-hook 'sclang-mode-hook #'yas-minor-mode)
+    (with-eval-after-load 'yasnippet
+      (add-hook 'sclang-mode-hook #'yas-minor-mode))
     (add-hook 'sclang-mode-hook #'subword-mode)
     (bind-keys :map sclang-mode-map
                ("C-c ]"      . sclang-pop-definition-mark)
