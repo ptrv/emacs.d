@@ -1920,11 +1920,6 @@ If ARG is not nil, create package in current directory"
         (setq locate-command mdfind)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * linux
-(when *is-linux*
-  (set-frame-font "Inconsolata-12" nil t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sclang
 (use-package ptrv-sclang
   :load-path "site-lisp"
