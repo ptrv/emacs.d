@@ -126,22 +126,6 @@
   :ensure t
   :init (exec-path-from-shell-initialize))
 
-(when *is-mac*
-  (defun ptrv/homebrew-prefix (&optional formula)
-    "Get the homebrew prefix for FORMULA.
-
-Without FORMULA, get the homebrew prefix itself.
-
-Return nil, if homebrew is not available, or if the prefix
-directory does not exist.
-Source: `https://github.com/lunaryorn/.emacs.d'"
-    (let ((prefix (condition-case nil
-                      (car (apply #'process-lines "brew" "--prefix"
-                                  (when formula (list formula))))
-                    (error nil))))
-      (when (and prefix (file-directory-p prefix))
-        prefix))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
 (defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
@@ -1877,75 +1861,66 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * osx
-(when *is-mac*
-  (use-package ns-win
-    :defer t
-    :config
-    (setq mac-command-modifier 'meta
-          mac-option-modifier 'super
-          mac-function-modifier 'hyper
-          ;; mac-right-command-modifier 'super
-          mac-right-option-modifier nil
-          ))
+(use-package ns-win
+  :if *is-mac*
+  :defer t
+  :config
+  (setq mac-command-modifier 'meta
+        mac-option-modifier 'super
+        mac-function-modifier 'hyper
+        ;; mac-right-command-modifier 'super
+        mac-right-option-modifier nil))
 
-  (when *is-cocoa-emacs*
-    (set-frame-font "Inconsolata-15" nil t)
-    ;; (set-frame-size (selected-frame) 110 53)
-    ;; (set-frame-position (selected-frame) 520 24)
-    )
+(use-package ptrv-osx
+  :load-path "site-lisp"
+  :if *is-mac*
+  :config
+  (progn
+    (when *is-cocoa-emacs*
+      (set-frame-font "Inconsolata-15" nil t))
 
-  (setq default-input-method "MacOSX")
+    (setq default-input-method "MacOSX")
 
-  ;; Make cut and paste work with the OS X clipboard
+    ;; Make cut and paste work with the OS X clipboard
+    (when (not window-system)
+      (setq interprogram-cut-function 'ptrv/paste-to-osx)
+      (setq interprogram-paste-function 'ptrv/copy-from-osx))
 
-  (defun ptrv/copy-from-osx ()
-    (shell-command-to-string "pbpaste"))
+    ;; Work around a bug on OS X where system-name is a fully qualified
+    ;; domain name
+    (setq system-name (car (split-string system-name "\\.")))
 
-  (defun ptrv/paste-to-osx (text &optional push)
-    (let ((process-connection-type nil))
-      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-        (process-send-string proc text)
-        (process-send-eof proc))))
+    ;; Ignore .DS_Store files with ido mode
+    (add-to-list 'ido-ignore-files "\\.DS_Store")))
 
-  (when (not window-system)
-    (setq interprogram-cut-function 'ptrv/paste-to-osx)
-    (setq interprogram-paste-function 'ptrv/copy-from-osx))
+;;GNU ls and find
+(use-package files
+  :defer t
+  :config
+  (when *is-mac*
+    (let ((gnu-ls (executable-find "gls")))
+      (if gnu-ls
+          (setq insert-directory-program gnu-ls)
+        (message "GNU coreutils not found. Install coreutils with homebrew.")))))
 
-  ;; Work around a bug on OS X where system-name is a fully qualified
-  ;; domain name
-  (setq system-name (car (split-string system-name "\\.")))
+(use-package grep
+  :defer t
+  :config
+  (when *is-mac*
+    (let ((gnu-find (executable-find "gfind")))
+      (when gnu-find
+        (setq find-program gnu-find)))
+    (let ((gnu-xargs (executable-find "gxargs")))
+      (when gnu-xargs
+        (setq xargs-program gnu-xargs)))))
 
-  ;; Ignore .DS_Store files with ido mode
-  (add-to-list 'ido-ignore-files "\\.DS_Store")
-
-  ;;GNU ls and find
-  (use-package files
-    :defer t
-    :config
-    (when *is-mac*
-      (let ((gnu-ls (executable-find "gls")))
-        (if gnu-ls
-            (setq insert-directory-program gnu-ls)
-          (message "GNU coreutils not found. Install coreutils with homebrew.")))))
-
-  (use-package grep
-    :defer t
-    :config
-    (when *is-mac*
-      (let ((gnu-find (executable-find "gfind")))
-        (when gnu-find
-          (setq find-program gnu-find)))
-      (let ((gnu-xargs (executable-find "gxargs")))
-        (when gnu-xargs
-          (setq xargs-program gnu-xargs)))))
-
-  (use-package locate
-    :defer t
-    :config
-    (when *is-mac*
-      (let ((mdfind (executable-find "mdfind")))
-        (when mdfind
-          (setq locate-command mdfind))))))
+(use-package locate
+  :defer t
+  :config
+  (when *is-mac*
+    (let ((mdfind (executable-find "mdfind")))
+      (when mdfind
+        (setq locate-command mdfind)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * linux
