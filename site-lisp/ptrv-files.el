@@ -134,6 +134,12 @@ prompt for the command to use."
   (interactive)
   (find-file user-init-file))
 
+(require 'cus-edit)
+(defun ptrv/find-user-custom-file ()
+  "Edit the `custom-file'."
+  (interactive)
+  (find-file custom-file))
+
 (defun ptrv/byte-recompile-site-lisp ()
   "Recompile user site-lisp directory."
   (interactive)

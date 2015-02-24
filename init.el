@@ -1725,6 +1725,7 @@ If ARG is not nil, create package in current directory"
          ("C-c f D"   . ptrv/delete-file-and-buffer)
          ("C-c f w"   . ptrv/copy-file-name-to-clipboard)
          ("C-c f i"   . ptrv/find-user-init-file)
+         ("C-c f I"   . ptrv/find-user-custom-file)
          ("C-c f b i" . ptrv/byte-recompile-init)
          ("C-c f b s" . ptrv/byte-recompile-site-lisp)
          ("C-c f b e" . ptrv/byte-recompile-elpa)
