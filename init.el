@@ -655,12 +655,6 @@
   (ptrv/hook-into-modes #'rainbow-delimiters-mode
                         '(text-mode-hook prog-mode-hook)))
 
-;; (use-package nrepl-eval-sexp-fu
-;;   :ensure t
-;;   :init (require 'nrepl-eval-sexp-fu)
-;;   :config
-;;   (setq nrepl-eval-sexp-fu-flash-duration 0.5))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 ;; (ptrv/after find-file-in-project
