@@ -117,8 +117,10 @@
 
 (use-package paradox
   :ensure t
-  :bind (("C-c l p" . paradox-list-packages)
-         ("C-c l P" . paradox-list-packages-no-fetch)))
+  :bind (("C-c l p" . paradox-list-packages))
+  :config
+  (setq paradox-github-token t
+        paradox-execute-asynchronously nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * PATH
