@@ -1066,7 +1066,7 @@ If ARG is non-nil prompt for filename."
 ;;;; * iedit
 (use-package iedit
   :ensure t
-  :defer t)
+  :bind ("C-;" . iedit-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * google-this
