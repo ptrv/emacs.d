@@ -514,7 +514,7 @@
       (find-file file))
 
     (use-package pcmpl-lein
-      :load-path "site-lisp/pcomplete-plugins")
+      :load-path "site-lisp")
 
     (use-package pcmpl-git
       :ensure t)
