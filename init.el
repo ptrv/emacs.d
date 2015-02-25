@@ -1339,11 +1339,6 @@ If ARG is non-nil prompt for filename."
      :doc-spec '(("(latex2e)Concept Index" )
                  ("(latex2e)Command Index")))))
 
-(use-package pstricks
-  :load-path "site-lisp"
-  :ensure auctex
-  :defer t)
-
 (use-package reftex
   :ensure auctex
   :defer t
