@@ -301,8 +301,9 @@
   (progn
     (require 'ansi-color)
     (defun ptrv/colorize-compilation-buffer ()
-      (ansi-color-process-output nil)
-      (setq-local comint-last-output-start (point-marker)))
+      (when (eq major-mode 'compilation-mode)
+        (ansi-color-process-output nil)
+        (setq-local comint-last-output-start (point-marker))))
     (add-hook 'compilation-filter-hook
               #'ptrv/colorize-compilation-buffer)
     ;; other settings
