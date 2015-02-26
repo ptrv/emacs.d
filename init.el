@@ -2002,8 +2002,6 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
-
-
 (use-package cc-mode
   :defer t
   :mode ("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
@@ -2049,14 +2047,8 @@ If ARG is not nil, create package in current directory"
                                    (eq major-mode 'c++-mode)))
                       (doxymacs-font-lock))))))
 
-    (defun ptrv/c++-mode-init ()
-      ;; (doxymacs-mode +1)
-      (yas-minor-mode +1))
-    (add-hook 'c++-mode-hook 'ptrv/c++-mode-init)
-
-    (defun ptrv/c-mode-init()
-      (local-set-key (kbd "RET") 'newline-and-indent))
-    (add-hook 'c-mode-hook 'ptrv/c-mode-init)
+    (with-eval-after-load 'yasnippet
+      (add-hook 'c++-mode-hook #'yas-minor-mode))
 
     ;; C++11 keywords
     (font-lock-add-keywords
