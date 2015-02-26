@@ -1409,13 +1409,6 @@ If ARG is non-nil prompt for filename."
   :mode (("CMakeLists\\.txt\\'" . cmake-mode)
          ("\\.cmake\\'" . cmake-mode)))
 
-;; desktop-entry-mode
-(use-package desktop-entry-mode
-  :load-path "site-lisp"
-  :init (add-hook 'desktop-entry-mode-hook 'turn-on-font-lock)
-  :commands (desktop-entry-mode)
-  :mode ("\\.desktop\\(\\.in\\)?$" . desktop-entry-mode))
-
 ;; glsl-mode
 (use-package glsl-mode
   :ensure t
