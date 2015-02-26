@@ -2203,8 +2203,11 @@ If ARG is not nil, create package in current directory"
   :init (key-chord-mode 1)
   :config
   (progn
-    (key-chord-define-global "JJ" 'ptrv/switch-to-previous-buffer)
-    (key-chord-define-global "BB" 'ido-switch-buffer)))
+    (key-chord-define-global "BB" 'ido-switch-buffer)
+    (key-chord-define-global "JJ" (lambda ()
+                                    (interactive)
+                                    (switch-to-buffer
+                                     (other-buffer (current-buffer) 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Ace jump mode
@@ -2318,13 +2321,6 @@ If ARG is not nil, create package in current directory"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * defuns
-;; http://emacsredux.com/blog/2013/04/28/switch-to-previous-buffer/
-(defun ptrv/switch-to-previous-buffer ()
-  "Switch to previous open buffer.
-Repeated invocation toggle between the two most recently open buffers."
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
-
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
