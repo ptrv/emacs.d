@@ -1082,6 +1082,7 @@ If ARG is non-nil prompt for filename."
 ;;;; * edit-server
 (use-package edit-server
   :ensure t
+  :if window-system
   :defer t
   :idle (edit-server-start)
   :idle-priority 10
@@ -2326,6 +2327,7 @@ If ARG is not nil, create package in current directory"
 ;;;; * server
 (use-package server
   :defer t
+  :if window-system
   :idle (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
