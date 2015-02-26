@@ -2330,17 +2330,13 @@ If ARG is not nil, create package in current directory"
          ("C-c i d" . ptrv/insert-current-date)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * defuns
-(defun eval-and-replace ()
-  "Replace the preceding sexp with its value."
-  (interactive)
-  (backward-kill-sexp)
-  (condition-case nil
-      (prin1 (eval (read (current-kill 0)))
-             (current-buffer))
-    (error (message "Invalid expression")
-           (insert (current-kill 0)))))
+;;;; * server
+(use-package server
+  :defer t
+  :idle (server-start))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * welcome-message stuff
 (defun ptrv/user-first-name ()
   "Get user's first name."
   (let* ((first-name (car (split-string user-full-name))))
@@ -2351,14 +2347,6 @@ If ARG is not nil, create package in current directory"
   "Check whether the user name is provided."
   (not (string-equal "" (ptrv/user-first-name))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * server
-(use-package server
-  :defer t
-  :idle (server-start))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * welcome-message stuff
 (defvar ptrv/welcome-messages
   (if (ptrv/user-first-name-p)
       (list (concat "Hello " (ptrv/user-first-name) ", somewhere in the world the sun is shining for you right now.")
