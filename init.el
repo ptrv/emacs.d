@@ -253,7 +253,8 @@
   ;; portions of lines via faces.  Also indicate tabs via characters
   (setq whitespace-style '(face indentation space-after-tab space-before-tab
                                 tab-mark empty trailing)
-        whitespace-line-column nil)    ; Use `fill-column' for overlong lines
+        whitespace-line-column nil      ; Use `fill-column' for overlong lines
+        whitespace-global-modes '(not go-mode))
   :diminish whitespace-mode)
 
 (use-package whitespace-cleanup-mode
@@ -262,7 +263,9 @@
   :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
                               '(prog-mode-hook text-mode-hook))
   :config
-  (setq whitespace-cleanup-mode-only-if-initially-clean t))
+  (progn
+    (setq whitespace-cleanup-mode-only-if-initially-clean t)
+    (add-to-list 'whitespace-cleanup-mode-ignore-modes 'go-mode)))
 
 ;; disabled commands
 (setq disabled-command-function nil)
@@ -1525,8 +1528,7 @@ If ARG is non-nil prompt for filename."
                 (if (= arg 4) (concat " " (read-from-minibuffer "Args: "))))))
 
     (defun ptrv/go-mode-init ()
-      (add-hook 'before-save-hook 'gofmt-before-save nil :local)
-      (whitespace-mode -1))
+      (add-hook 'before-save-hook 'gofmt-before-save nil :local))
     (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
     (use-package company-go
@@ -1549,8 +1551,6 @@ If ARG is non-nil prompt for filename."
       (defun ptrv/go-mode-flycheck--init ()
         (setq-local flycheck-check-syntax-automatically '(save)))
       (add-hook 'go-mode-hook 'ptrv/go-mode-flycheck--init))
-    (with-eval-after-load 'whitespace-cleanup-mode
-      (add-hook 'go-mode-hook (lambda () (whitespace-cleanup-mode -1))))
 
     (defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
 
