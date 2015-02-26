@@ -2345,12 +2345,6 @@ This checks in turn:
     (if sym (describe-function sym)
       (describe-variable (variable-at-point)))))
 
-(defun ptrv/set-variables-local (var-list)
-  "Make all variables in VAR-LIST local."
-  (unless (listp var-list)
-    (error "You have to pass a list to this function"))
-  (mapc (lambda (x) (make-local-variable x)) var-list))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
 (use-package server
