@@ -628,9 +628,19 @@
           (ielm))
         (bind-key "C-c C-z" 'ptrv/switch-to-ielm emacs-lisp-mode-map)))
 
-    (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
-    (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
     (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
+    (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
+
+    (defun eval-and-replace ()
+      "Replace the preceding sexp with its value."
+      (interactive)
+      (backward-kill-sexp)
+      (condition-case nil
+          (prin1 (eval (read (current-kill 0)))
+                 (current-buffer))
+        (error (message "Invalid expression")
+               (insert (current-kill 0)))))
+    (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
 
     (defun ptrv/lisp-describe-thing-at-point ()
       "Show the documentation of the Elisp function and variable near point.
