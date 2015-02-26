@@ -1552,10 +1552,6 @@ If ARG is non-nil prompt for filename."
     (with-eval-after-load 'whitespace-cleanup-mode
       (add-hook 'go-mode-hook (lambda () (whitespace-cleanup-mode -1))))
 
-    (with-eval-after-load 'find-file-in-project
-      (defvar ffip-patterns)
-      (add-to-list 'ffip-patterns "*.go"))
-
     (defvar ptrv/go-default-namespaces '("github.com/ptrv" "example"))
 
     (defun ptrv/go-create-package (name &optional arg)
@@ -1751,17 +1747,10 @@ If ARG is not nil, create package in current directory"
   :init (projectile-global-mode)
   :config
   (progn
+    (bind-key "C-x f" 'projectile-find-file-dwim projectile-mode-map)
     (dolist (file '(".ropeproject" "setup.py"))
       (add-to-list 'projectile-project-root-files file t)))
   :diminish projectile-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * ffip
-(use-package find-file-in-project
-  :ensure t
-  :bind ("C-x f" . ffip)
-  :config
-  (setq ffip-project-file '(".git" ".hg" ".ropeproject" "setup.py" "project.clj")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * find-file
