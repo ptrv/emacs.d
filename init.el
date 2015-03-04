@@ -2030,7 +2030,9 @@ If ARG is not nil, create package in current directory"
 ;;;; * cc-mode
 (use-package cc-mode
   :defer t
-  :mode ("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+  :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+         ("\\.m\\'"                   . c-mode)
+         ("\\.mm\\'"                  . c++-mode))
   :init
   (progn
     (defun ptrv/cc-mode-init ()
