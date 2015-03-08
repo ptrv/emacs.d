@@ -685,7 +685,8 @@ This checks in turn:
                         lisp-interaction-mode-hook
                         ielm-mode-hook
                         eval-expression-minibuffer-setup-hook
-                        c-mode-common-hook))
+                        c-mode-common-hook
+                        python-mode-hook))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
@@ -1978,7 +1979,6 @@ If ARG is not nil, create package in current directory"
   :config
   (progn
     (setq python-check-command "flake8")
-    (add-hook 'python-mode-hook 'eldoc-mode)
 
     (info-lookup-add-help
      :mode 'python-mode
