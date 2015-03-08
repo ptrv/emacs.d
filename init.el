@@ -959,6 +959,13 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :mode ("\\.yasnippet$" . yasnippet-mode)
+  :init
+  (ptrv/hook-into-modes
+   #'yas-minor-mode '(lua-mode-hook
+                      c++-mode-hook
+                      sclang-mode-hook
+                      processing-mode-hook
+                      go-mode-hook))
   :config
   (progn
     (setq yas-prompt-functions '(yas-x-prompt
@@ -1569,8 +1576,6 @@ If ARG is non-nil prompt for filename."
       :ensure t
       :init (add-hook 'go-mode-hook #'go-eldoc-setup))
 
-    (with-eval-after-load 'yasnippet
-      (add-hook 'go-mode-hook #'yas-minor-mode))
     (with-eval-after-load 'hideshow
       (add-hook 'go-mode-hook #'hs-minor-mode))
     (with-eval-after-load 'flycheck
@@ -1793,9 +1798,6 @@ If ARG is not nil, create package in current directory"
   :commands (processing-find-sketch)
   :config
   (progn
-    (with-eval-after-load 'yasnippet
-      (add-hook 'processing-mode-hook #'yas-minor-mode))
-
     (use-package processing-snippets
       :load-path "site-lisp/processing2-emacs"
       :commands (processing-snippets-initialize)
@@ -1949,8 +1951,6 @@ If ARG is not nil, create package in current directory"
           sclang-runtime-directory "~/scwork/"
           sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-    (with-eval-after-load 'yasnippet
-      (add-hook 'sclang-mode-hook #'yas-minor-mode))
     (add-hook 'sclang-mode-hook #'subword-mode)
     (bind-keys :map sclang-mode-map
                ("C-c ]"      . sclang-pop-definition-mark)
@@ -2076,9 +2076,6 @@ If ARG is not nil, create package in current directory"
                                    (eq major-mode 'c++-mode)))
                       (doxymacs-font-lock))))))
 
-    (with-eval-after-load 'yasnippet
-      (add-hook 'c++-mode-hook #'yas-minor-mode))
-
     ;; C++11 keywords
     (font-lock-add-keywords
      'c++-mode
@@ -2168,8 +2165,6 @@ If ARG is not nil, create package in current directory"
       (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
     (with-eval-after-load 'ggtags
       (add-hook 'lua-mode-hook 'ggtags-mode))
-    (with-eval-after-load 'yasnippet
-      (add-hook 'lua-mode-hook 'yas-minor-mode))
     (bind-keys :map lua-mode-map
                ("C-c C-d" . lua-send-proc)
                ("C-c C-c" . ptrv/lua-send-region-or-current-line)
