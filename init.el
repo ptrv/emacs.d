@@ -2151,6 +2151,11 @@ If ARG is not nil, create package in current directory"
 (use-package lua-mode
   :ensure t
   :defer t
+  :init
+  (with-eval-after-load 'company-ycmd
+    (defun ptrv/lua-mode-company-ycmd--init ()
+      (setq-local company-backends '((company-ycmd :with company-yasnippet))))
+    (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
   :config
   (progn
     (defun ptrv/lua-send-region-or-current-line ()
@@ -2159,10 +2164,6 @@ If ARG is not nil, create package in current directory"
       (if (region-active-p)
           (lua-send-region (region-beginning) (region-end))
         (lua-send-current-line)))
-    (with-eval-after-load 'company-ycmd
-      (defun ptrv/lua-mode-company-ycmd--init ()
-        (setq-local company-backends '((company-ycmd :with company-yasnippet))))
-      (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
     (bind-keys :map lua-mode-map
                ("C-c C-d" . lua-send-proc)
                ("C-c C-c" . ptrv/lua-send-region-or-current-line)
