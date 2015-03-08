@@ -1530,6 +1530,7 @@ If ARG is non-nil prompt for filename."
       (if read-cmd? (compilation-read-command default-cmd) default-cmd))
 
     (defun ptrv/go-run (arg)
+
       "go run current package"
       (interactive "p")
       (let (files-list
@@ -1569,16 +1570,15 @@ If ARG is non-nil prompt for filename."
     (use-package company-go
       :ensure t
       :init (add-hook 'go-mode-hook
-                      (lambda () (setq-local company-backends
-                                             '((company-go :with company-yasnippet)))))
+                      (lambda ()
+                        (setq-local company-backends
+                                    '((company-go :with company-yasnippet)))))
       :config (setq company-go-show-annotation nil))
 
     (use-package go-eldoc
       :ensure t
       :init (add-hook 'go-mode-hook #'go-eldoc-setup))
 
-    (with-eval-after-load 'hideshow
-      (add-hook 'go-mode-hook #'hs-minor-mode))
     (with-eval-after-load 'flycheck
       (defvar flycheck-check-syntax-automatically)
       (defun ptrv/go-mode-flycheck--init ()
@@ -2048,9 +2048,8 @@ If ARG is not nil, create package in current directory"
             c-default-style "bsd"
             indent-tabs-mode nil)
       (setq-local split-width-threshold nil))
-
-    (ptrv/hook-into-modes #'ptrv/cc-mode-init
-                          '(c-mode-hook c++-mode-hook)))
+    (ptrv/hook-into-modes
+     #'ptrv/cc-mode-init '(c-mode-hook c++-mode-hook)))
   :config
   (progn
     (setq c-default-style '((java-mode . "java")
