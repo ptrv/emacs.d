@@ -2025,7 +2025,10 @@ If ARG is not nil, create package in current directory"
 ;;;; * ggtags
 (use-package ggtags
   :ensure t
-  :defer t)
+  :defer t
+  :init
+  (ptrv/hook-into-modes
+   #'ggtags-mode '(c++-mode-hook lua-mode-hook)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
@@ -2044,8 +2047,6 @@ If ARG is not nil, create package in current directory"
             c-default-style "bsd"
             indent-tabs-mode nil)
       (eldoc-mode)
-      (ggtags-mode)
-      (setq-local eldoc-documentation-function 'ggtags-eldoc-function)
       (setq-local split-width-threshold nil))
 
     (ptrv/hook-into-modes #'ptrv/cc-mode-init
@@ -2163,8 +2164,6 @@ If ARG is not nil, create package in current directory"
       (defun ptrv/lua-mode-company-ycmd--init ()
         (setq-local company-backends '((company-ycmd :with company-yasnippet))))
       (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
-    (with-eval-after-load 'ggtags
-      (add-hook 'lua-mode-hook 'ggtags-mode))
     (bind-keys :map lua-mode-map
                ("C-c C-d" . lua-send-proc)
                ("C-c C-c" . ptrv/lua-send-region-or-current-line)
