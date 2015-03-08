@@ -2129,7 +2129,9 @@ If ARG is not nil, create package in current directory"
   :load-path "~/src/emacs-ycmd"
   :defer t
   :commands (ycmd-mode)
-  :init (add-hook 'c++-mode-hook 'ycmd-mode)
+  :init
+  (ptrv/hook-into-modes
+   #'ycmd-mode '(c++-mode-hook lua-mode-hook))
   :config
   (progn
     (use-package company-ycmd
@@ -2157,8 +2159,6 @@ If ARG is not nil, create package in current directory"
       (if (region-active-p)
           (lua-send-region (region-beginning) (region-end))
         (lua-send-current-line)))
-    (with-eval-after-load 'ycmd
-      (add-hook 'lua-mode-hook 'ycmd-mode))
     (with-eval-after-load 'company-ycmd
       (defun ptrv/lua-mode-company-ycmd--init ()
         (setq-local company-backends '((company-ycmd :with company-yasnippet))))
