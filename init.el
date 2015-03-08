@@ -684,7 +684,8 @@ This checks in turn:
          #'eldoc-mode '(emacs-lisp-mode-hook
                         lisp-interaction-mode-hook
                         ielm-mode-hook
-                        eval-expression-minibuffer-setup-hook))
+                        eval-expression-minibuffer-setup-hook
+                        c-mode-common-hook))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
@@ -2046,7 +2047,6 @@ If ARG is not nil, create package in current directory"
             ;;c-indent-level 4
             c-default-style "bsd"
             indent-tabs-mode nil)
-      (eldoc-mode)
       (setq-local split-width-threshold nil))
 
     (ptrv/hook-into-modes #'ptrv/cc-mode-init
