@@ -582,8 +582,9 @@
       (sp-local-pair "(" nil :bind "M-("))
 
     (dolist (mode sp--lisp-modes)
-      (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-        (add-hook hook 'smartparens-strict-mode)))
+      (unless (eq mode 'eshell-mode)
+        (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+          (add-hook hook 'smartparens-strict-mode))))
 
     (add-hook 'eval-expression-minibuffer-setup-hook
               'smartparens-strict-mode)))
