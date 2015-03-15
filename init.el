@@ -2246,8 +2246,8 @@ If ARG is not nil, create package in current directory"
   (progn
     (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
     (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
-    (bind-key "<down>" (lambda () (interactive) (enlarge-window -4)))
-    (bind-key "<up>" (lambda () (interactive) (enlarge-window 4)))))
+    (bind-key "C-c w <down>" (lambda () (interactive) (enlarge-window -4)))
+    (bind-key "C-c w <up>" (lambda () (interactive) (enlarge-window 4)))))
 
 (use-package ptrv-window
   :load-path "site-lisp"
