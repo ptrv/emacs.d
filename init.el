@@ -481,7 +481,7 @@
 ;;;; * smex
 (use-package smex
   :ensure t
-  :bind (("M-x" . smex)
+  :bind (([remap execute-extended-command] . smex)
          ("M-X" . smex-major-mode-commands)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -794,7 +794,7 @@ If ARG is non-nil prompt for filename."
            ("root" (filename . "^/sudo:root.*"))))))
 
 (use-package ibuffer
-  :bind (("C-x C-b" . ibuffer))
+  :bind ([remap list-buffers] . ibuffer)
   :init (add-hook 'ibuffer-mode-hook
                   (lambda ()
                     (ibuffer-auto-mode 1)
@@ -2304,7 +2304,7 @@ If ARG is not nil, create package in current directory"
 (use-package ptrv-simple
   :load-path "site-lisp"
   :commands (lorem)
-  :bind (("M-g g" . ptrv/goto-line-with-feedback)
+  :bind (([remap goto-line] . ptrv/goto-line-with-feedback)
          ("<S-return>" . ptrv/smart-open-line)
          ("M-o" . ptrv/smart-open-line)
          ("<C-S-return>" . ptrv/smart-open-line-above)
@@ -2316,7 +2316,7 @@ If ARG is not nil, create package in current directory"
          ("C-c u" . ptrv/browse-url)
          ("C-c q" . ptrv/exit-emacs-client)
          ("M-;" . ptrv/comment-dwim-line)
-         ("C-a" . ptrv/smarter-move-beginning-of-line)
+         ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
          ("C-c i d" . ptrv/insert-current-date)))
