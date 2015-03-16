@@ -126,7 +126,7 @@
 ;;;; * PATH
 (use-package exec-path-from-shell
   :ensure t
-  :init (exec-path-from-shell-initialize))
+  :config (exec-path-from-shell-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * custom settings
@@ -204,9 +204,9 @@
          ("C-c h A" . apropos-command)))
 
 (use-package autoinsert
-  :init (auto-insert-mode))
+  :config (auto-insert-mode))
 (use-package jka-cmpr-hook
-  :init (auto-compression-mode))
+  :config (auto-compression-mode))
 (use-package winner
   :bind (("M-N" . winner-redo)
          ("M-P" . winner-undo))
@@ -233,16 +233,19 @@
 
 (setq history-length 1000)
 (use-package savehist
-  :init (savehist-mode t)
   :config
-  (setq savehist-additional-variables '(search ring regexp-search-ring)
-        savehist-autosave-interval 60
-        savehist-save-minibuffer-history t))
+  (progn
+    (savehist-mode t)
+    (setq savehist-additional-variables '(search ring regexp-search-ring)
+         savehist-autosave-interval 60
+         savehist-save-minibuffer-history t)))
 
 ;; desktop.el
 (use-package desktop
-  :init (desktop-save-mode)
-  :config (setq desktop-save 'if-exists))
+  :config
+  (progn
+    (desktop-save-mode)
+    (setq desktop-save 'if-exists)))
 
 (use-package whitespace
   :bind ("C-c T w" . whitespace-mode)
@@ -402,7 +405,7 @@
 
 (setq column-number-mode t)
 (use-package hl-line
-  :init (global-hl-line-mode))
+  :config (global-hl-line-mode))
 
 (use-package zeburn
   :ensure zenburn-theme
@@ -458,26 +461,27 @@
 ;;;; * ido-ubiquitous
 (use-package ido-ubiquitous
   :ensure t
-  :init (ido-ubiquitous-mode)
   :config
-  (dolist (cmd '(sh-set-shell
-                 ispell-change-dictionary
-                 add-dir-local-variable
-                 ahg-do-command
-                 sclang-dump-interface
-                 sclang-dump-full-interface
-                 kill-ring-search
-                 tmm-menubar
-                 erc-iswitchb
-                 iswitchb-buffer))
-    (add-to-list 'ido-ubiquitous-command-overrides
-                 `(disable exact ,(symbol-name cmd)))))
+  (progn
+    (ido-ubiquitous-mode)
+    (dolist (cmd '(sh-set-shell
+                   ispell-change-dictionary
+                   add-dir-local-variable
+                   ahg-do-command
+                   sclang-dump-interface
+                   sclang-dump-full-interface
+                   kill-ring-search
+                   tmm-menubar
+                   erc-iswitchb
+                   iswitchb-buffer))
+      (add-to-list 'ido-ubiquitous-command-overrides
+                   `(disable exact ,(symbol-name cmd))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smex
 (use-package smex
   :ensure t
-  :bind (([remap execute-extended-command] . smex)
+  :bind (("M-x" . smex)
          ("M-X" . smex-major-mode-commands)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -531,6 +535,7 @@
   :ensure t
   :defer t
   :idle (global-company-mode)
+  :idle-priority 5
   :config
   (progn
     (setq company-idle-delay 0.5
@@ -791,7 +796,7 @@ If ARG is non-nil prompt for filename."
            ("root" (filename . "^/sudo:root.*"))))))
 
 (use-package ibuffer
-  :bind (([remap list-buffers] . ibuffer))
+  :bind (("C-x C-b" . ibuffer))
   :init (add-hook 'ibuffer-mode-hook
                   (lambda ()
                     (ibuffer-auto-mode 1)
@@ -978,7 +983,6 @@ If ARG is non-nil prompt for filename."
 
     (use-package dropdown-list
       :ensure t
-      :defer t
       :init
       (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
 
@@ -1126,9 +1130,9 @@ If ARG is non-nil prompt for filename."
 ;;;; * popwin
 (use-package popwin
   :ensure t
-  :init (popwin-mode)
   :config
   (progn
+    (popwin-mode)
     (bind-key "C-z" popwin:keymap)
 
     (defun ptrv/get-popwin-height (&optional size)
@@ -1184,11 +1188,12 @@ If ARG is non-nil prompt for filename."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
 (use-package autorevert
-  :init (global-auto-revert-mode)
   :config
-  ;; Also auto refresh dired, but be quiet about it
-  (setq global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil))
+  (progn
+    (global-auto-revert-mode)
+    ;; Also auto refresh dired, but be quiet about it
+    (setq global-auto-revert-non-file-buffers t
+          auto-revert-verbose nil)))
 
 (setq tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
                         68 72 76 80 84 88 92 96 100 104 108 112 116 120))
@@ -1328,6 +1333,7 @@ If ARG is non-nil prompt for filename."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * latex
 (use-package tex-site
+  :disabled t
   :ensure auctex)
 
 (use-package tex
@@ -1492,14 +1498,13 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :mode ("\\.text$" . markdown-mode)
-  :pre-load
+  :init
   (progn
     (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
     (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * golang
-
 (use-package go-mode
   :ensure t
   :commands (ptrv/go-create-package)
@@ -1652,9 +1657,9 @@ If ARG is not nil, create package in current directory"
     (erc-update-modules)
 
     (use-package erc-services
-      :init (erc-services-mode)
       :config
       (progn
+        (erc-services-mode)
         (setq erc-prompt-for-nickserv-password nil)
         (let ((freenode-credentials (netrc-credentials "freenode"))
               (oftc-credentials (netrc-credentials "oftc")))
@@ -1732,8 +1737,8 @@ If ARG is not nil, create package in current directory"
 ;;;; * move-text
 (use-package move-text
   :ensure t
-  :bind (([C-S-up]   . move-text-up)
-         ([C-S-down] . move-text-down)))
+  :bind (("C-S-<up>"   . move-text-up)
+         ("C-S-<down>" . move-text-down)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * file commands
@@ -1778,9 +1783,11 @@ If ARG is not nil, create package in current directory"
 ;;;; * projectile
 (use-package projectile
   :ensure t
-  :init (projectile-global-mode)
+  :idle (projectile-cleanup-known-projects)
+  :idle-priority 10
   :config
   (progn
+    (projectile-global-mode)
     (bind-key "C-x f" 'projectile-find-file-dwim projectile-mode-map)
     (dolist (file '(".ropeproject" "setup.py"))
       (add-to-list 'projectile-project-root-files file t)))
@@ -2013,9 +2020,9 @@ If ARG is not nil, create package in current directory"
 
     (use-package pyenv-mode
       :ensure t
-      :init (pyenv-mode)
       :config
       (progn
+        (pyenv-mode)
         (unbind-key "C-c C-s" pyenv-mode-map)
         (unbind-key "C-c C-u" pyenv-mode-map)
         (bind-keys :map pyenv-mode-map
@@ -2303,7 +2310,7 @@ If ARG is not nil, create package in current directory"
 (use-package ptrv-simple
   :load-path "site-lisp"
   :commands (lorem)
-  :bind (([remap goto-line] . ptrv/goto-line-with-feedback)
+  :bind (("M-g g" . ptrv/goto-line-with-feedback)
          ("<S-return>" . ptrv/smart-open-line)
          ("M-o" . ptrv/smart-open-line)
          ("<C-S-return>" . ptrv/smart-open-line-above)
@@ -2315,7 +2322,7 @@ If ARG is not nil, create package in current directory"
          ("C-c u" . ptrv/browse-url)
          ("C-c q" . ptrv/exit-emacs-client)
          ("M-;" . ptrv/comment-dwim-line)
-         ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
+         ("C-a" . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
          ("C-c i d" . ptrv/insert-current-date)))
@@ -2325,7 +2332,8 @@ If ARG is not nil, create package in current directory"
 (use-package server
   :defer t
   :if window-system
-  :idle (server-start))
+  :idle (server-start)
+  :idle-priority 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
