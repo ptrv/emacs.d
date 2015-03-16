@@ -533,11 +533,9 @@
 ;;;; * company
 (use-package company
   :ensure t
-  :defer t
-  :idle (global-company-mode)
-  :idle-priority 5
   :config
   (progn
+    (global-company-mode)
     (setq company-idle-delay 0.5
           company-tooltip-limit 10
           company-minimum-prefix-length 2
@@ -990,9 +988,7 @@ If ARG is non-nil prompt for filename."
 ;;;; * undo-tree
 (use-package undo-tree
   :ensure t
-  :defer t
-  :idle (global-undo-tree-mode)
-  :idle-priority 1
+  :config (global-undo-tree-mode)
   :diminish undo-tree-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1098,10 +1094,9 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :if window-system
   :defer t
-  :idle (edit-server-start)
-  :idle-priority 10
   :init
   (progn
+    (edit-server-start)
     (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
     (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer))
   :config
@@ -1783,8 +1778,7 @@ If ARG is not nil, create package in current directory"
 ;;;; * projectile
 (use-package projectile
   :ensure t
-  :idle (projectile-cleanup-known-projects)
-  :idle-priority 10
+  ;; :idle (projectile-cleanup-known-projects)
   :config
   (progn
     (projectile-global-mode)
@@ -2332,8 +2326,7 @@ If ARG is not nil, create package in current directory"
 (use-package server
   :defer t
   :if window-system
-  :idle (server-start)
-  :idle-priority 5)
+  :init (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
