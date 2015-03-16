@@ -1778,13 +1778,13 @@ If ARG is not nil, create package in current directory"
 ;;;; * projectile
 (use-package projectile
   :ensure t
-  ;; :idle (projectile-cleanup-known-projects)
   :config
   (progn
     (projectile-global-mode)
     (bind-key "C-x f" 'projectile-find-file-dwim projectile-mode-map)
     (dolist (file '(".ropeproject" "setup.py"))
-      (add-to-list 'projectile-project-root-files file t)))
+      (add-to-list 'projectile-project-root-files file t))
+    (run-with-idle-timer 10 nil (lambda () (projectile-cleanup-known-projects))))
   :diminish projectile-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
