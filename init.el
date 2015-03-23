@@ -825,20 +825,6 @@ If ARG is non-nil prompt for filename."
                 (set-fill-column 72)
                 (auto-fill-mode 1)))
 
-    ;; http://whattheemacsd.com/setup-magit.el-01.html
-    ;; full screen magit-status
-    (defadvice magit-status (around magit-fullscreen activate)
-      (window-configuration-to-register :magit-fullscreen)
-      ad-do-it
-      (delete-other-windows))
-    (defun magit-quit-session (&optional kill-buffer)
-      "Restores the previous window configuration and kills the magit buffer"
-      (interactive "P")
-      (if kill-buffer
-          (kill-buffer)
-        (bury-buffer))
-      (jump-to-register :magit-fullscreen))
-
     (defun magit-toggle-whitespace ()
       (interactive)
       (if (member "-w" magit-diff-options)
@@ -855,10 +841,7 @@ If ARG is non-nil prompt for filename."
       (setq magit-diff-options (remove "-w" magit-diff-options))
       (magit-refresh))
 
-    (bind-keys :map magit-status-mode-map
-               ("q" . magit-quit-session)
-               ("Q" . (lambda () (interactive) (magit-quit-session t)))
-               ("W" . magit-toggle-whitespace))
+    (bind-key "W" 'magit-toggle-whitespace magit-status-mode-map)
 
     (setq magit-auto-revert-mode nil
           magit-set-upstream-on-push t
@@ -1040,6 +1023,14 @@ If ARG is non-nil prompt for filename."
 
 ;; defalias
 (defalias 'toggle-fullscreen 'toggle-frame-maximized)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * fullframe
+(use-package fullframe
+  :ensure t
+  :defer t
+  :init(with-eval-after-load 'magit
+         (fullframe magit-status magit-mode-quit-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
