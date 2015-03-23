@@ -773,35 +773,41 @@ If ARG is non-nil prompt for filename."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ibuffer
-(use-package ibuf-ext
-  :defer t
-  :config
-  (setq ibuffer-show-empty-filter-groups nil
-        ibuffer-saved-filter-groups
-        '(("default"
-           ("IRC"      (mode . erc-mode))
-           ("emacs" (or (name . "^\\*scratch\\*$")
-                        (name . "^\\*Messages\\*$")
-                        (name . "^\\*Completions\\*$")
-                        (filename . ".emacs.d")
-                        (filename . ".live-packs")))
-           ("magit" (name . "\\*magit"))
-           ("dired" (mode . dired-mode))
-           ("sclang" (mode . sclang-mode))
-           ("Org" (mode . org-mode))
-           ("Help" (or (name . "\\*Help\\*")
-                       (name . "\\*Apropos\\*")
-                       (name . "\\*info\\*")))
-           ("#!-config" (filename . ".cb-config"))
-           ("ssh" (filename . "^/ssh.*"))
-           ("root" (filename . "^/sudo:root.*"))))))
-
 (use-package ibuffer
   :bind ([remap list-buffers] . ibuffer)
-  :init (add-hook 'ibuffer-mode-hook
-                  (lambda ()
-                    (ibuffer-auto-mode 1)
-                    (ibuffer-switch-to-saved-filter-groups "default"))))
+  :init (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode)
+  :config (setq ibuffer-formats
+                '((mark modified read-only vc-status-mini " "
+                        (name 18 18 :left :elide)
+                        " "
+                        (size 9 -1 :right)
+                        " "
+                        (mode 16 16 :left :elide)
+                        " "
+                        (vc-status 16 16 :left)
+                        " "
+                        filename-and-process)
+                  (mark modified read-only " "
+                        (name 18 18 :left :elide)
+                        " "
+                        (size 9 -1 :right)
+                        " "
+                        (mode 16 16 :left :elide)
+                        " " filename-and-process)
+                  (mark " "
+                        (name 16 -1)
+                        " " filename))))
+
+(use-package ibuffer-vc
+  :ensure t
+  :defer t
+  :init (with-eval-after-load 'ibuffer
+          (defun ptrv/ibuffer-set-up-preferred-filters ()
+            (ibuffer-vc-set-filter-groups-by-vc-root)
+            (unless (eq ibuffer-sorting-mode 'filename/process)
+              (ibuffer-do-sort-by-filename/process)))
+          (add-hook 'ibuffer-hook
+                    'ptrv/ibuffer-set-up-preferred-filters)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
