@@ -1035,8 +1035,8 @@ If ARG is non-nil prompt for filename."
 (use-package fullframe
   :ensure t
   :defer t
-  :init(with-eval-after-load 'magit
-         (fullframe magit-status magit-mode-quit-window)))
+  :init (with-eval-after-load 'magit
+          (fullframe magit-status magit-mode-quit-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
