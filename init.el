@@ -536,9 +536,9 @@
 ;;;; * company
 (use-package company
   :ensure t
+  :init (add-hook 'after-init-hook #'global-company-mode)
   :config
   (progn
-    (global-company-mode)
     (setq company-idle-delay 0.5
           company-tooltip-limit 10
           company-minimum-prefix-length 2
@@ -1823,7 +1823,7 @@ If ARG is not nil, create package in current directory"
   :ensure t
   :commands (flycheck-get-checker-for-buffer
              flycheck-may-enable-mode)
-  :init (global-flycheck-mode)
+  :init (add-hook 'after-init-hook #'global-flycheck-mode)
   :config
   (progn
     (setq flycheck-highlighting-mode 'lines)
