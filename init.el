@@ -702,6 +702,10 @@ This checks in turn:
   (ptrv/hook-into-modes #'rainbow-delimiters-mode
                         '(text-mode-hook prog-mode-hook)))
 
+(use-package macrostep
+  :ensure t
+  :defer t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 ;; (ptrv/after find-file-in-project
