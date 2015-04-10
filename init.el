@@ -2220,7 +2220,7 @@ If ARG is not nil, create package in current directory"
 (use-package ace-jump-mode
   :ensure t
   :bind (("C-o"   . ace-jump-mode)
-         ("C-S-o" . ace-jump-word-mode)))
+         ("C-S-o" . ace-jump-char-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
