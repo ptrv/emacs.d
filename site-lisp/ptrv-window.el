@@ -42,9 +42,9 @@
            (set-window-start w2 s1)))))
 
 ;; https://github.com/banister/window-rotate-for-emacs
-(defun ptrv/rotate-windows-helper(x d)
+(defun ptrv/rotate-windows-helper (x d)
   (if (equal (cdr x) nil) (set-window-buffer (car x) d)
-    (set-window-buffer (car x) (window-buffer (cadr x))) (rotate-windows-helper (cdr x) d)))
+    (set-window-buffer (car x) (window-buffer (cadr x))) (ptrv/rotate-windows-helper (cdr x) d)))
 
 (defun ptrv/rotate-windows ()
   "Rotate windows."
