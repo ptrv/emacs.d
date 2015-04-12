@@ -802,12 +802,12 @@ If ARG is non-nil prompt for filename."
                         (name 16 -1)
                         " " filename))))
 
-(use-package ibuffer-vc
+(use-package ibuffer-projectile
   :ensure t
   :defer t
   :init (with-eval-after-load 'ibuffer
           (defun ptrv/ibuffer-set-up-preferred-filters ()
-            (ibuffer-vc-set-filter-groups-by-vc-root)
+            (ibuffer-projectile-set-filter-groups)
             (unless (eq ibuffer-sorting-mode 'filename/process)
               (ibuffer-do-sort-by-filename/process)))
           (add-hook 'ibuffer-hook
