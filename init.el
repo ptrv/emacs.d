@@ -1830,8 +1830,6 @@ If ARG is not nil, create package in current directory"
   :init (add-hook 'after-init-hook #'global-flycheck-mode)
   :config
   (progn
-    (setq flycheck-highlighting-mode 'lines)
-
     (defun ptrv/flycheck-mode-on-safe ()
       (when (and (flycheck-may-enable-mode)
                  (flycheck-get-checker-for-buffer))
