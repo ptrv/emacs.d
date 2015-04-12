@@ -828,6 +828,7 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :bind (("C-x g" . magit-status))
+  :init (setq magit-last-seen-setup-instructions "1.4.0")
   :config
   (progn
     (add-hook 'magit-log-edit-mode-hook
