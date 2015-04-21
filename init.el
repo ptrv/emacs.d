@@ -84,6 +84,7 @@
 
 (defmacro ptrv/hook-into-modes (func modes)
   "Add FUNC to list of MODES."
+  (declare (indent 1))
   `(dolist (mode-hook ,modes)
      (add-hook mode-hook ,func)))
 
@@ -253,7 +254,7 @@
 (use-package whitespace
   :bind ("C-c T w" . whitespace-mode)
   :init (ptrv/hook-into-modes #'whitespace-mode
-                              '(prog-mode-hook text-mode-hook))
+          '(prog-mode-hook text-mode-hook))
   :config
   ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
   ;; portions of lines via faces.  Also indicate tabs via characters
@@ -267,7 +268,7 @@
   :ensure t
   :bind ("C-c T W" . whitespace-cleanup-mode)
   :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
-                              '(prog-mode-hook text-mode-hook))
+          '(prog-mode-hook text-mode-hook))
   :config
   (progn
     (setq whitespace-cleanup-mode-only-if-initially-clean t)
@@ -681,18 +682,18 @@ This checks in turn:
   :defer t
   :init
   (ptrv/hook-into-modes #'elisp-slime-nav-mode
-                        '(emacs-lisp-mode-hook ielm-mode-hook))
+    '(emacs-lisp-mode-hook ielm-mode-hook))
   :diminish elisp-slime-nav-mode)
 
 (use-package eldoc
   :defer t
-  :init (ptrv/hook-into-modes
-         #'eldoc-mode '(emacs-lisp-mode-hook
-                        lisp-interaction-mode-hook
-                        ielm-mode-hook
-                        eval-expression-minibuffer-setup-hook
-                        c-mode-common-hook
-                        python-mode-hook))
+  :init (ptrv/hook-into-modes #'eldoc-mode
+          '(emacs-lisp-mode-hook
+            lisp-interaction-mode-hook
+            ielm-mode-hook
+            eval-expression-minibuffer-setup-hook
+            c-mode-common-hook
+            python-mode-hook))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
@@ -700,7 +701,7 @@ This checks in turn:
   :defer t
   :init
   (ptrv/hook-into-modes #'rainbow-delimiters-mode
-                        '(text-mode-hook prog-mode-hook)))
+    '(text-mode-hook prog-mode-hook)))
 
 (use-package macrostep
   :ensure t
@@ -962,12 +963,12 @@ If ARG is non-nil prompt for filename."
   :defer t
   :mode ("\\.yasnippet$" . yasnippet-mode)
   :init
-  (ptrv/hook-into-modes
-   #'yas-minor-mode '(lua-mode-hook
-                      c++-mode-hook
-                      sclang-mode-hook
-                      processing-mode-hook
-                      go-mode-hook))
+  (ptrv/hook-into-modes #'yas-minor-mode
+    '(lua-mode-hook
+      c++-mode-hook
+      sclang-mode-hook
+      processing-mode-hook
+      go-mode-hook))
   :config
   (progn
     (setq yas-prompt-functions '(yas-x-prompt
@@ -2032,8 +2033,8 @@ If ARG is not nil, create package in current directory"
   :ensure t
   :defer t
   :init
-  (ptrv/hook-into-modes
-   #'ggtags-mode '(c++-mode-hook lua-mode-hook)))
+  (ptrv/hook-into-modes #'ggtags-mode
+    '(c++-mode-hook lua-mode-hook)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
@@ -2052,8 +2053,8 @@ If ARG is not nil, create package in current directory"
             c-default-style "bsd"
             indent-tabs-mode nil)
       (setq-local split-width-threshold nil))
-    (ptrv/hook-into-modes
-     #'ptrv/cc-mode-init '(c-mode-hook c++-mode-hook)))
+    (ptrv/hook-into-modes #'ptrv/cc-mode-init
+      '(c-mode-hook c++-mode-hook)))
   :config
   (progn
     (setq c-default-style '((java-mode . "java")
@@ -2134,8 +2135,8 @@ If ARG is not nil, create package in current directory"
   :defer t
   :commands (ycmd-mode)
   :init
-  (ptrv/hook-into-modes
-   #'ycmd-mode '(c++-mode-hook lua-mode-hook))
+  (ptrv/hook-into-modes #'ymcd-mode
+    '(c++-mode-hook lua-mode-hook go-mode-hook))
   :config
   (progn
     (use-package company-ycmd
