@@ -242,5 +242,13 @@ Otherwise insert the date as Mar 04, 2014."
   (interactive "P")
   (insert (format-time-string (if iso "%F" "%b %d, %Y"))))
 
+(defmacro measure-time (&rest body)
+  "Measure and return the running time of the code block."
+  (declare (indent defun) (debug t))
+  (let ((start (make-symbol "start")))
+    `(let ((,start (float-time)))
+       ,@body
+       (message "%.06f" (- (float-time) ,start)))))
+
 (provide 'ptrv-simple)
 ;;; ptrv-simple.el ends here
