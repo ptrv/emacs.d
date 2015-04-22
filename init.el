@@ -2139,7 +2139,7 @@ If ARG is not nil, create package in current directory"
   :defer t
   :commands (ycmd-mode)
   :init
-  (ptrv/hook-into-modes #'ymcd-mode
+  (ptrv/hook-into-modes #'ycmd-mode
     '(c++-mode-hook lua-mode-hook go-mode-hook))
   :config
   (progn
