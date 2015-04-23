@@ -2170,7 +2170,14 @@ If ARG is not nil, create package in current directory"
       :load-path "~/src/emacs-ycmd"
       :commands (flycheck-ycmd-setup)
       :init (with-eval-after-load 'flycheck
-              (flycheck-ycmd-setup)))))
+              (flycheck-ycmd-setup)))
+
+    (defun ptrv/company-ycmd-complete ()
+      (interactive)
+      (let ((ycmd-force-semantic-completion t))
+        (company-complete)))
+    (bind-key [remap complete-symbol]
+              #'ptrv/company-ycmd-complete ycmd-mode-map)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
