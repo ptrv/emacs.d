@@ -1799,11 +1799,16 @@ If ARG is not nil, create package in current directory"
   :config
   (progn
     (projectile-global-mode)
-    (bind-key "C-x f" 'projectile-find-file-dwim projectile-mode-map)
     (dolist (file '(".ropeproject" "setup.py"))
       (add-to-list 'projectile-project-root-files file t))
     (run-with-idle-timer 10 nil (lambda () (projectile-cleanup-known-projects))))
   :diminish projectile-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * find-file-in-project
+(use-package find-file-in-project
+  :ensure t
+  :bind ("C-x f" . find-file-in-project))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * find-file
