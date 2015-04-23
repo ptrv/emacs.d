@@ -451,7 +451,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
 (use-package ido
-  :init (ido-mode)
+  :init (ido-mode 1)
   :bind (("C-x M-f" . ido-find-file-other-window))
   :config
   (setq ido-enable-prefix nil
