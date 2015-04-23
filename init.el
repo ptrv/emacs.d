@@ -2349,9 +2349,9 @@ If ARG is not nil, create package in current directory"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
 (use-package server
-  :defer t
   :if window-system
-  :init (server-start))
+  :commands (server-running-p server-start)
+  :init (unless (server-running-p) (server-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * welcome-message stuff
