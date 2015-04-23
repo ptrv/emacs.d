@@ -1257,10 +1257,10 @@ If ARG is non-nil prompt for filename."
   :defer t
   :config
   (setq org-mobile-directory "~/Dropbox/MobileOrg"
-        org-mobile-files '("~/Dropbox/org/ptrv.org"
-                           "~/Dropbox/org/notes.org"
-                           "~/Dropbox/org/journal.org")
-        org-mobile-inbox-for-pull "~/Dropbox/org/from-mobile.org"))
+        org-mobile-files '("~/org/ptrv.org"
+                           "~/org/notes.org"
+                           "~/org/journal.org")
+        org-mobile-inbox-for-pull "~/org/from-mobile.org"))
 
 (use-package org-agenda
   :ensure org
