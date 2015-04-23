@@ -1736,7 +1736,12 @@ If ARG is not nil, create package in current directory"
   :init
   (progn
     (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
-    (add-hook 'text-mode-hook 'bug-reference-mode)))
+    (add-hook 'text-mode-hook 'bug-reference-mode)
+    (with-eval-after-load 'magit
+      (ptrv/hook-into-modes #'bug-reference-mode
+        '(magit-status-mode-hook magit-log-mode-hook))
+      (ptrv/hook-into-modes #'hack-dir-local-variables-non-file-buffer
+        '(magit-status-mode-hook magit-log-mode-hook)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
