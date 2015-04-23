@@ -1640,9 +1640,12 @@ If ARG is not nil, create package in current directory"
     (defun xml-format ()
       "Format XML file with xmllint."
       (interactive)
-      (save-excursion
-        (shell-command-on-region (point-min) (point-max)
-                                 "xmllint --format -" (buffer-name) t)))
+      (if (executable-find "xmllint")
+          (when (eq major-mode 'nxml-mode)
+            (save-excursion
+              (shell-command-on-region
+               (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
+        (user-error "The executable `xmllint' not found!")))
     (bind-key "C-c M-h" 'xml-format nxml-mode-map)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
