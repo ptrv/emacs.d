@@ -1734,6 +1734,8 @@ If ARG is not nil, create package in current directory"
   :defer t
   :init (delete-selection-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * bug-reference
 (use-package bug-reference
   :defer t
   :init
@@ -1775,6 +1777,8 @@ If ARG is not nil, create package in current directory"
 (bind-key "C-c f v l" #'add-file-local-variable)
 (bind-key "C-c f v p" #'add-file-local-variable-prop-line)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * dired
 (use-package dired
   :defer t
   :config
