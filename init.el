@@ -1019,17 +1019,6 @@ If ARG is non-nil prompt for filename."
   :commands (sql-spatialite))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * tea-time
-(use-package tea-time
-  :ensure t
-  :defer t
-  :commands (tea-time)
-  :config
-  (setq tea-time-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)
-        tea-time-sound-command (concat
-                                (ptrv/get-default-sound-command) " %s")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * frames
 ;; display visited file's path as frame title
 (setq frame-title-format
