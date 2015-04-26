@@ -119,6 +119,8 @@
 (require 'diminish)
 (require 'bind-key)
 
+(bind-key "C-c h b" #'describe-personal-keybindings)
+
 (use-package paradox
   :ensure t
   :bind (("C-c l p" . paradox-list-packages))
@@ -178,7 +180,13 @@
   :config (setq bookmark-save-flag t))
 
 (use-package simple
-  :bind ("C-x p" . pop-to-mark-command)
+  :bind (("C-x p" . pop-to-mark-command)
+         ("C-m" . newline-and-indent)
+         ("M-j" . ptrv/join-line))
+  :init
+  (defun ptrv/join-line ()
+    (interactive)
+    (join-line -1))
   :config
   (setq set-mark-command-repeat-pop t
         column-number-mode t
@@ -735,6 +743,8 @@ This checks in turn:
   (with-eval-after-load 'lisp-mode
     (bind-key "C-c e" #'macrostep-expand emacs-lisp-mode-map)
     (bind-key "C-c e" #'macrostep-expand lisp-interaction-mode-map)))
+
+(bind-key "C-c T d" #'toggle-debug-on-error)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
@@ -1780,6 +1790,10 @@ If ARG is not nil, create package in current directory"
   :defer t
   :init (delete-selection-mode))
 
+;;fast vertical naviation
+(bind-key "M-U" (lambda () (interactive) (forward-line -10)))
+(bind-key "M-D" (lambda () (interactive) (forward-line 10)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * bug-reference
 (use-package bug-reference
@@ -2320,13 +2334,16 @@ If ARG is not nil, create package in current directory"
   :bind (("<f6>"  . split-window-horizontally)
          ("<f7>"  . split-window-vertically)
          ("<f8>"  . delete-window)
-         ("C-. z" . delete-other-windows))
+         ("C-. z" . delete-other-windows)
+         ("C-<return>" . other-window))
   :config
   (progn
     (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
     (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
     (bind-key "C-c w <down>" (lambda () (interactive) (enlarge-window -4)))
-    (bind-key "C-c w <up>" (lambda () (interactive) (enlarge-window 4)))))
+    (bind-key "C-c w <up>" (lambda () (interactive) (enlarge-window 4)))
+    ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
+    (bind-key "C-x O" (lambda () (interactive) (other-window -1)))))
 
 (use-package ptrv-window
   :load-path "site-lisp"
@@ -2347,27 +2364,6 @@ If ARG is not nil, create package in current directory"
   :bind (("C-c A a" . align)
          ("C-c A c" . align-current)
          ("C-c A r" . align-regexp)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; *bindings
-(bind-key* "C-<return>" #'other-window)
-
-;;fast vertical naviation
-(bind-key "M-U" (lambda () (interactive) (forward-line -10)))
-(bind-key "M-D" (lambda () (interactive) (forward-line 10)))
-
-;; Align your code in a pretty way.
-(bind-key "C-x \\" 'align-regexp)
-
-(bind-key "C-m" 'newline-and-indent)
-
-(bind-key "M-j" (lambda () (interactive) (join-line -1)))
-
-;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
-(bind-key "C-x O" (lambda () (interactive) (other-window -1)))
-
-(bind-key "C-c T d" #'toggle-debug-on-error)
-(bind-key "C-c h b" #'describe-personal-keybindings)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * simple
