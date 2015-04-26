@@ -150,6 +150,10 @@
 (define-prefix-command 'ctl-c-u-map)
 (bind-key "C-c u" 'ctl-c-u-map)
 
+(defvar crl-c-s-map)
+(define-prefix-command 'ctl-c-s-map)
+(bind-key "C-c s" 'ctl-c-s-map)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
@@ -1090,15 +1094,50 @@ If ARG is non-nil prompt for filename."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * search
-(bind-key "C-c s" search-map)
-(bind-key "O" 'multi-occur search-map)
+(use-package isearch                    ; Search buffers
+  :bind (("C-c s s" . isearch-forward-symbol-at-point))
+  :config
+  (bind-key "C-o" (lambda () (interactive)
+                    (let ((case-fold-search isearch-case-fold-search))
+                      (occur (if isearch-regexp
+                                 isearch-string
+                               (regexp-quote isearch-string)))))
+            isearch-mode-map))
+
+(use-package highlight-symbol
+  :ensure t
+  :defer t
+  :init
+  :bind
+  (("C-c s %" . highlight-symbol-query-replace)
+   ("C-c s n" . highlight-symbol-next-in-defun)
+   ("C-c s o" . highlight-symbol-occur)
+   ("C-c s p" . highlight-symbol-prev-in-defun))
+  ;; Navigate occurrences of the symbol under point with M-n and M-p, and
+  ;; highlight symbol occurrences
+  :init (progn (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode)
+               (add-hook 'prog-mode-hook #'highlight-symbol-mode))
+  :config
+  (setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
+        highlight-symbol-on-navigation-p t) ; Highlight immediately after
+                                        ; navigation
+  :diminish highlight-symbol-mode)
 
 ;; the silver searcher
 (use-package ag
   :ensure t
   :defer t
-  :bind(("C-c a a" . ag)
-        ("C-c a A" . ag-regexp)
+  :init
+  (with-eval-after-load 'ag
+    (defun highlight-symbol-ag ()
+      (interactive)
+      (if (thing-at-point 'symbol)
+          (let ((highlight-symbol-border-pattern '("\\b" . "\\b")))
+            (ag-project-regexp (highlight-symbol-get-symbol)))
+        (error "No symbol at point")))
+    (bind-key "C-c s a" #'highlight-symbol-ag))
+  :bind(("C-c a a" . ag-regexp)
+        ("C-c a A" . ag)
         ("C-c a d" . ag-dired-regexp)
         ("C-c a D" . ag-dired)
         ("C-c a f" . ag-files)
@@ -2319,14 +2358,6 @@ If ARG is not nil, create package in current directory"
 
 ;; Align your code in a pretty way.
 (bind-key "C-x \\" 'align-regexp)
-
-;; Activate occur easily inside isearch
-(bind-key "C-o" (lambda () (interactive)
-                  (let ((case-fold-search isearch-case-fold-search))
-                    (occur (if isearch-regexp
-                               isearch-string
-                             (regexp-quote isearch-string)))))
-          isearch-mode-map)
 
 (bind-key "C-m" 'newline-and-indent)
 
