@@ -1618,7 +1618,18 @@ If ARG is not nil, create package in current directory"
 (use-package nxml-mode
   :mode (("\\.xml$" . nxml-mode)
          ("\\.gpx$" . nxml-mode))
-  :defer t
+  :bind ("C-c u x" . xml-format)
+  :init
+  (progn
+    (defun xml-format ()
+      "Format XML file with xmllint."
+      (interactive)
+      (if (executable-find "xmllint")
+          (when (eq major-mode 'nxml-mode)
+            (save-excursion
+              (shell-command-on-region
+               (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
+        (user-error "The executable `xmllint' not found!"))))
   :config
   (progn
     (defun gpx-setup ()
@@ -1629,18 +1640,7 @@ If ARG is not nil, create package in current directory"
     (add-hook 'nxml-mode-hook 'gpx-setup)
 
     (setq nxml-slash-auto-complete-flag t
-          nxml-sexp-element-flag t)
-
-    (defun xml-format ()
-      "Format XML file with xmllint."
-      (interactive)
-      (if (executable-find "xmllint")
-          (when (eq major-mode 'nxml-mode)
-            (save-excursion
-              (shell-command-on-region
-               (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-        (user-error "The executable `xmllint' not found!")))
-    (bind-key "C-c M-h" 'xml-format nxml-mode-map)))
+          nxml-sexp-element-flag t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
