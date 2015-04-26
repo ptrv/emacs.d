@@ -1454,9 +1454,10 @@ If ARG is non-nil prompt for filename."
 ;; (ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$")
 
 ;; json
-(use-package json-mode
+(use-package json-reformat
   :ensure t
-  :mode ("\\.json$" . json-mode))
+  :defer t
+  :bind ("C-c u j" . json-reformat-region))
 
 ;; gnuplot
 (use-package gnuplot
