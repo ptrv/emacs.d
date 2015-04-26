@@ -347,6 +347,23 @@
   :load-path "site-lisp"
   :mode ("\.eml$" . tbemail-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * timdate
+(use-package time
+  :bind (("C-c u i" . emacs-init-time)
+         ("C-c u T" . display-time-world))
+  :config
+  (setq display-time-world-time-format "%H:%M %Z, %d. %b"
+        display-time-world-list '(("Europe/Berlin"    "Berlin")
+                                  ("Europe/London"    "London")
+                                  ("Europe/Bucharest"  "Satu Mare")
+                                  ("America/New_York" "New York (USA)")
+                                  ("America/San_Francisco" "San Francisco")
+                                  ("Asia/Tokyo"       "Tokyo (JP)"))))
+
+(use-package calendar
+  :bind ("C-c u c" . calendar)
+  :config (setq calendar-week-start-day 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diff
@@ -1312,10 +1329,6 @@ If ARG is non-nil prompt for filename."
   :ensure org
   :defer t
   :config (load "~/.org-publish-projects.el" 'noerror))
-
-(use-package calendar
-  :defer t
-  :config (setq calendar-week-start-day 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org2blog
