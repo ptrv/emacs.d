@@ -141,10 +141,14 @@
   :config (setq custom-file ptrv/custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * ctl-period-map
+;;;; * keymaps
 (defvar ctl-period-map)
 (define-prefix-command 'ctl-period-map)
 (bind-key "C-." 'ctl-period-map)
+
+(defvar ctl-c-u-map)
+(define-prefix-command 'ctl-c-u-map)
+(bind-key "C-c u" 'ctl-c-u-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
@@ -498,7 +502,7 @@
 ;;;; * Eshell
 (use-package eshell
   :bind (("C-x m" . eshell)
-         ("C-. t" . ptrv/eshell-or-restore))
+         ("C-c u s" . ptrv/eshell-or-restore))
   :init
   ;; http://irreal.org/blog/?p=1742
   (defun ptrv/eshell-or-restore ()
@@ -2334,13 +2338,13 @@ If ARG is not nil, create package in current directory"
          ("C-c d" . ptrv/duplicate-current-line-or-region)
          ("C-c M-d" . ptrv/duplicate-and-comment-current-line-or-region)
          ("C-x r v" . ptrv/list-registers)
-         ("C-c u" . ptrv/browse-url)
+         ("C-c u b" . ptrv/browse-url)
          ("C-c q" . ptrv/exit-emacs-client)
          ("M-;" . ptrv/comment-dwim-line)
          ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
-         ("C-c i d" . ptrv/insert-current-date)))
+         ("C-c u d" . ptrv/insert-current-date)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
