@@ -1117,7 +1117,6 @@ If ARG is non-nil prompt for filename."
 (use-package highlight-symbol
   :ensure t
   :defer t
-  :init
   :bind
   (("C-c s %" . highlight-symbol-query-replace)
    ("C-c s n" . highlight-symbol-next-in-defun)
