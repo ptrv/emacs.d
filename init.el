@@ -1137,7 +1137,7 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t
   :init
-  (with-eval-after-load 'ag
+  (with-eval-after-load 'highlight-symbol
     (defun highlight-symbol-ag ()
       (interactive)
       (if (thing-at-point 'symbol)
