@@ -1156,6 +1156,12 @@ If ARG is non-nil prompt for filename."
   (setq ag-highlight-search t
         ag-reuse-buffers t))
 
+(use-package anzu
+  :ensure t
+  :defer t
+  :init (global-anzu-mode)
+  :diminish anzu-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * edit-server
 (use-package edit-server
