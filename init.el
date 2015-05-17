@@ -1640,6 +1640,7 @@ If ARG is non-nil prompt for filename."
     (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
     (use-package company-go
+      :disabled t
       :ensure t
       :init (add-hook 'go-mode-hook
                       (lambda ()
