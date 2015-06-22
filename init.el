@@ -730,7 +730,9 @@ This checks in turn:
             ielm-mode-hook
             eval-expression-minibuffer-setup-hook
             c-mode-common-hook
-            python-mode-hook))
+            python-mode-hook
+            cider-mode-hook
+            cider-repl-mode-hook))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
@@ -756,47 +758,35 @@ This checks in turn:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
-;; (ptrv/after find-file-in-project
-;;   (add-to-list 'ffip-patterns "*.clj"))
+(use-package cider
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (setq nrepl-log-messages t
+          nrepl-hide-special-buffers t)
 
-;; (ptrv/after clojure-mode
-;;   (message "clojure config has been loaded !!!")
+    (bind-key "M-RET" #'cider-doc cider-mode-map)
 
-;;   (ptrv/add-to-hook 'clojure-mode-hook ptrv/lisp-common-modes)
+    (unbind-key "C-<return>" cider-repl-mode-map)
+    (bind-keys :map cider-repl-mode-map
+               ("M-RET" . cider-doc)
+               ("C-M-<return>" . cider-repl-closing-return))
 
-;;   (ptrv/smartparens-setup-lisp-modes '(clojure-mode))
+    (setq cider-repl-use-clojure-font-lock t)
 
-;;   (defun ptrv/clojure-mode-init ()
-;;     (yas-minor-mode 1))
-;;   (add-hook 'clojure-mode-hook 'ptrv/clojure-mode-init))
+    (add-hook 'cider-repl-mode-hook #'subword-mode)
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;; * nrepl
-;; (add-to-list 'same-window-buffer-names "*cider*")
+    (with-eval-after-load 'smartparens
+      (sp-local-pair 'clojure-mode "(" nil :bind "M-("))
 
-;; (ptrv/after cider-repl
-;;   (setq cider-repl-pop-to-buffer-on-connect t)
-;;   (setq cider-repl-popup-stacktraces t))
+    (use-package cider-eval-sexp-fu
+      :ensure t
+      :demand t)
 
-;; (ptrv/after nrepl-client
-;;   ;; (setq nrepl-port "4555")
-;;   (setq nrepl-buffer-name-show-port t))
-
-;; (ptrv/after cider-interaction
-;;   (setq cider-show-error-buffer nil))
-
-;; (ptrv/after cider-repl-mode
-;;   (define-key cider-repl-mode-map (kbd "M-RET") 'cider-doc)
-;;   (ptrv/smartparens-setup-lisp-modes '(cider-repl-mode)))
-
-;; (ptrv/after cider-mode
-;;   (message "cider-mode config has been loaded!!!")
-
-;;   (ptrv/hook-into-modes 'cider-turn-on-eldoc-mode
-;;                         '(cider-mode))
-
-;;   ;; Show documentation/information with M-RET
-;;   (define-key cider-mode-map (kbd "M-RET") 'cider-doc))
+    ;; (use-package clj-refactor
+    ;;   :ensure t)
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
@@ -1015,7 +1005,8 @@ If ARG is non-nil prompt for filename."
       c++-mode-hook
       sclang-mode-hook
       processing-mode-hook
-      go-mode-hook))
+      go-mode-hook
+      clojure-mode-hook))
   :config
   (progn
     (setq yas-prompt-functions '(yas-x-prompt
