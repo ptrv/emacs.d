@@ -750,6 +750,10 @@ This checks in turn:
 
 (bind-key "C-c T d" #'toggle-debug-on-error)
 
+(use-package eval-sexp-fu
+  :ensure t
+  :demand t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 ;; (ptrv/after find-file-in-project
