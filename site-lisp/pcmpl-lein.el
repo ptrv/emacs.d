@@ -81,9 +81,11 @@
 
 ;;;###autoload
 (defun pcomplete/lein ()
-  (let ((pcmpl-lein-project-root (expand-file-name
-                                  (locate-dominating-file
-                                   default-directory "project.clj"))))
+  (let ((pcmpl-lein-project-root (condition-case nil
+                                     (expand-file-name
+                                      (locate-dominating-file
+                                       default-directory "project.clj"))
+                                   (error nil))))
     (pcomplete-here (pcmpl-lein-tasks))
     (if (not (string= "run" (cadr pcomplete-args)))
         (pcomplete-here (pcmpl-lein-namespaces))
