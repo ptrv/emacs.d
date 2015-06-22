@@ -1764,6 +1764,9 @@ If ARG is not nil, create package in current directory"
     (use-package alert
       :ensure t)
 
+    (use-package erc-hl-nicks
+      :ensure t)
+
     (use-package erc-match
       :init
       (add-hook 'erc-text-matched-hook
