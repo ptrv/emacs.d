@@ -1162,6 +1162,11 @@ If ARG is non-nil prompt for filename."
   :diminish anzu-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * which-function
+(use-package which-func
+  :init (which-function-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * edit-server
 (use-package edit-server
   :ensure t
