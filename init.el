@@ -627,7 +627,11 @@
           (add-hook hook 'smartparens-strict-mode))))
 
     (add-hook 'eval-expression-minibuffer-setup-hook
-              'smartparens-strict-mode)))
+              'smartparens-strict-mode)
+
+    (sp-local-pair '(c++-mode) "{" nil :post-handlers
+                   '(((lambda (&rest _ignored)
+                        (ptrv/smart-open-line-above)) "RET")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
