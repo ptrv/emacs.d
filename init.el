@@ -766,11 +766,15 @@ This checks in turn:
     (setq nrepl-log-messages t
           nrepl-hide-special-buffers t)
 
-    (bind-key "M-RET" #'cider-doc cider-mode-map)
+    (defun ptrv/cider-doc ()
+      (interactive)
+      (cider-doc t))
+
+    (bind-key "M-RET" #'ptrv/cider-doc cider-mode-map)
 
     (unbind-key "C-<return>" cider-repl-mode-map)
     (bind-keys :map cider-repl-mode-map
-               ("M-RET" . cider-doc)
+               ("M-RET" . ptrv/cider-doc)
                ("C-M-<return>" . cider-repl-closing-return))
 
     (setq cider-repl-use-clojure-font-lock t)
