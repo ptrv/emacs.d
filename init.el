@@ -868,45 +868,8 @@ If ARG is non-nil prompt for filename."
 ;;;; * magit
 (use-package magit
   :ensure t
-  :defer t
-  :bind (("C-x g" . magit-status))
-  :init (setq magit-last-seen-setup-instructions "1.4.0")
-  :config
-  (progn
-    (add-hook 'magit-log-edit-mode-hook
-              (lambda ()
-                (set-fill-column 72)
-                (auto-fill-mode 1)))
-
-    (defun magit-toggle-whitespace ()
-      (interactive)
-      (if (member "-w" magit-diff-options)
-          (magit-dont-ignore-whitespace)
-        (magit-ignore-whitespace)))
-
-    (defun magit-ignore-whitespace ()
-      (interactive)
-      (add-to-list 'magit-diff-options "-w")
-      (magit-refresh))
-
-    (defun magit-dont-ignore-whitespace ()
-      (interactive)
-      (setq magit-diff-options (remove "-w" magit-diff-options))
-      (magit-refresh))
-
-    (bind-key "W" 'magit-toggle-whitespace magit-status-mode-map)
-
-    (setq magit-auto-revert-mode nil
-          magit-set-upstream-on-push t
-          magit-completing-read-function 'magit-ido-completing-read)))
-
-(use-package git-commit-mode
-  :ensure t
-  :defer t
-  :init (add-hook 'git-commit-mode-hook
-                  (lambda ()
-                    (set-fill-column 72)
-                    (auto-fill-mode 1))))
+  :bind (("C-x g" . magit-status)
+         ("C-x M-g" . magit-dispatch-popup)))
 
 (use-package gitconfig-mode
   :ensure t
@@ -917,10 +880,6 @@ If ARG is non-nil prompt for filename."
   :defer t)
 
 (use-package gitattributes-mode
-  :ensure t
-  :defer t)
-
-(use-package git-rebase-mode
   :ensure t
   :defer t)
 
