@@ -869,7 +869,9 @@ If ARG is non-nil prompt for filename."
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status)
-         ("C-x M-g" . magit-dispatch-popup)))
+         ("C-x M-g" . magit-dispatch-popup)
+         ("C-c v l" . magit-log-buffer-file)
+         ("C-c v b" . magit-blame)))
 
 (use-package gitconfig-mode
   :ensure t
