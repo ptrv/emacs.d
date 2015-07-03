@@ -885,6 +885,10 @@ If ARG is non-nil prompt for filename."
   :ensure t
   :defer t)
 
+(use-package git-timemachine
+  :ensure t
+  :bind ("C-c v t" . git-timemachine-toggle))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc
 (use-package vc-hooks
