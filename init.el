@@ -2169,7 +2169,7 @@ If ARG is not nil, create package in current directory"
                  (when (string-match "\\*gud-" (buffer-name buf))
                    (throw 'found buf))))))
         (if gud-buf
-            (switch-to-buffer-other-window gud-buf)
+            (switch-to-buffer gud-buf)
           (call-interactively (if *is-mac* 'lldb 'gud-gdb)))))
     (bind-key "C-. g" #'ptrv/show-debugger))
   :config
