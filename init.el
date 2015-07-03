@@ -893,7 +893,7 @@ If ARG is non-nil prompt for filename."
 ;;;; * vc
 (use-package vc-hooks
   :defer t
-  :config (setq vc-follow-symlinks)) t
+  :config (setq vc-follow-symlinks t))
 
 (use-package vc-git
   :defer t
