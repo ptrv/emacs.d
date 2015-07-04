@@ -368,7 +368,7 @@
 ;;;; * timdate
 (use-package time
   :bind (("C-c u i" . emacs-init-time)
-         ("C-c u T" . display-time-world))
+         ("C-c u t" . display-time-world))
   :config
   (setq display-time-world-time-format "%H:%M %Z, %d. %b"
         display-time-world-list '(("Europe/Berlin"    "Berlin")
@@ -943,11 +943,11 @@ If ARG is non-nil prompt for filename."
         (message "There are unresolved conflicts in this file")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * git-messanger
+;;;; * git-messenger
 (use-package git-messenger
   :ensure t
   :defer t
-  :bind (("C-x v p" . git-messenger:popup-message))
+  :bind (("C-c v p" . git-messenger:popup-message))
   :config (setq git-messenger:show-detail t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
