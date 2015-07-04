@@ -1249,7 +1249,8 @@ If ARG is non-nil prompt for filename."
             ("*Flycheck errors*" :stick t :noselect t)
             ("*processing-compilation*" :noselect t)
             ("*anaconda-doc*" :noselect t)
-            ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))))))
+            ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))
+            ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
