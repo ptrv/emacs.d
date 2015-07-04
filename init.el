@@ -156,6 +156,10 @@
 (define-prefix-command 'ctl-c-s-map)
 (bind-key "C-c s" 'ctl-c-s-map)
 
+(defvar crl-c-e-map)
+(define-prefix-command 'ctl-c-e-map)
+(bind-key "C-c e" 'ctl-c-e-map)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
@@ -282,7 +286,8 @@
 
 (use-package whitespace-cleanup-mode
   :ensure t
-  :bind ("C-c T W" . whitespace-cleanup-mode)
+  :bind (("C-c T W" . whitespace-cleanup-mode)
+         ("C-c e w" . whitespace-cleanup))
   :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
           '(prog-mode-hook text-mode-hook))
   :config
@@ -747,8 +752,8 @@ This checks in turn:
   :defer t
   :init
   (with-eval-after-load 'lisp-mode
-    (bind-key "C-c e" #'macrostep-expand emacs-lisp-mode-map)
-    (bind-key "C-c e" #'macrostep-expand lisp-interaction-mode-map)))
+    (bind-key "C-c e e" #'macrostep-expand emacs-lisp-mode-map)
+    (bind-key "C-c e e" #'macrostep-expand lisp-interaction-mode-map)))
 
 (bind-key "C-c T d" #'toggle-debug-on-error)
 
@@ -1495,7 +1500,7 @@ If ARG is non-nil prompt for filename."
 (use-package json-reformat
   :ensure t
   :defer t
-  :bind ("C-c u j" . json-reformat-region))
+  :bind ("C-c e j" . json-reformat-region))
 
 ;; gnuplot
 (use-package gnuplot
@@ -1657,7 +1662,7 @@ If ARG is not nil, create package in current directory"
 (use-package nxml-mode
   :mode (("\\.xml$" . nxml-mode)
          ("\\.gpx$" . nxml-mode))
-  :bind ("C-c u x" . xml-format)
+  :bind ("C-c e x" . xml-format)
   :init
   (progn
     (defun xml-format ()
@@ -2365,7 +2370,7 @@ If ARG is not nil, create package in current directory"
          ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
-         ("C-c u d" . ptrv/insert-current-date)))
+         ("C-c e d" . ptrv/insert-current-date)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
