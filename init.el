@@ -876,7 +876,28 @@ If ARG is non-nil prompt for filename."
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup)
          ("C-c v l" . magit-log-buffer-file)
-         ("C-c v b" . magit-blame)))
+         ("C-c v b" . magit-blame))
+  :config
+  (progn
+    (setq magit-completing-read-function
+          #'magit-ido-completing-read)
+
+    (defun ptrv/magit-set-repo-dirs-from-projectile ()
+      "Set `magit-repo-dirs' from known Projectile projects."
+      (let ((project-dirs (bound-and-true-p projectile-known-projects)))
+        ;; Remove trailing slashes from project directories, because Magit adds
+        ;; trailing slashes again, which breaks the presentation in the Magit
+        ;; prompt.
+        (setq magit-repository-directories
+              (remove-if (lambda (dir)
+                           (file-remote-p dir 'method))
+                         (mapcar #'directory-file-name project-dirs)))))
+
+    (with-eval-after-load 'projectile
+      (ptrv/magit-set-repo-dirs-from-projectile))
+
+    (add-hook 'projectile-switch-project-hook
+              #'ptrv/magit-set-repo-dirs-from-projectile)))
 
 (use-package gitconfig-mode
   :ensure t
