@@ -1553,7 +1553,8 @@ If ARG is non-nil prompt for filename."
          ("\\.mkd$"       . markdown-mode)
          ("\\README\\.md" . gfm-mode))
   :config
-  (setq markdown-css-path (expand-file-name "css/markdown.css" ptrv/etc-dir)))
+  (setq markdown-css-paths
+        (expand-file-name "css/markdown.css" ptrv/etc-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
