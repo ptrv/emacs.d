@@ -1268,10 +1268,10 @@ This checks in turn:
 (use-package org
   :defer t
   :mode ("\\.org\\'" . org-mode)
-  :bind (("C-c l a" . org-agenda)
-         ("C-c l b" . org-iswitchb)
-         ("C-c l c" . org-capture)
-         ("C-c l o" . org-store-link))
+  :bind (("C-c O a" . org-agenda)
+         ("C-c O b" . org-iswitchb)
+         ("C-c O c" . org-capture)
+         ("C-c O o" . org-store-link))
   :config
   (progn
     (setq org-outline-path-complete-in-steps nil
@@ -1907,6 +1907,7 @@ If ARG is not nil, create package in current directory"
 ;;;; * flycheck
 (use-package flycheck
   :ensure t
+  :bind ("C-c l e" . list-flycheck-errors)
   :commands (flycheck-get-checker-for-buffer
              flycheck-may-enable-mode)
   :init (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -2348,7 +2349,7 @@ If ARG is not nil, create package in current directory"
   :load-path "site-lisp"
   :bind (("C-c w s" . ptrv/swap-windows)
          ("C-c w r" . ptrv/rotate-windows)
-         ("C-c v"   . ptrv/halve-other-window-height-or-width)))
+         ("C-c w v" . ptrv/halve-other-window-height-or-width)))
 
 (use-package ptrv-buffers
   :load-path "site-lisp"
