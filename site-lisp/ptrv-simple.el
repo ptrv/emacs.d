@@ -243,12 +243,22 @@ Otherwise insert the date as Mar 04, 2014."
   (insert (format-time-string (if iso "%F" "%b %d, %Y"))))
 
 (defmacro measure-time (&rest body)
-  "Measure and return the running time of the code block."
+  "Measure and return the running time of BODY."
   (declare (indent defun) (debug t))
   (let ((start (make-symbol "start")))
     `(let ((,start (float-time)))
        ,@body
        (message "%.06f" (- (float-time) ,start)))))
+
+(defun sudo-edit (&optional arg)
+  "Edit buffer with superuser privileges.
+If ARG is non-nil prompt for filename."
+  (interactive "P")
+  (let (auth-sources)
+    (if (or arg (not buffer-file-name))
+        (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
+
 
 (provide 'ptrv-simple)
 ;;; ptrv-simple.el ends here

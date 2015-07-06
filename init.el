@@ -813,15 +813,6 @@ This checks in turn:
   (setq tramp-backup-directory-alist backup-directory-alist
         tramp-auto-save-directory (locate-user-emacs-file "tramp-auto-save")))
 
-(defun sudo-edit (&optional arg)
-  "Edit buffer with superuser privileges.
-If ARG is non-nil prompt for filename."
-  (interactive "P")
-  (let (auth-sources)
-    (if (or arg (not buffer-file-name))
-        (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
-      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ibuffer
 (use-package ibuffer
@@ -2393,7 +2384,8 @@ If ARG is not nil, create package in current directory"
          ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
          ("C-M-\\" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
-         ("C-c e d" . ptrv/insert-current-date)))
+         ("C-c e d" . ptrv/insert-current-date)
+         ("C-c e S" . sudo-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
