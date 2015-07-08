@@ -896,6 +896,13 @@ This checks in turn:
     (add-hook 'projectile-switch-project-hook
               #'ptrv/magit-set-repo-dirs-from-projectile)))
 
+(use-package git-commit
+  :ensure t
+  :defer t
+  :config
+  (remove-hook 'git-commit-finish-query-functions
+               #'git-commit-check-style-conventions))
+
 (use-package gitconfig-mode
   :ensure t
   :defer t)
