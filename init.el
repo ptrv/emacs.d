@@ -873,6 +873,12 @@ This checks in turn:
     (setq magit-completing-read-function
           #'magit-ido-completing-read)
 
+    ;; hide stashes section in magit status
+    (add-hook 'magit-section-set-visibility-hook
+              (lambda (section)
+                (and (memq (magit-section-type section) '(stashes))
+                     'hide)))
+
     (defun ptrv/magit-set-repo-dirs-from-projectile ()
       "Set `magit-repo-dirs' from known Projectile projects."
       (let ((project-dirs (bound-and-true-p projectile-known-projects)))
