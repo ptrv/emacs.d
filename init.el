@@ -143,24 +143,6 @@
   :config (setq custom-file ptrv/custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * keymaps
-(defvar ctl-period-map)
-(define-prefix-command 'ctl-period-map)
-(bind-key "C-." 'ctl-period-map)
-
-(defvar ctl-c-u-map)
-(define-prefix-command 'ctl-c-u-map)
-(bind-key "C-c u" 'ctl-c-u-map)
-
-(defvar crl-c-s-map)
-(define-prefix-command 'ctl-c-s-map)
-(bind-key "C-c s" 'ctl-c-s-map)
-
-(defvar crl-c-e-map)
-(define-prefix-command 'ctl-c-e-map)
-(bind-key "C-c e" 'ctl-c-e-map)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 72
               indent-tabs-mode nil ; And force use of spaces
