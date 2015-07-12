@@ -818,38 +818,55 @@ This checks in turn:
 (use-package ibuffer
   :bind ([remap list-buffers] . ibuffer)
   :init (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode)
-  :config (setq ibuffer-formats
-                '((mark modified read-only vc-status-mini " "
-                        (name 18 18 :left :elide)
-                        " "
-                        (size 9 -1 :right)
-                        " "
-                        (mode 16 16 :left :elide)
-                        " "
-                        (vc-status 16 16 :left)
-                        " "
-                        filename-and-process)
-                  (mark modified read-only " "
-                        (name 18 18 :left :elide)
-                        " "
-                        (size 9 -1 :right)
-                        " "
-                        (mode 16 16 :left :elide)
-                        " " filename-and-process)
-                  (mark " "
-                        (name 16 -1)
-                        " " filename))))
+  :config
+  (progn
+    (use-package ibuf-ext
+      :config (setq ibuffer-show-empty-filter-groups nil))
+    (setq ibuffer-formats
+          '((mark modified read-only vc-status-mini " "
+                  (name 18 18 :left :elide)
+                  " "
+                  (size 9 -1 :right)
+                  " "
+                  (mode 16 16 :left :elide)
+                  " "
+                  (vc-status 16 16 :left)
+                  " "
+                  filename-and-process)
+            (mark modified read-only " "
+                  (name 18 18 :left :elide)
+                  " "
+                  (size 9 -1 :right)
+                  " "
+                  (mode 16 16 :left :elide)
+                  " " filename-and-process)
+            (mark " "
+                  (name 16 -1)
+                  " " filename)))))
 
 (use-package ibuffer-projectile
   :ensure t
   :defer t
   :init (with-eval-after-load 'ibuffer
-          (defun ptrv/ibuffer-set-up-preferred-filters ()
-            (ibuffer-projectile-set-filter-groups)
+          (defun ptrv/ibuffer-group-buffers ()
+            (setq ibuffer-filter-groups
+                  (append
+                   '(("IRC" (mode . erc-mode))
+                     ("Help" (or (name . "\\*Help\\*")
+                                 (name . "\\*Apropos\\*")
+                                 (name . "\\*info\\*")))
+                     ("Emacs" (or (name . "^\\*scratch\\*$")
+                                  (name . "^\\*Messages\\*$")
+                                  (name . "^\\*Completions\\*$")
+                                  (name . "^\\*Backtrace\\*$")
+                                  (mode . inferior-emacs-lisp-mode)))
+                     ("root" (filename . "^/sudo:root.*"))
+                     ("Org" (mode . org-mode)))
+                   (ibuffer-projectile-generate-filter-groups)))
             (unless (eq ibuffer-sorting-mode 'filename/process)
               (ibuffer-do-sort-by-filename/process)))
           (add-hook 'ibuffer-hook
-                    'ptrv/ibuffer-set-up-preferred-filters)))
+                    #'ptrv/ibuffer-group-buffers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
