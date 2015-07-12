@@ -796,6 +796,13 @@ This checks in turn:
         tramp-auto-save-directory (locate-user-emacs-file "tramp-auto-save")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ffap
+(use-package ffap
+  :defer t
+  ;; https://github.com/technomancy/emacs-starter-kit/issues/39
+  :config (setq ffap-machine-p-known 'reject))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ibuffer
 (use-package ibuffer
   :bind ([remap list-buffers] . ibuffer)
