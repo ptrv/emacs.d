@@ -144,7 +144,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
-(setq-default fill-column 72
+(setq-default fill-column 80
               indent-tabs-mode nil ; And force use of spaces
               c-basic-offset 4     ; indents 4 chars
               tab-width 4)         ; and 4 char wide for TAB
