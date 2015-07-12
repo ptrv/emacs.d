@@ -2092,6 +2092,14 @@ If ARG is not nil, create package in current directory"
 ;;;; * python
 (use-package python
   :defer t
+  :init
+  (with-eval-after-load 'flycheck
+    (defun ptrv/python-mode-flycheck-config ()
+      (setq-local flycheck-check-syntax-automatically
+                  (delq 'idle-change
+                        flycheck-check-syntax-automatically)))
+    (add-hook 'python-mode-hook
+              #'ptrv/python-mode-flycheck-config))
   :config
   (progn
     (setq python-check-command "flake8")
