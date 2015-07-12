@@ -2104,6 +2104,8 @@ If ARG is not nil, create package in current directory"
   (progn
     (setq python-check-command "flake8")
 
+    (add-hook 'python-mode-hook (lambda () (setq fill-column 79)))
+
     (info-lookup-add-help
      :mode 'python-mode
      :regexp "[a-zA-Z_0-9.]+"
