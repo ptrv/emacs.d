@@ -658,7 +658,7 @@
           (interactive)
           (pop-to-buffer (get-buffer-create "*ielm*"))
           (ielm))
-        (bind-key "C-c C-z" 'ptrv/switch-to-ielm emacs-lisp-mode-map)))
+        (bind-key "C-c z" 'ptrv/switch-to-ielm)))
 
     (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
     (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
