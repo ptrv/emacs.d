@@ -2106,6 +2106,11 @@ If ARG is not nil, create package in current directory"
 
     (add-hook 'python-mode-hook (lambda () (setq fill-column 79)))
 
+    (let ((ipython (executable-find "ipython")))
+      (if ipython
+          (setq python-shell-interpreter "ipython")
+        (warn "IPython is missing, falling back to default python")))
+
     (info-lookup-add-help
      :mode 'python-mode
      :regexp "[a-zA-Z_0-9.]+"
