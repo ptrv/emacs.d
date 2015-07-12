@@ -1579,6 +1579,12 @@ This checks in turn:
     (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; jira
+(use-package jira-markup-mode
+  :ensure t
+  :mode ("/itsalltext/.*jira.*\\.txt$" . jira-markup-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * golang
 (use-package go-mode
   :ensure t
