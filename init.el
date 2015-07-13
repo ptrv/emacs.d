@@ -2257,7 +2257,7 @@ If ARG is not nil, create package in current directory"
   :commands (ycmd-mode)
   :init
   (ptrv/hook-into-modes #'ycmd-mode
-    '(c++-mode-hook lua-mode-hook go-mode-hook))
+    '(c++-mode-hook go-mode-hook))
   :config
   (progn
     (use-package company-ycmd
@@ -2287,7 +2287,9 @@ If ARG is not nil, create package in current directory"
   :init
   (with-eval-after-load 'company-ycmd
     (defun ptrv/lua-mode-company-ycmd--init ()
-      (setq-local company-backends '((company-ycmd :with company-yasnippet))))
+      (setq-local company-backends '((company-dabbrev-code
+                                      company-gtags
+                                      company-etags))))
     (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
   :config
   (progn
