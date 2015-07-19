@@ -2346,11 +2346,13 @@ If ARG is not nil, create package in current directory"
                                      (other-buffer (current-buffer) 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * Ace jump mode
-(use-package ace-jump-mode
+;;;; * Avy
+(use-package avy
   :ensure t
-  :bind (("C-o"   . ace-jump-mode)
-         ("C-S-o" . ace-jump-char-mode)))
+  :bind (("C-c j s" . avy-isearch)
+         ("C-c j j" . avy-goto-char)
+         ("C-c j w" . avy-goto-word-or-subword-1))
+  :config (setq avy-background t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
