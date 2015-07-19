@@ -2352,7 +2352,8 @@ If ARG is not nil, create package in current directory"
   :bind (("C-c j s" . avy-isearch)
          ("C-c j j" . avy-goto-char)
          ("C-c j w" . avy-goto-word-or-subword-1))
-  :config (setq avy-background t))
+  :config (setq avy-background t
+                avy-style 'at))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
