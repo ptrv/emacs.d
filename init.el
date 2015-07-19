@@ -2378,8 +2378,7 @@ If ARG is not nil, create package in current directory"
   :bind (("<f6>"  . split-window-horizontally)
          ("<f7>"  . split-window-vertically)
          ("<f8>"  . delete-window)
-         ("C-. z" . delete-other-windows)
-         ("C-<return>" . other-window))
+         ("C-. z" . delete-other-windows))
   :config
   (progn
     (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
@@ -2401,6 +2400,10 @@ If ARG is not nil, create package in current directory"
   :init
   (add-hook 'kill-buffer-query-functions
             #'ptrv/do-not-kill-important-buffers))
+
+(use-package ace-window
+  :ensure t
+  :bind ("C-<return>" . ace-window))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; *align
