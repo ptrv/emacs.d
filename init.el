@@ -583,7 +583,8 @@
 (use-package company-quickhelp
   :ensure t
   :defer t
-  :init (company-quickhelp-mode))
+  :init (with-eval-after-load 'company
+          (company-quickhelp-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
