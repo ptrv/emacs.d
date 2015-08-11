@@ -225,7 +225,15 @@
   :defer t
   :init (recentf-mode)
   :config
-  (setq recentf-max-saved-items 100))
+  (setq recentf-max-saved-items 200
+        recentf-auto-cleanup 300
+        recentf-exclude (list "/\\.git/.*\\'" ; Git contents
+                              "/elpa/.*\\'"   ; Package files
+                              "/itsalltext/"  ; It's all text temp files
+                              ".*\\.gz\\'"
+                              "TAGS"
+                              ".*-autoloads\\.el\\'"
+                              "ido.last")))
 
 (use-package uniquify
   :config
