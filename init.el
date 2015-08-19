@@ -708,7 +708,10 @@ This checks in turn:
 
     (use-package lexbind-mode
       :ensure t
-      :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))))
+      :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
+
+    (with-eval-after-load 'ptrv-simple
+      (bind-key "C-M-;" #'comment-or-uncomment-sexp emacs-lisp-mode-map))))
 
 (use-package elisp-slime-nav
   :ensure t
@@ -761,6 +764,9 @@ This checks in turn:
   (progn
     (setq nrepl-log-messages t
           nrepl-hide-special-buffers t)
+
+    (with-eval-after-load 'ptrv-simple
+      (bind-key "C-M-;" #'comment-or-uncomment-sexp clojure-mode-map))
 
     (defun ptrv/cider-doc ()
       (interactive)
