@@ -243,7 +243,7 @@
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
-  :config (setq-default save-place t))
+  :init (save-place-mode 1))
 
 (setq history-length 1000)
 (use-package savehist
