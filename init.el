@@ -900,6 +900,7 @@ This checks in turn:
         ;; Remove trailing slashes from project directories, because Magit adds
         ;; trailing slashes again, which breaks the presentation in the Magit
         ;; prompt.
+        (require 'cl)
         (setq magit-repository-directories
               (remove-if (lambda (dir)
                            (file-remote-p dir 'method))
