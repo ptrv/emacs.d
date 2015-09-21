@@ -149,18 +149,6 @@
               c-basic-offset 4     ; indents 4 chars
               tab-width 4)         ; and 4 char wide for TAB
 
-(defun ptrv/get-default-url-program ()
-  "Get default program to handle urls."
-  (cond
-   (*is-mac* (executable-find "open"))
-   (*is-linux* (executable-find "x-www-browser"))))
-
-(use-package browse-url
-  :defer t
-  :config
-  (setq browse-url-generic-program (ptrv/get-default-url-program)
-        browse-url-browser-function 'browse-url-generic))
-
 (use-package bookmark
   :bind ("C-c l b" . list-bookmarks)
   :config (setq bookmark-save-flag t))
