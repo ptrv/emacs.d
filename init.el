@@ -1736,13 +1736,21 @@ If ARG is not nil, create package in current directory"
 ;;;; * erc
 (use-package erc
   :defer t
+  :init
+  (defun erc-connect ()
+    (interactive)
+    (if-let ((freenode-user (car (netrc-credentials "freenode"))))
+        (erc :server "irc.freenode.net"
+             :port 7000
+             :nick freenode-user)
+      (user-error "Freenode user-name not found")))
   :config
   (progn
     (setq erc-server "irc.freenode.net"
-          erc-port 6667
+          erc-port 7000
           erc-nick "ptrv"
           erc-nick-uniquifier "_"
-          ;; erc-server-connect-function 'erc-open-tls-stream
+          erc-server-connect-function 'erc-open-tls-stream
           )
 
     (add-to-list 'erc-modules 'spelling)
