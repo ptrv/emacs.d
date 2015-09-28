@@ -2292,12 +2292,12 @@ If ARG is not nil, create package in current directory"
   :ensure t
   :defer t
   :init
-  (with-eval-after-load 'company-ycmd
-    (defun ptrv/lua-mode-company-ycmd--init ()
+  (with-eval-after-load 'company
+    (defun ptrv/lua-mode-company-init ()
       (setq-local company-backends '((company-dabbrev-code
                                       company-gtags
                                       company-etags))))
-    (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-ycmd--init))
+    (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-init))
   :config
   (progn
     (defun ptrv/lua-send-region-or-current-line ()
