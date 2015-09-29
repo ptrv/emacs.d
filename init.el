@@ -1572,7 +1572,8 @@ This checks in turn:
          ("\\README\\.md" . gfm-mode))
   :config
   (setq markdown-css-paths
-        (expand-file-name "css/markdown.css" ptrv/etc-dir)))
+        (list
+         (expand-file-name "css/pandoc.css" ptrv/etc-dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
