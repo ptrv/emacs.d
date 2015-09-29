@@ -231,9 +231,9 @@
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
-  :init (if (fboundp 'save-place-mode)
-            (save-place-mode 1)
-          (setq-default save-place t)))
+  :config (if (fboundp 'save-place-mode)
+             (save-place-mode 1)
+           (setq-default save-place t)))
 
 (setq history-length 1000)
 (use-package savehist
