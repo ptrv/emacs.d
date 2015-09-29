@@ -1751,51 +1751,7 @@ If ARG is not nil, create package in current directory"
           erc-port 7000
           erc-nick "ptrv"
           erc-nick-uniquifier "_"
-          erc-server-connect-function 'erc-open-tls-stream
-          )
-
-    (add-to-list 'erc-modules 'spelling)
-    (erc-update-modules)
-
-    (use-package erc-services
-      :config
-      (progn
-        (defun ptrv/get-nickserv-password (network)
-          (let ((creds (netrc-credentials network)))
-            (cadr creds)))
-        (defun ptrv/erc-nickserv-identify (orig-func &rest args)
-          (let* ((arg (car args))
-                 (password (if (functionp arg)
-                               (funcall arg)
-                             arg)))
-            (apply orig-func (list password))))
-        (advice-add 'erc-nickserv-identify :around
-                    #'ptrv/erc-nickserv-identify)
-        (erc-services-mode)
-        (setq erc-prompt-for-nickserv-password nil)
-        (let ((freenode-credentials (netrc-credentials "freenode"))
-              (oftc-credentials (netrc-credentials "oftc")))
-          (setq erc-nickserv-passwords
-                `((freenode (,(cons (car freenode-credentials)
-                                    (apply-partially 'ptrv/get-nickserv-password
-                                                     "freenode"))))
-                  (oftc (,(cons (car oftc-credentials)
-                                (apply-partially 'ptrv/get-nickserv-password
-                                                 "oftc")))))))))
-
-    (use-package erc-track
-      :config
-      (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                      "324" "329" "332" "333" "353" "477")))
-
-    (add-hook 'erc-mode-hook
-              (lambda ()
-                (add-hook 'window-configuration-change-hook
-                          (lambda ()
-                            (setq erc-fill-column (- (window-width) 2)))
-                          nil :local)))
-
-    (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+          erc-server-connect-function 'erc-open-tls-stream)
 
     (use-package alert
       :ensure t)
@@ -1803,18 +1759,8 @@ If ARG is not nil, create package in current directory"
     (use-package erc-hl-nicks
       :ensure t)
 
-    (use-package erc-match
-      :init
-      (add-hook 'erc-text-matched-hook
-                (lambda (match-type nickuserhost message)
-                  "Notify when a message is received."
-                  (unless (posix-string-match "^\\** *Users on #" message)
-                    (alert (replace-regexp-in-string " +" " " message)
-                           :title (format "%s in %s"
-                                          ;; Username of sender
-                                          (car (split-string nickuserhost "!"))
-                                          ;; Channel
-                                          (or (erc-default-target) "#unknown")))))))))
+    (use-package ptrv-erc
+      :load-path "site-lisp")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode
