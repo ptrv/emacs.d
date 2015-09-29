@@ -143,10 +143,12 @@ prompt for the command to use."
 (defun ptrv/byte-recompile-site-lisp ()
   "Recompile user site-lisp directory."
   (interactive)
-  (dolist (project (directory-files
-                    (locate-user-emacs-file "site-lisp") t "^[^_]\\w+"))
-    (when (file-directory-p project)
-      (byte-recompile-directory project 0))))
+  (let ((site-lisp-dir (locate-user-emacs-file "site-lisp")))
+    (byte-recompile-directory site-lisp-dir 0)
+    (dolist (project (directory-files
+                      site-lisp-dir t "^[^_]\\w+"))
+      (when (file-directory-p project)
+        (byte-recompile-directory project 0)))))
 
 (defun ptrv/byte-recompile-elpa ()
   "Recompile elpa directory."
