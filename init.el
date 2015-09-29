@@ -1693,7 +1693,9 @@ This checks in turn:
       :ensure t)
 
     (use-package ptrv-erc
-      :load-path "site-lisp")))
+      :load-path "site-lisp"
+      :config
+      (bind-key "C-c C-b" #'ptrv/erc-switch-to-buffer erc-mode-map))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode

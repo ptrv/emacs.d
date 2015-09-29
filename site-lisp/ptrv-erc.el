@@ -96,5 +96,30 @@
                                       (or (erc-default-target) "#unknown")))))))
 
 
+;; other
+
+(defun ptrv/erc-switch-to-buffer (&optional arg)
+  "Prompt for a ERC buffer to switch to.
+When invoked with prefix argument, use all erc buffers.  Without prefix
+ARG, allow only buffers related to same session server.
+If `erc-track-mode' is in enabled, put the last element of
+`erc-modified-channels-alist' in front of the buffer list."
+  (interactive "P")
+  (when (bound-and-true-p ido-mode)
+    (switch-to-buffer
+     (ido-completing-read
+      "Switch to ERC buffer: "
+      (save-excursion
+        (delq
+         nil
+         (mapcar 'buffer-name
+                 (erc-buffer-list
+                  nil
+                  (when arg erc-server-process)))))
+      nil t nil nil
+      (when (boundp 'erc-modified-channels-alist)
+        (buffer-name (caar (last erc-modified-channels-alist))))))))
+
+
 (provide 'ptrv-erc)
 ;;; ptrv-erc.el ends here
