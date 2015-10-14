@@ -24,3 +24,6 @@
 [submodule "snippets/lua-mode"]
 	path = snippets/lua-mode
 	url = https://github.com/ptrv/yasnippet-lua-mode.git
+[submodule "site-lisp/company-lua"]
+	path = site-lisp/company-lua
+	url = https://github.com/ptrv/company-lua.git

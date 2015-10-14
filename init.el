@@ -2198,10 +2198,11 @@ This checks in turn:
   :init
   (with-eval-after-load 'company
     (defun ptrv/lua-mode-company-init ()
-      (setq-local company-backends '((company-dabbrev-code
+      (setq-local company-backends '((company-lua
+                                      company-dabbrev-code
                                       company-gtags
                                       company-etags))))
-    (add-hook 'lua-mode-hook 'ptrv/lua-mode-company-init))
+    (add-hook 'lua-mode-hook #'ptrv/lua-mode-company-init))
   :config
   (progn
     (defun ptrv/lua-send-region-or-current-line ()
@@ -2214,6 +2215,10 @@ This checks in turn:
                ("C-c C-d" . lua-send-proc)
                ("C-c C-c" . ptrv/lua-send-region-or-current-line)
                ("C-c C-p" . lua-start-process))))
+
+(use-package company-lua
+  :load-path "site-lisp/company-lua"
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
