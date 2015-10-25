@@ -2269,9 +2269,7 @@ This checks in turn:
 ;;;; * Avy
 (use-package avy
   :ensure t
-  :bind (("C-c j s" . avy-isearch)
-         ("C-c j j" . avy-goto-char)
-         ("C-c j w" . avy-goto-word-or-subword-1))
+  :bind ("C-c j" . avy-goto-word-or-subword-1)
   :config (setq avy-background t
                 avy-style 'at))
 
