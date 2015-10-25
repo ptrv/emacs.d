@@ -1835,6 +1835,9 @@ This checks in turn:
       :init (with-eval-after-load 'company
               (processing-company-setup)))
 
+    (use-package processing-flycheck
+      :load-path "site-lisp/processing2-emacs")
+
     (bind-keys :map processing-mode-map
                ("C-c C-c" . processing-sketch-run)
                ("C-c C-d" . processing-find-in-reference))))
