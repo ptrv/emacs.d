@@ -817,28 +817,7 @@ This checks in turn:
   :config
   (progn
     (use-package ibuf-ext
-      :config (setq ibuffer-show-empty-filter-groups nil))
-    (setq ibuffer-formats
-          '((mark modified read-only vc-status-mini " "
-                  (name 18 18 :left :elide)
-                  " "
-                  (size 9 -1 :right)
-                  " "
-                  (mode 16 16 :left :elide)
-                  " "
-                  (vc-status 16 16 :left)
-                  " "
-                  filename-and-process)
-            (mark modified read-only " "
-                  (name 18 18 :left :elide)
-                  " "
-                  (size 9 -1 :right)
-                  " "
-                  (mode 16 16 :left :elide)
-                  " " filename-and-process)
-            (mark " "
-                  (name 16 -1)
-                  " " filename)))))
+      :config (setq ibuffer-show-empty-filter-groups nil))))
 
 (use-package ibuffer-projectile
   :ensure t
