@@ -289,6 +289,11 @@
    (*is-mac* (executable-find "afplay"))
    (*is-linux* (executable-find "paplay"))))
 
+(use-package "mule-cmds"
+  :defer t
+  :config
+  (bind-key "C-x <return>" mule-keymap))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * compilation
 ;; Compilation from Emacs
@@ -2220,10 +2225,20 @@ This checks in turn:
 ;;;; * multiple-cursors
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C->"         . mc/mark-next-like-this)
-         ("C-<"         . mc/mark-previous-like-this)
-         ("C-c C-<"     . mc/mark-all-like-this)))
+  :bind (("M-3"       . mc/mark-next-like-this)
+         ("M-4"       . mc/mark-previous-like-this)
+         ("C-M-3"     . mc/unmark-next-like-this)
+         ("C-M-4"     . mc/unmark-previous-like-this)
+         ("C-x C-m"   . mc/mark-all-dwim)
+         ("C-c m i"   . mc/insert-numbers)
+         ("C-c m h"   . mc-hide-unmatched-lines-mode)
+         ("C-c m a"   . mc/mark-all-like-this)
+         ("C-c m d"   . mc/mark-all-symbols-like-this-in-defun)
+         ("C-c m r"   . mc/reverse-regions)
+         ("C-c m s"   . mc/sort-regions)
+         ("C-c m l"   . mc/edit-lines)
+         ("C-c m C-a" . mc/edit-beginnings-of-lines)
+         ("C-c m C-e" . mc/edit-ends-of-lines)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
