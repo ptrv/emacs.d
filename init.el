@@ -1114,7 +1114,7 @@ This checks in turn:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * search
-(use-package isearch                    ; Search buffers
+(use-package "isearch"                    ; Search buffers
   :bind (("C-c s s" . isearch-forward-symbol-at-point))
   :config
   (bind-key "C-o" (lambda () (interactive)
