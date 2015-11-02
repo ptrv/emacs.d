@@ -2062,7 +2062,8 @@ This checks in turn:
   :defer t
   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
          ("\\.m\\'"                   . c-mode)
-         ("\\.mm\\'"                  . c++-mode))
+         ("\\.mm\\'"                  . c++-mode)
+         ("\\.inl\\'"                 . c++-mode))
   :init
   (progn
     (defun ptrv/cc-mode-init ()
