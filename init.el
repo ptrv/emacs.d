@@ -472,6 +472,12 @@
           (1 headline-face t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * beacon
+(use-package beacon
+  :ensure t
+  :init (add-hook 'after-init-hook #'beacon-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
 (use-package ido
   :init (progn
