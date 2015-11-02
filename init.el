@@ -606,16 +606,15 @@
     (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
     (bind-key "M-?" #'sp-convolute-sexp smartparens-strict-mode-map)
 
-    (sp-with-modes sp--lisp-modes
-      (sp-local-pair "(" nil :bind "M-("))
+    (sp-local-pair sp--lisp-modes "(" nil :bind "M-(")
 
     (dolist (mode sp--lisp-modes)
       (unless (eq mode 'eshell-mode)
         (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
           (add-hook hook 'smartparens-strict-mode))))
 
-    (add-hook 'eval-expression-minibuffer-setup-hook
-              'smartparens-strict-mode)
+    (ptrv/hook-into-modes #'smartparens-strict-mode
+      '(eval-expression-minibuffer-setup-hook ielm-mode-hook))
 
     (sp-local-pair '(c++-mode) "{" nil :post-handlers
                    '(((lambda (&rest _ignored)
