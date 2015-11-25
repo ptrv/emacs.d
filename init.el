@@ -121,6 +121,32 @@
 
 (bind-key "C-c h b" #'describe-personal-keybindings)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * tls
+(defcustom ptrv/trustfile-command "/usr/bin/python -m certifi"
+  "Command to retrieve trustfile path."
+  :type 'string)
+
+;; https://glyph.twistedmatrix.com/2015/11/editor-malware.html
+(use-package tls
+  :defer t
+  :config
+  (let ((trustfile
+         (replace-regexp-in-string
+          "\\\\" "/"
+          (replace-regexp-in-string
+           "\n" ""
+           (shell-command-to-string ptrv/trustfile-command)))))
+    (setq tls-program
+          (list
+           (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                   (if (eq window-system 'w32) ".exe" "") trustfile)))
+    (use-package gnutls
+      :config (setq gnutls-verify-error t
+                    gnutls-trustfiles (list trustfile)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * paradox
 (use-package paradox
   :ensure t
   :bind (("C-c l p" . paradox-list-packages))
