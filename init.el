@@ -123,27 +123,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tls
-(defcustom ptrv/trustfile-command "/usr/bin/python -m certifi"
-  "Command to retrieve trustfile path."
+(defcustom ptrv/trustfile-command nil
+  "Command to retrieve trustfile path.
+
+Something like: `python -m certifi'."
   :type 'string)
 
 ;; https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 (use-package tls
   :defer t
   :config
-  (let ((trustfile
-         (replace-regexp-in-string
-          "\\\\" "/"
-          (replace-regexp-in-string
-           "\n" ""
-           (shell-command-to-string ptrv/trustfile-command)))))
-    (setq tls-program
-          (list
-           (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
-                   (if (eq window-system 'w32) ".exe" "") trustfile)))
-    (use-package gnutls
-      :config (setq gnutls-verify-error t
-                    gnutls-trustfiles (list trustfile)))))
+  (if ptrv/trustfile-command
+    (let ((trustfile
+           (replace-regexp-in-string
+            "\\\\" "/"
+            (replace-regexp-in-string
+             "\n" ""
+             (shell-command-to-string ptrv/trustfile-command)))))
+      (setq tls-program
+            (list
+             (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                     (if (eq window-system 'w32) ".exe" "") trustfile)))
+      (use-package gnutls
+        :config (setq gnutls-verify-error t
+                      gnutls-trustfiles (list trustfile))))
+    (warn "Cannot set tls program because, `ptrv/trustfile-command' is nil")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * paradox
