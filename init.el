@@ -2209,6 +2209,13 @@ This checks in turn:
     '(c-mode-hook c++-mode-hook go-mode-hook))
   :config
   (progn
+    (defun ptrv/ycmd-show-server-buffer ()
+      (interactive)
+      (-when-let (buf (get-buffer ycmd--server-buffer-name))
+        (push-mark)
+        (ring-insert find-tag-marker-ring (point-marker))
+        (switch-to-buffer buf)))
+    (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
     (use-package company-ycmd
       :load-path "~/src/emacs-ycmd"
       :commands (company-ycmd-setup)
