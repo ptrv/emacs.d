@@ -2206,7 +2206,7 @@ This checks in turn:
   :commands (ycmd-mode)
   :init
   (ptrv/hook-into-modes #'ycmd-mode
-    '(c++-mode-hook go-mode-hook))
+    '(c-mode-hook c++-mode-hook go-mode-hook))
   :config
   (progn
     (use-package company-ycmd
