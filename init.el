@@ -2020,13 +2020,26 @@ This checks in turn:
 (use-package python
   :defer t
   :init
-  (with-eval-after-load 'flycheck
-    (defun ptrv/python-mode-flycheck-config ()
-      (setq-local flycheck-check-syntax-automatically
-                  (delq 'idle-change
-                        flycheck-check-syntax-automatically)))
-    (add-hook 'python-mode-hook
-              #'ptrv/python-mode-flycheck-config))
+  (progn
+    (with-eval-after-load 'flycheck
+      (defun ptrv/python-mode-flycheck-config ()
+        (setq-local flycheck-check-syntax-automatically
+                    (delq 'idle-change
+                          flycheck-check-syntax-automatically)))
+      (add-hook 'python-mode-hook
+                #'ptrv/python-mode-flycheck-config))
+    (defun ptrv/pyenv-mode-set-maybe ()
+      "Automatically activates pyenv version if .python-version file exists."
+      (when (or (featurep 'pyenv-mode) (require 'pyenv-mode nil t))
+        (-when-let (pyenv-version-file
+                    (catch 'found
+                      (f-traverse-upwards
+                       (lambda (path)
+                         (let ((f (f-expand ".python-version" path)))
+                           (when (f-exists? f)
+                             (throw 'found f)))))))
+          (pyenv-mode-set (s-trim (f-read-text pyenv-version-file 'utf-8))))))
+    (add-hook 'find-file-hook #'ptrv/pyenv-mode-set-maybe))
   :config
   (progn
     (setq python-check-command "flake8")
