@@ -2091,7 +2091,10 @@ This checks in turn:
         (unbind-key "C-c C-u" pyenv-mode-map)
         (bind-keys :map pyenv-mode-map
                    ("C-. p s" . pyenv-mode-set)
-                   ("C-. p u" . pyenv-mode-unset))))))
+                   ("C-. p u" . pyenv-mode-unset))))
+
+    (use-package pytest
+      :ensure t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ggtags
