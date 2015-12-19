@@ -1767,7 +1767,7 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
 (use-package move-text
-  :ensure t
+  :load-path "site-lisp"
   :bind (("C-S-<up>"   . move-text-up)
          ("C-S-<down>" . move-text-down)))
 
