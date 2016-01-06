@@ -1560,7 +1560,9 @@ This checks in turn:
   :ensure t
   :mode ("/PKGBUILD$" . pkgbuild-mode))
 ;; (ptrv/add-auto-mode 'shell-script-mode "\\.install$")
-;; (ptrv/add-auto-mode 'conf-unix-mode "\\.*rc$")
+
+(use-package conf-mode
+  :mode ("\\.*rc$" . conf-unix-mode))
 
 ;; json
 (use-package json-reformat
