@@ -2109,6 +2109,7 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ggtags
 (use-package ggtags
+  :disabled t
   :ensure t
   :defer t
   :init
