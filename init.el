@@ -2074,10 +2074,12 @@ This checks in turn:
                     (match-string 1 item))))))))
 
     (use-package anaconda-mode
+      :disabled t
       :ensure t
       :init (add-hook 'python-mode-hook 'anaconda-mode))
 
     (use-package company-anaconda
+      :disabled t
       :ensure t
       :init
       (with-eval-after-load 'company
@@ -2214,7 +2216,7 @@ This checks in turn:
   :commands (ycmd-mode)
   :init
   (ptrv/hook-into-modes #'ycmd-mode
-    '(c-mode-hook c++-mode-hook go-mode-hook))
+    '(c-mode-hook c++-mode-hook go-mode-hook python-mode-hook))
   :config
   (progn
     (defun ptrv/ycmd-show-server-buffer ()
