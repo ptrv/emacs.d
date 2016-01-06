@@ -191,6 +191,12 @@ Something like: `python -m certifi'."
   (defun ptrv/join-line ()
     (interactive)
     (join-line -1))
+  (defun pop-to-mark-command--around (orig-fun &rest args)
+    (let ((p (point)))
+      (dotimes (i 10)
+        (when (= p (point)) (apply orig-fun args)))))
+  (advice-add 'pop-to-mark-command :around
+              #'pop-to-mark-command--around)
   :config
   (setq set-mark-command-repeat-pop t
         column-number-mode t
