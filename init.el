@@ -908,8 +908,8 @@ This checks in turn:
          ("C-c v b" . magit-blame))
   :config
   (progn
-    (setq magit-completing-read-function
-          #'magit-ido-completing-read)
+    (setq magit-completing-read-function #'magit-ido-completing-read
+          magit-push-current-set-remote-if-missing nil)
 
     ;; hide stashes section in magit status
     (add-hook 'magit-section-set-visibility-hook
