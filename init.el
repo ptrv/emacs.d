@@ -2221,10 +2221,9 @@ This checks in turn:
   (progn
     (defun ptrv/ycmd-show-server-buffer ()
       (interactive)
-      (-when-let (buf (get-buffer ycmd--server-buffer-name))
-        (push-mark)
-        (ring-insert find-tag-marker-ring (point-marker))
-        (switch-to-buffer buf)))
+      (-if-let (buf (get-buffer ycmd--server-buffer-name))
+          (switch-to-buffer buf)
+        (error "No YCMD server buffer")))
     (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
     (use-package company-ycmd
       :load-path "~/src/emacs-ycmd"
