@@ -906,10 +906,10 @@ This checks in turn:
          ("C-x M-g" . magit-dispatch-popup)
          ("C-c v l" . magit-log-buffer-file)
          ("C-c v b" . magit-blame))
+  :init (setq magit-push-current-set-remote-if-missing nil)
   :config
   (progn
-    (setq magit-completing-read-function #'magit-ido-completing-read
-          magit-push-current-set-remote-if-missing nil)
+    (setq magit-completing-read-function #'magit-ido-completing-read)
 
     ;; hide stashes section in magit status
     (add-hook 'magit-section-set-visibility-hook
