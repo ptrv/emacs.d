@@ -1633,13 +1633,23 @@ This checks in turn:
                ("C-c C-i"   . go-goto-imports)
                ("C-c C-r"   . go-remove-unused-imports)
                ("C-c C-p"   . ptrv/go-create-package)
-               ("C-c C-c c" . ptrv/go-run)
-               ("C-c C-c r" . ptrv/go-run-buffer)
-               ("C-c C-c b" . ptrv/go-build)
-               ("C-c C-c t" . ptrv/go-test))
+               ;; ("C-c C-c c" . ptrv/go-run)
+               ;; ("C-c C-c r" . ptrv/go-run-buffer)
+               ;; ("C-c C-c b" . ptrv/go-build)
+               ;; ("C-c C-c t" . ptrv/go-test)
+               )
+
+    (use-package ptrv-go
+      :load-path "site-lisp")
 
     (defun ptrv/go-mode-init ()
-      (add-hook 'before-save-hook 'gofmt-before-save nil :local))
+      (add-hook 'before-save-hook 'gofmt-before-save nil :local)
+
+      ;; Customize compile command to run go build
+      (if (not (and (stringp compile-command)
+                    (string-match "go" compile-command)))
+          (set (make-local-variable 'compile-command)
+               "go build -v && go test -v && go vet && golint")))
     (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
     (use-package company-go
@@ -1660,11 +1670,6 @@ This checks in turn:
       (defun ptrv/go-mode-flycheck--init ()
         (setq-local flycheck-check-syntax-automatically '(save)))
       (add-hook 'go-mode-hook 'ptrv/go-mode-flycheck--init))))
-
-(use-package ptrv-go
-  :load-path "site-lisp"
-  :commands (ptrv/go-create-package))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * xml

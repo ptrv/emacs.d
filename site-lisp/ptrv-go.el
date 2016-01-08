@@ -26,6 +26,17 @@
 
 (require 'go-mode)
 
+(defun ptrv/load-file-from-gopath (fname)
+  (let ((gopath-items (split-string (getenv "GOPATH") ":")))
+    (loop for prefix in gopath-items
+          if (file-exists-p (concat prefix "/src/" fname))
+          return (load-file (concat prefix "/src/" fname)))))
+
+(defun ptrv/load-file-from-gopath-or-download (pkg file)
+  (let ((fname (concat pkg "/" file)))
+    (unless (ptrv/load-file-from-gopath fname)
+      (shell-command (format "go get -u %s" pkg))
+      (ptrv/load-file-from-gopath fname))))
 
 ;; compile functions
 (defun ptrv/go-build ()
