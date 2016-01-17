@@ -1293,7 +1293,8 @@ This checks in turn:
             ("*processing-compilation*" :noselect t)
             ("*anaconda-doc*" :noselect t)
             ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))
-            ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))))))
+            ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))
+            ("*cscope*" :height ,(ptrv/get-popwin-height 'medium))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
@@ -2166,6 +2167,11 @@ This checks in turn:
                                (or (eq major-mode 'c-mode)
                                    (eq major-mode 'c++-mode)))
                       (doxymacs-font-lock))))))
+
+    (use-package xcscope
+      :ensure t
+      :init
+      (add-hook 'c++-mode-hook #'cscope-minor-mode))
 
     ;; C++11 keywords
     (font-lock-add-keywords
