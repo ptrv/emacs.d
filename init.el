@@ -1839,12 +1839,6 @@ This checks in turn:
   :diminish projectile-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * find-file-in-project
-(use-package find-file-in-project
-  :ensure t
-  :bind ("C-x f" . find-file-in-project))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * find-file
 (use-package find-file
   :bind ("C-c o" . ff-find-other-file))
