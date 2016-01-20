@@ -2107,16 +2107,6 @@ This checks in turn:
       :ensure t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * ggtags
-(use-package ggtags
-  :disabled t
-  :ensure t
-  :defer t
-  :init
-  (ptrv/hook-into-modes #'ggtags-mode
-    '(c++-mode-hook lua-mode-hook)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
 (use-package cc-mode
   :defer t
