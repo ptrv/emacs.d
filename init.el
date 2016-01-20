@@ -2246,9 +2246,8 @@ This checks in turn:
   (with-eval-after-load 'company
     (defun ptrv/lua-mode-company-init ()
       (setq-local company-backends '((company-lua
-                                      company-gtags
-                                      company-dabbrev-code
                                       company-etags
+                                      company-dabbrev-code
                                       company-yasnippet))))
     (add-hook 'lua-mode-hook #'ptrv/lua-mode-company-init))
   :config
