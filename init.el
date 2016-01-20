@@ -595,9 +595,6 @@ Something like: `python -m certifi'."
       :load-path "site-lisp")
 
     (use-package pcmpl-git
-      :ensure t)
-
-    (use-package starter-kit-eshell
       :ensure t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
