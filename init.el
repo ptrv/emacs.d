@@ -2150,7 +2150,7 @@ This checks in turn:
                       (doxymacs-font-lock))))))
 
     (use-package xcscope
-      :ensure t
+      :load-path "site-lisp/xcscope"
       :init
       (add-hook 'c++-mode-hook #'cscope-minor-mode))
 
