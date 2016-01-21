@@ -2154,6 +2154,9 @@ This checks in turn:
       :init
       (add-hook 'c++-mode-hook #'cscope-minor-mode))
 
+    (use-package clang-format
+      :ensure t)
+
     ;; C++11 keywords
     (font-lock-add-keywords
      'c++-mode
