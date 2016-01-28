@@ -1190,6 +1190,10 @@ This checks in turn:
   (setq ag-highlight-search t
         ag-reuse-buffers t))
 
+(use-package wgrep-ag
+  :ensure t
+  :defer t)
+
 (use-package anzu
   :ensure t
   :defer t
