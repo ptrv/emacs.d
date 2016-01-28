@@ -2391,6 +2391,18 @@ This checks in turn:
          ("C-c e S" . sudo-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * docs
+(use-package zeal-at-point
+  :if *is-linux*
+  :ensure t
+  :bind ("C-. d" . zeal-at-point))
+
+(use-package dash-at-point
+  :if *is-mac*
+  :ensure t
+  :bind ("C-. d" . dash-at-point))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
 (use-package server
   :if window-system
