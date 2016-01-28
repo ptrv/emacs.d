@@ -2307,12 +2307,10 @@ This checks in turn:
                                      (other-buffer (current-buffer) 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; * Avy
-(use-package avy
+;;;; * ace-jump-mode
+(use-package ace-jump-mode
   :ensure t
-  :bind ("C-c j" . avy-goto-word-or-subword-1)
-  :config (setq avy-background t
-                avy-style 'at))
+  :bind ("C-o" . ace-jump-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
