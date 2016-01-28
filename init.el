@@ -2336,7 +2336,8 @@ This checks in turn:
   :bind (("<f6>"  . split-window-horizontally)
          ("<f7>"  . split-window-vertically)
          ("<f8>"  . delete-window)
-         ("C-. z" . delete-other-windows))
+         ("C-. z" . delete-other-windows)
+         ("C-<return>". other-window))
   :config
   (progn
     (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
@@ -2358,10 +2359,6 @@ This checks in turn:
   :init
   (add-hook 'kill-buffer-query-functions
             #'ptrv/do-not-kill-important-buffers))
-
-(use-package ace-window
-  :ensure t
-  :bind ("C-<return>" . ace-window))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; *align
