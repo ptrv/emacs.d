@@ -27,6 +27,3 @@
 [submodule "site-lisp/company-lua"]
 	path = site-lisp/company-lua
 	url = https://github.com/ptrv/company-lua.git
-[submodule "site-lisp/xcscope"]
-	path = site-lisp/xcscope
-	url = https://github.com/ptrv/xcscope.el.git

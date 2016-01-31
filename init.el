@@ -2162,7 +2162,7 @@ With a prefix argument P, isearch for the symbol at point."
                       (doxymacs-font-lock))))))
 
     (use-package xcscope
-      :load-path "site-lisp/xcscope"
+      :ensure t
       :init
       (add-hook 'c++-mode-hook #'cscope-minor-mode))
 
