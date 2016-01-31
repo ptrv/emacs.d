@@ -1135,11 +1135,18 @@ This checks in turn:
           "SCLang:PostBuffer*")
         iflipb-wrap-around t))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * search
-(use-package "isearch"                    ; Search buffers
-  :bind (("C-c s s" . isearch-forward-symbol-at-point))
+(use-package "isearch"
+  :bind ([remap isearch-forward] . ptrv/isearch-symbol-with-prefix)
+  :init
+  (defun ptrv/isearch-symbol-with-prefix (p)
+    "Like isearch, unless prefix argument is provided.
+With a prefix argument P, isearch for the symbol at point."
+    (interactive "P")
+    (let ((current-prefix-arg nil))
+      (call-interactively
+       (if p #'isearch-forward-symbol-at-point #'isearch-forward))))
   :config
   (bind-key "C-o" (lambda () (interactive)
                     (let ((case-fold-search isearch-case-fold-search))
