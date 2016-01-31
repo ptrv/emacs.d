@@ -1302,7 +1302,8 @@ With a prefix argument P, isearch for the symbol at point."
             ("*anaconda-doc*" :noselect t)
             ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))
             ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))
-            ("*cscope*" :height ,(ptrv/get-popwin-height 'medium))))))
+            ("*cscope*" :height ,(ptrv/get-popwin-height 'medium))
+            ("*xref*" :height ,(ptrv/get-popwin-height 'medium))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
