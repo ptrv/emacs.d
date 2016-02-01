@@ -103,7 +103,15 @@
     (define-key map [?l] 'ptrv/sclang-show-meter)
     (define-key map [?s] 'ptrv/sclang-show-scope)
     (define-key map [?h] 'ptrv/sclang-show-helper-window)
-    (define-key map [?t] 'ptrv/sclang-show-node-tree)))
+    (define-key map [?t] 'ptrv/sclang-show-node-tree))
+
+  (defun ptrv/sclang-setup-eldoc ()
+    (add-function :before-until (local 'eldoc-documentation-function)
+                  #'ptrv/sclang-eldoc-function))
+  (add-hook 'sclang-mode-hook #'ptrv/sclang-setup-eldoc)
+
+  (defun ptrv/sclang-eldoc-function ()
+    (eldoc-message (sclang-show-method-args))))
 
 (provide 'ptrv-sclang)
 ;;; ptrv-sclang.el ends here
