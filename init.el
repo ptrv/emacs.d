@@ -514,8 +514,136 @@ Something like: `python -m certifi'."
   :init (add-hook 'after-init-hook #'beacon-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * helm
+(use-package helm                       ; Powerful minibuffer input framework
+  :ensure t
+  :bind (("C-. ." . helm-resume))
+  :init (progn (helm-mode 1)
+               (with-eval-after-load 'helm-config
+                 (warn "`helm-config' loaded! Get rid of it ASAP!")))
+  :config (setq helm-split-window-in-side-p t)
+  :diminish helm-mode)
+
+(use-package helm-misc
+  :ensure helm
+  :bind (([remap switch-to-buffer] . helm-mini)))
+
+(use-package helm-command
+  :ensure helm
+  :bind ([remap execute-extended-command] . helm-M-x)
+  :config (setq helm-M-x-fuzzy-match t))
+
+(use-package helm-buffers
+  :ensure helm
+  :defer t
+  :config (setq helm-buffers-fuzzy-matching t))
+
+(use-package helm-files
+  :ensure helm
+  :defer t
+  :bind (([remap find-file] . helm-find-files)
+         ("C-c f s"         . helm-for-files)
+         ("C-c f r"         . helm-recentf))
+  :config
+  (progn
+    (setq helm-recentf-fuzzy-match t
+          ;; Use recentf to find recent files
+          helm-ff-file-name-history-use-recentf t
+          ;; Find library from `require', `declare-function' and friends
+          helm-ff-search-library-in-sexp t
+          helm-ff-fuzzy-matching t)
+
+    (when (eq system-type 'darwin)
+      ;; Replace locate with spotlight for `helm-for-files'
+      (setq helm-for-files-preferred-list
+            (append (delq 'helm-source-locate
+                          helm-for-files-preferred-list)
+                    '(helm-source-mac-spotlight))))))
+
+(use-package helm-imenu
+  :ensure helm
+  :bind (("C-c n i" . helm-imenu-in-all-buffers)
+         ("C-c n t" . helm-imenu)
+         ("C-x C-i" . helm-imenu))
+  :config (setq helm-imenu-fuzzy-match t
+                ;; Don't automatically jump to candidate if only one match,
+                ;; because it makes the behaviour of this command unpredictable,
+                ;; and prevents me from getting an overview over the buffer if
+                ;; point is on a matching symbol.
+                helm-imenu-execute-action-at-once-if-one nil))
+
+(use-package helm-ring
+  :ensure helm
+  :bind (([remap yank-pop]        . helm-show-kill-ring)
+         ([remap insert-register] . helm-register)))
+
+(use-package helm-elisp
+  :ensure helm
+  :bind (("C-c f l" . helm-locate-library)
+         ("C-c h a" . helm-apropos)))
+
+(use-package helm-ag
+  :ensure t
+  ;; :bind (("C-c a a" . helm-do-ag)
+  ;;        ("C-c a A" . helm-ag))
+  :config (setq helm-ag-fuzzy-match t
+                helm-ag-insert-at-point 'symbol
+                helm-ag-source-type 'file-line))
+
+
+(use-package helm-projectile
+  :ensure t
+  :defer t
+  :init (with-eval-after-load 'projectile (helm-projectile-on))
+  :config
+  (progn (setq projectile-switch-project-action #'helm-projectile)
+
+         (bind-key "C-t" #'ptrv/neotree-project-root
+                   helm-projectile-projects-map)
+
+         (helm-add-action-to-source "Open NeoTree `C-t'"
+                                    #'ptrv/neotree-project-root
+                                    helm-source-projectile-projects 1)))
+
+(use-package helm-info
+  :ensure helm
+  :bind (("C-c h e" . helm-info-emacs)
+         ("C-c h i" . helm-info-at-point)))
+
+(use-package helm-man
+  :ensure helm
+  :bind (("C-c h m" . helm-man-woman)))
+
+(use-package neotree
+  :ensure t
+  :bind (("C-c f t" . neotree-toggle))
+  :init
+  (with-eval-after-load 'projectile
+    (defun ptrv/neotree-project-root (&optional directory)
+      "Open a NeoTree browser for a project DIRECTORY."
+      (interactive)
+      (let ((default-directory (or directory default-directory)))
+        (if (and (fboundp 'neo-global--window-exists-p)
+                 (neo-global--window-exists-p))
+            (neotree-hide)
+          (neotree-find (projectile-project-root)))))
+    (bind-key "t" #'ptrv/neotree-project-root
+              projectile-command-map))
+  :config (setq neo-window-width 32
+                neo-create-file-auto-open t
+                neo-banner-message nil
+                neo-show-updir-line nil
+                neo-mode-line-type 'neotree
+                neo-smart-open t
+                neo-dont-be-alone t
+                neo-persist-show nil
+                neo-show-hidden-files t
+                neo-auto-indent-point t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
 (use-package ido
+  :disabled t
   :init (progn
           (ido-mode 1)
           (ido-everywhere 1))
@@ -531,6 +659,7 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido-ubiquitous
 (use-package ido-ubiquitous
+  :disabled t
   :ensure t
   :config
   (progn
@@ -551,6 +680,7 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smex
 (use-package smex
+  :disabled t
   :ensure t
   :bind (([remap execute-extended-command] . smex)
          ("M-X" . smex-major-mode-commands)))
@@ -558,6 +688,7 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * idomenu
 (use-package idomenu
+  :disabled t
   :ensure t
   :bind (("C-x C-i" . idomenu)))
 
@@ -1640,7 +1771,7 @@ With a prefix argument P, isearch for the symbol at point."
   (progn
     (bind-keys :map go-mode-map
                ("M-."       . godef-jump)
-               ("C-c C-i"   . go-goto-imports)
+               ;; ("C-c C-i"   . go-goto-imports)
                ("C-c C-r"   . go-remove-unused-imports)
                ("C-c C-p"   . ptrv/go-create-package)
                ;; ("C-c C-c c" . ptrv/go-run)
@@ -1799,7 +1930,7 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package ptrv-files
   :load-path "site-lisp"
   :bind (("<f5>"      . ptrv/refresh-file)
-         ("C-c f r"   . ptrv/ido-recentf-open)
+         ;; ("C-c f r"   . ptrv/ido-recentf-open)
          ("C-c f o"   . ptrv/open-with)
          ("C-c f d"   . ptrv/launch-directory)
          ("C-c f R"   . ptrv/rename-current-buffer-file)
@@ -2323,6 +2454,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
 (use-package browse-kill-ring
+  :disabled t
   :ensure t
   :bind ("M-C-y" . browse-kill-ring)
   :config
