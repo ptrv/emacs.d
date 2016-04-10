@@ -511,7 +511,8 @@ Something like: `python -m certifi'."
 ;;;; * beacon
 (use-package beacon
   :ensure t
-  :init (add-hook 'after-init-hook #'beacon-mode))
+  :init (add-hook 'after-init-hook #'beacon-mode)
+  :diminish beacon-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * helm
