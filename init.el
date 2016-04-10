@@ -475,37 +475,18 @@ Something like: `python -m certifi'."
   :defer t
   :init (load-theme 'zenburn :no-confirm))
 
-(defvar todo-comment-face 'todo-comment-face)
+
 (defvar headline-face 'headline-face)
-
-;; Fontifying todo items outside of org-mode
-(defface todo-comment-face
-  '((t (:foreground "#cd0000"
-        :weight bold
-        :bold t)))
-  "Face for TODO in code buffers."
-  :group 'org-faces)
-(defface headline-face
-  '((t (:inherit font-lock-comment-face
-        :weight bold
-        :bold t
-        :underline t)))
-  "Face for headlines."
-  :group 'org-faces)
-
-(defun fontify-todo ()
-  "Fontify todos."
-  (font-lock-add-keywords
-   nil `(("\\<\\(FIX\\(ME\\)?\\|TODO\\)"
-          1 todo-comment-face t))))
-
-(add-hook 'prog-mode-hook 'fontify-todo)
-
 (defun fontify-headline ()
   "Fontify certain headlines."
   (font-lock-add-keywords
    nil '(("^;;;; [* ]*\\(.*\\)\\>"
           (1 headline-face t)))))
+
+(use-package hl-todo
+  :ensure t
+  :defer t
+  :init (global-hl-todo-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * beacon
