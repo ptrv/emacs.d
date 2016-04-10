@@ -1320,6 +1320,12 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package anzu
   :ensure t
   :defer t
+  :bind
+  (([remap query-replace] . anzu-query-replace)
+   ([remap query-replace-regexp] . anzu-query-replace-regexp)
+   :map isearch-mode-map
+   ([remap isearch-query-replace] . anzu-isearch-query-replace)
+   ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp))
   :init (global-anzu-mode)
   :diminish anzu-mode)
 
