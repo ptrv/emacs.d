@@ -597,6 +597,10 @@ Something like: `python -m certifi'."
   :config
   (setq helm-swoop-speed-or-color t))
 
+(use-package helm-gitignore
+  :ensure t
+  :bind ("C-c v I" . helm-gitignore))
+
 (use-package neotree
   :ensure t
   :bind (("C-c f t" . neotree-toggle))
