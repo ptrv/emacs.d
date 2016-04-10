@@ -560,12 +560,10 @@ Something like: `python -m certifi'."
 
 (use-package helm-ag
   :ensure t
-  ;; :bind (("C-c a a" . helm-do-ag)
-  ;;        ("C-c a A" . helm-ag))
+  :bind (("C-c a a" . helm-do-ag)
+         ("C-c a A" . helm-ag))
   :config (setq helm-ag-fuzzy-match t
-                helm-ag-insert-at-point 'symbol
-                helm-ag-source-type 'file-line))
-
+                helm-ag-insert-at-point 'symbol))
 
 (use-package helm-projectile
   :ensure t
@@ -1275,6 +1273,7 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;; the silver searcher
 (use-package ag
+  :disabled t
   :ensure t
   :defer t
   :init
