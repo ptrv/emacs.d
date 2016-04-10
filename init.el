@@ -981,26 +981,27 @@ This checks in turn:
   :disabled t
   :ensure t
   :defer t
-  :init (with-eval-after-load 'ibuffer
-          (defun ptrv/ibuffer-group-buffers ()
-            (setq ibuffer-filter-groups
-                  (append
-                   '(("IRC" (mode . erc-mode))
-                     ("Help" (or (name . "\\*Help\\*")
-                                 (name . "\\*Apropos\\*")
-                                 (name . "\\*info\\*")))
-                     ("Emacs" (or (name . "^\\*scratch\\*$")
-                                  (name . "^\\*Messages\\*$")
-                                  (name . "^\\*Completions\\*$")
-                                  (name . "^\\*Backtrace\\*$")
-                                  (mode . inferior-emacs-lisp-mode)))
-                     ("root" (filename . "^/sudo:root.*"))
-                     ("Org" (mode . org-mode)))
-                   (ibuffer-projectile-generate-filter-groups)))
-            (unless (eq ibuffer-sorting-mode 'filename/process)
-              (ibuffer-do-sort-by-filename/process)))
-          (add-hook 'ibuffer-hook
-                    #'ptrv/ibuffer-group-buffers)))
+  :after ibuffer
+  :init
+  (defun ptrv/ibuffer-group-buffers ()
+    (setq ibuffer-filter-groups
+          (append
+           '(("IRC" (mode . erc-mode))
+             ("Help" (or (name . "\\*Help\\*")
+                         (name . "\\*Apropos\\*")
+                         (name . "\\*info\\*")))
+             ("Emacs" (or (name . "^\\*scratch\\*$")
+                          (name . "^\\*Messages\\*$")
+                          (name . "^\\*Completions\\*$")
+                          (name . "^\\*Backtrace\\*$")
+                          (mode . inferior-emacs-lisp-mode)))
+             ("root" (filename . "^/sudo:root.*"))
+             ("Org" (mode . org-mode)))
+           (ibuffer-projectile-generate-filter-groups)))
+    (unless (eq ibuffer-sorting-mode 'filename/process)
+      (ibuffer-do-sort-by-filename/process)))
+  (add-hook 'ibuffer-hook
+            #'ptrv/ibuffer-group-buffers))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gist
@@ -2220,12 +2221,12 @@ With a prefix argument P, isearch for the symbol at point."
   (use-package company-anaconda
     :disabled t
     :ensure t
+    :after company
     :init
-    (with-eval-after-load 'company
-      (defun ptrv/company-anaconda--init ()
-        (setq-local company-backends
-                    '((company-anaconda :with company-yasnippet))))
-      (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
+    (defun ptrv/company-anaconda--init ()
+      (setq-local company-backends
+                  '((company-anaconda :with company-yasnippet))))
+    (add-hook 'python-mode-hook 'ptrv/company-anaconda--init))
 
   (use-package highlight-indentation
     :ensure t
@@ -2370,14 +2371,6 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package lua-mode
   :ensure t
   :defer t
-  :init
-  (with-eval-after-load 'company
-    (defun ptrv/lua-mode-company-init ()
-      (setq-local company-backends '((company-lua
-                                      company-etags
-                                      company-dabbrev-code
-                                      company-yasnippet))))
-    (add-hook 'lua-mode-hook #'ptrv/lua-mode-company-init))
   :config
   (defun ptrv/lua-send-region-or-current-line ()
     "Send current region or line to lua process."
@@ -2388,11 +2381,17 @@ With a prefix argument P, isearch for the symbol at point."
   (bind-keys :map lua-mode-map
              ("C-c C-d" . lua-send-proc)
              ("C-c C-c" . ptrv/lua-send-region-or-current-line)
-             ("C-c C-p" . lua-start-process)))
-
-(use-package company-lua
-  :load-path "site-lisp/company-lua"
-  :defer t)
+             ("C-c C-p" . lua-start-process))
+  (use-package company-lua
+    :load-path "site-lisp/company-lua"
+    :after company
+    :init
+    (defun ptrv/lua-mode-company-init ()
+      (setq-local company-backends '((company-lua
+                                      company-etags
+                                      company-dabbrev-code
+                                      company-yasnippet))))
+    (add-hook 'lua-mode-hook #'ptrv/lua-mode-company-init)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
