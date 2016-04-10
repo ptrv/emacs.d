@@ -2350,9 +2350,9 @@ With a prefix argument P, isearch for the symbol at point."
     :after flycheck
     :init (flycheck-ycmd-setup))
 
-  (defun ptrv/company-ycmd-complete ()
-    (interactive)
-    (let ((ycmd-force-semantic-completion t))
+  (defun ptrv/company-ycmd-complete (arg)
+    (interactive "P")
+    (let ((ycmd-force-semantic-completion (not arg)))
       (company-complete)))
   (bind-key [remap complete-symbol]
             #'ptrv/company-ycmd-complete ycmd-mode-map))
