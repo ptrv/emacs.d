@@ -2497,7 +2497,7 @@ With a prefix argument P, isearch for the symbol at point."
             #'ptrv/do-not-kill-important-buffers))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; *align
+;;;; * align
 (use-package align
   :bind (("C-c A a" . align)
          ("C-c A c" . align-current)
