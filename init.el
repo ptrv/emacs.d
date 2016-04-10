@@ -2353,9 +2353,10 @@ With a prefix argument P, isearch for the symbol at point."
   (use-package ycmd-eldoc
     :load-path "~/src/emacs-ycmd"
     :disabled t
+    :commands (ycmd-eldoc-setup)
+    :after eldoc
     :init
-    (ycmd-eldoc-setup)
-    (add-hook 'ycmd-mode-hook #'ptrv/ycmd-eldoc-setup-maybe))
+    (add-hook 'ycmd-mode-hook #'ycmd-eldoc-setup))
 
   (defun ptrv/company-ycmd-complete (arg)
     (interactive "P")
