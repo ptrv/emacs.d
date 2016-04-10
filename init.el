@@ -274,18 +274,16 @@ Something like: `python -m certifi'."
 (setq history-length 1000)
 (use-package savehist
   :config
-  (progn
-    (savehist-mode t)
-    (setq savehist-additional-variables '(search ring regexp-search-ring)
-         savehist-autosave-interval 60
-         savehist-save-minibuffer-history t)))
+  (savehist-mode t)
+  (setq savehist-additional-variables '(search ring regexp-search-ring)
+        savehist-autosave-interval 60
+        savehist-save-minibuffer-history t))
 
 ;; desktop.el
 (use-package desktop
   :config
-  (progn
-    (desktop-save-mode)
-    (setq desktop-save 'if-exists)))
+  (desktop-save-mode)
+  (setq desktop-save 'if-exists))
 
 (use-package whitespace
   :bind ("C-c T w" . whitespace-mode)
@@ -307,9 +305,8 @@ Something like: `python -m certifi'."
   :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
           '(prog-mode-hook text-mode-hook))
   :config
-  (progn
-    (setq whitespace-cleanup-mode-only-if-initially-clean t)
-    (add-to-list 'whitespace-cleanup-mode-ignore-modes 'go-mode)))
+  (setq whitespace-cleanup-mode-only-if-initially-clean t)
+  (add-to-list 'whitespace-cleanup-mode-ignore-modes 'go-mode))
 
 ;; disabled commands
 (setq disabled-command-function nil)
@@ -337,30 +334,28 @@ Something like: `python -m certifi'."
   :bind (("C-c c" . compile)
          ("C-c C" . recompile))
   :init
-  (progn
-    (defun ptrv/show-compilation ()
-      (interactive)
-      (let ((compile-buf
-             (catch 'found
-               (dolist (buf (buffer-list))
-                 (when (string-match "\\*compilation\\*" (buffer-name buf))
-                   (throw 'found buf))))))
-        (if compile-buf
-            (switch-to-buffer-other-window compile-buf)
-          (call-interactively 'compile))))
-    (bind-key "C-. c" #'ptrv/show-compilation))
+  (defun ptrv/show-compilation ()
+    (interactive)
+    (let ((compile-buf
+           (catch 'found
+             (dolist (buf (buffer-list))
+               (when (string-match "\\*compilation\\*" (buffer-name buf))
+                 (throw 'found buf))))))
+      (if compile-buf
+          (switch-to-buffer-other-window compile-buf)
+        (call-interactively 'compile))))
+  (bind-key "C-. c" #'ptrv/show-compilation)
   :config
-  (progn
-    (require 'ansi-color)
-    (defun ptrv/colorize-compilation-buffer ()
-      (when (eq major-mode 'compilation-mode)
-        (ansi-color-process-output nil)
-        (setq-local comint-last-output-start (point-marker))))
-    (add-hook 'compilation-filter-hook
-              #'ptrv/colorize-compilation-buffer)
-    ;; other settings
-    (setq compilation-scroll-output t
-          compilation-always-kill t)))
+  (require 'ansi-color)
+  (defun ptrv/colorize-compilation-buffer ()
+    (when (eq major-mode 'compilation-mode)
+      (ansi-color-process-output nil)
+      (setq-local comint-last-output-start (point-marker))))
+  (add-hook 'compilation-filter-hook
+            #'ptrv/colorize-compilation-buffer)
+  ;; other settings
+  (setq compilation-scroll-output t
+        compilation-always-kill t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * email
@@ -432,14 +427,13 @@ Something like: `python -m certifi'."
 (use-package flyspell
   :defer t
   :config
-  (progn
-    (setq flyspell-use-meta-tab nil
-          flyspell-issue-welcome-flag nil
-          flyspell-issue-message-flag nil)
-    (bind-keys :map flyspell-mode-map
-               ("\M-\t" . nil)
-               ("C-:"   . flyspell-auto-correct-word)
-               ("C-."   . ispell-word))))
+  (setq flyspell-use-meta-tab nil
+        flyspell-issue-welcome-flag nil
+        flyspell-issue-message-flag nil)
+  (bind-keys :map flyspell-mode-map
+             ("\M-\t" . nil)
+             ("C-:"   . flyspell-auto-correct-word)
+             ("C-."   . ispell-word)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hippie-expand
@@ -500,9 +494,10 @@ Something like: `python -m certifi'."
 (use-package helm                       ; Powerful minibuffer input framework
   :ensure t
   :bind (("C-. ." . helm-resume))
-  :init (progn (helm-mode 1)
-               (with-eval-after-load 'helm-config
-                 (warn "`helm-config' loaded! Get rid of it ASAP!")))
+  :init
+  (helm-mode 1)
+  (with-eval-after-load 'helm-config
+    (warn "`helm-config' loaded! Get rid of it ASAP!"))
   :config (setq helm-split-window-in-side-p t)
   :diminish helm-mode)
 
@@ -527,20 +522,19 @@ Something like: `python -m certifi'."
          ("C-c f s"         . helm-for-files)
          ("C-c f r"         . helm-recentf))
   :config
-  (progn
-    (setq helm-recentf-fuzzy-match t
-          ;; Use recentf to find recent files
-          helm-ff-file-name-history-use-recentf t
-          ;; Find library from `require', `declare-function' and friends
-          helm-ff-search-library-in-sexp t
-          helm-ff-fuzzy-matching t)
+  (setq helm-recentf-fuzzy-match t
+        ;; Use recentf to find recent files
+        helm-ff-file-name-history-use-recentf t
+        ;; Find library from `require', `declare-function' and friends
+        helm-ff-search-library-in-sexp t
+        helm-ff-fuzzy-matching t)
 
-    (when (eq system-type 'darwin)
-      ;; Replace locate with spotlight for `helm-for-files'
-      (setq helm-for-files-preferred-list
-            (append (delq 'helm-source-locate
-                          helm-for-files-preferred-list)
-                    '(helm-source-mac-spotlight))))))
+  (when (eq system-type 'darwin)
+    ;; Replace locate with spotlight for `helm-for-files'
+    (setq helm-for-files-preferred-list
+          (append (delq 'helm-source-locate
+                        helm-for-files-preferred-list)
+                  '(helm-source-mac-spotlight)))))
 
 (use-package helm-imenu
   :ensure helm
@@ -579,14 +573,14 @@ Something like: `python -m certifi'."
   :after projectile
   :init (helm-projectile-on)
   :config
-  (progn (setq projectile-switch-project-action #'helm-projectile)
+  (setq projectile-switch-project-action #'helm-projectile)
 
-         (bind-key "C-t" #'ptrv/neotree-project-root
-                   helm-projectile-projects-map)
+  (bind-key "C-t" #'ptrv/neotree-project-root
+            helm-projectile-projects-map)
 
-         (helm-add-action-to-source "Open NeoTree `C-t'"
-                                    #'ptrv/neotree-project-root
-                                    helm-source-projectile-projects 1)))
+  (helm-add-action-to-source "Open NeoTree `C-t'"
+                             #'ptrv/neotree-project-root
+                             helm-source-projectile-projects 1))
 
 (use-package helm-info
   :ensure helm
@@ -627,9 +621,9 @@ Something like: `python -m certifi'."
 ;;;; * ido
 (use-package ido
   :disabled t
-  :init (progn
-          (ido-mode 1)
-          (ido-everywhere 1))
+  :init
+  (ido-mode 1)
+  (ido-everywhere 1)
   :bind (("C-x M-f" . ido-find-file-other-window))
   :config
   (setq ido-enable-prefix nil
@@ -645,20 +639,19 @@ Something like: `python -m certifi'."
   :disabled t
   :ensure t
   :config
-  (progn
-    (ido-ubiquitous-mode)
-    (dolist (cmd '(sh-set-shell
-                   ispell-change-dictionary
-                   add-dir-local-variable
-                   ahg-do-command
-                   sclang-dump-interface
-                   sclang-dump-full-interface
-                   kill-ring-search
-                   tmm-menubar
-                   erc-iswitchb
-                   iswitchb-buffer))
-      (add-to-list 'ido-ubiquitous-command-overrides
-                   `(disable exact ,(symbol-name cmd))))))
+  (ido-ubiquitous-mode)
+  (dolist (cmd '(sh-set-shell
+                 ispell-change-dictionary
+                 add-dir-local-variable
+                 ahg-do-command
+                 sclang-dump-interface
+                 sclang-dump-full-interface
+                 kill-ring-search
+                 tmm-menubar
+                 erc-iswitchb
+                 iswitchb-buffer))
+    (add-to-list 'ido-ubiquitous-command-overrides
+                 `(disable exact ,(symbol-name cmd)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smex
@@ -691,25 +684,24 @@ Something like: `python -m certifi'."
       (eshell)
       (delete-other-windows)))
   :config
-  (progn
-    (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
+  (setq eshell-directory-name (locate-user-emacs-file "eshell/"))
 
-    (bind-key "C-x M" (lambda () (interactive) (eshell t)))
+  (bind-key "C-x M" (lambda () (interactive) (eshell t)))
 
-    (defun eshell/clear ()
-      "04Dec2001 - sailor, to clear the eshell buffer."
-      (interactive)
-      (let ((inhibit-read-only t))
-        (erase-buffer)))
+  (defun eshell/clear ()
+    "04Dec2001 - sailor, to clear the eshell buffer."
+    (interactive)
+    (let ((inhibit-read-only t))
+      (erase-buffer)))
 
-    (defun eshell/e (file)
-      (find-file file))
+  (defun eshell/e (file)
+    (find-file file))
 
-    (use-package pcmpl-lein
-      :load-path "site-lisp")
+  (use-package pcmpl-lein
+    :load-path "site-lisp")
 
-    (use-package pcmpl-git
-      :ensure t)))
+  (use-package pcmpl-git
+    :ensure t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
@@ -717,16 +709,15 @@ Something like: `python -m certifi'."
   :ensure t
   :init (add-hook 'after-init-hook #'global-company-mode)
   :config
-  (progn
-    (setq company-idle-delay 0.5
-          company-tooltip-limit 10
-          company-minimum-prefix-length 2
-          company-show-numbers t
-          company-global-modes '(not magit-status-mode)
-          ;; company-transformers '(company-sort-by-occurrence))
-          )
-    (bind-key [remap completion-at-point] #'company-complete company-mode-map)
-    (bind-key [remap complete-symbol] #'company-complete company-mode-map)))
+  (setq company-idle-delay 0.5
+        company-tooltip-limit 10
+        company-minimum-prefix-length 2
+        company-show-numbers t
+        company-global-modes '(not magit-status-mode)
+        ;; company-transformers '(company-sort-by-occurrence))
+        )
+  (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+  (bind-key [remap complete-symbol] #'company-complete company-mode-map))
 
 ;; (use-package company-statistics
 ;;   :ensure t
@@ -749,34 +740,32 @@ Something like: `python -m certifi'."
 (use-package smartparens
   :ensure t
   :init
-  (progn
-    (require 'smartparens-config)
-    (smartparens-global-mode)
-    (show-smartparens-global-mode))
+  (require 'smartparens-config)
+  (smartparens-global-mode)
+  (show-smartparens-global-mode)
   :config
-  (progn
-    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
-    (dolist (it sp-paredit-bindings)
-      (bind-key (car it) (cdr it) smartparens-strict-mode-map))
+  (dolist (it sp-paredit-bindings)
+    (bind-key (car it) (cdr it) smartparens-strict-mode-map))
 
-    (bind-key "M-q" #'sp-indent-defun smartparens-strict-mode-map)
-    (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
-    (bind-key "M-?" #'sp-convolute-sexp smartparens-strict-mode-map)
+  (bind-key "M-q" #'sp-indent-defun smartparens-strict-mode-map)
+  (bind-key "C-j" #'sp-newline smartparens-strict-mode-map)
+  (bind-key "M-?" #'sp-convolute-sexp smartparens-strict-mode-map)
 
-    (sp-local-pair sp--lisp-modes "(" nil :bind "M-(")
+  (sp-local-pair sp--lisp-modes "(" nil :bind "M-(")
 
-    (dolist (mode sp--lisp-modes)
-      (unless (eq mode 'eshell-mode)
-        (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
-          (add-hook hook 'smartparens-strict-mode))))
+  (dolist (mode sp--lisp-modes)
+    (unless (eq mode 'eshell-mode)
+      (let ((hook (intern (format "%s-hook" (symbol-name mode)))))
+        (add-hook hook 'smartparens-strict-mode))))
 
-    (ptrv/hook-into-modes #'smartparens-strict-mode
-      '(eval-expression-minibuffer-setup-hook ielm-mode-hook))
+  (ptrv/hook-into-modes #'smartparens-strict-mode
+    '(eval-expression-minibuffer-setup-hook ielm-mode-hook))
 
-    (sp-local-pair '(c++-mode) "{" nil :post-handlers
-                   '(((lambda (&rest _ignored)
-                        (ptrv/smart-open-line-above)) "RET")))))
+  (sp-local-pair '(c++-mode) "{" nil :post-handlers
+                 '(((lambda (&rest _ignored)
+                      (ptrv/smart-open-line-above)) "RET"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
@@ -785,82 +774,80 @@ Something like: `python -m certifi'."
   :mode (("\\.el$" . emacs-lisp-mode)
          ("/Cask$" . emacs-lisp-mode))
   :config
-  (progn
-    (with-eval-after-load 'company
-      (defun ptrv/company-elisp--init ()
-        (setq-local company-backends '((company-capf :with company-dabbrev))))
-      (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
+  (with-eval-after-load 'company
+    (defun ptrv/company-elisp--init ()
+      (setq-local company-backends '((company-capf :with company-dabbrev))))
+    (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
 
-    (defun imenu-elisp-sections ()
-      "Add custom expression to imenu."
-      (setq imenu-prev-index-position-function nil)
-      (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
-    (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
+  (defun imenu-elisp-sections ()
+    "Add custom expression to imenu."
+    (setq imenu-prev-index-position-function nil)
+    (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
+  (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-    (defun ptrv/remove-elc-on-save ()
-      "If you’re saving an elisp file, likely the .elc is no longer valid."
-      (add-hook 'after-save-hook
-                (lambda ()
-                  (if (file-exists-p (concat buffer-file-name "c"))
-                      (delete-file (concat buffer-file-name "c"))))
-                nil :local))
+  (defun ptrv/remove-elc-on-save ()
+    "If you’re saving an elisp file, likely the .elc is no longer valid."
+    (add-hook 'after-save-hook
+              (lambda ()
+                (if (file-exists-p (concat buffer-file-name "c"))
+                    (delete-file (concat buffer-file-name "c"))))
+              nil :local))
 
-    (dolist (it '(ptrv/remove-elc-on-save fontify-headline))
-      (add-hook 'emacs-lisp-mode-hook it))
+  (dolist (it '(ptrv/remove-elc-on-save fontify-headline))
+    (add-hook 'emacs-lisp-mode-hook it))
 
-    (use-package ielm
-      :defer t
-      :init
-      (progn
-        (defun ptrv/switch-to-ielm ()
-          (interactive)
-          (pop-to-buffer (get-buffer-create "*ielm*"))
-          (ielm))
-        (bind-key "C-c z" 'ptrv/switch-to-ielm)))
-
-    (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
-    (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
-
-    (defun eval-and-replace ()
-      "Replace the preceding sexp with its value."
+  (use-package ielm
+    :defer t
+    :init
+    (defun ptrv/switch-to-ielm ()
       (interactive)
-      (backward-kill-sexp)
-      (condition-case nil
-          (prin1 (eval (read (current-kill 0)))
-                 (current-buffer))
-        (error (message "Invalid expression")
-               (insert (current-kill 0)))))
-    (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
+      (pop-to-buffer (get-buffer-create "*ielm*"))
+      (ielm))
+    (bind-key "C-c z" 'ptrv/switch-to-ielm))
 
-    (defun ptrv/lisp-describe-thing-at-point ()
-      "Show the documentation of the Elisp function and variable near point.
+  (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
+  (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
+
+  (defun eval-and-replace ()
+    "Replace the preceding sexp with its value."
+    (interactive)
+    (backward-kill-sexp)
+    (condition-case nil
+        (prin1 (eval (read (current-kill 0)))
+               (current-buffer))
+      (error (message "Invalid expression")
+             (insert (current-kill 0)))))
+  (bind-key "C-c C-e" 'eval-and-replace lisp-mode-shared-map)
+
+  (defun ptrv/lisp-describe-thing-at-point ()
+    "Show the documentation of the Elisp function and variable near point.
 
 This checks in turn:
 -- for a function name where point is
 -- for a variable name where point is
 -- for a surrounding function call"
-      (interactive)
-      ;; sigh, function-at-point is too clever.  we want only the first half.
-      (let ((sym (ignore-errors
-                   (with-syntax-table emacs-lisp-mode-syntax-table
-                     (save-excursion
-                       (or (not (zerop (skip-syntax-backward "_w")))
-                           (eq (char-syntax (char-after (point))) ?w)
-                           (eq (char-syntax (char-after (point))) ?_)
-                           (forward-sexp -1))
-                       (skip-chars-forward "`'")
-                       (let ((obj (read (current-buffer))))
-                         (and (symbolp obj) (fboundp obj) obj)))))))
-        (if sym (describe-function sym)
-          (describe-variable (variable-at-point)))))
-    (bind-key "M-RET" 'ptrv/lisp-describe-thing-at-point lisp-mode-shared-map)
+    (interactive)
+    ;; sigh, function-at-point is too clever.  we want only the first half.
+    (let ((sym (ignore-errors
+                 (with-syntax-table emacs-lisp-mode-syntax-table
+                   (save-excursion
+                     (or (not (zerop (skip-syntax-backward "_w")))
+                         (eq (char-syntax (char-after (point))) ?w)
+                         (eq (char-syntax (char-after (point))) ?_)
+                         (forward-sexp -1))
+                     (skip-chars-forward "`'")
+                     (let ((obj (read (current-buffer))))
+                       (and (symbolp obj) (fboundp obj) obj)))))))
+      (if sym (describe-function sym)
+        (describe-variable (variable-at-point)))))
+  (bind-key "M-RET" 'ptrv/lisp-describe-thing-at-point lisp-mode-shared-map)
 
-    (use-package lexbind-mode
-      :ensure t
-      :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
+  (use-package lexbind-mode
+    :ensure t
+    :init (add-hook 'emacs-lisp-mode-hook 'lexbind-mode))
 
-    (with-eval-after-load 'ptrv-simple
-      (bind-key "C-M-;" #'comment-or-uncomment-sexp emacs-lisp-mode-map))))
+  (with-eval-after-load 'ptrv-simple
+    (bind-key "C-M-;" #'comment-or-uncomment-sexp emacs-lisp-mode-map)))
 
 (use-package elisp-slime-nav
   :ensure t
@@ -910,38 +897,37 @@ This checks in turn:
   :ensure t
   :defer t
   :config
-  (progn
-    (setq nrepl-log-messages t
-          nrepl-hide-special-buffers t)
+  (setq nrepl-log-messages t
+        nrepl-hide-special-buffers t)
 
-    (with-eval-after-load 'ptrv-simple
-      (bind-key "C-M-;" #'comment-or-uncomment-sexp clojure-mode-map))
+  (with-eval-after-load 'ptrv-simple
+    (bind-key "C-M-;" #'comment-or-uncomment-sexp clojure-mode-map))
 
-    (defun ptrv/cider-doc ()
-      (interactive)
-      (cider-doc t))
+  (defun ptrv/cider-doc ()
+    (interactive)
+    (cider-doc t))
 
-    (bind-key "M-RET" #'ptrv/cider-doc cider-mode-map)
+  (bind-key "M-RET" #'ptrv/cider-doc cider-mode-map)
 
-    (unbind-key "C-<return>" cider-repl-mode-map)
-    (bind-keys :map cider-repl-mode-map
-               ("M-RET" . ptrv/cider-doc)
-               ("C-M-<return>" . cider-repl-closing-return))
+  (unbind-key "C-<return>" cider-repl-mode-map)
+  (bind-keys :map cider-repl-mode-map
+             ("M-RET" . ptrv/cider-doc)
+             ("C-M-<return>" . cider-repl-closing-return))
 
-    (setq cider-repl-use-clojure-font-lock t)
+  (setq cider-repl-use-clojure-font-lock t)
 
-    (add-hook 'cider-repl-mode-hook #'subword-mode)
+  (add-hook 'cider-repl-mode-hook #'subword-mode)
 
-    (with-eval-after-load 'smartparens
-      (sp-local-pair 'clojure-mode "(" nil :bind "M-("))
+  (with-eval-after-load 'smartparens
+    (sp-local-pair 'clojure-mode "(" nil :bind "M-("))
 
-    (use-package cider-eval-sexp-fu
-      :ensure t
-      :demand t)
+  (use-package cider-eval-sexp-fu
+    :ensure t
+    :demand t)
 
-    ;; (use-package clj-refactor
-    ;;   :ensure t)
-    ))
+  (use-package clj-refactor
+    :disabled t
+    :ensure t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tramp
@@ -972,9 +958,8 @@ This checks in turn:
   :bind ([remap list-buffers] . ibuffer)
   :init (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode)
   :config
-  (progn
-    (use-package ibuf-ext
-      :config (setq ibuffer-show-empty-filter-groups nil))))
+  (use-package ibuf-ext
+    :config (setq ibuffer-show-empty-filter-groups nil)))
 
 (use-package ibuffer-projectile
   :ensure t
@@ -1019,32 +1004,31 @@ This checks in turn:
          ("C-c v b" . magit-blame))
   :init (setq magit-push-current-set-remote-if-missing nil)
   :config
-  (progn
-    (setq magit-completing-read-function #'magit-ido-completing-read)
+  (setq magit-completing-read-function #'magit-ido-completing-read)
 
-    ;; hide stashes section in magit status
-    (add-hook 'magit-section-set-visibility-hook
-              (lambda (section)
-                (and (memq (magit-section-type section) '(stashes))
-                     'hide)))
+  ;; hide stashes section in magit status
+  (add-hook 'magit-section-set-visibility-hook
+            (lambda (section)
+              (and (memq (magit-section-type section) '(stashes))
+                   'hide)))
 
-    (defun ptrv/magit-set-repo-dirs-from-projectile ()
-      "Set `magit-repo-dirs' from known Projectile projects."
-      (let ((project-dirs (bound-and-true-p projectile-known-projects)))
-        ;; Remove trailing slashes from project directories, because Magit adds
-        ;; trailing slashes again, which breaks the presentation in the Magit
-        ;; prompt.
-        (require 'cl)
-        (setq magit-repository-directories
-              (remove-if (lambda (dir)
-                           (file-remote-p dir 'method))
-                         (mapcar #'directory-file-name project-dirs)))))
+  (defun ptrv/magit-set-repo-dirs-from-projectile ()
+    "Set `magit-repo-dirs' from known Projectile projects."
+    (let ((project-dirs (bound-and-true-p projectile-known-projects)))
+      ;; Remove trailing slashes from project directories, because Magit adds
+      ;; trailing slashes again, which breaks the presentation in the Magit
+      ;; prompt.
+      (require 'cl)
+      (setq magit-repository-directories
+            (remove-if (lambda (dir)
+                         (file-remote-p dir 'method))
+                       (mapcar #'directory-file-name project-dirs)))))
 
-    (with-eval-after-load 'projectile
-      (ptrv/magit-set-repo-dirs-from-projectile))
+  (with-eval-after-load 'projectile
+    (ptrv/magit-set-repo-dirs-from-projectile))
 
-    (add-hook 'projectile-switch-project-hook
-              #'ptrv/magit-set-repo-dirs-from-projectile)))
+  (add-hook 'projectile-switch-project-hook
+            #'ptrv/magit-set-repo-dirs-from-projectile))
 
 (use-package git-commit
   :ensure t
@@ -1131,9 +1115,12 @@ This checks in turn:
   :ensure t
   :defer t
   :init
-  (progn
-    (global-diff-hl-mode)
-    (add-hook 'dired-mode-hook 'diff-hl-dired-mode)))
+  (global-diff-hl-mode)
+  ;; Fall back to the display margin, if the fringe is unavailable
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
@@ -1157,17 +1144,16 @@ This checks in turn:
       go-mode-hook
       clojure-mode-hook))
   :config
-  (progn
-    (setq yas-prompt-functions '(yas-x-prompt
-                                 yas-ido-prompt
-                                 yas-completing-prompt))
+  (setq yas-prompt-functions '(yas-x-prompt
+                               yas-ido-prompt
+                               yas-completing-prompt))
 
-    (unless yas-global-mode (yas-reload-all))
+  (unless yas-global-mode (yas-reload-all))
 
-    (use-package dropdown-list
-      :ensure t
-      :init
-      (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt))))
+  (use-package dropdown-list
+    :ensure t
+    :init
+    (add-to-list 'yas-prompt-functions 'yas-dropdown-prompt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * undo-tree
@@ -1182,11 +1168,10 @@ This checks in turn:
   :ensure t
   :defer t
   :config
-  (progn
-    (pomodoro-add-to-mode-line)
-    (setq pomodoro-sound-player (ptrv/get-default-sound-command)
-          pomodoro-break-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)
-          pomodoro-work-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir))))
+  (pomodoro-add-to-mode-line)
+  (setq pomodoro-sound-player (ptrv/get-default-sound-command)
+        pomodoro-break-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)
+        pomodoro-work-start-sound (expand-file-name "sounds/alarm.wav" ptrv/etc-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sql-mode
@@ -1279,8 +1264,9 @@ With a prefix argument P, isearch for the symbol at point."
    ("C-c s p" . highlight-symbol-prev-in-defun))
   ;; Navigate occurrences of the symbol under point with M-n and M-p, and
   ;; highlight symbol occurrences
-  :init (progn (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode)
-               (add-hook 'prog-mode-hook #'highlight-symbol-mode))
+  :init
+  (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode)
+  (add-hook 'prog-mode-hook #'highlight-symbol-mode)
   :config
   (setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
         highlight-symbol-on-navigation-p t) ; Highlight immediately after
@@ -1333,10 +1319,9 @@ With a prefix argument P, isearch for the symbol at point."
   :if window-system
   :defer t
   :init
-  (progn
-    (edit-server-start)
-    (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-    (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer))
+  (edit-server-start)
+  (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
+  (add-hook 'edit-server-done-hook 'edit-server-maybe-htmlize-buffer)
   :config
   (setq edit-server-url-major-mode-alist '(("github\\.com" . gfm-mode))
         edit-server-new-frame nil))
@@ -1364,70 +1349,68 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package popwin
   :ensure t
   :config
-  (progn
-    (popwin-mode)
-    (bind-key "C-z" popwin:keymap)
+  (popwin-mode)
+  (bind-key "C-z" popwin:keymap)
 
-    (defun ptrv/get-popwin-height (&optional size)
-      (let* ((default-values (cond ((>= (display-pixel-height) 1000) '(30 20 15))
-                                   ((and (< (display-pixel-height) 1000)
-                                         (>= (display-pixel-height) 900)) '(25 20 15))
-                                   ((< (display-pixel-height) 900) '(20 15 10)))))
-        (cond ((eq size 'small) (nth 2 default-values))
-              ((eq size 'medium) (nth 1 default-values))
-              ((eq size 'big) (car default-values))
-              (:else (car default-values)))))
+  (defun ptrv/get-popwin-height (&optional size)
+    (let* ((default-values (cond ((>= (display-pixel-height) 1000) '(30 20 15))
+                                 ((and (< (display-pixel-height) 1000)
+                                       (>= (display-pixel-height) 900)) '(25 20 15))
+                                 ((< (display-pixel-height) 900) '(20 15 10)))))
+      (cond ((eq size 'small) (nth 2 default-values))
+            ((eq size 'medium) (nth 1 default-values))
+            ((eq size 'big) (car default-values))
+            (:else (car default-values)))))
 
-    (setq popwin:special-display-config
-          `((help-mode :height ,(ptrv/get-popwin-height) :stick t)
-            ("*Completions*" :noselect t)
-            ("*compilation*" :noselect t :height ,(ptrv/get-popwin-height))
-            ("*Messages*")
-            ("*Occur*" :noselect t)
-            ("\\*Slime Description.*" :noselect t :regexp t :height ,(ptrv/get-popwin-height))
-            ("*magit-commit*" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
-            ("COMMIT_EDITMSG" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
-            ("*magit-diff*" :noselect t :height ,(ptrv/get-popwin-height) :width 80)
-            ("*magit-edit-log*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
-            ("*magit-process*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
-            ("\\*Slime Inspector.*" :regexp t :height ,(ptrv/get-popwin-height))
-            ("*Ido Completions*" :noselect t :height ,(ptrv/get-popwin-height))
-            ;;("*eshell*" :height 20)
-            ("\\*ansi-term\\*.*" :regexp t :height ,(ptrv/get-popwin-height))
-            ("*shell*" :height ,(ptrv/get-popwin-height))
-            (".*overtone.log" :regexp t :height ,(ptrv/get-popwin-height))
-            ("*gists*" :height ,(ptrv/get-popwin-height))
-            ("*sldb.*":regexp t :height ,(ptrv/get-popwin-height))
-            ("*Gofmt Errors*" :noselect t)
-            ("\\*godoc" :regexp t :height ,(ptrv/get-popwin-height))
-            ("*Shell Command Output*" :noselect t)
-            ("*cider-doc*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
-            ("\\*cider-repl " :regexp t :height ,(ptrv/get-popwin-height 'medium) :stick t)
-            ("*Kill Ring*" :height ,(ptrv/get-popwin-height))
-            ("*project-status*" :noselect t)
-            ("*pytest*" :noselect t)
-            ("*Python*" :stick t)
-            ("*Python Doc*" :noselect t)
-            ("*jedi:doc*" :noselect t)
-            ("*Registers*" :noselect t)
-            ("*ielm*" :stick t)
-            ("*Flycheck errors*" :stick t :noselect t)
-            ("*processing-compilation*" :noselect t)
-            ("*anaconda-doc*" :noselect t)
-            ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))
-            ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))
-            ("*cscope*" :height ,(ptrv/get-popwin-height 'medium))
-            ("*xref*" :height ,(ptrv/get-popwin-height 'medium))))))
+  (setq popwin:special-display-config
+        `((help-mode :height ,(ptrv/get-popwin-height) :stick t)
+          ("*Completions*" :noselect t)
+          ("*compilation*" :noselect t :height ,(ptrv/get-popwin-height))
+          ("*Messages*")
+          ("*Occur*" :noselect t)
+          ("\\*Slime Description.*" :noselect t :regexp t :height ,(ptrv/get-popwin-height))
+          ("*magit-commit*" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
+          ("COMMIT_EDITMSG" :noselect t :height ,(ptrv/get-popwin-height) :width 80 :stick t)
+          ("*magit-diff*" :noselect t :height ,(ptrv/get-popwin-height) :width 80)
+          ("*magit-edit-log*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
+          ("*magit-process*" :noselect t :height ,(ptrv/get-popwin-height 'small) :width 80)
+          ("\\*Slime Inspector.*" :regexp t :height ,(ptrv/get-popwin-height))
+          ("*Ido Completions*" :noselect t :height ,(ptrv/get-popwin-height))
+          ;;("*eshell*" :height 20)
+          ("\\*ansi-term\\*.*" :regexp t :height ,(ptrv/get-popwin-height))
+          ("*shell*" :height ,(ptrv/get-popwin-height))
+          (".*overtone.log" :regexp t :height ,(ptrv/get-popwin-height))
+          ("*gists*" :height ,(ptrv/get-popwin-height))
+          ("*sldb.*":regexp t :height ,(ptrv/get-popwin-height))
+          ("*Gofmt Errors*" :noselect t)
+          ("\\*godoc" :regexp t :height ,(ptrv/get-popwin-height))
+          ("*Shell Command Output*" :noselect t)
+          ("*cider-doc*" :height ,(ptrv/get-popwin-height 'medium) :stick t)
+          ("\\*cider-repl " :regexp t :height ,(ptrv/get-popwin-height 'medium) :stick t)
+          ("*Kill Ring*" :height ,(ptrv/get-popwin-height))
+          ("*project-status*" :noselect t)
+          ("*pytest*" :noselect t)
+          ("*Python*" :stick t)
+          ("*Python Doc*" :noselect t)
+          ("*jedi:doc*" :noselect t)
+          ("*Registers*" :noselect t)
+          ("*ielm*" :stick t)
+          ("*Flycheck errors*" :stick t :noselect t)
+          ("*processing-compilation*" :noselect t)
+          ("*anaconda-doc*" :noselect t)
+          ("*company-documentation*" :noselect t :height ,(ptrv/get-popwin-height 'small))
+          ("*wclock*" :noselect t :height ,(ptrv/get-popwin-height 'small))
+          ("*cscope*" :height ,(ptrv/get-popwin-height 'medium))
+          ("*xref*" :height ,(ptrv/get-popwin-height 'medium)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * buffer
 (use-package autorevert
   :config
-  (progn
-    (global-auto-revert-mode)
-    ;; Also auto refresh dired, but be quiet about it
-    (setq global-auto-revert-non-file-buffers t
-          auto-revert-verbose nil)))
+  (global-auto-revert-mode)
+  ;; Also auto refresh dired, but be quiet about it
+  (setq global-auto-revert-non-file-buffers t
+        auto-revert-verbose nil))
 
 (setq tab-stop-list '(2 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64
                         68 72 76 80 84 88 92 96 100 104 108 112 116 120))
@@ -1449,32 +1432,31 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c O c" . org-capture)
          ("C-c O o" . org-store-link))
   :config
-  (progn
-    (setq org-outline-path-complete-in-steps nil
-          org-completion-use-iswitchb nil
-          org-completion-use-ido t
-          org-log-done t
-          org-src-fontify-natively nil
-          ;; Set agenda files in custom.el or use default
-          ;; org-directory "~/Dropbox/org"
-          org-default-notes-file (expand-file-name "captures.org" org-directory)
-          ;; org-agenda-files `(,(expand-file-name "ptrv.org" org-directory))
-          org-link-mailto-program '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s")
-          )
+  (setq org-outline-path-complete-in-steps nil
+        org-completion-use-iswitchb nil
+        org-completion-use-ido t
+        org-log-done t
+        org-src-fontify-natively nil
+        ;; Set agenda files in custom.el or use default
+        ;; org-directory "~/Dropbox/org"
+        org-default-notes-file (expand-file-name "captures.org" org-directory)
+        ;; org-agenda-files `(,(expand-file-name "ptrv.org" org-directory))
+        org-link-mailto-program
+        '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
 
-    (with-eval-after-load 'yasnippet
-      (defun yas-org-very-safe-expand ()
-        (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
+  (with-eval-after-load 'yasnippet
+    (defun yas-org-very-safe-expand ()
+      (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
 
-      (defun org-mode-yasnippet-workaround ()
-        (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
-      (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround)
+    (defun org-mode-yasnippet-workaround ()
+      (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
+    (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround)
 
-      (defun org-mode-init ()
-        (turn-off-flyspell))
-      (add-hook 'org-mode-hook 'org-mode-init)
+    (defun org-mode-init ()
+      (turn-off-flyspell))
+    (add-hook 'org-mode-hook 'org-mode-init)
 
-      (bind-key "C-c g" 'org-sparse-tree org-mode-map))))
+    (bind-key "C-c g" 'org-sparse-tree org-mode-map)))
 
 (use-package org-clock
   :ensure org
@@ -1525,24 +1507,23 @@ With a prefix argument P, isearch for the symbol at point."
   :ensure org
   :defer t
   :config
-  (progn
-    (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
-    ;; Make babel results blocks lowercase
-    (setq org-babel-results-keyword "results")
-    (defun bh/display-inline-images ()
-      (condition-case nil
-          (org-display-inline-images)
-        (error nil)))
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((sh . t)
-       (python . t)
-       (C . t)
-       (octave . t)
-       (emacs-lisp . t)
-       (latex . t)
-       (dot . t)
-       (gnuplot . t)))))
+  (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+  ;; Make babel results blocks lowercase
+  (setq org-babel-results-keyword "results")
+  (defun bh/display-inline-images ()
+    (condition-case nil
+        (org-display-inline-images)
+      (error nil)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sh . t)
+     (python . t)
+     (C . t)
+     (octave . t)
+     (emacs-lisp . t)
+     (latex . t)
+     (dot . t)
+     (gnuplot . t))))
 
 (use-package ox
   :ensure org
@@ -1570,56 +1551,54 @@ With a prefix argument P, isearch for the symbol at point."
   :ensure auctex
   :defer t
   :config
-  (progn
-    (setq TeX-auto-save t
-          TeX-parse-self t
-          TeX-source-correlate-method 'synctex
-          TeX-source-correlate-mode t)
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        TeX-source-correlate-method 'synctex
+        TeX-source-correlate-mode t)
 
-    (setq-default TeX-master nil
-                  TeX-PDF-mode t
-                  TeX-command-default "latexmk")
+  (setq-default TeX-master nil
+                TeX-PDF-mode t
+                TeX-command-default "latexmk")
 
-    (dolist (cmd '(("latexmk" "latexmk %s" TeX-run-TeX nil
-                    (latex-mode doctex-mode) :help "Run latexmk")
-                   ("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
-                    (latex-mode doctex-mode) :help "Run latexmk -c")
-                   ("latexmk cleanall" "latexmk -C %s" TeX-run-TeX nil
-                    (latex-mode doctex-mode) :help "Run latexmk -C")))
-      (add-to-list 'TeX-command-list cmd t))
+  (dolist (cmd '(("latexmk" "latexmk %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk")
+                 ("latexmk clean" "latexmk -c %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk -c")
+                 ("latexmk cleanall" "latexmk -C %s" TeX-run-TeX nil
+                  (latex-mode doctex-mode) :help "Run latexmk -C")))
+    (add-to-list 'TeX-command-list cmd t))
 
-    ;; Replace the rotten Lacheck with Chktex
-    (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
+  ;; Replace the rotten Lacheck with Chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v5 %s")
 
-    (cond (*is-linux*
-           (add-to-list 'TeX-expand-list '("%C" (lambda () (buffer-file-name))) t)
-           (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
-           (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
-          (*is-mac*
-           (setq TeX-view-program-selection '((output-pdf "Skim")))
-           (setq TeX-view-program-list
-                 '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))))))
+  (cond (*is-linux*
+         (add-to-list 'TeX-expand-list '("%C" (lambda () (buffer-file-name))) t)
+         (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%C")))
+         (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
+        (*is-mac*
+         (setq TeX-view-program-selection '((output-pdf "Skim")))
+         (setq TeX-view-program-list
+               '(("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b"))))))
 
 (use-package latex
   :ensure auctex
   :defer t
   :config
-  (progn
-    (dolist (it '(LaTeX-math-mode reftex-mode auto-fill-mode))
-      (add-hook 'LaTeX-mode-hook it))
+  (dolist (it '(LaTeX-math-mode reftex-mode auto-fill-mode))
+    (add-hook 'LaTeX-mode-hook it))
 
-    (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
+  (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "latexmk")))
 
-    ;; clean intermediate files from latexmk
-    (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
-      (add-to-list 'LaTeX-clean-intermediate-suffixes suffix))
+  ;; clean intermediate files from latexmk
+  (dolist (suffix '("\\.fdb_latexmk" "\\.fls"))
+    (add-to-list 'LaTeX-clean-intermediate-suffixes suffix))
 
-    (info-lookup-add-help
-     :mode 'latex-mode
-     :regexp ".*"
-     :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
-     :doc-spec '(("(latex2e)Concept Index" )
-                 ("(latex2e)Command Index")))))
+  (info-lookup-add-help
+   :mode 'latex-mode
+   :regexp ".*"
+   :parse-rule "\\\\?[a-zA-Z]+\\|\\\\[^a-zA-Z]"
+   :doc-spec '(("(latex2e)Concept Index" )
+               ("(latex2e)Command Index"))))
 
 (use-package reftex
   :ensure auctex
@@ -1705,13 +1684,12 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :init (setq-default abbrev-mode t)
   :config
-  (progn
-    (define-abbrev-table 'global-abbrev-table
-      '(
-        ;; typo corrections
-        ("teh" "the")
-        ))
-    (setq save-abbrevs nil))
+  (define-abbrev-table 'global-abbrev-table
+    '(
+      ;; typo corrections
+      ("teh" "the")
+      ))
+  (setq save-abbrevs nil)
   :diminish abbrev-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1735,9 +1713,8 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :mode ("\\.text$" . markdown-mode)
   :init
-  (progn
-    (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-    (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)))
+  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+  (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; jira
@@ -1751,49 +1728,48 @@ With a prefix argument P, isearch for the symbol at point."
   :ensure t
   :defer t
   :config
-  (progn
-    (bind-keys :map go-mode-map
-               ("M-."       . godef-jump)
-               ;; ("C-c C-i"   . go-goto-imports)
-               ("C-c C-r"   . go-remove-unused-imports)
-               ("C-c C-p"   . ptrv/go-create-package)
-               ;; ("C-c C-c c" . ptrv/go-run)
-               ;; ("C-c C-c r" . ptrv/go-run-buffer)
-               ;; ("C-c C-c b" . ptrv/go-build)
-               ;; ("C-c C-c t" . ptrv/go-test)
-               )
+  (bind-keys :map go-mode-map
+             ("M-."       . godef-jump)
+             ;; ("C-c C-i"   . go-goto-imports)
+             ("C-c C-r"   . go-remove-unused-imports)
+             ("C-c C-p"   . ptrv/go-create-package)
+             ;; ("C-c C-c c" . ptrv/go-run)
+             ;; ("C-c C-c r" . ptrv/go-run-buffer)
+             ;; ("C-c C-c b" . ptrv/go-build)
+             ;; ("C-c C-c t" . ptrv/go-test)
+             )
 
-    (use-package ptrv-go
-      :load-path "site-lisp")
+  (use-package ptrv-go
+    :load-path "site-lisp")
 
-    (defun ptrv/go-mode-init ()
-      (add-hook 'before-save-hook 'gofmt-before-save nil :local)
+  (defun ptrv/go-mode-init ()
+    (add-hook 'before-save-hook 'gofmt-before-save nil :local)
 
-      ;; Customize compile command to run go build
-      (if (not (and (stringp compile-command)
-                    (string-match "go" compile-command)))
-          (set (make-local-variable 'compile-command)
-               "go build -v && go test -v && go vet && golint")))
-    (add-hook 'go-mode-hook 'ptrv/go-mode-init)
+    ;; Customize compile command to run go build
+    (if (not (and (stringp compile-command)
+                  (string-match "go" compile-command)))
+        (set (make-local-variable 'compile-command)
+             "go build -v && go test -v && go vet && golint")))
+  (add-hook 'go-mode-hook 'ptrv/go-mode-init)
 
-    (use-package company-go
-      :disabled t
-      :ensure t
-      :init (add-hook 'go-mode-hook
-                      (lambda ()
-                        (setq-local company-backends
-                                    '((company-go :with company-yasnippet)))))
-      :config (setq company-go-show-annotation nil))
+  (use-package company-go
+    :disabled t
+    :ensure t
+    :init (add-hook 'go-mode-hook
+                    (lambda ()
+                      (setq-local company-backends
+                                  '((company-go :with company-yasnippet)))))
+    :config (setq company-go-show-annotation nil))
 
-    (use-package go-eldoc
-      :ensure t
-      :init (add-hook 'go-mode-hook #'go-eldoc-setup))
+  (use-package go-eldoc
+    :ensure t
+    :init (add-hook 'go-mode-hook #'go-eldoc-setup))
 
-    (with-eval-after-load 'flycheck
-      (defvar flycheck-check-syntax-automatically)
-      (defun ptrv/go-mode-flycheck--init ()
-        (setq-local flycheck-check-syntax-automatically '(save)))
-      (add-hook 'go-mode-hook 'ptrv/go-mode-flycheck--init))))
+  (with-eval-after-load 'flycheck
+    (defvar flycheck-check-syntax-automatically)
+    (defun ptrv/go-mode-flycheck--init ()
+      (setq-local flycheck-check-syntax-automatically '(save)))
+    (add-hook 'go-mode-hook 'ptrv/go-mode-flycheck--init)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * xml
@@ -1802,27 +1778,25 @@ With a prefix argument P, isearch for the symbol at point."
          ("\\.gpx$" . nxml-mode))
   :bind ("C-c e x" . xml-format)
   :init
-  (progn
-    (defun xml-format ()
-      "Format XML file with xmllint."
-      (interactive)
-      (if (executable-find "xmllint")
-          (when (eq major-mode 'nxml-mode)
-            (save-excursion
-              (shell-command-on-region
-               (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
-        (user-error "The executable `xmllint' not found!"))))
+  (defun xml-format ()
+    "Format XML file with xmllint."
+    (interactive)
+    (if (executable-find "xmllint")
+        (when (eq major-mode 'nxml-mode)
+          (save-excursion
+            (shell-command-on-region
+             (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
+      (user-error "The executable `xmllint' not found!")))
   :config
-  (progn
-    (defun gpx-setup ()
-      (when (and (stringp buffer-file-name)
-                 (string-match "\\.gpx\\'" buffer-file-name))
-        (setq-local nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
-        (setq-local nxml-heading-element-name-regexp "name\\|time")))
-    (add-hook 'nxml-mode-hook 'gpx-setup)
+  (defun gpx-setup ()
+    (when (and (stringp buffer-file-name)
+               (string-match "\\.gpx\\'" buffer-file-name))
+      (setq-local nxml-section-element-name-regexp "trk\\|trkpt\\|wpt")
+      (setq-local nxml-heading-element-name-regexp "name\\|time")))
+  (add-hook 'nxml-mode-hook 'gpx-setup)
 
-    (setq nxml-slash-auto-complete-flag t
-          nxml-sexp-element-flag t)))
+  (setq nxml-slash-auto-complete-flag t
+        nxml-sexp-element-flag t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
@@ -1838,23 +1812,22 @@ With a prefix argument P, isearch for the symbol at point."
                :nick freenode-user)
         (user-error "Freenode user-name not found"))))
   :config
-  (progn
-    (setq erc-server "irc.freenode.net"
-          erc-port 7000
-          erc-nick "ptrv"
-          erc-nick-uniquifier "_"
-          erc-server-connect-function 'erc-open-tls-stream)
+  (setq erc-server "irc.freenode.net"
+        erc-port 7000
+        erc-nick "ptrv"
+        erc-nick-uniquifier "_"
+        erc-server-connect-function 'erc-open-tls-stream)
 
-    (use-package alert
-      :ensure t)
+  (use-package alert
+    :ensure t)
 
-    (use-package erc-hl-nicks
-      :ensure t)
+  (use-package erc-hl-nicks
+    :ensure t)
 
-    (use-package ptrv-erc
-      :load-path "site-lisp"
-      :config
-      (bind-key "C-c C-b" #'ptrv/erc-switch-to-buffer erc-mode-map))))
+  (use-package ptrv-erc
+    :load-path "site-lisp"
+    :config
+    (bind-key "C-c C-b" #'ptrv/erc-switch-to-buffer erc-mode-map)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * faust-mode
@@ -1892,14 +1865,13 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package bug-reference
   :defer t
   :init
-  (progn
-    (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
-    (add-hook 'text-mode-hook 'bug-reference-mode)
-    (with-eval-after-load 'magit
-      (ptrv/hook-into-modes #'bug-reference-mode
-        '(magit-status-mode-hook magit-log-mode-hook))
-      (ptrv/hook-into-modes #'hack-dir-local-variables-non-file-buffer
-        '(magit-status-mode-hook magit-log-mode-hook)))))
+  (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+  (add-hook 'text-mode-hook 'bug-reference-mode)
+  (with-eval-after-load 'magit
+    (ptrv/hook-into-modes #'bug-reference-mode
+      '(magit-status-mode-hook magit-log-mode-hook))
+    (ptrv/hook-into-modes #'hack-dir-local-variables-non-file-buffer
+      '(magit-status-mode-hook magit-log-mode-hook))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
@@ -1935,30 +1907,28 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package dired
   :defer t
   :config
-  (progn
-    (require 'dired-x)
-    (setq dired-auto-revert-buffer t
-          dired-listing-switches "-alhF")
+  (require 'dired-x)
+  (setq dired-auto-revert-buffer t
+        dired-listing-switches "-alhF")
 
-    (when (or (memq system-type '(gnu gnu/linux))
-              (string= (file-name-nondirectory insert-directory-program) "gls"))
-      ;; If we are on a GNU system or have GNU ls, add some more `ls' switches:
-      ;; `--group-directories-first' lists directories before files, and `-v'
-      ;; sorts numbers in file names naturally, i.e. "image1" goes before
-      ;; "image02"
-      (setq dired-listing-switches
-            (concat dired-listing-switches " --group-directories-first -v")))))
+  (when (or (memq system-type '(gnu gnu/linux))
+            (string= (file-name-nondirectory insert-directory-program) "gls"))
+    ;; If we are on a GNU system or have GNU ls, add some more `ls' switches:
+    ;; `--group-directories-first' lists directories before files, and `-v'
+    ;; sorts numbers in file names naturally, i.e. "image1" goes before
+    ;; "image02"
+    (setq dired-listing-switches
+          (concat dired-listing-switches " --group-directories-first -v"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * projectile
 (use-package projectile
   :ensure t
   :config
-  (progn
-    (projectile-global-mode)
-    (dolist (file '(".ropeproject" "setup.py"))
-      (add-to-list 'projectile-project-root-files file t))
-    (run-with-idle-timer 10 nil (lambda () (projectile-cleanup-known-projects))))
+  (projectile-global-mode)
+  (dolist (file '(".ropeproject" "setup.py"))
+    (add-to-list 'projectile-project-root-files file t))
+  (run-with-idle-timer 10 nil (lambda () (projectile-cleanup-known-projects)))
   :diminish projectile-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1974,22 +1944,21 @@ With a prefix argument P, isearch for the symbol at point."
   :mode ("\\.pde$" . processing-mode)
   :commands (processing-find-sketch)
   :config
-  (progn
-    (use-package processing-snippets
-      :load-path "site-lisp/processing2-emacs"
-      :commands (processing-snippets-initialize)
-      :after yasnippet
-      :init (processing-snippets-initialize))
+  (use-package processing-snippets
+    :load-path "site-lisp/processing2-emacs"
+    :commands (processing-snippets-initialize)
+    :after yasnippet
+    :init (processing-snippets-initialize))
 
-    (use-package processing-company
-      :load-path "site-lisp/processing2-emacs"
-      :commands (processing-company-setup)
-      :after company
-      :init (processing-company-setup))
+  (use-package processing-company
+    :load-path "site-lisp/processing2-emacs"
+    :commands (processing-company-setup)
+    :after company
+    :init (processing-company-setup))
 
-    (bind-keys :map processing-mode-map
-               ("C-c C-c" . processing-sketch-run)
-               ("C-c C-d" . processing-find-in-reference))))
+  (bind-keys :map processing-mode-map
+             ("C-c C-c" . processing-sketch-run)
+             ("C-c C-d" . processing-find-in-reference)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * flycheck
@@ -2000,13 +1969,12 @@ With a prefix argument P, isearch for the symbol at point."
              flycheck-may-enable-mode)
   :init (add-hook 'after-init-hook #'global-flycheck-mode)
   :config
-  (progn
-    (defun ptrv/flycheck-mode-on-safe ()
-      (when (and (flycheck-may-enable-mode)
-                 (flycheck-get-checker-for-buffer))
-        (flycheck-mode)))
-    (advice-add 'flycheck-mode-on-safe :override
-                #'ptrv/flycheck-mode-on-safe)))
+  (defun ptrv/flycheck-mode-on-safe ()
+    (when (and (flycheck-may-enable-mode)
+               (flycheck-get-checker-for-buffer))
+      (flycheck-mode)))
+  (advice-add 'flycheck-mode-on-safe :override
+              #'ptrv/flycheck-mode-on-safe))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
@@ -2016,20 +1984,19 @@ With a prefix argument P, isearch for the symbol at point."
          ("S-<f12>" . hs-toggle-hiding-all))
   :init (add-hook 'prog-mode-hook #'hs-minor-mode)
   :config
-  (progn
-    ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
-    (setq hs-isearch-open t)
+  ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
+  (setq hs-isearch-open t)
 
-    (defvar hs-hide-all nil
-      "Current state of hideshow for toggling all.")
+  (defvar hs-hide-all nil
+    "Current state of hideshow for toggling all.")
 
-    (defun hs-toggle-hiding-all ()
-      "Toggle hideshow all."
-      (interactive)
-      (setq hs-hide-all (not hs-hide-all))
-      (if hs-hide-all
-          (hs-hide-all)
-        (hs-show-all))))
+  (defun hs-toggle-hiding-all ()
+    "Toggle hideshow all."
+    (interactive)
+    (setq hs-hide-all (not hs-hide-all))
+    (if hs-hide-all
+        (hs-hide-all)
+      (hs-show-all)))
   :diminish hs-minor-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2062,20 +2029,19 @@ With a prefix argument P, isearch for the symbol at point."
   :load-path "site-lisp"
   :if *is-mac*
   :config
-  (progn
-    (setq default-input-method "MacOSX")
+  (setq default-input-method "MacOSX")
 
-    ;; Make cut and paste work with the OS X clipboard
-    (when (not window-system)
-      (setq interprogram-cut-function 'ptrv/paste-to-osx)
-      (setq interprogram-paste-function 'ptrv/copy-from-osx))
+  ;; Make cut and paste work with the OS X clipboard
+  (when (not window-system)
+    (setq interprogram-cut-function 'ptrv/paste-to-osx)
+    (setq interprogram-paste-function 'ptrv/copy-from-osx))
 
-    ;; Work around a bug on OS X where system-name is a fully qualified
-    ;; domain name
-    (setq system-name (car (split-string system-name "\\.")))
+  ;; Work around a bug on OS X where system-name is a fully qualified
+  ;; domain name
+  (setq system-name (car (split-string system-name "\\.")))
 
-    ;; Ignore .DS_Store files with ido mode
-    (add-to-list 'ido-ignore-files "\\.DS_Store")))
+  ;; Ignore .DS_Store files with ido mode
+  (add-to-list 'ido-ignore-files "\\.DS_Store"))
 
 ;;GNU ls and find
 (use-package files
@@ -2116,118 +2082,114 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package sclang
   :defer t
   :config
-  (progn
-    (require 'ptrv-sclang)
-    (ptrv/sclang-mode-loader--remove)
+  (require 'ptrv-sclang)
+  (ptrv/sclang-mode-loader--remove)
 
-    (setq sclang-auto-scroll-post-buffer nil
-          sclang-eval-line-forward nil
-          ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
-          sclang-library-configuration-file "~/.sclang.cfg"
-          sclang-runtime-directory "~/scwork/"
-          sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
+  (setq sclang-auto-scroll-post-buffer nil
+        sclang-eval-line-forward nil
+        ;;sclang-help-path '("~/.local/share/SuperCollider/Help")
+        sclang-library-configuration-file "~/.sclang.cfg"
+        sclang-runtime-directory "~/scwork/"
+        sclang-server-panel "Server.local.makeGui.window.bounds = Rect(5,5,288,98)")
 
-    (add-hook 'sclang-mode-hook #'subword-mode)
-    (bind-keys :map sclang-mode-map
-               ("C-c ]"      . sclang-pop-definition-mark)
-               ("s-."        . sclang-main-stop)
-               ("<s-return>" . sclang-eval-region-or-line))
+  (add-hook 'sclang-mode-hook #'subword-mode)
+  (bind-keys :map sclang-mode-map
+             ("C-c ]"      . sclang-pop-definition-mark)
+             ("s-."        . sclang-main-stop)
+             ("<s-return>" . sclang-eval-region-or-line))
 
-    (use-package company-sclang
-      :load-path "site-lisp/company-sclang"
-      :commands (company-sclang-setup)
-      :after company
-      :init (company-sclang-setup)
-      :config (unbind-key "C-M-i" sclang-mode-map))
+  (use-package company-sclang
+    :load-path "site-lisp/company-sclang"
+    :commands (company-sclang-setup)
+    :after company
+    :init (company-sclang-setup)
+    :config (unbind-key "C-M-i" sclang-mode-map))
 
-    (use-package sclang-snippets
-      :load-path "site-lisp/sclang-snippets"
-      :commands (sclang-snippets-initialize)
-      :after yasnippet
-      :init (sclang-snippets-initialize))))
+  (use-package sclang-snippets
+    :load-path "site-lisp/sclang-snippets"
+    :commands (sclang-snippets-initialize)
+    :after yasnippet
+    :init (sclang-snippets-initialize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
 (use-package python
   :defer t
   :init
-  (progn
-    (with-eval-after-load 'flycheck
-      (defun ptrv/python-mode-flycheck-config ()
-        (setq-local flycheck-check-syntax-automatically
-                    (delq 'idle-change
-                          flycheck-check-syntax-automatically)))
-      (add-hook 'python-mode-hook
-                #'ptrv/python-mode-flycheck-config))
-    (defun ptrv/pyenv-mode-set-maybe ()
-      "Automatically activates pyenv version if .python-version file exists."
-      (when (or (featurep 'pyenv-mode) (require 'pyenv-mode nil t))
-        (-when-let (pyenv-version-file
-                    (catch 'found
-                      (f-traverse-upwards
-                       (lambda (path)
-                         (let ((f (f-expand ".python-version" path)))
-                           (when (f-exists? f)
-                             (throw 'found f)))))))
-          (pyenv-mode-set (s-trim (f-read-text pyenv-version-file 'utf-8))))))
-    (add-hook 'find-file-hook #'ptrv/pyenv-mode-set-maybe))
+  (with-eval-after-load 'flycheck
+    (defun ptrv/python-mode-flycheck-config ()
+      (setq-local flycheck-check-syntax-automatically
+                  (delq 'idle-change
+                        flycheck-check-syntax-automatically)))
+    (add-hook 'python-mode-hook
+              #'ptrv/python-mode-flycheck-config))
+  (defun ptrv/pyenv-mode-set-maybe ()
+    "Automatically activates pyenv version if .python-version file exists."
+    (when (or (featurep 'pyenv-mode) (require 'pyenv-mode nil t))
+      (-when-let (pyenv-version-file
+                  (catch 'found
+                    (f-traverse-upwards
+                     (lambda (path)
+                       (let ((f (f-expand ".python-version" path)))
+                         (when (f-exists? f)
+                           (throw 'found f)))))))
+        (pyenv-mode-set (s-trim (f-read-text pyenv-version-file 'utf-8))))))
+  (add-hook 'find-file-hook #'ptrv/pyenv-mode-set-maybe)
   :config
-  (progn
-    (setq python-check-command "flake8")
+  (setq python-check-command "flake8")
 
-    (add-hook 'python-mode-hook (lambda () (setq fill-column 79)))
+  (add-hook 'python-mode-hook (lambda () (setq fill-column 79)))
 
-    (let ((ipython (executable-find "ipython")))
-      (if ipython
-          (setq python-shell-interpreter "ipython")
-        (warn "IPython is missing, falling back to default python")))
+  (let ((ipython (executable-find "ipython")))
+    (if ipython
+        (setq python-shell-interpreter "ipython")
+      (warn "IPython is missing, falling back to default python")))
 
-    (info-lookup-add-help
-     :mode 'python-mode
-     :regexp "[a-zA-Z_0-9.]+"
-     :doc-spec
-     '(("(python)Python Module Index" )
-       ("(python)Index"
-        (lambda
-          (item)
-          (cond
-           ((string-match
-             "\\([A-Za-z0-9_]+\\)() (in module \\([A-Za-z0-9_.]+\\))" item)
-            (format "%s.%s" (match-string 2 item)
-                    (match-string 1 item))))))))
+  (info-lookup-add-help
+   :mode 'python-mode
+   :regexp "[a-zA-Z_0-9.]+"
+   :doc-spec
+   '(("(python)Python Module Index" )
+     ("(python)Index"
+      (lambda
+        (item)
+        (cond
+         ((string-match
+           "\\([A-Za-z0-9_]+\\)() (in module \\([A-Za-z0-9_.]+\\))" item)
+          (format "%s.%s" (match-string 2 item)
+                  (match-string 1 item))))))))
 
-    (use-package anaconda-mode
-      :disabled t
-      :ensure t
-      :init (add-hook 'python-mode-hook 'anaconda-mode))
+  (use-package anaconda-mode
+    :disabled t
+    :ensure t
+    :init (add-hook 'python-mode-hook 'anaconda-mode))
 
-    (use-package company-anaconda
-      :disabled t
-      :ensure t
-      :init
-      (with-eval-after-load 'company
-        (defun ptrv/company-anaconda--init ()
-          (setq-local company-backends
-                      '((company-anaconda :with company-yasnippet))))
-        (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
+  (use-package company-anaconda
+    :disabled t
+    :ensure t
+    :init
+    (with-eval-after-load 'company
+      (defun ptrv/company-anaconda--init ()
+        (setq-local company-backends
+                    '((company-anaconda :with company-yasnippet))))
+      (add-hook 'python-mode-hook 'ptrv/company-anaconda--init)))
 
-    (use-package highlight-indentation
-      :ensure t
-      :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
+  (use-package highlight-indentation
+    :ensure t
+    :init (add-hook 'python-mode-hook 'highlight-indentation-mode))
 
-    (use-package pyenv-mode
-      :ensure t
-      :config
-      (progn
-        (pyenv-mode)
-        (unbind-key "C-c C-s" pyenv-mode-map)
-        (unbind-key "C-c C-u" pyenv-mode-map)
-        (bind-keys :map pyenv-mode-map
-                   ("C-. p s" . pyenv-mode-set)
-                   ("C-. p u" . pyenv-mode-unset))))
+  (use-package pyenv-mode
+    :ensure t
+    :config
+    (pyenv-mode)
+    (unbind-key "C-c C-s" pyenv-mode-map)
+    (unbind-key "C-c C-u" pyenv-mode-map)
+    (bind-keys :map pyenv-mode-map
+               ("C-. p s" . pyenv-mode-set)
+               ("C-. p u" . pyenv-mode-unset)))
 
-    (use-package pytest
-      :ensure t)))
+  (use-package pytest
+    :ensure t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
@@ -2238,68 +2200,64 @@ With a prefix argument P, isearch for the symbol at point."
          ("\\.mm\\'"                  . c++-mode)
          ("\\.inl\\'"                 . c++-mode))
   :init
-  (progn
-    (defun ptrv/cc-mode-init ()
-      (c-set-style "my-cc-mode")
-      (setq c-basic-offset 4
-            tab-width 4
-            ;;c-indent-level 4
-            c-default-style "bsd"
-            indent-tabs-mode nil)
-      (setq-local split-width-threshold nil))
-    (ptrv/hook-into-modes #'ptrv/cc-mode-init
-      '(c-mode-hook c++-mode-hook)))
+  (defun ptrv/cc-mode-init ()
+    (c-set-style "my-cc-mode")
+    (setq c-basic-offset 4
+          tab-width 4
+          ;;c-indent-level 4
+          c-default-style "bsd"
+          indent-tabs-mode nil)
+    (setq-local split-width-threshold nil))
+  (ptrv/hook-into-modes #'ptrv/cc-mode-init
+    '(c-mode-hook c++-mode-hook))
   :config
-  (progn
-    (setq c-default-style '((java-mode . "java")
-                            (awk-mode . "awk")
-                            (other . "bsd")))
-    (c-add-style "my-cc-mode"
-                 '("bsd"
-                   (c-basic-offset . 4)
-                   (c-offsets-alist . ((innamespace . 0)))))
+  (setq c-default-style '((java-mode . "java")
+                          (awk-mode . "awk")
+                          (other . "bsd")))
+  (c-add-style "my-cc-mode"
+               '("bsd"
+                 (c-basic-offset . 4)
+                 (c-offsets-alist . ((innamespace . 0)))))
 
-    ;; doxymacs
-    (use-package doxymacs
-      :commands (doxymacs-mode)
-      :config
-      (progn
-        (defvar doxymacs-external-xml-parser-executable)
-        (unless (file-exists-p doxymacs-external-xml-parser-executable)
-          (warn "The doxymacs_parser executable does not exist!"))
-        (defvar doxymacs-mode)
-        (add-hook 'font-lock-mode-hook
-                  (lambda ()
-                    (when (and doxymacs-mode
-                               (or (eq major-mode 'c-mode)
-                                   (eq major-mode 'c++-mode)))
-                      (doxymacs-font-lock))))))
+  ;; doxymacs
+  (use-package doxymacs
+    :commands (doxymacs-mode)
+    :config
+    (defvar doxymacs-external-xml-parser-executable)
+    (unless (file-exists-p doxymacs-external-xml-parser-executable)
+      (warn "The doxymacs_parser executable does not exist!"))
+    (defvar doxymacs-mode)
+    (add-hook 'font-lock-mode-hook
+              (lambda ()
+                (when (and doxymacs-mode
+                           (or (eq major-mode 'c-mode)
+                               (eq major-mode 'c++-mode)))
+                  (doxymacs-font-lock)))))
 
-    (use-package xcscope
-      :ensure t
-      :init
-      (add-hook 'c++-mode-hook #'cscope-minor-mode))
+  (use-package xcscope
+    :ensure t
+    :init
+    (add-hook 'c++-mode-hook #'cscope-minor-mode))
 
-    (use-package clang-format
-      :ensure t)))
+  (use-package clang-format
+    :ensure t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gud
 (use-package gud
   :commands gud-gdb
   :init
-  (progn
-    (defun ptrv/show-debugger ()
-      (interactive)
-      (let ((gud-buf
-             (catch 'found
-               (dolist (buf (buffer-list))
-                 (when (string-match "\\*gud-" (buffer-name buf))
-                   (throw 'found buf))))))
-        (if gud-buf
-            (switch-to-buffer gud-buf)
-          (call-interactively (if *is-mac* 'lldb 'gud-gdb)))))
-    (bind-key "C-. g" #'ptrv/show-debugger))
+  (defun ptrv/show-debugger ()
+    (interactive)
+    (let ((gud-buf
+           (catch 'found
+             (dolist (buf (buffer-list))
+               (when (string-match "\\*gud-" (buffer-name buf))
+                 (throw 'found buf))))))
+      (if gud-buf
+          (switch-to-buffer gud-buf)
+        (call-interactively (if *is-mac* 'lldb 'gud-gdb)))))
+  (bind-key "C-. g" #'ptrv/show-debugger)
   :config
   (bind-keys ("<f9>"    . gud-cont)
              ("<f10>"   . gud-next)
@@ -2321,31 +2279,30 @@ With a prefix argument P, isearch for the symbol at point."
   (ptrv/hook-into-modes #'ycmd-mode
     '(c-mode-hook c++-mode-hook go-mode-hook python-mode-hook))
   :config
-  (progn
-    (defun ptrv/ycmd-show-server-buffer ()
-      (interactive)
-      (-if-let (buf (get-buffer ycmd--server-buffer-name))
-          (switch-to-buffer buf)
-        (error "No YCMD server buffer")))
-    (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
-    (use-package company-ycmd
-      :load-path "~/src/emacs-ycmd"
-      :commands (company-ycmd-setup)
-      :after company
-      :init (company-ycmd-setup))
+  (defun ptrv/ycmd-show-server-buffer ()
+    (interactive)
+    (-if-let (buf (get-buffer ycmd--server-buffer-name))
+        (switch-to-buffer buf)
+      (error "No YCMD server buffer")))
+  (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
+  (use-package company-ycmd
+    :load-path "~/src/emacs-ycmd"
+    :commands (company-ycmd-setup)
+    :after company
+    :init (company-ycmd-setup))
 
-    (use-package flycheck-ycmd
-      :load-path "~/src/emacs-ycmd"
-      :commands (flycheck-ycmd-setup)
-      :after flycheck
-      :init (flycheck-ycmd-setup))
+  (use-package flycheck-ycmd
+    :load-path "~/src/emacs-ycmd"
+    :commands (flycheck-ycmd-setup)
+    :after flycheck
+    :init (flycheck-ycmd-setup))
 
-    (defun ptrv/company-ycmd-complete ()
-      (interactive)
-      (let ((ycmd-force-semantic-completion t))
-        (company-complete)))
-    (bind-key [remap complete-symbol]
-              #'ptrv/company-ycmd-complete ycmd-mode-map)))
+  (defun ptrv/company-ycmd-complete ()
+    (interactive)
+    (let ((ycmd-force-semantic-completion t))
+      (company-complete)))
+  (bind-key [remap complete-symbol]
+            #'ptrv/company-ycmd-complete ycmd-mode-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
@@ -2361,17 +2318,16 @@ With a prefix argument P, isearch for the symbol at point."
                                       company-yasnippet))))
     (add-hook 'lua-mode-hook #'ptrv/lua-mode-company-init))
   :config
-  (progn
-    (defun ptrv/lua-send-region-or-current-line ()
-      "Send current region or line to lua process."
-      (interactive)
-      (if (region-active-p)
-          (lua-send-region (region-beginning) (region-end))
-        (lua-send-current-line)))
-    (bind-keys :map lua-mode-map
-               ("C-c C-d" . lua-send-proc)
-               ("C-c C-c" . ptrv/lua-send-region-or-current-line)
-               ("C-c C-p" . lua-start-process))))
+  (defun ptrv/lua-send-region-or-current-line ()
+    "Send current region or line to lua process."
+    (interactive)
+    (if (region-active-p)
+        (lua-send-region (region-beginning) (region-end))
+      (lua-send-current-line)))
+  (bind-keys :map lua-mode-map
+             ("C-c C-d" . lua-send-proc)
+             ("C-c C-c" . ptrv/lua-send-region-or-current-line)
+             ("C-c C-p" . lua-start-process)))
 
 (use-package company-lua
   :load-path "site-lisp/company-lua"
@@ -2382,12 +2338,11 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package sgml-mode
   :defer t
   :config
-  (progn
-    (require 'smartparens-html)
-    (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
-    (bind-keys :map html-mode-map
-               ("C-c C-f" . sp-html-next-tag)
-               ("C-c C-b" . sp-html-previous-tag))))
+  (require 'smartparens-html)
+  (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
+  (bind-keys :map html-mode-map
+             ("C-c C-f" . sp-html-next-tag)
+             ("C-c C-b" . sp-html-previous-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * multiple-cursors
@@ -2421,12 +2376,11 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :init (key-chord-mode 1)
   :config
-  (progn
-    (key-chord-define-global "BB" 'ido-switch-buffer)
-    (key-chord-define-global "JJ" (lambda ()
-                                    (interactive)
-                                    (switch-to-buffer
-                                     (other-buffer (current-buffer) 1))))))
+  (key-chord-define-global "BB" 'ido-switch-buffer)
+  (key-chord-define-global "JJ" (lambda ()
+                                  (interactive)
+                                  (switch-to-buffer
+                                   (other-buffer (current-buffer) 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ace-jump-mode
@@ -2462,13 +2416,12 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-. z" . delete-other-windows)
          ("C-<return>". other-window))
   :config
-  (progn
-    (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
-    (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
-    (bind-key "C-c w <down>" (lambda () (interactive) (enlarge-window -4)))
-    (bind-key "C-c w <up>" (lambda () (interactive) (enlarge-window 4)))
-    ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
-    (bind-key "C-x O" (lambda () (interactive) (other-window -1)))))
+  (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
+  (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
+  (bind-key "C-c w <down>" (lambda () (interactive) (enlarge-window -4)))
+  (bind-key "C-c w <up>" (lambda () (interactive) (enlarge-window 4)))
+  ;;http://emacsredux.com/blog/2013/03/30/go-back-to-previous-window/
+  (bind-key "C-x O" (lambda () (interactive) (other-window -1))))
 
 (use-package ptrv-window
   :load-path "site-lisp"
