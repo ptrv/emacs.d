@@ -785,8 +785,7 @@ Something like: `python -m certifi'."
 ;;;; * elisp
 (use-package lisp-mode
   :defer t
-  :mode (("\\.el$" . emacs-lisp-mode)
-         ("/Cask$" . emacs-lisp-mode))
+  :mode (("\\.el$" . emacs-lisp-mode))
   :config
   (with-eval-after-load 'company
     (defun ptrv/company-elisp--init ()
@@ -904,6 +903,9 @@ This checks in turn:
 (use-package eval-sexp-fu
   :ensure t
   :demand t)
+
+(use-package cask-mode
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
