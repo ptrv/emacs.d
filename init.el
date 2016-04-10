@@ -589,6 +589,14 @@ Something like: `python -m certifi'."
   :ensure helm
   :bind (("C-c h m" . helm-man-woman)))
 
+(use-package helm-swoop
+  :ensure t
+  :bind (("C-c s s" . helm-swoop)
+         ("C-c s S" . helm-multi-swoop)
+         ("C-c s C-s" . helm-multi-swoop-all))
+  :config
+  (setq helm-swoop-speed-or-color t))
+
 (use-package neotree
   :ensure t
   :bind (("C-c f t" . neotree-toggle))
