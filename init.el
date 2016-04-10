@@ -2350,6 +2350,13 @@ With a prefix argument P, isearch for the symbol at point."
     :after flycheck
     :init (flycheck-ycmd-setup))
 
+  (use-package ycmd-eldoc
+    :load-path "~/src/emacs-ycmd"
+    :disabled t
+    :init
+    (ycmd-eldoc-setup)
+    (add-hook 'ycmd-mode-hook #'ptrv/ycmd-eldoc-setup-maybe))
+
   (defun ptrv/company-ycmd-complete (arg)
     (interactive "P")
     (let ((ycmd-force-semantic-completion (not arg)))
