@@ -976,6 +976,7 @@ This checks in turn:
     :config (setq ibuffer-show-empty-filter-groups nil)))
 
 (use-package ibuffer-projectile
+  :disabled t
   :ensure t
   :defer t
   :init (with-eval-after-load 'ibuffer
