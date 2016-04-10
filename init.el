@@ -1831,9 +1831,9 @@ With a prefix argument P, isearch for the symbol at point."
     (interactive)
     (let ((freenode-user (car (netrc-credentials "freenode"))))
       (if freenode-user
-          (erc :server "irc.freenode.net"
-               :port 7000
-               :nick freenode-user)
+          (erc-tls :server "irc.freenode.net"
+                   :port 7000
+                   :nick freenode-user)
         (user-error "Freenode user-name not found"))))
   :config
   (setq erc-server "irc.freenode.net"
