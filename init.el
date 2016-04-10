@@ -589,6 +589,10 @@ Something like: `python -m certifi'."
   :ensure helm
   :bind (("C-c h m" . helm-man-woman)))
 
+(use-package helm-ls-git
+  :ensure t
+  :bind ("C-c v l" . helm-ls-git-ls))
+
 (use-package helm-swoop
   :ensure t
   :bind (("C-c s s" . helm-swoop)
@@ -1010,7 +1014,7 @@ This checks in turn:
   :ensure t
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup)
-         ("C-c v l" . magit-log-buffer-file)
+         ("C-c v f" . magit-log-buffer-file)
          ("C-c v b" . magit-blame))
   :init (setq magit-push-current-set-remote-if-missing nil)
   :config
