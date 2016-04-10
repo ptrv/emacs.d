@@ -257,7 +257,9 @@ If ARG is non-nil prompt for filename."
   (let (auth-sources)
     (if (or arg (not buffer-file-name))
         (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
-      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
+      (let ((p (point)))
+        (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))
+        (goto-char p)))))
 
 (defun uncomment-sexp (&optional n)
   "Uncomment a sexp around point."
