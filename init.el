@@ -594,7 +594,8 @@ Something like: `python -m certifi'."
 (use-package helm-projectile
   :ensure t
   :defer t
-  :init (with-eval-after-load 'projectile (helm-projectile-on))
+  :after projectile
+  :init (helm-projectile-on)
   :config
   (progn (setq projectile-switch-project-action #'helm-projectile)
 
@@ -758,8 +759,8 @@ Something like: `python -m certifi'."
 (use-package company-quickhelp
   :ensure t
   :defer t
-  :init (with-eval-after-load 'company
-          (company-quickhelp-mode)))
+  :after company
+  :init (company-quickhelp-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
@@ -910,10 +911,10 @@ This checks in turn:
 (use-package macrostep
   :ensure t
   :defer t
+  :after lisp-mode
   :init
-  (with-eval-after-load 'lisp-mode
-    (bind-key "C-c e e" #'macrostep-expand emacs-lisp-mode-map)
-    (bind-key "C-c e e" #'macrostep-expand lisp-interaction-mode-map)))
+  (bind-key "C-c e e" #'macrostep-expand emacs-lisp-mode-map)
+  (bind-key "C-c e e" #'macrostep-expand lisp-interaction-mode-map))
 
 (bind-key "C-c T d" #'toggle-debug-on-error)
 
@@ -1234,8 +1235,8 @@ This checks in turn:
 (use-package fullframe
   :ensure t
   :defer t
-  :init (with-eval-after-load 'magit
-          (fullframe magit-status magit-mode-quit-window)))
+  :after magit
+  :init (fullframe magit-status magit-mode-quit-window))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
@@ -1995,14 +1996,14 @@ With a prefix argument P, isearch for the symbol at point."
     (use-package processing-snippets
       :load-path "site-lisp/processing2-emacs"
       :commands (processing-snippets-initialize)
-      :init (with-eval-after-load 'yasnippet
-              (processing-snippets-initialize)))
+      :after yasnippet
+      :init (processing-snippets-initialize))
 
     (use-package processing-company
       :load-path "site-lisp/processing2-emacs"
       :commands (processing-company-setup)
-      :init (with-eval-after-load 'company
-              (processing-company-setup)))
+      :after company
+      :init (processing-company-setup))
 
     (bind-keys :map processing-mode-map
                ("C-c C-c" . processing-sketch-run)
@@ -2153,15 +2154,15 @@ With a prefix argument P, isearch for the symbol at point."
     (use-package company-sclang
       :load-path "site-lisp/company-sclang"
       :commands (company-sclang-setup)
-      :init (with-eval-after-load 'company
-              (company-sclang-setup))
+      :after company
+      :init (company-sclang-setup)
       :config (unbind-key "C-M-i" sclang-mode-map))
 
     (use-package sclang-snippets
       :load-path "site-lisp/sclang-snippets"
       :commands (sclang-snippets-initialize)
-      :init (with-eval-after-load 'yasnippet
-              (sclang-snippets-initialize)))))
+      :after yasnippet
+      :init (sclang-snippets-initialize))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
@@ -2348,14 +2349,14 @@ With a prefix argument P, isearch for the symbol at point."
     (use-package company-ycmd
       :load-path "~/src/emacs-ycmd"
       :commands (company-ycmd-setup)
-      :init (with-eval-after-load 'company
-              (company-ycmd-setup)))
+      :after company
+      :init (company-ycmd-setup))
 
     (use-package flycheck-ycmd
       :load-path "~/src/emacs-ycmd"
       :commands (flycheck-ycmd-setup)
-      :init (with-eval-after-load 'flycheck
-              (flycheck-ycmd-setup)))
+      :after flycheck
+      :init (flycheck-ycmd-setup))
 
     (defun ptrv/company-ycmd-complete ()
       (interactive)
