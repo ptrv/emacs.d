@@ -471,6 +471,14 @@ Something like: `python -m certifi'."
 
 
 (defvar headline-face 'headline-face)
+(defface headline-face
+  '((t (:inherit font-lock-comment-face
+                 :weight bold
+                 :bold t
+                 :underline t)))
+  "Face for headlines."
+  :group 'org-faces)
+
 (defun fontify-headline ()
   "Fontify certain headlines."
   (font-lock-add-keywords
