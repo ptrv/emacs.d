@@ -2536,6 +2536,47 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c w r" . ptrv/rotate-windows)
          ("C-c w v" . ptrv/halve-other-window-height-or-width)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * golden-ratio
+(use-package golden-ratio
+  :ensure t
+  :init
+  (defun ptrv/toggle-golden-ratio ()
+    (interactive)
+    (if (bound-and-true-p golden-ratio-mode)
+        (progn
+          (golden-ratio-mode -1)
+          (balance-windows))
+      (golden-ratio-mode)
+      (golden-ratio)))
+  :bind (("C-c t g" . ptrv/toggle-golden-ratio))
+  :config
+  (setq golden-ratio-extra-commands '(windmove-up
+                                      windmove-down
+                                      windmove-left
+                                      windmove-right
+                                      ace-window
+                                      ace-delete-window
+                                      ace-select-window
+                                      ace-swap-window
+                                      ace-maximize-window)
+        ;; Exclude a couple of special modes from golden ratio, namely
+        ;; Flycheck's error list, calc
+        golden-ratio-exclude-modes '(flycheck-error-list-mode
+                                     calc-mode
+                                     dired-mode
+                                     ediff-mode
+                                     )
+        ;; Exclude a couple of special buffers from golden ratio, namely Helm,
+        ;; WhichKey, NeoTree, etc.
+        golden-ratio-exclude-buffer-regexp
+        `(,(rx bos "*" (any "h" "H") "elm*" eos)
+          ,(rx bos "*which-key*" eos)
+          ,(rx bos "*NeoTree*" eos))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * buffers
+
 (use-package ptrv-buffers
   :load-path "site-lisp"
   :commands (ptrv/do-not-kill-important-buffers)
