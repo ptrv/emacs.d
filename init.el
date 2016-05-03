@@ -235,6 +235,25 @@ Something like: `python -m certifi'."
 
 (use-package autoinsert
   :config (auto-insert-mode))
+(use-package copyright
+  :defer t
+  :bind (("C-c i c" . copyright-update))
+  :init
+  ;; Update copyright when visiting files
+  (defun ptrv/copyright-update ()
+    (interactive)
+    (unless buffer-read-only
+      (copyright-update nil 'interactive)
+      (unless copyright-update
+        ;; Fix years when the copyright information was updated
+        (copyright-fix-years))))
+  (add-hook 'find-file-hook #'ptrv/copyright-update)
+  :config
+  ;; Use ranges to denote consecutive years
+  (setq copyright-year-ranges t
+        ;; Limit copyright changes to my own copyright
+        copyright-names-regexp (regexp-quote user-full-name)))
+
 (use-package jka-cmpr-hook
   :config (auto-compression-mode))
 (use-package winner
