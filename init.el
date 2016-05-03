@@ -173,6 +173,11 @@ Something like: `python -m certifi'."
   :config (setq custom-file ptrv/custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * hydra
+(use-package hydra
+  :ensure t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * builtins
 (setq-default fill-column 80
               indent-tabs-mode nil ; And force use of spaces
@@ -184,10 +189,16 @@ Something like: `python -m certifi'."
   :config (setq bookmark-save-flag t))
 
 (use-package simple
-  :bind (("C-x p" . pop-to-mark-command)
-         ("C-m" . newline-and-indent)
-         ("M-j" . ptrv/join-line))
+  :bind (("C-m" . newline-and-indent)
+         ("M-j" . ptrv/join-line)
+         ("M-g n" . ptrv-errors/next-error)
+         ("M-g p" . ptrv-errors/previous-error))
   :init
+  (defhydra ptrv-errors ()
+    "Errors."
+    ("n" next-error "next")
+    ("p" previous-error "previous")
+    ("f" first-error "first"))
   (defun ptrv/join-line ()
     (interactive)
     (join-line -1))
@@ -708,6 +719,17 @@ Something like: `python -m certifi'."
   :disabled t
   :ensure t
   :bind (("C-x C-i" . idomenu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * pages
+(use-package page
+  :bind (("C-x ]" . ptrv-pages/forward-page)
+         ("C-x [" . ptrv-pages/backward-page))
+  :init
+  (defhydra ptrv-pages ()
+    "Pages"
+    ("[" backward-page "backward")
+    ("]" forward-page "forward")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Eshell
