@@ -2366,6 +2366,7 @@ With a prefix argument P, isearch for the symbol at point."
         (switch-to-buffer buf)
       (error "No YCMD server buffer")))
   (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
+  (bind-key "M-." #'ycmd-goto ycmd-mode-map)
   (use-package company-ycmd
     :load-path "~/src/emacs-ycmd"
     :commands (company-ycmd-setup)
