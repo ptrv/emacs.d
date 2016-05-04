@@ -665,8 +665,8 @@ Something like: `python -m certifi'."
 
 (use-package helm-ag
   :ensure t
-  :bind (("C-c s a" . helm-do-ag)
-         ("C-c s A" . helm-ag))
+  ;; :bind (("C-c s a" . helm-do-ag)
+  ;;        ("C-c s A" . helm-ag))
   :config (setq helm-ag-fuzzy-match t
                 helm-ag-insert-at-point 'symbol))
 
@@ -1419,25 +1419,11 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;; the silver searcher
 (use-package ag
-  :disabled t
   :ensure t
   :defer t
   :init
-  (with-eval-after-load 'highlight-symbol
-    (defun highlight-symbol-ag ()
-      (interactive)
-      (if (thing-at-point 'symbol)
-          (let ((highlight-symbol-border-pattern '("\\b" . "\\b")))
-            (ag-project-regexp (highlight-symbol-get-symbol)))
-        (error "No symbol at point")))
-    (bind-key "C-c s a" #'highlight-symbol-ag))
-  :bind(("C-c a a" . ag-regexp)
-        ("C-c a A" . ag)
-        ("C-c a d" . ag-dired-regexp)
-        ("C-c a D" . ag-dired)
-        ("C-c a f" . ag-files)
-        ("C-c a k" . ag-kill-other-buffers)
-        ("C-c a K" . ag-kill-buffers))
+  :bind(("C-c s A" . ag-regexp)
+        ("C-c s a" . ag))
   :config
   (setq ag-highlight-search t
         ag-reuse-buffers t))
