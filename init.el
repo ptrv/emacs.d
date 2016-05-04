@@ -173,6 +173,57 @@ Something like: `python -m certifi'."
   :config (setq custom-file ptrv/custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * which-key
+(use-package which-key
+  :ensure t
+  :init (which-key-mode)
+  :config
+  (setq which-key-idle-delay 0.5
+        which-key-sort-order 'which-key-prefix-then-key-order
+        which-key-description-replacement-alist
+        '(("Prefix Command" . "prefix")
+          ;; Lambdas
+          ("\\`\\?\\?\\'"   . "λ")
+          ;; Prettify hydra entry points
+          ("/body\\'"       . "|=")
+          ;; Drop my personal prefix
+          ("\\`ptrv/"  . "")))
+  (which-key-declare-prefixes
+    "C-c a" "applications"
+    "C-c D" "diff"
+    "C-c g" "git"
+    "C-c g g" "github/gists"
+    "C-c f" "files"
+    "C-c f v" "variables"
+    "C-c f b" "byte-compilation"
+    "C-c b" "buffers"
+    "C-c p" "projects"
+    "C-c i" "insert"
+    "C-c h" "help"
+    "C-c j" "jump"
+    "C-c l" "list"
+    "C-c t" "toggle"
+    "C-c x" "text"
+    "C-c x a" "align"
+    "C-c ;" "comment"
+    "C-c u" "cursors"
+    "C-c C-p" "sql"
+    "C-c s" "search"
+    "C-c o" "org"
+    "C-c m" "major-mode"
+    "C-c w" "windows"
+    "C-c /" "google-this"
+    "C-c !" "flycheck"
+    "C-c ," "cscope"
+    "C-c C-y" "ycmd"
+    "C-." "run")
+
+  (which-key-declare-prefixes-for-mode 'emacs-lisp-mode
+    "C-c m" "elisp/personal")
+
+  :diminish which-key-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hydra
 (use-package hydra
   :ensure t)
@@ -234,6 +285,11 @@ Something like: `python -m certifi'."
       x-select-enable-primary nil
       mouse-yank-at-point t)
 
+(use-package newcomment
+  :bind (("C-c ; d" . comment-dwim)
+         ("C-c ; l" . comment-line)
+         ("C-c ; r" . comment-region)))
+
 (use-package minibuffer
   :defer t
   :config
@@ -245,7 +301,8 @@ Something like: `python -m certifi'."
          ("C-c h A" . apropos-command)))
 
 (use-package autoinsert
-  :config (auto-insert-mode))
+  :bind (("C-c i a" . auto-insert)))
+
 (use-package copyright
   :defer t
   :bind (("C-c i c" . copyright-update))
@@ -316,7 +373,7 @@ Something like: `python -m certifi'."
   (setq desktop-save 'if-exists))
 
 (use-package whitespace
-  :bind ("C-c T w" . whitespace-mode)
+  :bind ("C-c t w" . whitespace-mode)
   :init (ptrv/hook-into-modes #'whitespace-mode
           '(prog-mode-hook text-mode-hook))
   :config
@@ -330,8 +387,8 @@ Something like: `python -m certifi'."
 
 (use-package whitespace-cleanup-mode
   :ensure t
-  :bind (("C-c T W" . whitespace-cleanup-mode)
-         ("C-c e w" . whitespace-cleanup))
+  :bind (("C-c t W" . whitespace-cleanup-mode)
+         ("C-c x w" . whitespace-cleanup))
   :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
           '(prog-mode-hook text-mode-hook))
   :config
@@ -413,8 +470,8 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * timdate
 (use-package time
-  :bind (("C-c u i" . emacs-init-time)
-         ("C-c u t" . display-time-world))
+  :bind (("C-c a i" . emacs-init-time)
+         ("C-c a t" . display-time-world))
   :config
   (setq display-time-world-time-format "%H:%M %Z, %d. %b"
         display-time-world-list '(("Europe/Berlin"    "Berlin")
@@ -425,8 +482,13 @@ Something like: `python -m certifi'."
                                   ("Asia/Tokyo"       "Tokyo (JP)"))))
 
 (use-package calendar
-  :bind ("C-c u c" . calendar)
+  :bind ("C-c a c" . calendar)
   :config (setq calendar-week-start-day 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * calc
+(use-package calc
+  :bind ("C-c a r" . calc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diff
@@ -487,7 +549,7 @@ Something like: `python -m certifi'."
 ;;;; * look-and-feel
 (use-package rainbow-mode
   :ensure t
-  :bind ("C-c T r" . rainbow-mode)
+  :bind ("C-c t r" . rainbow-mode)
   :diminish rainbow-mode)
 
 (setq column-number-mode t)
@@ -576,8 +638,8 @@ Something like: `python -m certifi'."
 
 (use-package helm-imenu
   :ensure helm
-  :bind (("C-c n i" . helm-imenu-in-all-buffers)
-         ("C-c n t" . helm-imenu)
+  :bind (;; ("C-c n i" . helm-imenu-in-all-buffers)
+         ;; ("C-c n t" . helm-imenu)
          ("C-x C-i" . helm-imenu))
   :config (setq helm-imenu-fuzzy-match t
                 ;; Don't automatically jump to candidate if only one match,
@@ -593,13 +655,17 @@ Something like: `python -m certifi'."
 
 (use-package helm-elisp
   :ensure helm
-  :bind (("C-c f l" . helm-locate-library)
+  :bind (("C-c h l" . helm-locate-library)
          ("C-c h a" . helm-apropos)))
+
+(use-package helm-color
+  :ensure helm
+  :bind ("C-c i C" . helm-colors))
 
 (use-package helm-ag
   :ensure t
-  :bind (("C-c a a" . helm-do-ag)
-         ("C-c a A" . helm-ag))
+  :bind (("C-c s a" . helm-do-ag)
+         ("C-c s A" . helm-ag))
   :config (setq helm-ag-fuzzy-match t
                 helm-ag-insert-at-point 'symbol))
 
@@ -607,6 +673,7 @@ Something like: `python -m certifi'."
   :ensure t
   :defer t
   :after projectile
+  :bind ("C-c s p" . helm-projectile-ag)
   :init (helm-projectile-on)
   :config
   (setq projectile-switch-project-action #'helm-projectile)
@@ -629,7 +696,7 @@ Something like: `python -m certifi'."
 
 (use-package helm-ls-git
   :ensure t
-  :bind ("C-c v l" . helm-ls-git-ls))
+  :bind ("C-c g h" . helm-ls-git-ls))
 
 (use-package helm-swoop
   :ensure t
@@ -641,7 +708,7 @@ Something like: `python -m certifi'."
 
 (use-package helm-gitignore
   :ensure t
-  :bind ("C-c v I" . helm-gitignore))
+  :bind ("C-c g I" . helm-gitignore))
 
 (use-package neotree
   :ensure t
@@ -734,8 +801,7 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * Eshell
 (use-package eshell
-  :bind (("C-x m" . eshell)
-         ("C-c u s" . ptrv/eshell-or-restore))
+  :bind (("C-x m" . eshell))
   :init
   ;; http://irreal.org/blog/?p=1742
   (defun ptrv/eshell-or-restore ()
@@ -765,6 +831,12 @@ Something like: `python -m certifi'."
 
   (use-package pcmpl-git
     :ensure t))
+
+(use-package shell
+  :bind ("C-c a S" . shell))
+
+(use-package term
+  :bind ("C-c a s" . ansi-term))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * company
@@ -865,7 +937,7 @@ Something like: `python -m certifi'."
       (interactive)
       (pop-to-buffer (get-buffer-create "*ielm*"))
       (ielm))
-    (bind-key "C-c z" 'ptrv/switch-to-ielm))
+    (bind-key "C-c a '" 'ptrv/switch-to-ielm))
 
   (bind-key "C-c C-p" 'eval-print-last-sexp lisp-mode-shared-map)
   (bind-key "RET" 'reindent-then-newline-and-indent lisp-mode-shared-map)
@@ -944,10 +1016,10 @@ This checks in turn:
   :defer t
   :after lisp-mode
   :init
-  (bind-key "C-c e e" #'macrostep-expand emacs-lisp-mode-map)
-  (bind-key "C-c e e" #'macrostep-expand lisp-interaction-mode-map))
+  (bind-key "C-c m e" #'macrostep-expand emacs-lisp-mode-map)
+  (bind-key "C-c m e" #'macrostep-expand lisp-interaction-mode-map))
 
-(bind-key "C-c T d" #'toggle-debug-on-error)
+(bind-key "C-c t d" #'toggle-debug-on-error)
 
 (use-package eval-sexp-fu
   :ensure t
@@ -1056,9 +1128,9 @@ This checks in turn:
 ;;;; * gist
 (use-package yagist
   :ensure t
-  :bind(("C-c G c" . yagist-region-or-buffer)
-        ("C-c G p" . yagist-region-or-buffer-private)
-        ("C-c G l" . yagist-list))
+  :bind(("C-c g g c" . yagist-region-or-buffer)
+        ("C-c g g p" . yagist-region-or-buffer-private)
+        ("C-c g g l" . yagist-list))
   :config (setq yagist-view-gist t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1066,9 +1138,12 @@ This checks in turn:
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status)
-         ("C-x M-g" . magit-dispatch-popup)
-         ("C-c v f" . magit-log-buffer-file)
-         ("C-c v b" . magit-blame))
+         ("C-c g M-g" . magit-dispatch-popup)
+         ("C-c g c" . magit-clone)
+         ("C-c g s" . magit-status)
+         ("C-c g b" . magit-blame)
+         ("C-c g l" . magit-log-buffer-file)
+         ("C-c g p" . magit-pull))
   :init (setq magit-push-current-set-remote-if-missing nil)
   :config
   (setq magit-completing-read-function #'magit-ido-completing-read)
@@ -1118,7 +1193,7 @@ This checks in turn:
 
 (use-package git-timemachine
   :ensure t
-  :bind ("C-c v t" . git-timemachine-toggle))
+  :bind ("C-c g T" . git-timemachine-toggle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc
@@ -1173,7 +1248,7 @@ This checks in turn:
 (use-package git-messenger
   :ensure t
   :defer t
-  :bind (("C-c v p" . git-messenger:popup-message))
+  :bind (("C-c g p" . git-messenger:popup-message))
   :config (setq git-messenger:show-detail t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1246,8 +1321,8 @@ This checks in turn:
   :defer t
   :config
   (bind-keys :map sql-mode-map
-             ("C-c C-p p" . sql-set-product)
-             ("C-c C-p i" . sql-set-sqli-buffer)))
+             ("C-c m p" . sql-set-product)
+             ("C-c m i" . sql-set-sqli-buffer)))
 
 (use-package sql-spatialite-ext
   :defer t
@@ -1326,9 +1401,10 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :bind
   (("C-c s %" . highlight-symbol-query-replace)
-   ("C-c s n" . highlight-symbol-next-in-defun)
+   ;; ("C-c s n" . highlight-symbol-next-in-defun)
    ("C-c s o" . highlight-symbol-occur)
-   ("C-c s p" . highlight-symbol-prev-in-defun))
+   ;; ("C-c s p" . highlight-symbol-prev-in-defun)
+   )
   ;; Navigate occurrences of the symbol under point with M-n and M-p, and
   ;; highlight symbol occurrences
   :init
@@ -1408,7 +1484,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * iedit
 (use-package iedit
   :ensure t
-  :bind ("C-;" . iedit-mode))
+  :bind ("C-c s i" . iedit-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * google-this
@@ -1501,10 +1577,10 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package org
   :defer t
   :mode ("\\.org\\'" . org-mode)
-  :bind (("C-c O a" . org-agenda)
-         ("C-c O b" . org-iswitchb)
-         ("C-c O c" . org-capture)
-         ("C-c O o" . org-store-link))
+  :bind (("C-c o a" . org-agenda)
+         ("C-c o b" . org-iswitchb)
+         ("C-c o c" . org-capture)
+         ("C-c o o" . org-store-link))
   :config
   (setq org-outline-path-complete-in-steps nil
         org-completion-use-iswitchb nil
@@ -1764,7 +1840,7 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package json-reformat
   :ensure t
   :defer t
-  :bind ("C-c e j" . json-reformat-region))
+  :bind ("C-c x j" . json-reformat-region))
 
 ;; gnuplot
 (use-package gnuplot
@@ -1869,7 +1945,7 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package nxml-mode
   :mode (("\\.xml$" . nxml-mode)
          ("\\.gpx$" . nxml-mode))
-  :bind ("C-c e x" . xml-format)
+  :bind ("C-c x x" . xml-format)
   :init
   (defun xml-format ()
     "Format XML file with xmllint."
@@ -2056,7 +2132,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * find-file
 (use-package find-file
-  :bind ("C-c o" . ff-find-other-file))
+  :bind ("C-c j o" . ff-find-other-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * processing
@@ -2102,8 +2178,8 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * hideshow
 (use-package hideshow
   :defer t
-  :bind (("<f12>"   . hs-toggle-hiding)
-         ("S-<f12>" . hs-toggle-hiding-all))
+  :bind (("C-c b h"   . hs-toggle-hiding)
+         ("C-c b H" . hs-toggle-hiding-all))
   :init (add-hook 'prog-mode-hook #'hs-minor-mode)
   :config
   ;; https://github.com/Hawstein/my-emacs/blob/master/_emacs/hs-minor-mode-settings.el
@@ -2481,16 +2557,16 @@ With a prefix argument P, isearch for the symbol at point."
          ("M-4"       . mc/mark-previous-like-this)
          ("C-M-3"     . mc/unmark-next-like-this)
          ("C-M-4"     . mc/unmark-previous-like-this)
-         ("C-x C-m"   . mc/mark-all-dwim)
-         ("C-c m i"   . mc/insert-numbers)
-         ("C-c m h"   . mc-hide-unmatched-lines-mode)
-         ("C-c m a"   . mc/mark-all-like-this)
-         ("C-c m d"   . mc/mark-all-symbols-like-this-in-defun)
-         ("C-c m r"   . mc/reverse-regions)
-         ("C-c m s"   . mc/sort-regions)
-         ("C-c m l"   . mc/edit-lines)
-         ("C-c m C-a" . mc/edit-beginnings-of-lines)
-         ("C-c m C-e" . mc/edit-ends-of-lines)))
+         ("C-c u m"   . mc/mark-all-dwim)
+         ("C-c u i"   . mc/insert-numbers)
+         ("C-c u h"   . mc-hide-unmatched-lines-mode)
+         ("C-c u a"   . mc/mark-all-like-this)
+         ("C-c u d"   . mc/mark-all-symbols-like-this-in-defun)
+         ("C-c u r"   . mc/reverse-regions)
+         ("C-c u s"   . mc/sort-regions)
+         ("C-c u l"   . mc/edit-lines)
+         ("C-c u C-a" . mc/edit-beginnings-of-lines)
+         ("C-c u C-e" . mc/edit-ends-of-lines)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
@@ -2531,18 +2607,19 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package find-func
   :init (find-function-setup-keys)
   :bind (;; Help should search more than just commands
-         ("C-h C-f" . find-function)
-         ("C-h C-k" . find-function-on-key)
-         ("C-h C-v" . find-variable)
-         ("C-h C-l" . find-library)))
+         ("C-c h C-f" . find-function)
+         ("C-c h C-k" . find-function-on-key)
+         ("C-c h C-v" . find-variable)
+         ("C-c h C-l" . find-library)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * windows
 (use-package window
-  :bind (("<f6>"  . split-window-horizontally)
-         ("<f7>"  . split-window-vertically)
-         ("<f8>"  . delete-window)
-         ("C-. z" . delete-other-windows)
+  :bind (("C-c w ="  . balance-windows)
+         ("C-c w /"  . split-window-right)
+         ("C-c w -"  . split-window-below)
+         ("C-c w k"  . delete-window)
+         ("C-c w z" . delete-other-windows)
          ("C-<return>". other-window))
   :config
   (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
@@ -2609,9 +2686,9 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * align
 (use-package align
-  :bind (("C-c A a" . align)
-         ("C-c A c" . align-current)
-         ("C-c A r" . align-regexp)))
+  :bind (("C-c x a a" . align)
+         ("C-c x a c" . align-current)
+         ("C-c x a r" . align-regexp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * simple
@@ -2626,27 +2703,27 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-M--" . ptrv/decrement-number-at-point)
          ("C-c d" . ptrv/duplicate-current-line-or-region)
          ("C-c M-d" . ptrv/duplicate-and-comment-current-line-or-region)
-         ("C-x r v" . ptrv/list-registers)
-         ("C-c u b" . ptrv/browse-url)
+         ("C-c a b" . ptrv/browse-url)
          ("C-c q" . ptrv/exit-emacs-client)
          ("M-;" . ptrv/comment-dwim-line)
          ([remap move-beginning-of-line] . ptrv/smarter-move-beginning-of-line)
-         ("C-M-\\" . ptrv/indent-region-or-buffer)
+         ;; ("C-M-\\" . ptrv/indent-region-or-buffer)
+         ("C-c x i" . ptrv/indent-region-or-buffer)
          ("C-M-z" . ptrv/indent-defun)
-         ("C-c e d" . ptrv/insert-current-date)
-         ("C-c e S" . sudo-edit)))
+         ("C-c i d" . ptrv/insert-current-date)
+         ("C-c f S" . sudo-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * docs
 (use-package zeal-at-point
   :if *is-linux*
   :ensure t
-  :bind ("C-. d" . zeal-at-point))
+  :bind ("C-c h d" . zeal-at-point))
 
 (use-package dash-at-point
   :if *is-mac*
   :ensure t
-  :bind ("C-. d" . dash-at-point))
+  :bind ("C-c h d" . dash-at-point))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * server
