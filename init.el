@@ -2127,6 +2127,7 @@ With a prefix argument P, isearch for the symbol at point."
   (dolist (file '(".ropeproject" "setup.py"))
     (add-to-list 'projectile-project-root-files file t))
   (run-with-idle-timer 10 nil (lambda () (projectile-cleanup-known-projects)))
+  (setq projectile-completion-system 'helm)
   :diminish projectile-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
