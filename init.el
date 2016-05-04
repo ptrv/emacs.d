@@ -1340,6 +1340,10 @@ This checks in turn:
 ;; defalias
 (defalias 'toggle-fullscreen 'toggle-frame-maximized)
 
+(use-package frame
+  :bind (("C-c w F" . toggle-frame-fullscreen)
+         ("C-c w M" . toggle-frame-maximized)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * fullframe
 (use-package fullframe
