@@ -1,6 +1,6 @@
 ;;; init.el --- Emacs configuration of Peter Vasil
 ;;
-;; Copyright (c) 2013-2014 Peter Vasil <mail@petervasil.net>
+;; Copyright (c) 2013-2014, 2016 Peter Vasil <mail@petervasil.net>
 ;;
 ;; Author: Peter Vasil <mail@petervasil.net>
 ;; URL: https://gihub.com/ptrv/emacs.d
@@ -354,9 +354,10 @@ Something like: `python -m certifi'."
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
-  :config (if (fboundp 'save-place-mode)
-             (save-place-mode 1)
-           (setq-default save-place t)))
+  :config
+  (if (fboundp 'save-place-mode)
+      (save-place-mode 1)
+    (setq-default save-place t)))
 
 (setq history-length 1000)
 (use-package savehist
