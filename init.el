@@ -1029,6 +1029,9 @@ This checks in turn:
 (use-package cask-mode
   :ensure t)
 
+(use-package bug-hunter
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * clojure
 (use-package cider
