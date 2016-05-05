@@ -2545,6 +2545,11 @@ With a prefix argument P, isearch for the symbol at point."
              ("C-c C-b" . sp-html-previous-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * turtle
+(use-package "ttl-mode"
+  :mode (("\\.ttl$" . ttl-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * multiple-cursors
 (use-package multiple-cursors
   :ensure t
