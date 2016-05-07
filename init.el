@@ -2481,19 +2481,16 @@ With a prefix argument P, isearch for the symbol at point."
   (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
   (bind-key "M-." #'ycmd-goto ycmd-mode-map)
   (use-package company-ycmd
-    :load-path "~/src/emacs-ycmd"
     :commands (company-ycmd-setup)
     :after company
     :init (company-ycmd-setup))
 
   (use-package flycheck-ycmd
-    :load-path "~/src/emacs-ycmd"
     :commands (flycheck-ycmd-setup)
     :after flycheck
     :init (flycheck-ycmd-setup))
 
   (use-package ycmd-eldoc
-    :load-path "~/src/emacs-ycmd"
     :disabled t
     :commands (ycmd-eldoc-setup)
     :after eldoc
