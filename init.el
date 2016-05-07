@@ -223,6 +223,15 @@ Something like: `python -m certifi'."
   (which-key-declare-prefixes-for-mode 'emacs-lisp-mode
     "C-c m" "elisp/personal")
 
+  (which-key-declare-prefixes-for-mode 'markdown-mode
+    "C-c TAB" "markdown/images"
+    "C-c C-a" "markdown/links"
+    "C-c C-c" "markdown/process"
+    "C-c C-s" "markdown/style"
+    "C-c C-t" "markdown/header"
+    "C-c C-x" "markdown/structure"
+    "C-c m" "markdown/personal")
+
   :diminish which-key-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1876,7 +1885,10 @@ With a prefix argument P, isearch for the symbol at point."
   :config
   (setq markdown-css-paths
         (list
-         (expand-file-name "css/pandoc.css" ptrv/etc-dir))))
+         (expand-file-name "css/pandoc.css" ptrv/etc-dir)))
+  (add-hook 'gfm-mode-hook #'turn-off-auto-fill)
+  (bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
+  (bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * pandoc
