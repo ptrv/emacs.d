@@ -1595,30 +1595,22 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c o o" . org-store-link))
   :config
   (setq org-outline-path-complete-in-steps nil
-        org-completion-use-iswitchb nil
-        org-completion-use-ido t
         org-log-done t
         org-src-fontify-natively nil
-        ;; Set agenda files in custom.el or use default
-        ;; org-directory "~/Dropbox/org"
-        org-default-notes-file (expand-file-name "captures.org" org-directory)
-        ;; org-agenda-files `(,(expand-file-name "ptrv.org" org-directory))
-        org-link-mailto-program
-        '(browse-url "https://mail.google.com/mail/?view=cm&to=%a&su=%s"))
+        org-default-notes-file (expand-file-name
+                                "captures.org" org-directory))
 
   (with-eval-after-load 'yasnippet
     (defun yas-org-very-safe-expand ()
       (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
-
     (defun org-mode-yasnippet-workaround ()
       (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand))
-    (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround)
+    (add-hook 'org-mode-hook 'org-mode-yasnippet-workaround))
 
-    (defun org-mode-init ()
-      (turn-off-flyspell))
-    (add-hook 'org-mode-hook 'org-mode-init)
-
-    (bind-key "C-c g" 'org-sparse-tree org-mode-map)))
+  ;; (defun org-mode-init ()
+  ;;   (turn-off-flyspell))
+  ;; (add-hook 'org-mode-hook 'org-mode-init)
+  )
 
 (use-package org-clock
   :ensure org
@@ -1660,32 +1652,19 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :config
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
-           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i" :empty-lines 1)
-          ("j" "Journal" entry (file+datetree (expand-file-name "journal.org" org-directory))
-           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1))))
-
-(use-package ob-core
-  :ensure org
-  :defer t
-  :config
-  (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
-  ;; Make babel results blocks lowercase
-  (setq org-babel-results-keyword "results")
-  (defun bh/display-inline-images ()
-    (condition-case nil
-        (org-display-inline-images)
-      (error nil)))
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((sh . t)
-     (python . t)
-     (C . t)
-     (octave . t)
-     (emacs-lisp . t)
-     (latex . t)
-     (dot . t)
-     (gnuplot . t))))
+        '(("t" "Todo" entry
+           (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
+           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i"
+           :empty-lines 1)
+          ("j" "Journal" entry
+           (file+datetree (expand-file-name "journal.org" org-directory))
+           "* %U %^{Title}\n%?"
+           :empty-lines 1)
+          ("b" "Tidbit: quote, zinger, one-liner or textlet" entry
+           (file+headline org-default-notes-file "Tidbits")
+           (concat "* %^{Name} captured %U\n"
+                   "%^{Tidbit type|quote|zinger|one-liner|textlet}\n"
+                   "Possible Inspiration: %a  %i\n%?")))))
 
 (use-package ox
   :ensure org
