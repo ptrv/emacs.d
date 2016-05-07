@@ -1653,7 +1653,7 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package org-capture
   :ensure org
-  :bind ("C-c o c" . org-capture)
+  :mode ("\\.orgcaptmpl\\'" . org-mode)
   :config
   (defvar oc-capture-prmt-history nil
     "History of prompt answers for org capture.")
