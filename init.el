@@ -1631,26 +1631,6 @@ With a prefix argument P, isearch for the symbol at point."
                            "~/org/journal.org")
         org-mobile-inbox-for-pull "~/org/from-mobile.org"))
 
-(use-package org-agenda
-  :ensure org
-  :defer t
-  :config
-  (setq org-agenda-custom-commands
-        '(("P" "Projects"
-           ((tags "PROJECT")))
-          ("H" "Home Lists"
-           ((tags "HOME")
-            (tags "COMPUTER")
-            (tags "DVD")
-            (tags "READING")))
-          ("W" "Work Lists"
-           ((tags "WORK")))
-          ("D" "Daily Action List"
-           ((agenda "" ((org-agenda-ndays 1)
-                        (org-agenda-sorting-strategy
-                         '((agenda time-up priority-down tag-up)))
-                        (org-deadline-warning-days 0))))))))
-
 (use-package org-capture
   :ensure org
   :mode ("\\.orgcaptmpl\\'" . org-mode)
