@@ -2553,10 +2553,10 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * multiple-cursors
 (use-package multiple-cursors
   :ensure t
-  :bind (("M-3"       . mc/mark-next-like-this)
-         ("M-4"       . mc/mark-previous-like-this)
-         ("C-M-3"     . mc/unmark-next-like-this)
-         ("C-M-4"     . mc/unmark-previous-like-this)
+  :bind (("C-c u n"   . ptrv-mc/mc/mark-next-like-this)
+         ("C-c u p"   . ptrv-mc/mc/mark-previous-like-this)
+         ("C-c u N"   . ptrv-mc/mc/unmark-next-like-this)
+         ("C-c u P"   . ptrv-mc/mc/unmark-previous-like-this)
          ("C-c u m"   . mc/mark-all-dwim)
          ("C-c u i"   . mc/insert-numbers)
          ("C-c u h"   . mc-hide-unmatched-lines-mode)
@@ -2566,7 +2566,14 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c u s"   . mc/sort-regions)
          ("C-c u l"   . mc/edit-lines)
          ("C-c u C-a" . mc/edit-beginnings-of-lines)
-         ("C-c u C-e" . mc/edit-ends-of-lines)))
+         ("C-c u C-e" . mc/edit-ends-of-lines))
+  :init
+  (defhydra ptrv-mc ()
+    "Multiple Cursors"
+    ("n" mc/mark-next-like-this "mark next")
+    ("p" mc/mark-previous-like-this "mark previous")
+    ("N" mc/unmark-next-like-this "unmark next")
+    ("U" mc/unmark-previous-like-this "unmark previous")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
