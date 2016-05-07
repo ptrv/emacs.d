@@ -594,6 +594,11 @@ Something like: `python -m certifi'."
   :defer t
   :init (global-hl-todo-mode))
 
+(use-package smart-mode-line
+  :ensure t
+  :config
+  (sml/setup))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * beacon
 (use-package beacon
