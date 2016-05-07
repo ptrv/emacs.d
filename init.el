@@ -1596,7 +1596,7 @@ With a prefix argument P, isearch for the symbol at point."
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c o a" . org-agenda)
          ("C-c o b" . org-iswitchb)
-         ("C-c o o" . org-store-link))
+         ("C-c o l" . org-store-link))
   :config
   (setq org-outline-path-complete-in-steps nil
         org-log-done t
