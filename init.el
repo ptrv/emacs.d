@@ -1163,11 +1163,10 @@ This checks in turn:
          ("C-c g s" . magit-status)
          ("C-c g b" . magit-blame)
          ("C-c g l" . magit-log-buffer-file)
-         ("C-c g p" . magit-pull))
-  :init (setq magit-push-current-set-remote-if-missing nil)
+         ("C-c g F" . magit-pull))
+  :init
+  (setq magit-push-current-set-remote-if-missing nil)
   :config
-  (setq magit-completing-read-function #'magit-ido-completing-read)
-
   ;; hide stashes section in magit status
   (add-hook 'magit-section-set-visibility-hook
             (lambda (section)
