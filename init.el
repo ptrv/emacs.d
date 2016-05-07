@@ -1260,13 +1260,20 @@ This checks in turn:
 (use-package diff-hl
   :ensure t
   :defer t
+  :bind (:map diff-hl-command-map
+              ("]" . ptrv-hunks/diff-hl-next-hunk)
+              ("[" . ptrv-hunks/diff-hl-previous-hunk))
   :init
   (global-diff-hl-mode)
   ;; Fall back to the display margin, if the fringe is unavailable
   (unless (display-graphic-p)
     (diff-hl-margin-mode))
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
-  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  (defhydra ptrv-hunks ()
+    "Hunks"
+    ("]" diff-hl-next-hunk "next")
+    ("[" diff-hl-previous-hunk "previous")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * mercurial
