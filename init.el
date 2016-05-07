@@ -187,7 +187,7 @@ Something like: `python -m certifi'."
           ;; Prettify hydra entry points
           ("/body\\'"       . "|=")
           ;; Drop my personal prefix
-          ("\\`ptrv/"  . "")
+          ("\\`ptrv.*?/"  . "")
           ("\\`cscope-"  . "")
           ("\\`ycmd-"  . "")))
   (which-key-declare-prefixes
