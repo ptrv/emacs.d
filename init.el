@@ -178,7 +178,7 @@ Something like: `python -m certifi'."
   :ensure t
   :init (which-key-mode)
   :config
-  (setq which-key-idle-delay 0.5
+  (setq which-key-idle-delay 1.0
         which-key-sort-order 'which-key-prefix-then-key-order
         which-key-description-replacement-alist
         '(("Prefix Command" . "prefix")
