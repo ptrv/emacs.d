@@ -2430,7 +2430,8 @@ With a prefix argument P, isearch for the symbol at point."
   (use-package xcscope
     :ensure t
     :init
-    (add-hook 'c++-mode-hook #'cscope-minor-mode))
+    (dolist (mode-hook '(c++-mode-hook c-mode-hook))
+      (add-hook mode-hook #'cscope-minor-mode)))
 
   (use-package clang-format
     :ensure t))
