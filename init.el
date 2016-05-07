@@ -1596,7 +1596,6 @@ With a prefix argument P, isearch for the symbol at point."
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c o a" . org-agenda)
          ("C-c o b" . org-iswitchb)
-         ("C-c o c" . org-capture)
          ("C-c o o" . org-store-link))
   :config
   (setq org-outline-path-complete-in-steps nil
@@ -1654,10 +1653,20 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package org-capture
   :ensure org
-  :defer t
+  :bind ("C-c o c" . org-capture)
   :config
+  (defvar oc-capture-prmt-history nil
+    "History of prompt answers for org capture.")
+  (defun oc/prmt (prompt variable)
+    "PROMPT for string, save it to VARIABLE and insert it."
+    (setq-local variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
+  (defun oc/inc (what text &rest fmtvars)
+    "Ask user to include WHAT.  If user agrees return TEXT."
+    (when (y-or-n-p (concat "Include " what "?"))
+      (apply 'format text fmtvars)))
+
   (setq org-capture-templates
-        '(("t" "Todo" entry
+        `(("t" "Todo" entry
            (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
            "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i"
            :empty-lines 1)
@@ -1667,9 +1676,15 @@ With a prefix argument P, isearch for the symbol at point."
            :empty-lines 1)
           ("b" "Tidbit: quote, zinger, one-liner or textlet" entry
            (file+headline org-default-notes-file "Tidbits")
-           (concat "* %^{Name} captured %U\n"
-                   "%^{Tidbit type|quote|zinger|one-liner|textlet}\n"
-                   "Possible Inspiration: %a  %i\n%?")))))
+           (file ,(expand-file-name "org-templates/tidbit.orgcaptmpl"
+                                    ptrv/etc-dir)))
+          ("i" "JIRA Ticket" entry
+           (file org-default-notes-file "JIRA Issues")
+           (file ,(expand-file-name
+                   "org-templates/jiraticket.orgcaptmpl" ptrv/etc-dir)))
+          ("e" "Emacs Berlin topic" entry
+           (file (expand-file-name "emacs-berlin.org" org-directory))
+           "* %?"))))
 
 (use-package ox
   :ensure org

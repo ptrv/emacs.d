@@ -1,0 +1,11 @@
+* JIRA Ticket %(oc/prmt "JIRA Project" 'jr-prj)-%(oc/prmt "JIRA Ticket No." 'jr-no)
+For project %(progn jr-prj) I have to do the following stuff:
+%(oc/inc "tasks"
+"** Tasks %s-%s
+Do the triage."
+ jr-prj jr-no)
+%(oc/inc "implementation"
+"** Implement %s-%s
+Implement stuff
+- [ ] Tests pass?"
+ jr-prj jr-no)
