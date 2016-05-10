@@ -1639,7 +1639,8 @@ With a prefix argument P, isearch for the symbol at point."
     "History of prompt answers for org capture.")
   (defun oc/prmt (prompt variable)
     "PROMPT for string, save it to VARIABLE and insert it."
-    (setq-local variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
+    (make-local-variable variable)
+    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
   (defun oc/inc (what text &rest fmtvars)
     "Ask user to include WHAT.  If user agrees return TEXT."
     (when (y-or-n-p (concat "Include " what "?"))
