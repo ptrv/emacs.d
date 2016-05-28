@@ -608,7 +608,7 @@ Something like: `python -m certifi'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * helm
-(use-package helm                       ; Powerful minibuffer input framework
+(use-package helm
   :ensure t
   :bind (("C-. ." . helm-resume))
   :init
@@ -752,6 +752,16 @@ Something like: `python -m certifi'."
                 neo-persist-show nil
                 neo-show-hidden-files t
                 neo-auto-indent-point t))
+
+(use-package smex
+  :ensure t
+  :defer t
+  :init (add-hook 'after-init-hook #'smex-initialize))
+
+(use-package ptrv-helm-smex
+  :load-path "site-lisp"
+  :after (smex helm-source)
+  :bind ([remap execute-extended-command] . helm-smex/run))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
