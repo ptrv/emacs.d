@@ -1675,7 +1675,11 @@ With a prefix argument P, isearch for the symbol at point."
                    "org-templates/jiraticket.orgcaptmpl" ptrv/etc-dir)))
           ("e" "Emacs Berlin topic" entry
            (file (expand-file-name "emacs-berlin.org" org-directory))
-           "* %?"))))
+           "* %?")
+          ("s" "Code Snippet" entry
+           (file (expand-file-name "snippets.org" org-directory))
+           ;; Prompt for tag and language
+           "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC"))))
 
 (use-package ox
   :ensure org
