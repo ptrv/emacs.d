@@ -2495,6 +2495,7 @@ With a prefix argument P, isearch for the symbol at point."
       (error "No YCMD server buffer")))
   (bind-key "w" #'ptrv/ycmd-show-server-buffer ycmd-command-map)
   (bind-key "M-." #'ycmd-goto ycmd-mode-map)
+  (bind-key "M-?" #'ycmd-goto-definition ycmd-mode-map)
   (use-package company-ycmd
     :commands (company-ycmd-setup)
     :after company
@@ -2517,7 +2518,20 @@ With a prefix argument P, isearch for the symbol at point."
     (let ((ycmd-force-semantic-completion (not arg)))
       (company-complete)))
   (bind-key [remap complete-symbol]
-            #'ptrv/company-ycmd-complete ycmd-mode-map))
+            #'ptrv/company-ycmd-complete ycmd-mode-map)
+  (defun ptrv/ycmd-after-exception-try-cscope-or-ag (type buf pos _res)
+    (when (equal type "GoToDefinition")
+      (save-excursion
+        (with-current-buffer buf
+          (goto-char pos)
+          (ycmd--save-marker)
+          (if (file-exists-p (expand-file-name
+                              cscope-index-file (projectile-project-root)))
+              (cscope-find-global-definition-no-prompting)
+            (ag (symbol-name (symbol-at-point))
+                (file-name-directory (buffer-file-name))))))))
+  (add-hook 'ycmd-after-exception-hook
+            #'ptrv/ycmd-after-exception-try-cscope-or-ag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
