@@ -37,8 +37,9 @@
 
 (defun helm-smex-action (command)
   (let ((prefix-arg current-prefix-arg))
-    (command-execute command 'record)
-    (smex-rank command)))
+    (unwind-protect
+        (command-execute command 'record)
+      (smex-rank command))))
 
 (defclass helm-smex-source (helm-source-sync)
   ((init :initform 'helm-smex-init)
