@@ -755,13 +755,11 @@ Something like: `python -m certifi'."
 
 (use-package smex
   :ensure t
-  :defer t
-  :init (add-hook 'after-init-hook #'smex-initialize))
+  :defer t)
 
 (use-package ptrv-helm-smex
   :load-path "site-lisp"
-  :after (smex helm-source)
-  :bind ([remap execute-extended-command] . helm-smex/run))
+  :bind ([remap execute-extended-command] . helm-smex))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido

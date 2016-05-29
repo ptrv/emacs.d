@@ -27,7 +27,6 @@
 (require 'smex)
 (require 'helm-source)
 
-(defvar helm-smex-source--candidates nil)
 (defvar helm-smex-source--cache (make-hash-table :test #'eq))
 
 (defun helm-smex-score-no-cache (command)
@@ -47,16 +46,13 @@
 (defun helm-smex-items ()
   (unless smex-initialized-p
     (smex-initialize))
-  (if (not (smex-detect-new-commands))
-      helm-smex-source--candidates
-    (smex-update)
-    (setq helm-smex-source--candidates
-          (smex-convert-for-ido smex-cache))))
+  (and (smex-detect-new-commands)
+       (smex-update))
+  smex-ido-cache)
 
 (defclass helm-smex-source (helm-source-sync)
   ((init
     :initform (lambda ()
-                (helm-smex-items)
                 (clrhash helm-smex-source--cache)))
    (candidates :initform 'helm-smex-items)
    (match :initform 'helm-fuzzy-match)
@@ -68,10 +64,9 @@
                 (unwind-protect
                     (execute-extended-command current-prefix-arg
                                               command-name)
-                  (smex-rank (intern command-name)))))
-   ))
+                  (smex-rank (intern command-name)))))))
 
-(defun helm-smex/run ()
+(defun helm-smex ()
   (interactive)
   (helm :buffer "*helm-smex*"
         :sources (helm-make-source "Smex" helm-smex-source)))
