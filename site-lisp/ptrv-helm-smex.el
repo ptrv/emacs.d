@@ -25,51 +25,54 @@
 ;;; Code:
 
 (require 'smex)
+(require 'helm)
 (require 'helm-source)
 
-(defvar helm-smex-source--cache (make-hash-table :test #'eq))
+;; (defvar helm-smex-source--cache (make-hash-table :test #'eq))
 
-(defun helm-smex-score-no-cache (command)
-  (or (cdr (car (cl-member (symbol-name command) smex-cache
-                           :test #'string=)))
-      0))
+;; (defun helm-smex-score-no-cache (command)
+;;   (or (cdr (assoc command smex-cache)) 0))
 
-(defun helm-smex-score (command)
-  (or (gethash command helm-smex-source--cache)
-      (puthash command (helm-smex-score-no-cache command)
-               helm-smex-source--cache)))
+;; (defun helm-smex-score (command)
+;;   (or (gethash command helm-smex-source--cache)
+;;       (puthash command (helm-smex-score-no-cache command)
+;;                helm-smex-source--cache)))
 
-(defun helm-smex-compare-candidates (command-name1 command-name2)
-  (> (helm-smex-score (intern-soft command-name1))
-     (helm-smex-score (intern-soft command-name2))))
+;; (defun helm-smex-compare-candidates (command-name1 command-name2)
+;;   (> (helm-smex-score (intern-soft command-name1))
+;;      (helm-smex-score (intern-soft command-name2))))
 
-(defun helm-smex-items ()
+;; (defun helm-smex-sort (candidates source)
+;;   (message "bla")
+;;   (sort candidates #'helm-smex-compare-candidates))
+
+(defun helm-smex-init ()
   (unless smex-initialized-p
     (smex-initialize))
-  (and (smex-detect-new-commands)
+  (and smex-auto-update
+       (smex-detect-new-commands)
        (smex-update))
-  smex-ido-cache)
+  (clrhash helm-smex-source--cache))
+
+(defun helm-smex-action (command-name)
+  (unwind-protect
+      (execute-extended-command current-prefix-arg
+                                command-name)
+    (smex-rank (intern command-name))))
 
 (defclass helm-smex-source (helm-source-sync)
-  ((init
-    :initform (lambda ()
-                (clrhash helm-smex-source--cache)))
-   (candidates :initform 'helm-smex-items)
+  ((init :initform 'helm-smex-init)
+   (candidates :initform 'smex-ido-cache)
    (match :initform 'helm-fuzzy-match)
-   (filtered-candidates-transformer
-    :initform (lambda (candidates source)
-                (sort candidates #'helm-smex-compare-candidates)))
-   (action
-    :initform (lambda (command-name)
-                (unwind-protect
-                    (execute-extended-command current-prefix-arg
-                                              command-name)
-                  (smex-rank (intern command-name)))))))
+   ;; (filtered-candidate-transformer
+   ;;  :initform 'helm-smex-sort)
+   (action :initform 'helm-smex-action)))
 
 (defun helm-smex ()
   (interactive)
-  (helm :buffer "*helm-smex*"
-        :sources (helm-make-source "Smex" helm-smex-source)))
+  (let ((helm--mode-line-display-prefarg t))
+    (helm :buffer "*helm-smex*"
+          :sources (helm-make-source "Smex" helm-smex-source))))
 
 (provide 'ptrv-helm-smex)
 ;;; ptrv-helm-smex.el ends here
