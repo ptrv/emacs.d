@@ -1194,7 +1194,11 @@ This checks in turn:
     (ptrv/magit-set-repo-dirs-from-projectile))
 
   (add-hook 'projectile-switch-project-hook
-            #'ptrv/magit-set-repo-dirs-from-projectile))
+            #'ptrv/magit-set-repo-dirs-from-projectile)
+
+  (use-package magit-gitflow
+    :ensure t
+    :init (add-hook 'magit-mode-hook #'turn-on-magit-gitflow)))
 
 (use-package git-commit
   :ensure t
