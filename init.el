@@ -672,7 +672,7 @@ Something like: `python -m certifi'."
 
 (use-package helm-elisp
   :ensure helm
-  :bind (("C-c h l" . helm-locate-library)
+  :bind (;; ("C-c h l" . helm-locate-library)
          ("C-c h a" . helm-apropos)))
 
 (use-package helm-color
@@ -2628,10 +2628,10 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package find-func
   :init (find-function-setup-keys)
   :bind (;; Help should search more than just commands
-         ("C-c h C-f" . find-function)
-         ("C-c h C-k" . find-function-on-key)
-         ("C-c h C-v" . find-variable)
-         ("C-c h C-l" . find-library)))
+         ("C-c h f" . find-function)
+         ("C-c h k" . find-function-on-key)
+         ("C-c h v" . find-variable)
+         ("C-c h l" . find-library)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * windows
