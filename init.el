@@ -688,8 +688,6 @@ Something like: `python -m certifi'."
 
 (use-package helm-projectile
   :ensure t
-  :defer t
-  :after projectile
   :bind ("C-c s p" . helm-projectile-ag)
   :init (helm-projectile-on)
   :config
@@ -1039,7 +1037,6 @@ This checks in turn:
 (use-package macrostep
   :ensure t
   :defer t
-  :after lisp-mode
   :init
   (bind-key "C-c m e" #'macrostep-expand emacs-lisp-mode-map)
   (bind-key "C-c m e" #'macrostep-expand lisp-interaction-mode-map))
@@ -1382,7 +1379,6 @@ This checks in turn:
 (use-package fullframe
   :ensure t
   :defer t
-  :after magit
   :init (fullframe magit-status magit-mode-quit-window))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
