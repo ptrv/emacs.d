@@ -2657,6 +2657,12 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c w v" . ptrv/halve-other-window-height-or-width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * ace-window
+(use-package ace-window
+  :ensure t
+  :bind ("C-x o" . ace-window))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * golden-ratio
 (use-package golden-ratio
   :ensure t
