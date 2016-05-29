@@ -26,6 +26,7 @@
 
 (require 'smex)
 (require 'helm)
+(require 'helm-elisp)
 (require 'helm-source)
 
 (defun helm-smex-init ()
@@ -41,12 +42,19 @@
         (command-execute command 'record)
       (smex-rank command))))
 
+(defun helm-smex-persistent-action (candidate)
+  (helm-elisp--persistent-help
+   candidate 'helm-describe-function))
+
 (defclass helm-smex-source (helm-source-sync)
   ((init :initform 'helm-smex-init)
    (candidates :initform 'smex-ido-cache)
    (match :initform 'helm-fuzzy-match)
    (action :initform 'helm-smex-execute-command)
-   (coerce :initform 'intern)))
+   (coerce :initform 'intern)
+   (persistent-action
+    :initform helm-smex-persistent-action)
+   (persistent-help :initform "Describe command")))
 
 (defun helm-smex ()
   (interactive)
