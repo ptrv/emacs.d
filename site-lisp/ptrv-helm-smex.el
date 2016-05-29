@@ -31,33 +31,34 @@
 (require 'helm-elisp)
 (require 'helm-source)
 
-(defun helm-smex-init ()
+(defun helm-smex--init ()
   (unless smex-initialized-p
     (smex-initialize))
   (and smex-auto-update
        (smex-detect-new-commands)
        (smex-update)))
 
-(defun helm-smex-execute-command (command)
+(defun helm-smex--execute-command (command)
   (let ((prefix-arg current-prefix-arg))
     (unwind-protect
         (command-execute command 'record)
       (smex-rank command))))
 
-(defun helm-smex-persistent-action (candidate)
+(defun helm-smex--persistent-action (candidate)
   (helm-elisp--persistent-help
    candidate 'helm-describe-function))
 
 (defclass helm-smex-source (helm-source-sync)
-  ((init :initform 'helm-smex-init)
+  ((init :initform 'helm-smex--init)
    (candidates :initform 'smex-ido-cache)
    (match :initform 'helm-fuzzy-match)
-   (action :initform 'helm-smex-execute-command)
+   (action :initform 'helm-smex--execute-command)
    (coerce :initform 'intern)
    (persistent-action
-    :initform helm-smex-persistent-action)
+    :initform helm-smex--persistent-action)
    (persistent-help :initform "Describe command")))
 
+;;;###autoload
 (defun helm-smex ()
   (interactive)
   (let ((helm--mode-line-display-prefarg t))
