@@ -20,7 +20,9 @@
 
 ;;; Commentary:
 
-;;
+;; Sources:
+;; https://github.com/hatschipuh/helm-better-defaults
+;; https://github.com/wasamasa/dotemacs/blob/master/unpublished/helm-smex.el
 
 ;;; Code:
 
