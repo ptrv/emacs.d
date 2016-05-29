@@ -35,7 +35,7 @@
        (smex-detect-new-commands)
        (smex-update)))
 
-(defun helm-smex-action (command)
+(defun helm-smex-execute-command (command)
   (let ((prefix-arg current-prefix-arg))
     (unwind-protect
         (command-execute command 'record)
@@ -45,7 +45,7 @@
   ((init :initform 'helm-smex-init)
    (candidates :initform 'smex-ido-cache)
    (match :initform 'helm-fuzzy-match)
-   (action :initform 'helm-smex-action)
+   (action :initform 'helm-smex-execute-command)
    (coerce :initform 'intern)))
 
 (defun helm-smex ()
