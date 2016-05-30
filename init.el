@@ -755,8 +755,8 @@ Something like: `python -m certifi'."
   :ensure t
   :defer t)
 
-(use-package ptrv-helm-smex
-  :load-path "site-lisp"
+(use-package helm-smex
+  :load-path "site-lisp/helm-smex"
   :bind ([remap execute-extended-command] . helm-smex))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

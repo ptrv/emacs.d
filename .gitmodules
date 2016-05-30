@@ -27,3 +27,6 @@
 [submodule "site-lisp/company-lua"]
 	path = site-lisp/company-lua
 	url = https://github.com/ptrv/company-lua.git
+[submodule "site-lisp/helm-smex"]
+	path = site-lisp/helm-smex
+	url = https://github.com/ptrv/helm-smex.git
