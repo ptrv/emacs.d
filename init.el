@@ -757,7 +757,8 @@ Something like: `python -m certifi'."
 
 (use-package helm-smex
   :load-path "site-lisp/helm-smex"
-  :bind ([remap execute-extended-command] . helm-smex))
+  :bind (([remap execute-extended-command] . helm-smex)
+         ("M-X" . helm-smex-major-mode-commands)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ido
