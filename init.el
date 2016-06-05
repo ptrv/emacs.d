@@ -121,6 +121,17 @@
 
 (bind-key "C-c h b" #'describe-personal-keybindings)
 
+(use-package package-build
+  :disabled t
+  :load-path "~/src/melpa"
+  :commands (package-build-archive
+             package-build-create-recipe
+             package-build-current-recipe)
+  :config
+  (defun ptrv/package-build-dump-archive-contents ()
+    (interactive)
+    (package-build-dump-archive-contents)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * tls
 (defcustom ptrv/trustfile-command nil
