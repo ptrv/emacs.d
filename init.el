@@ -1057,7 +1057,13 @@ This checks in turn:
 
 (use-package eval-sexp-fu
   :ensure t
-  :demand t)
+  :init
+  (when (>= emacs-major-version 25)
+    (eval-after-load 'bytecomp
+      '(add-to-list 'byte-compile-not-obsolete-funcs
+                    'preceding-sexp)))
+  :config
+  (turn-on-eval-sexp-fu-flash-mode))
 
 (use-package cask-mode
   :ensure t)
