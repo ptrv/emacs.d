@@ -337,7 +337,7 @@ Something like: `python -m certifi'."
       (unless copyright-update
         ;; Fix years when the copyright information was updated
         (copyright-fix-years))))
-  (add-hook 'find-file-hook #'ptrv/copyright-update)
+  ;; (add-hook 'find-file-hook #'ptrv/copyright-update)
   :config
   ;; Use ranges to denote consecutive years
   (setq copyright-year-ranges t
