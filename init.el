@@ -1133,13 +1133,15 @@ This checks in turn:
   :init (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode)
   :config
   (use-package ibuf-ext
-    :config (setq ibuffer-show-empty-filter-groups nil)))
+    :config (setq ibuffer-show-empty-filter-groups nil))
+  (defun ptrv/ibuffer-quit (&optional kill window)
+    (interactive "P")
+    (quit-window (not kill) window))
+  (bind-key "q" #'ptrv/ibuffer-quit ibuffer-mode-map))
 
 (use-package ibuffer-projectile
-  :disabled t
   :ensure t
   :defer t
-  :after ibuffer
   :init
   (defun ptrv/ibuffer-group-buffers ()
     (setq ibuffer-filter-groups
