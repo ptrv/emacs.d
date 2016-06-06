@@ -1217,6 +1217,7 @@ This checks in turn:
                           (name . "^\\*Completions\\*$")
                           (name . "^\\*Backtrace\\*$")
                           (mode . inferior-emacs-lisp-mode)))
+             ("Helm" (name . "^\\*helm.*"))
              ("root" (filename . "^/sudo:root.*"))
              ("Org" (mode . org-mode)))
            (ibuffer-projectile-generate-filter-groups)))
