@@ -2246,10 +2246,18 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * flycheck
 (use-package flycheck
   :ensure t
-  :bind ("C-c l e" . list-flycheck-errors)
+  :bind ("C-c l e" . ptrv/flycheck-errors/body)
   :commands (flycheck-get-checker-for-buffer
              flycheck-may-enable-mode)
-  :init (add-hook 'after-init-hook #'global-flycheck-mode)
+  :init
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (defhydra ptrv/flycheck-errors ()
+    "Flycheck errors."
+    ("n" flycheck-next-error "next")
+    ("p" flycheck-previous-error "previous")
+    ("f" flycheck-first-error "first")
+    ("l" flycheck-list-errors "list")
+    ("w" flycheck-copy-errors-as-kill "copy message"))
   :config
   (defun ptrv/flycheck-mode-on-safe ()
     (when (and (flycheck-may-enable-mode)
