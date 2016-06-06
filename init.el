@@ -980,6 +980,19 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                  '(((lambda (&rest _ignored)
                       (ptrv/smart-open-line-above)) "RET"))))
 
+(use-package embrace
+  :ensure t
+  :bind (("C-c x e" . ptrv/embrace/body))
+  :init
+  (defhydra ptrv/embrace (:hint nil)
+    "
+Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
+"
+    ("a" embrace-add)
+    ("c" embrace-change)
+    ("d" embrace-delete)
+    ("q" nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
 (use-package lisp-mode
