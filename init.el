@@ -1196,9 +1196,9 @@ This checks in turn:
   :config
   (use-package ibuf-ext
     :config (setq ibuffer-show-empty-filter-groups nil))
-  (defun ptrv/ibuffer-quit (&optional kill window)
+  (defun ptrv/ibuffer-quit (&optional bury window)
     (interactive "P")
-    (quit-window (not kill) window))
+    (quit-window (not bury) window))
   (bind-key "q" #'ptrv/ibuffer-quit ibuffer-mode-map))
 
 (use-package ibuffer-projectile
