@@ -2332,7 +2332,8 @@ With a prefix argument P, isearch for the symbol at point."
   (setq system-name (car (split-string system-name "\\.")))
 
   ;; Ignore .DS_Store files with ido mode
-  (add-to-list 'ido-ignore-files "\\.DS_Store"))
+  (with-eval-after-load 'ido
+    (add-to-list 'ido-ignore-files "\\.DS_Store")))
 
 ;;GNU ls and find
 (use-package files
