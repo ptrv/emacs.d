@@ -1184,7 +1184,7 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; ffap
 (use-package ffap
-  :defer t
+  :bind ("C-c j f" . ffap)
   ;; https://github.com/technomancy/emacs-starter-kit/issues/39
   :config (setq ffap-machine-p-known 'reject))
 
