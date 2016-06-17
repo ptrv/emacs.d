@@ -345,7 +345,22 @@ Something like: `python -m certifi'."
         copyright-names-regexp (regexp-quote user-full-name)))
 
 (use-package jka-cmpr-hook
-  :config (auto-compression-mode))
+  :config
+  (auto-compression-mode)
+  (when *is-mac*
+    ;; Allow editing of binary .plist files.
+    (add-to-list 'jka-compr-compression-info-list
+                 ["\\.plist$"
+                  "converting text XML to binary plist"
+                  "plutil"
+                  ("-convert" "binary1" "-o" "-" "-")
+                  "converting binary plist to text XML"
+                  "plutil"
+                  ("-convert" "xml1" "-o" "-" "-")
+                  nil nil "bplist"])
+    ;;It is necessary to perform an update!
+    (jka-compr-update)))
+
 (use-package winner
   :bind (("M-N" . winner-redo)
          ("M-P" . winner-undo))
@@ -2028,7 +2043,8 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * xml
 (use-package nxml-mode
   :mode (("\\.xml$" . nxml-mode)
-         ("\\.gpx$" . nxml-mode))
+         ("\\.gpx$" . nxml-mode)
+         ("\\.plist$" . nxml-mode))
   :bind ("C-c x x" . xml-format)
   :init
   (defun xml-format ()
