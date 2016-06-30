@@ -921,8 +921,28 @@ Something like: `python -m certifi'."
   :init (company-quickhelp-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * paredit
+(use-package paredit
+  :ensure t
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook
+                  inferior-emacs-lisp-mode-hook
+                  eval-expression-minibuffer-setup-hook))
+    (add-hook hook #'enable-paredit-mode)))
+
+(use-package elec-pair
+  :config
+  (electric-pair-mode +1))
+
+(use-package paren
+  :config
+  (setq show-paren-style 'parenthesis)
+  (show-paren-mode +1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
 (use-package smartparens
+  :disabled t
   :ensure t
   :bind (("C-c k" . ptrv/smartparens/body)
          :map smartparens-strict-mode
@@ -1168,9 +1188,6 @@ This checks in turn:
   (setq cider-repl-use-clojure-font-lock t)
 
   (add-hook 'cider-repl-mode-hook #'subword-mode)
-
-  (with-eval-after-load 'smartparens
-    (sp-local-pair 'clojure-mode "(" nil :bind "M-("))
 
   (use-package cider-eval-sexp-fu
     :ensure t
@@ -2662,14 +2679,14 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
-(use-package sgml-mode
-  :defer t
-  :config
-  (require 'smartparens-html)
-  (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
-  (bind-keys :map html-mode-map
-             ("C-c C-f" . sp-html-next-tag)
-             ("C-c C-b" . sp-html-previous-tag)))
+;; (use-package sgml-mode
+;;   :defer t
+;;   :config
+;;   (require 'smartparens-html)
+;;   (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
+;;   (bind-keys :map html-mode-map
+;;              ("C-c C-f" . sp-html-next-tag)
+;;              ("C-c C-b" . sp-html-previous-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * turtle
