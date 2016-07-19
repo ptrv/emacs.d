@@ -2566,7 +2566,8 @@ With a prefix argument P, isearch for the symbol at point."
       (add-hook mode-hook #'cscope-minor-mode)))
 
   (use-package clang-format
-    :ensure t))
+    :ensure t
+    :bind ("C-. f" . clang-format-region)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gud
