@@ -2560,6 +2560,7 @@ With a prefix argument P, isearch for the symbol at point."
                   (doxymacs-font-lock)))))
 
   (use-package xcscope
+    :disabled t
     :ensure t
     :init
     (dolist (mode-hook '(c++-mode-hook c-mode-hook))
@@ -2567,7 +2568,24 @@ With a prefix argument P, isearch for the symbol at point."
 
   (use-package clang-format
     :ensure t
-    :bind ("C-. f" . clang-format-region)))
+    :bind ("C-. f" . clang-format-region))
+
+  (use-package helm-cscope
+    :ensure t
+    :bind
+    (:map helm-cscope-mode-map
+          ("C-c , s" . helm-cscope-find-this-symbol)
+          ("C-c , d" . helm-cscope-find-global-definition)
+          ("C-c , C" . helm-cscope-find-called-function)
+          ("C-c , c" . helm-cscope-find-calling-this-funtcion)
+          ("C-c , t" . helm-cscope-find-this-text-string)
+          ("C-c , e" . helm-cscope-find-egrep-pattern)
+          ("C-c , f" . helm-cscope-find-this-file)
+          ("C-c , i" . helm-cscope-find-files-including-file)
+          ("C-c , =" . helm-cscope-find-assignments-to-this-symbol))
+    :init
+    (dolist (hook '(c++-mode-hook c-mode-hook))
+      (add-hook hook #'helm-cscope-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gud
