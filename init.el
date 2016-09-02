@@ -2627,7 +2627,13 @@ With a prefix argument P, isearch for the symbol at point."
   :commands (ycmd-mode)
   :init
   (ptrv/hook-into-modes #'ycmd-mode
-    '(c-mode-hook c++-mode-hook go-mode-hook python-mode-hook rust-mode-hook))
+    '(c-mode-hook
+      c++-mode-hook
+      go-mode-hook
+      python-mode-hook
+      rust-mode-hook
+      js-mode-hook
+      typescript-mode-hook))
   :config
   (defun ptrv/ycmd-show-server-buffer ()
     (interactive)
