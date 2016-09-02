@@ -2580,7 +2580,7 @@ With a prefix argument P, isearch for the symbol at point."
     :bind
     (:map helm-cscope-mode-map
           ("C-c , s" . helm-cscope-find-this-symbol)
-          ("C-c , d" . helm-cscope-find-global-definition)
+          ("C-c , g" . helm-cscope-find-global-definition)
           ("C-c , C" . helm-cscope-find-called-function)
           ("C-c , c" . helm-cscope-find-calling-this-funtcion)
           ("C-c , t" . helm-cscope-find-this-text-string)
