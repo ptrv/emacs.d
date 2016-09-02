@@ -922,30 +922,35 @@ Something like: `python -m certifi'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * paredit
-(use-package paredit
-  :ensure t
-  :init
-  (dolist (hook '(emacs-lisp-mode-hook
-                  inferior-emacs-lisp-mode-hook
-                  eval-expression-minibuffer-setup-hook))
-    (add-hook hook #'enable-paredit-mode)))
+;; (use-package paredit
+;;   :ensure t
+;;   :init
+;;   (dolist (hook '(emacs-lisp-mode-hook
+;;                   inferior-emacs-lisp-mode-hook
+;;                   eval-expression-minibuffer-setup-hook))
+;;     (add-hook hook #'enable-paredit-mode))
+;;   :config
+;;   (with-eval-after-load 'eldoc
+;;     (eldoc-add-command
+;;      'paredit-backward-delete
+;;      'paredit-close-round)))
 
-(use-package elec-pair
-  :config
-  (electric-pair-mode +1))
+;; (use-package elec-pair
+;;   :config
+;;   (electric-pair-mode +1))
 
-(use-package paren
-  :config
-  (setq show-paren-style 'parenthesis)
-  (show-paren-mode +1))
+;; (use-package paren
+;;   :config
+;;   (setq show-paren-style 'parenthesis)
+;;   (show-paren-mode +1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * smartparens
 (use-package smartparens
-  :disabled t
+  ;; :disabled t
   :ensure t
   :bind (("C-c k" . ptrv/smartparens/body)
-         :map smartparens-strict-mode
+         :map smartparens-strict-mode-map
          ("M-q" . sp-indent-defun))
   :init
   (defhydra ptrv/smartparens (:hint nil)
