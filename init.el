@@ -2682,6 +2682,28 @@ With a prefix argument P, isearch for the symbol at point."
             #'ptrv/ycmd-after-exception-try-cscope-or-ag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; * fill-column-indicator
+(use-package fill-column-indicator
+  :ensure t
+  :commands (fci-mode)
+  :init
+  (add-hook 'c-mode-hook 'fci-mode)
+  (add-hook 'c++-mode-hook 'fci-mode)
+  :config
+  ;; 120 char of limit
+  (setq fci-rule-column 120)
+
+  ;; workaround to avoid intereference with company
+  (defun on-off-fci-before-company(command)
+    (when (string= "show" command)
+      (turn-off-fci-mode))
+    (when (string= "hide" command)
+      (turn-on-fci-mode)))
+
+  (advice-add 'company-call-frontends
+              :before #'on-off-fci-before-company))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
 (use-package lua-mode
   :ensure t
