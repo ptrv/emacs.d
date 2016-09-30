@@ -2705,6 +2705,37 @@ With a prefix argument P, isearch for the symbol at point."
               :before #'on-off-fci-before-company))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * rtags
+(use-package rtags
+  :disabled t
+  :load-path "~/src/rtags/src"
+  :commands (rtags-start-process-unless-running)
+  :init
+  (defun ptrv/rtags-init()
+    (local-set-key (kbd "M-.") #'rtags-find-symbol-at-point)
+    (local-set-key (kbd "M-,") #'rtags-location-stack-back))
+  (dolist (it '(c++-mode-hook c-mode-hook))
+    (add-hook it #'rtags-start-process-unless-running)
+    (add-hook it #'ptrv/rtags-init))
+  :config
+  (setq rtags-autostart-diagnostics t
+        rtags-completions-enabled t)
+  (rtags-diagnostics)
+  (use-package company-rtags
+    :after company
+    :init
+    (add-to-list 'company-backends 'company-rtags))
+  (use-package flycheck-rtags
+    :after flycheck
+    :init
+    (defun my-flycheck-rtags-setup ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil))
+    ;; c-mode-common-hook is also called by c++-mode
+    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * lua
 (use-package lua-mode
   :ensure t
