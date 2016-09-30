@@ -2684,6 +2684,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; * fill-column-indicator
 (use-package fill-column-indicator
+  :disabled t
   :ensure t
   :commands (fci-mode)
   :init
