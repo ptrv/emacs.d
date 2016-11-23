@@ -2482,7 +2482,7 @@ With a prefix argument P, isearch for the symbol at point."
   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
          ("\\.m\\'"                   . c-mode)
          ("\\.mm\\'"                  . c++-mode)
-         ("\\.inl\\'"                 . c++-mode))
+         ("\\.i\\(nl\\|pp\\)\\'"      . c++-mode))
   :init
   (defun ptrv/cc-mode-init ()
     (c-set-style "my-cc-mode")
