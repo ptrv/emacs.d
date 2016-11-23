@@ -2771,13 +2771,21 @@ With a prefix argument P, isearch for the symbol at point."
   (key-chord-define-global "JJ" (lambda ()
                                   (interactive)
                                   (switch-to-buffer
-                                   (other-buffer (current-buffer) 1)))))
+                                   (other-buffer (current-buffer) 1))))
+  (key-chord-define-global "fg" 'jump-char-forward)
+  (key-chord-define-global "df" 'jump-char-backward))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ace-jump-mode
 (use-package ace-jump-mode
   :ensure t
   :bind ("C-o" . ace-jump-mode))
+
+;; (use-package jump-char
+;;   :ensure t
+;;   :defer t
+;;   :bind (:map jump-char-isearch-map
+;;               ("<return>" . jump-char-exit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
