@@ -2752,7 +2752,8 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c u s"   . mc/sort-regions)
          ("C-c u l"   . mc/edit-lines)
          ("C-c u C-a" . mc/edit-beginnings-of-lines)
-         ("C-c u C-e" . mc/edit-ends-of-lines)))
+         ("C-c u C-e" . mc/edit-ends-of-lines)
+         ("C-c u SPC" . set-rectangular-region-anchor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * expand-region
