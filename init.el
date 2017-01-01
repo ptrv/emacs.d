@@ -2545,10 +2545,7 @@ With a prefix argument P, isearch for the symbol at point."
           ("C-c , =" . helm-cscope-find-assignments-to-this-symbol))
     :init
     (dolist (hook '(c++-mode-hook c-mode-hook))
-      (add-hook hook #'helm-cscope-mode)))
-
-  (with-eval-after-load 'key-chord
-    (key-chord-define c++-mode-map ";;" "\C-e;")))
+      (add-hook hook #'helm-cscope-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gud
@@ -2775,7 +2772,10 @@ With a prefix argument P, isearch for the symbol at point."
                                   (switch-to-buffer
                                    (other-buffer (current-buffer) 1))))
   (key-chord-define-global "fg" 'jump-char-forward)
-  (key-chord-define-global "df" 'jump-char-backward))
+  (key-chord-define-global "df" 'jump-char-backward)
+
+  (with-eval-after-load 'cc-mode
+    (key-chord-define c++-mode-map ";;" "\C-e;")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ace-jump-mode
