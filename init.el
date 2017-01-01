@@ -1780,6 +1780,13 @@ With a prefix argument P, isearch for the symbol at point."
               (org-present-read-write))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * org-reveal
+(use-package ox-reveal
+  :ensure t
+  :after org
+  :defer t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * info-look
 (use-package info-look
   :commands info-lookup-add-help)
