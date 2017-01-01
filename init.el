@@ -200,6 +200,7 @@ Something like: `python -m certifi'."
           ;; Drop my personal prefix
           ("\\`ptrv.*?/"  . "")
           ("\\`cscope-"  . "")
+          ("\\`helm-cscope-"  . "")
           ("\\`ycmd-"  . "")))
   (which-key-declare-prefixes
     "C-c a" "applications"
