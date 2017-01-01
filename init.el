@@ -2154,7 +2154,8 @@ With a prefix argument P, isearch for the symbol at point."
   :config
   (require 'dired-x)
   (setq dired-auto-revert-buffer t
-        dired-listing-switches "-alhF")
+        dired-listing-switches "-alhF"
+        dired-dwim-target t)
 
   (when (or (memq system-type '(gnu gnu/linux))
             (string= (file-name-nondirectory insert-directory-program) "gls"))
