@@ -2825,7 +2825,7 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c w k"  . delete-window)
          ("C-c w z" . delete-other-windows)
          ("C-<return>". other-window))
-  :config
+  :init
   (bind-key "C-c w ." (lambda () (interactive) (shrink-window-horizontally 4)))
   (bind-key "C-c w ," (lambda () (interactive) (enlarge-window-horizontally 4)))
   (bind-key "C-c w <down>" (lambda () (interactive) (enlarge-window -4)))
