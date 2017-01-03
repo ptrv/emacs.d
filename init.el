@@ -2129,7 +2129,8 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
 (use-package move-text
-  :load-path "site-lisp"
+  :ensure t
+  :defer t
   :bind (("C-S-<up>"   . move-text-up)
          ("C-S-<down>" . move-text-down)))
 
