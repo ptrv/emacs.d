@@ -191,18 +191,16 @@ Something like: `python -m certifi'."
   :config
   (setq which-key-idle-delay 1.0
         which-key-sort-order 'which-key-prefix-then-key-order
-        which-key-description-replacement-alist
-        '(("Prefix Command" . "prefix")
-          ;; Lambdas
-          ("\\`\\?\\?\\'"   . "λ")
-          ;; Prettify hydra entry points
-          ("/body\\'"       . "|=")
-          ;; Drop my personal prefix
-          ("\\`ptrv.*?/"  . "")
-          ("\\`cscope-"  . "")
-          ("\\`helm-cscope-"  . "")
-          ("\\`ycmd-"  . "")))
-  (which-key-declare-prefixes
+        which-key-replacement-alist
+        (append which-key-replacement-alist
+                '(;; Prettify hydra entry points
+                  ((nil . "/body\\'") . (nil . "|="))
+                  ;; Drop my personal prefix
+                  ((nil . "\\`ptrv.*?/") . (nil . ""))
+                  ((nil . "\\`cscope-") . (nil . ""))
+                  ((nil . "\\`helm-cscope-") . (nil  . ""))
+                  ((nil . "\\`ycmd-") . (nil . "")))))
+  (which-key-add-key-based-replacements
     "C-c a" "applications"
     "C-c D" "diff"
     "C-c g" "git"
@@ -232,10 +230,10 @@ Something like: `python -m certifi'."
     "C-c C-y" "ycmd"
     "C-." "run")
 
-  (which-key-declare-prefixes-for-mode 'emacs-lisp-mode
+  (which-key-add-major-mode-key-based-replacements 'emacsu-lisp-mode
     "C-c m" "elisp/personal")
 
-  (which-key-declare-prefixes-for-mode 'markdown-mode
+  (which-key-add-major-mode-key-based-replacements 'markdown-mode
     "C-c TAB" "markdown/images"
     "C-c C-a" "markdown/links"
     "C-c C-c" "markdown/process"
