@@ -969,7 +969,7 @@ Something like: `python -m certifi'."
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (sp-local-pair sp-lisp-modes "(" nil :bind "M-(")
 
-  (sp-local-pair '(c++-mode) "{" nil :post-handlers
+  (sp-local-pair '(c++-mode go-mode) "{" nil :post-handlers
                  '(((lambda (&rest _ignored)
                       (ptrv/smart-open-line-above)) "RET"))))
 
