@@ -1979,14 +1979,15 @@ With a prefix argument P, isearch for the symbol at point."
   :defer t
   :config
   (bind-keys :map go-mode-map
-             ("M-."       . godef-jump)
+             ;; ("M-."       . godef-jump)
              ;; ("C-c C-i"   . go-goto-imports)
-             ("C-c C-r"   . go-remove-unused-imports)
-             ("C-c C-p"   . ptrv/go-create-package)
+             ;; ("C-c C-r"   . go-remove-unused-imports)
+             ("C-c m p"   . ptrv/go-create-package)
              ;; ("C-c C-c c" . ptrv/go-run)
              ;; ("C-c C-c r" . ptrv/go-run-buffer)
              ;; ("C-c C-c b" . ptrv/go-build)
              ;; ("C-c C-c t" . ptrv/go-test)
+             ("C-c m d" . godoc-at-point)
              )
 
   (use-package ptrv-go
