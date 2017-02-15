@@ -2755,6 +2755,7 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c u N"   . mc/unmark-next-like-this)
          ("C-c u P"   . mc/unmark-previous-like-this)
          ("C-c u m"   . mc/mark-all-dwim)
+         ("C-c u M"   . mc/mark-more-like-this-extended)
          ("C-c u i"   . mc/insert-numbers)
          ("C-c u h"   . mc-hide-unmatched-lines-mode)
          ("C-c u a"   . mc/mark-all-like-this)
