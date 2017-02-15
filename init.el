@@ -1996,6 +1996,7 @@ With a prefix argument P, isearch for the symbol at point."
     (ptrv/load-file-from-gopath-or-download
      "github.com/golang/lint" "misc/emacs/golint.el"))
 
+  (setq gofmt-command "goimports")
 
   (defun ptrv/go-mode-init ()
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
