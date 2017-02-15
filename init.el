@@ -1991,7 +1991,11 @@ With a prefix argument P, isearch for the symbol at point."
              )
 
   (use-package ptrv-go
-    :load-path "site-lisp")
+    :load-path "site-lisp"
+    :config
+    (ptrv/load-file-from-gopath-or-download
+     "github.com/golang/lint" "misc/emacs/golint.el"))
+
 
   (defun ptrv/go-mode-init ()
     (add-hook 'before-save-hook 'gofmt-before-save nil :local)
