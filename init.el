@@ -114,6 +114,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(setq use-package-enable-imenu-support t)
 (eval-when-compile
   (require 'use-package))
 (require 'diminish)
@@ -996,12 +997,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
     (defun ptrv/company-elisp--init ()
       (setq-local company-backends '((company-capf :with company-dabbrev))))
     (add-hook 'emacs-lisp-mode-hook 'ptrv/company-elisp--init))
-
-  (defun imenu-elisp-sections ()
-    "Add custom expression to imenu."
-    (setq imenu-prev-index-position-function nil)
-    (add-to-list 'imenu-generic-expression '("Sections" "^;;;; [* ]*\\(.+\\)$" 1) t))
-  (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
   (defun ptrv/remove-elc-on-save ()
     "If you’re saving an elisp file, likely the .elc is no longer valid."
