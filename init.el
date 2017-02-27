@@ -629,6 +629,7 @@ Something like: `python -m certifi'."
 ;;;; * beacon
 (use-package beacon
   :ensure t
+  :defer t
   :init (add-hook 'after-init-hook #'beacon-mode)
   :diminish beacon-mode)
 
@@ -892,6 +893,7 @@ Something like: `python -m certifi'."
 ;;;; * company
 (use-package company
   :ensure t
+  :defer t
   :init (add-hook 'after-init-hook #'global-company-mode)
   :config
   (setq company-idle-delay 0.5
