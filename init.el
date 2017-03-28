@@ -2203,7 +2203,27 @@ With a prefix argument P, isearch for the symbol at point."
       (async-shell-command ptrv/rsync-command "*rsync*")
       ;; finally, switch to that window
       (other-window 1)))
-  (bind-key "Y" #'ptrv/dired-rsync dired-mode-map))
+  (bind-key "Y" #'ptrv/dired-rsync dired-mode-map)
+  (defun ptrv/ediff-files ()
+    (interactive)
+    (let ((files (dired-get-marked-files))
+          (wnd (current-window-configuration)))
+      (if (<= (length files) 2)
+          (let ((file1 (car files))
+                (file2 (if (cdr files)
+                           (cadr files)
+                         (read-file-name
+                          "file: "
+                          (dired-dwim-target-directory)))))
+            (if (file-newer-than-file-p file1 file2)
+                (ediff-files file2 file1)
+              (ediff-files file1 file2))
+            (add-hook 'ediff-after-quit-hook-internal
+                      (lambda ()
+                        (setq ediff-after-quit-hook-internal nil)
+                        (set-window-configuration wnd))))
+        (error "No more than 2 files should be marked"))))
+  (bind-key "e" #'ptrv/ediff-files dired-mode-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * projectile
