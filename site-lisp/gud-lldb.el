@@ -66,7 +66,7 @@
                           gud-marker-acc start)
             ;; (lldb) frame select -r 1
             ;; frame #1: 0x0000000100000e09 a.out`main + 25 at main.c:44
-            (string-match "^frame.* at \\([^:\n]*\\):\\([0-9]*\\)\n"
+            (string-match "^[ ]*frame.* at \\([^:\n]*\\):\\([0-9]*\\)\n"
                            gud-marker-acc start))
       ;(message "gud-marker-acc matches our pattern....")
       (setq gud-last-frame
