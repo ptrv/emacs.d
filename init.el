@@ -2461,10 +2461,10 @@ With a prefix argument P, isearch for the symbol at point."
 
   (add-hook 'python-mode-hook (lambda () (setq fill-column 79)))
 
-  (let ((ipython (executable-find "ipython")))
-    (if ipython
-        (setq python-shell-interpreter "ipython")
-      (warn "IPython is missing, falling back to default python")))
+  ;; (let ((ipython (executable-find "ipython")))
+  ;;   (if ipython
+  ;;       (setq python-shell-interpreter "ipython")
+  ;;     (warn "IPython is missing, falling back to default python")))
 
   (info-lookup-add-help
    :mode 'python-mode
