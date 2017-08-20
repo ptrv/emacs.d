@@ -548,14 +548,32 @@ Something like: `python -m certifi'."
     (warn "No spell checker available!")))
 
 (use-package flyspell
+  :bind (("C-c t s" . flyspell-mode)
+         ("C-c l f" . ptrv/flyspell/body))
+  :init
+  (dolist (hook '(text-mode-hook message-mode-hook))
+    (add-hook hook 'turn-on-flyspell))
+  ;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   :config
+  (defhydra ptrv/flyspell (:hint nil)
+    "
+  _,_:  next error  _._: correct word   _w_: ispell word
+-^-----^---------------------^-----^---------------------
+  _c_:  correct before point  _p_:  correct previous word
+  _b_:  flyspell buffer       _q_:  quit
+"
+    ("q" nil)
+    ("," flyspell-goto-next-error)
+    ("." flyspell-auto-correct-word)
+    ("w" ispell-word)
+    ("c" flyspell-correct-word-before-point)
+    ("p" flyspell-auto-correct-previous-word)
+    ("b" flyspell-buffer))
   (setq flyspell-use-meta-tab nil
         flyspell-issue-welcome-flag nil
         flyspell-issue-message-flag nil)
-  (bind-keys :map flyspell-mode-map
-             ("\M-\t" . nil)
-             ("C-:"   . flyspell-auto-correct-word)
-             ("C-."   . ispell-word)))
+  (dolist (key '("C-." "C-,"))
+    (define-key flyspell-mode-map (kbd key) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hippie-expand
