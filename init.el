@@ -117,6 +117,7 @@
 (setq use-package-enable-imenu-support t)
 (eval-when-compile
   (require 'use-package))
+(setq use-package-always-defer t)
 (require 'diminish)
 (require 'bind-key)
 
@@ -143,7 +144,6 @@ Something like: `python -m certifi'."
 
 ;; https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 (use-package tls
-  :defer t
   :config
   (if ptrv/trustfile-command
       (let ((trustfile
@@ -180,7 +180,6 @@ Something like: `python -m certifi'."
 ;;;; * custom settings
 (defconst ptrv/custom-file (locate-user-emacs-file "custom.el"))
 (use-package cus-edit
-  :defer t
   :init (load ptrv/custom-file :no-error :no-message)
   :config (setq custom-file ptrv/custom-file))
 
@@ -313,12 +312,10 @@ Something like: `python -m certifi'."
          ("C-c ; r" . comment-region)))
 
 (use-package minibuffer
-  :defer t
   :config
   (setq completion-cycle-threshold 5))
 
 (use-package apropos
-  :defer t
   :bind (("C-c h a" . apropos)
          ("C-c h A" . apropos-command)))
 
@@ -326,7 +323,6 @@ Something like: `python -m certifi'."
   :bind (("C-c i a" . auto-insert)))
 
 (use-package copyright
-  :defer t
   :bind (("C-c i c" . copyright-update))
   :init
   ;; Update copyright when visiting files
@@ -370,7 +366,6 @@ Something like: `python -m certifi'."
   :config (windmove-default-keybindings 'super))
 
 (use-package recentf
-  :defer t
   :init (recentf-mode)
   :config
   (setq recentf-max-saved-items 200
@@ -438,7 +433,6 @@ Something like: `python -m certifi'."
 
 ;;enable cua-mode for rectangular selections
 (use-package cua-base
-  :defer t
   :config (setq cua-enable-cua-keys nil))
 
 (defun ptrv/get-default-sound-command ()
@@ -448,7 +442,6 @@ Something like: `python -m certifi'."
    (*is-linux* (executable-find "paplay"))))
 
 (use-package "mule-cmds"
-  :defer t
   :config
   (bind-key "C-x <return>" mule-keymap))
 
@@ -488,12 +481,10 @@ Something like: `python -m certifi'."
       user-mail-address "mail@petervasil.net")
 
 (use-package message
-  :defer t
   :config
   (setq message-send-mail-function 'smtpmail-send-it))
 
 (use-package smtpmail
-  :defer t
   :config
   (setq smtpmail-smtp-user user-mail-address
         smtpmail-stream-type 'starttls
@@ -539,7 +530,6 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ediff
 (use-package ediff
-  :defer t
   :config
   (setq ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain))
@@ -547,7 +537,6 @@ Something like: `python -m certifi'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * spelling
 (use-package ispell
-  :defer t
   :config
   (setq ispell-program-name "aspell" ; use aspell instead of ispell
         ;; ispell-extra-args '("--sug-mode=ultra")
@@ -555,7 +544,6 @@ Something like: `python -m certifi'."
         ispell-silently-savep t))       ; Don't ask when saving the private dict
 
 (use-package flyspell
-  :defer t
   :config
   (setq flyspell-use-meta-tab nil
         flyspell-issue-welcome-flag nil
@@ -596,7 +584,6 @@ Something like: `python -m certifi'."
 
 (use-package zeburn
   :ensure zenburn-theme
-  :defer t
   :init (load-theme 'zenburn :no-confirm))
 
 
@@ -617,7 +604,6 @@ Something like: `python -m certifi'."
 
 (use-package hl-todo
   :ensure t
-  :defer t
   :init (global-hl-todo-mode))
 
 (use-package smart-mode-line
@@ -629,7 +615,6 @@ Something like: `python -m certifi'."
 ;;;; * beacon
 (use-package beacon
   :ensure t
-  :defer t
   :init (add-hook 'after-init-hook #'beacon-mode)
   :diminish beacon-mode)
 
@@ -656,12 +641,10 @@ Something like: `python -m certifi'."
 
 (use-package helm-buffers
   :ensure helm
-  :defer t
   :config (setq helm-buffers-fuzzy-matching t))
 
 (use-package helm-files
   :ensure helm
-  :defer t
   :bind (([remap find-file] . helm-find-files)
          ("C-c f s"         . helm-for-files)
          ("C-c f r"         . helm-recentf))
@@ -779,8 +762,7 @@ Something like: `python -m certifi'."
                 neo-auto-indent-point t))
 
 (use-package smex
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package helm-smex
   :load-path "site-lisp/helm-smex"
@@ -893,7 +875,6 @@ Something like: `python -m certifi'."
 ;;;; * company
 (use-package company
   :ensure t
-  :defer t
   :init (add-hook 'after-init-hook #'global-company-mode)
   :config
   (setq company-idle-delay 0.5
@@ -908,17 +889,14 @@ Something like: `python -m certifi'."
 
 ;; (use-package company-statistics
 ;;   :ensure t
-;;   :defer t
 ;;   :init (company-statistics-mode))
 
 (use-package company-dabbrev
   :ensure company
-  :defer t
   :config (setq company-dabbrev-downcase nil))
 
 (use-package company-quickhelp
   :ensure t
-  :defer t
   :after company
   :init (company-quickhelp-mode))
 
@@ -992,7 +970,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * elisp
 (use-package lisp-mode
-  :defer t
   :mode (("\\.el$" . emacs-lisp-mode))
   :config
   (with-eval-after-load 'company
@@ -1012,7 +989,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
     (add-hook 'emacs-lisp-mode-hook it))
 
   (use-package ielm
-    :defer t
     :init
     (defun ptrv/switch-to-ielm ()
       (interactive)
@@ -1066,14 +1042,12 @@ This checks in turn:
 
 (use-package elisp-slime-nav
   :ensure t
-  :defer t
   :init
   (ptrv/hook-into-modes #'elisp-slime-nav-mode
     '(emacs-lisp-mode-hook ielm-mode-hook))
   :diminish elisp-slime-nav-mode)
 
 (use-package eldoc
-  :defer t
   :init (ptrv/hook-into-modes #'eldoc-mode
           '(emacs-lisp-mode-hook
             lisp-interaction-mode-hook
@@ -1087,14 +1061,12 @@ This checks in turn:
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
   :ensure t
-  :defer t
   :init
   (ptrv/hook-into-modes #'rainbow-delimiters-mode
     '(text-mode-hook prog-mode-hook)))
 
 (use-package macrostep
   :ensure t
-  :defer t
   :init
   (bind-key "C-c m e" #'macrostep-expand emacs-lisp-mode-map)
   (bind-key "C-c m e" #'macrostep-expand lisp-interaction-mode-map))
@@ -1121,7 +1093,6 @@ This checks in turn:
 ;;;; * clojure
 (use-package cider
   :ensure t
-  :defer t
   :config
   (setq nrepl-log-messages t
         nrepl-hide-special-buffers t)
@@ -1163,7 +1134,6 @@ This checks in turn:
                   (member method '("su" "sudo"))))))))
 
 (use-package tramp
-  :defer t
   :config
   (setq tramp-backup-directory-alist backup-directory-alist
         tramp-auto-save-directory (locate-user-emacs-file "tramp-auto-save")))
@@ -1190,7 +1160,6 @@ This checks in turn:
 
 (use-package ibuffer-projectile
   :ensure t
-  :defer t
   :init
   (defun ptrv/ibuffer-group-buffers ()
     (setq ibuffer-filter-groups
@@ -1266,22 +1235,20 @@ This checks in turn:
 
 (use-package git-commit
   :ensure t
-  :defer t
+  :commands (git-commit-setup-check-buffer)
+  :init (add-hook 'find-file-hook 'git-commit-setup-check-buffer)
   :config
   (remove-hook 'git-commit-finish-query-functions
                #'git-commit-check-style-conventions))
 
 (use-package gitconfig-mode
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package gitignore-mode
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package gitattributes-mode
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package git-timemachine
   :ensure t
@@ -1290,7 +1257,6 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * vc
 (use-package vc-hooks
-  :defer t
   :config (setq vc-follow-symlinks t))
 
 (use-package vc-git
@@ -1339,7 +1305,6 @@ This checks in turn:
 ;;;; * git-messenger
 (use-package git-messenger
   :ensure t
-  :defer t
   :bind (("C-c g p" . git-messenger:popup-message))
   :config (setq git-messenger:show-detail t))
 
@@ -1347,7 +1312,6 @@ This checks in turn:
 ;;;; * diff-hl
 (use-package diff-hl
   :ensure t
-  :defer t
   :bind (:map diff-hl-command-map
               ("]" . ptrv-hunks/diff-hl-next-hunk)
               ("[" . ptrv-hunks/diff-hl-previous-hunk))
@@ -1374,7 +1338,6 @@ This checks in turn:
 ;; (yas-global-mode 1)
 (use-package yasnippet
   :ensure t
-  :defer t
   :mode ("\\.yasnippet$" . yasnippet-mode)
   :init
   (ptrv/hook-into-modes #'yas-minor-mode
@@ -1407,7 +1370,6 @@ This checks in turn:
 ;;;; * pomodoro.el
 (use-package pomodoro
   :ensure t
-  :defer t
   :config
   (pomodoro-add-to-mode-line)
   (setq pomodoro-sound-player (ptrv/get-default-sound-command)
@@ -1417,14 +1379,12 @@ This checks in turn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * sql-mode
 (use-package sql
-  :defer t
   :config
   (bind-keys :map sql-mode-map
              ("C-c m p" . sql-set-product)
              ("C-c m i" . sql-set-sqli-buffer)))
 
 (use-package sql-spatialite-ext
-  :defer t
   :commands (sql-spatialite))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1446,14 +1406,12 @@ This checks in turn:
 ;;;; * fullframe
 (use-package fullframe
   :ensure t
-  :defer t
   :init (fullframe magit-status magit-mode-quit-window))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iflipb
 (use-package iflipb
   :ensure t
-  :defer t
   :bind (("C-<next>"      . iflipb-next-buffer)
          ("C-<prior>"     . iflipb-previous-buffer)
          ("<XF86Forward>" . iflipb-next-buffer)
@@ -1464,7 +1422,6 @@ This checks in turn:
           "*Compile-Log*"
           "*Ibuffer*"
           "*Messages*"
-          "*scratch*"
           "*Completions*"
           "*magit"
           "*Pymacs*"
@@ -1500,7 +1457,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package highlight-symbol
   :ensure t
-  :defer t
   :bind
   (("C-c s %" . highlight-symbol-query-replace)
    ;; ("C-c s n" . highlight-symbol-next-in-defun)
@@ -1521,7 +1477,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;; the silver searcher
 (use-package ag
   :ensure t
-  :defer t
   :init
   :bind(("C-c s A" . ag-regexp)
         ("C-c s a" . ag))
@@ -1530,12 +1485,10 @@ With a prefix argument P, isearch for the symbol at point."
         ag-reuse-buffers t))
 
 (use-package wgrep-ag
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package anzu
   :ensure t
-  :defer t
   :bind
   (([remap query-replace] . anzu-query-replace)
    ([remap query-replace-regexp] . anzu-query-replace-regexp)
@@ -1555,7 +1508,6 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package edit-server
   :ensure t
   :if window-system
-  :defer t
   :init
   (edit-server-start)
   (add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
@@ -1565,8 +1517,7 @@ With a prefix argument P, isearch for the symbol at point."
         edit-server-new-frame nil))
 
 (use-package edit-server-htmlize
-  :ensure t
-  :defer t)
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iedit
@@ -1578,7 +1529,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * google-this
 (use-package google-this
   :ensure t
-  :defer t
   :init (google-this-mode)
   :diminish google-this-mode)
 
@@ -1586,6 +1536,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * popwin
 (use-package popwin
   :ensure t
+  :demand t
   :config
   (popwin-mode)
   (bind-key "C-z" popwin:keymap)
@@ -1663,7 +1614,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org
 (use-package org
-  :defer t
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c o a" . org-agenda)
          ("C-c o b" . org-iswitchb)
@@ -1689,12 +1639,10 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package org-clock
   :ensure org
-  :defer t
   :config (setq org-clock-into-drawer t))
 
 (use-package org-mobile
   :ensure org
-  :defer t
   :config
   (setq org-mobile-directory "~/Dropbox/MobileOrg"
         org-mobile-files '("~/org/ptrv.org"
@@ -1745,21 +1693,18 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package ox
   :ensure org
-  :defer t
   :config (load "~/.org-publish-projects.el" 'noerror))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org2blog
 (use-package org2blog
   :ensure t
-  :defer t
   :config (load "~/.org-blogs.el" 'noerror))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * org-present
 (use-package org-present
   :ensure t
-  :defer t
   :config
   (add-hook 'org-present-mode-hook
             (lambda ()
@@ -1778,8 +1723,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * org-reveal
 (use-package ox-reveal
   :ensure t
-  :after org
-  :defer t)
+  :after org)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * info-look
@@ -1793,7 +1737,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package tex
   :ensure auctex
-  :defer t
   :config
   (setq TeX-auto-save t
         TeX-parse-self t
@@ -1826,7 +1769,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package latex
   :ensure auctex
-  :defer t
   :config
   (dolist (it '(LaTeX-math-mode reftex-mode auto-fill-mode))
     (add-hook 'LaTeX-mode-hook it))
@@ -1846,7 +1788,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 (use-package reftex
   :ensure auctex
-  :defer t
   :config
   (setq reftex-plug-into-AUCTeX t
         ;; Recommended optimizations
@@ -1866,8 +1807,7 @@ With a prefix argument P, isearch for the symbol at point."
   :mode ("\\.css$" . css-mode))
 
 (use-package yaml-mode
-  :ensure t
-  :defer t)
+  :ensure t)
 
 ;; pd-mode
 (use-package pd-mode
@@ -1914,18 +1854,15 @@ With a prefix argument P, isearch for the symbol at point."
 ;; json
 (use-package json-reformat
   :ensure t
-  :defer t
   :bind ("C-c x j" . json-reformat-region))
 
 ;; gnuplot
 (use-package gnuplot
-  :defer t
   :commands (gnuplot-mode gnuplot-make-buffer)
   :mode ("\\.gp$" . gnuplot-mode))
 
 ;;;; * abbrev
 (use-package abbrev
-  :defer t
   :init (setq-default abbrev-mode t)
   :config
   (define-abbrev-table 'global-abbrev-table
@@ -1940,7 +1877,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * markdown
 (use-package markdown-mode
   :ensure t
-  :defer t
   :mode (("\\.md$"        . markdown-mode)
          ("\\.markdown$"  . markdown-mode)
          ("\\.mkd$"       . markdown-mode)
@@ -1957,7 +1893,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * pandoc
 (use-package pandoc-mode
   :ensure t
-  :defer t
   :mode ("\\.text$" . markdown-mode)
   :init
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
@@ -1973,7 +1908,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * golang
 (use-package go-mode
   :ensure t
-  :defer t
   :config
   (bind-keys :map go-mode-map
              ;; ("M-."       . godef-jump)
@@ -2055,7 +1989,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * erc
 (use-package erc
-  :defer t
   :init
   (defun erc-connect ()
     (interactive)
@@ -2100,14 +2033,12 @@ With a prefix argument P, isearch for the symbol at point."
 (setq sentence-end-double-space nil)
 
 (use-package subword-mode
-  :defer t
   :init (add-hook 'prog-mode-hook 'subword-mode))
 
 (with-eval-after-load 'subword
   (diminish 'subword-mode))
 
 (use-package delsel
-  :defer t
   :init (delete-selection-mode))
 
 ;;fast vertical naviation
@@ -2117,7 +2048,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * bug-reference
 (use-package bug-reference
-  :defer t
   :init
   (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
   (add-hook 'text-mode-hook 'bug-reference-mode)
@@ -2131,7 +2061,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * move-text
 (use-package move-text
   :ensure t
-  :defer t
   :bind (("C-S-<up>"   . move-text-up)
          ("C-S-<down>" . move-text-down)))
 
@@ -2160,7 +2089,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * dired
 (use-package dired
-  :defer t
   :config
   (require 'dired-x)
   (setq dired-auto-revert-buffer t
@@ -2229,7 +2157,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * projectile
 (use-package projectile
   :ensure t
-  :defer t
   :init (add-hook 'after-init-hook #'projectile-mode)
   :config
   (dolist (file '(".ropeproject" "setup.py"))
@@ -2247,7 +2174,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * processing
 (use-package processing-mode
   :load-path "site-lisp/processing2-emacs"
-  :defer t
   :mode ("\\.pde$" . processing-mode)
   :commands (processing-find-sketch)
   :config
@@ -2294,7 +2220,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * hideshow
 (use-package hideshow
-  :defer t
   :bind (("C-c b h"   . hs-toggle-hiding)
          ("C-c b H" . hs-toggle-hiding-all))
   :init (add-hook 'prog-mode-hook #'hs-minor-mode)
@@ -2332,7 +2257,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * osx
 (use-package ns-win
   :if *is-mac*
-  :defer t
   :config
   (setq mac-command-modifier 'meta
         mac-option-modifier 'super
@@ -2361,7 +2285,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;;GNU ls and find
 (use-package files
-  :defer t
   :config
   (when *is-mac*
     (let ((gnu-ls (executable-find "gls")))
@@ -2370,7 +2293,6 @@ With a prefix argument P, isearch for the symbol at point."
         (message "GNU coreutils not found. Install coreutils with homebrew.")))))
 
 (use-package grep
-  :defer t
   :config
   (when *is-mac*
     (let ((gnu-find (executable-find "gfind")))
@@ -2381,7 +2303,6 @@ With a prefix argument P, isearch for the symbol at point."
         (setq xargs-program gnu-xargs)))))
 
 (use-package locate
-  :defer t
   :config
   (when *is-mac*
     (let ((mdfind (executable-find "mdfind")))
@@ -2396,7 +2317,6 @@ With a prefix argument P, isearch for the symbol at point."
   :mode ("\\.\\(sc\\|scd\\)$" . ptrv/sclang-mode-loader))
 
 (use-package sclang
-  :defer t
   :config
   (require 'ptrv-sclang)
   (ptrv/sclang-mode-loader--remove)
@@ -2430,7 +2350,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * python
 (use-package python
-  :defer t
   :init
   (with-eval-after-load 'flycheck
     (defun ptrv/python-mode-flycheck-config ()
@@ -2510,7 +2429,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * cc-mode
 (use-package cc-mode
-  :defer t
   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
          ("\\.m\\'"                   . c-mode)
          ("\\.mm\\'"                  . c++-mode)
@@ -2609,7 +2527,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * ycmd
 (use-package ycmd
   :load-path "~/src/emacs-ycmd"
-  :defer t
   :commands (ycmd-mode)
   :init
   (ptrv/hook-into-modes #'ycmd-mode
@@ -2725,7 +2642,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * lua
 (use-package lua-mode
   :ensure t
-  :defer t
   :config
   (defun ptrv/lua-send-region-or-current-line ()
     "Send current region or line to lua process."
@@ -2751,7 +2667,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * html
 ;; (use-package sgml-mode
-;;   :defer t
 ;;   :config
 ;;   (require 'smartparens-html)
 ;;   (add-to-list 'sp-navigate-consider-stringlike-sexp 'html-mode)
@@ -2795,7 +2710,6 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * key-chord
 (use-package key-chord
   :ensure t
-  :defer t
   :init (key-chord-mode 1)
   :config
   (key-chord-define-global "BB" 'ido-switch-buffer)
@@ -2817,7 +2731,6 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;; (use-package jump-char
 ;;   :ensure t
-;;   :defer t
 ;;   :bind (:map jump-char-isearch-map
 ;;               ("<return>" . jump-char-exit)))
 
