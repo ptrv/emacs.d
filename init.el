@@ -512,7 +512,21 @@ Something like: `python -m certifi'."
 
 (use-package calendar
   :bind ("C-c a c" . calendar)
-  :config (setq calendar-week-start-day 1))
+  :config
+  (defconst holiday-german--national-holidays
+    '((holiday-fixed 1 1 "Neujahr")
+      (holiday-easter-etc -2 "Karfreitag")
+      (holiday-easter-etc 1 "Ostermontag")
+      (holiday-fixed 5 1 "Tag der Arbeit")
+      (holiday-easter-etc 39 "Christi Himmelfahrt")
+      (holiday-easter-etc 50 "Pfingstmontag")
+      (holiday-fixed 10 3 "Tag der Deutschen Einheit")
+      (holiday-fixed 12 25 "1. Weihnachtstag")
+      (holiday-fixed 12 26 "2. Weihnachtstag")))
+  (setq calendar-week-start-day 1
+        calendar-date-style 'european
+        calendar-holidays holiday-german--national-holidays
+        calendar-mark-holidays-flag t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * calc
