@@ -1357,7 +1357,8 @@ _q_uit _RET_: current
       sclang-mode-hook
       processing-mode-hook
       go-mode-hook
-      clojure-mode-hook))
+      clojure-mode-hook
+      org-mode-hook))
   :config
   (setq yas-prompt-functions '(yas-x-prompt
                                yas-ido-prompt
@@ -1630,11 +1631,28 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c o b" . org-iswitchb)
          ("C-c o l" . org-store-link))
   :config
+  (defvar ptrv/org-agenda-file "~/org/agenda.org")
   (setq org-outline-path-complete-in-steps nil
         org-log-done t
         org-src-fontify-natively nil
-        org-default-notes-file (expand-file-name
-                                "captures.org" org-directory))
+        org-default-notes-file "~/org/inbox.org"
+        org-agenda-files `(,org-default-notes-file
+                           "~/org/gtd.org"
+                           "~/org/tickler.org"
+                           ,ptrv/org-agenda-file)
+        org-refile-use-outline-path 'file
+        org-refile-targets `(("~/org/gtd.org" :maxlevel . 3)
+                             ("~/org/someday.org" :level . 1)
+                             ("~/org/tickler.org" :maxlevel . 2)
+                             ("~/org/inbox.org" :maxlevel . 1)
+                             (,ptrv/org-agenda-file :level . 1))
+        org-todo-keywords
+        '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+          (sequence "FEATURE(f)" "|" "COMPLETED(c)")
+          (sequence "BUG(b)" "|" "FIXED(x)")
+          (sequence "APPT(p)" "|" "DONE(d)" "CANCELLED(a)")
+          ;; (sequence "WAITING(w!)" "|" "DONE(d)")
+          ))
 
   (with-eval-after-load 'yasnippet
     (defun yas-org-very-safe-expand ()
@@ -1648,6 +1666,85 @@ With a prefix argument P, isearch for the symbol at point."
   ;; (add-hook 'org-mode-hook 'org-mode-init)
   )
 
+(use-package org-agenda
+  :ensure org
+  :config
+  (defun org-agenda-format-parent (n)
+    ;; (s-truncate n (org-format-outline-path (org-get-outline-path)))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (org-up-heading-safe)
+        (s-truncate n (org-get-heading t t)))))
+  ;; Custom agenda function, see customized 'org-agenda-custom-commands.
+  ;; Open the agenda in org-agenda-log-mode, with the archive file, and
+  ;; for the previous week. To work well, 'org-log-done should be set to
+  ;; 't, to ensure that everything is in the agenda.
+  (defun ptrv/org-agenda-log (arg)
+    (org-agenda-archives-mode)
+    (org-agenda-list arg)
+    (org-agenda-log-mode)
+    (org-agenda-earlier 1))
+
+  (setq org-agenda-custom-commands
+        '(("d" "30 days deadlines" agenda ""
+           ((org-agenda-entry-types '(:deadline))
+            (org-agenda-overriding-header "Month deadlines")
+            (org-agenda-span 'month)
+            (org-agenda-overriding-header "")))
+          ("l" "Logbook" ptrv/org-agenda-log ""
+           ((org-agenda-overriding-header "Logbook")))
+          ("E" "Errands" tags "errands" nil)
+          ("n" "Next actions"
+           ((alltodo ""
+                     ((org-agenda-tag-filter-preset nil)
+                      (org-agenda-overriding-header "Next actions")
+                      (org-agenda-skip-function
+                       #'my-org-agenda-skip-all-siblings-but-first)
+                      (org-agenda-prefix-format "%-32:(org-agenda-format-parent 30)")
+                      (org-agenda-todo-keyword-format "%-4s")
+                      (org-agenda-files '("~/org/gtd.org")))))
+           nil nil)
+          ("@" "Contexts"
+           ((todo "WAITING" ((org-agenda-overriding-header "Waiting")))
+            (tags-todo "@email"
+                       ((org-agenda-overriding-header "Emails")
+                        (org-agenda-skip-function
+                         '(org-agenda-skip-entry-if 'nottodo '("TODO")))))
+            (tags-todo "@phone"
+                       ((org-agenda-overriding-header "Phone calls")
+                        (org-agenda-skip-function
+                         '(org-agenda-skip-entry-if 'todo 'done))))
+            (tags-todo "@office"
+                       ((org-agenda-overriding-header "At the office")
+                        (org-agenda-skip-function
+                         #'my-org-agenda-skip-all-siblings-but-first)))
+            (tags-todo "@freelance"
+                       ((org-agenda-overriding-header "Freelance")
+                        (org-agenda-skip-function
+                         #'my-org-agenda-skip-all-siblings-but-first)))
+            (tags-todo "@home"
+                       ((org-agenda-overriding-header "Home")
+                        (org-agenda-skip-function
+                         #'my-org-agenda-skip-all-siblings-but-first)))
+            nil nil))))
+
+  (defun my-org-agenda-skip-all-siblings-but-first ()
+    "Skip all but the first non-done entry."
+    (let (should-skip-entry)
+      (unless (org-current-is-todo)
+        (setq should-skip-entry t))
+      (save-excursion
+        (while (and (not should-skip-entry) (org-goto-sibling t))
+          (when (org-current-is-todo)
+            (setq should-skip-entry t))))
+      (when should-skip-entry
+        (or (outline-next-heading)
+            (goto-char (point-max))))))
+
+  (defun org-current-is-todo ()
+    (string= "TODO" (org-get-todo-state))))
+
 (use-package org-clock
   :ensure org
   :config (setq org-clock-into-drawer t))
@@ -1656,51 +1753,29 @@ With a prefix argument P, isearch for the symbol at point."
   :ensure org
   :config
   (setq org-mobile-directory "~/Dropbox/MobileOrg"
-        org-mobile-files '("~/org/ptrv.org"
-                           "~/org/notes.org"
-                           "~/org/journal.org")
+        org-mobile-files '("~/org/inbox.org"
+                           "~/org/gtd.org"
+                           "~/org/someday.org"
+                           "~/org/tickler.org")
         org-mobile-inbox-for-pull "~/org/from-mobile.org"))
 
 (use-package org-capture
   :ensure org
   :bind ("C-c o c" . org-capture)
-  :mode ("\\.orgcaptmpl\\'" . org-mode)
   :config
-  (defvar oc-capture-prmt-history nil
-    "History of prompt answers for org capture.")
-  (defun oc/prmt (prompt variable)
-    "PROMPT for string, save it to VARIABLE and insert it."
-    (make-local-variable variable)
-    (set variable (read-string (concat prompt ": ") nil oc-capture-prmt-history)))
-  (defun oc/inc (what text &rest fmtvars)
-    "Ask user to include WHAT.  If user agrees return TEXT."
-    (when (y-or-n-p (concat "Include " what "?"))
-      (apply 'format text fmtvars)))
-
   (setq org-capture-templates
-        `(("t" "Todo" entry
-           (file+headline (expand-file-name "ptrv.org" org-directory) "TASKS")
-           "* TODO %?\n :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n%i"
-           :empty-lines 1)
-          ("j" "Journal" entry
-           (file+datetree (expand-file-name "journal.org" org-directory))
-           "* %U %^{Title}\n%?"
-           :empty-lines 1)
-          ("b" "Tidbit: quote, zinger, one-liner or textlet" entry
-           (file+headline org-default-notes-file "Tidbits")
-           (file ,(expand-file-name "org-templates/tidbit.orgcaptmpl"
-                                    ptrv/etc-dir)))
-          ("i" "JIRA Ticket" entry
-           (file org-default-notes-file "JIRA Issues")
-           (file ,(expand-file-name
-                   "org-templates/jiraticket.orgcaptmpl" ptrv/etc-dir)))
-          ("e" "Emacs Berlin topic" entry
-           (file (expand-file-name "emacs-berlin.org" org-directory))
-           "* %?")
-          ("s" "Code Snippet" entry
-           (file (expand-file-name "snippets.org" org-directory))
-           ;; Prompt for tag and language
-           "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC"))))
+        '(("t" "Todo [inbox]" entry
+           (file+headline "~/org/inbox.org" "Tasks")
+           "* TODO %i%?")
+          ("l" "Todo (with link) [inbox]" entry
+           (file+headline org-default-notes-file "Tasks")
+           "* TODO %a")
+          ("T" "Tickler" entry
+           (file+headline "~/org/tickler.org" "Tickler")
+           "* %i%? \n %U")
+          ("p" "Appointment" entry
+           (file+headline ptrv/org-agenda-file "Appointment")
+           "* APPT %i%? \n %^t"))))
 
 (use-package ox
   :ensure org
