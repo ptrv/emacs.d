@@ -959,7 +959,7 @@ Something like: `python -m certifi'."
   (smartparens-global-mode)
   (show-smartparens-global-mode)
 
-  (dolist (hook '(inferior-emacs-lisp-mode-hook
+  (dolist (hook '(ielm-mode-hook
                   emacs-lisp-mode-hook
                   eval-expression-minibuffer-setup-hook))
     (add-hook hook #'smartparens-strict-mode))
