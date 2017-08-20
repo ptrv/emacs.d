@@ -538,10 +538,14 @@ Something like: `python -m certifi'."
 ;;;; * spelling
 (use-package ispell
   :config
-  (setq ispell-program-name "aspell" ; use aspell instead of ispell
+  (setq ispell-program-name (if *is-mac*
+                                (executable-find "aspell")
+                              (executable-find "hunspell"))
         ;; ispell-extra-args '("--sug-mode=ultra")
-        ispell-dictionary "en"          ; default dictionary
-        ispell-silently-savep t))       ; Don't ask when saving the private dict
+        ispell-dictionary "en_US"       ; default dictionary
+        ispell-silently-savep t)       ; Don't ask when saving the private dict
+  (unless ispell-program-name
+    (warn "No spell checker available!")))
 
 (use-package flyspell
   :config
