@@ -2327,17 +2327,17 @@ With a prefix argument P, isearch for the symbol at point."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * diminish
-(defmacro rename-modeline (package-name mode new-name)
+(defmacro ptrv/rename-modeline (package-name mode new-name)
   "Rename modeline for PACKAGE-NAME and MODE to NEW-NAME."
   `(eval-after-load ,package-name
-     '(defadvice ,mode (after rename-modeline activate)
+     '(defadvice ,mode (after ptrv/rename-modeline activate)
         (setq mode-name ,new-name))))
 
-(rename-modeline "clojure-mode" clojure-mode "λ")
-(rename-modeline "python" python-mode "Py")
-(rename-modeline "lisp-mode" emacs-lisp-mode "EL")
-(rename-modeline "markdown-mode" markdown-mode "md")
-(rename-modeline "processing-mode" processing-mode "P5")
+(ptrv/rename-modeline "clojure-mode" clojure-mode "λ")
+(ptrv/rename-modeline "python" python-mode "Py")
+(ptrv/rename-modeline "lisp-mode" emacs-lisp-mode "EL")
+(ptrv/rename-modeline "markdown-mode" markdown-mode "md")
+(ptrv/rename-modeline "processing-mode" processing-mode "P5")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * osx
