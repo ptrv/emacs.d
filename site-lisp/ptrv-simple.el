@@ -243,12 +243,12 @@ Otherwise insert the date as Mar 04, 2014."
   (insert (format-time-string (if iso "%F" "%b %d, %Y"))))
 
 (defmacro measure-time (&rest body)
-  "Measure and return the running time of BODY."
-  (declare (indent defun) (debug t))
+  (declare (indent defun))
+  (garbage-collect)
   (let ((start (make-symbol "start")))
     `(let ((,start (float-time)))
        ,@body
-       (message "%.06f" (- (float-time) ,start)))))
+       (message "%s" (- (float-time) ,start)))))
 
 (defun sudo-edit (&optional arg)
   "Edit buffer with superuser privileges.
