@@ -343,5 +343,12 @@ With a prefix argument N, (un)comment that many sexps."
     (dotimes (_ (or n 1))
       (comment-sexp--raw))))
 
+(defun ptrv/block-comment-c++ (start end)
+  (interactive "r")
+  (let ((comment-start "/* ")
+        (comment-end " */")
+        (comment-style 'aligned))
+    (comment-region start end)))
+
 (provide 'ptrv-simple)
 ;;; ptrv-simple.el ends here
