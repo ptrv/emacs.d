@@ -174,6 +174,7 @@ Something like: `python -m certifi'."
 ;;;; * PATH
 (use-package exec-path-from-shell
   :ensure t
+  :demand t
   :config (exec-path-from-shell-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -363,6 +364,7 @@ Something like: `python -m certifi'."
   :init (winner-mode))
 
 (use-package windmove
+  :demand t
   :config (windmove-default-keybindings 'super))
 
 (use-package recentf
@@ -386,6 +388,7 @@ Something like: `python -m certifi'."
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
+  :demand t
   :config
   (if (fboundp 'save-place-mode)
       (save-place-mode 1)
@@ -393,6 +396,7 @@ Something like: `python -m certifi'."
 
 (setq history-length 1000)
 (use-package savehist
+  :demand t
   :config
   (savehist-mode t)
   (setq savehist-additional-variables '(search ring regexp-search-ring)
@@ -401,6 +405,7 @@ Something like: `python -m certifi'."
 
 ;; desktop.el
 (use-package desktop
+  :demand t
   :config
   (desktop-save-mode)
   (setq desktop-save 'if-exists))
@@ -644,6 +649,7 @@ Something like: `python -m certifi'."
 
 (use-package smart-mode-line
   :ensure t
+  :demand t
   :config
   (sml/setup))
 
@@ -965,11 +971,12 @@ Something like: `python -m certifi'."
 (use-package smartparens
   ;; :disabled t
   :ensure t
+  :demand t
   :bind (:map smartparens-strict-mode-map
               ("M-q" . sp-indent-defun)
               ("C-j" . sp-newline)
               ("M-?" . sp-convolute-sexp))
-  :init
+  :config
   (smartparens-global-mode)
   (show-smartparens-global-mode)
 
@@ -977,7 +984,6 @@ Something like: `python -m certifi'."
                   emacs-lisp-mode-hook
                   eval-expression-minibuffer-setup-hook))
     (add-hook hook #'smartparens-strict-mode))
-  :config
   (require 'smartparens-config)
 
   (dolist (it sp-paredit-bindings)
