@@ -512,9 +512,9 @@ Something like: `python -m certifi'."
   (setq display-time-world-time-format "%H:%M %Z, %d. %b"
         display-time-world-list '(("Europe/Berlin"    "Berlin")
                                   ("Europe/London"    "London")
+                                  ("America/Los_Angeles" "San Francisco")
                                   ("Europe/Bucharest"  "Satu Mare")
                                   ("America/New_York" "New York (USA)")
-                                  ("America/San_Francisco" "San Francisco")
                                   ("Asia/Tokyo"       "Tokyo (JP)"))))
 
 (use-package calendar
