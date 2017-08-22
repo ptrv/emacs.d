@@ -364,8 +364,10 @@ Something like: `python -m certifi'."
   :init (winner-mode))
 
 (use-package windmove
-  :demand t
-  :config (windmove-default-keybindings 'super))
+  :bind (("s-<left>"  . windmove-left)
+         ("s-<right>" . windmove-right)
+         ("s-<up>"    . windmove-up)
+         ("s-<down>"  . windmove-down)))
 
 (use-package recentf
   :init (recentf-mode)
