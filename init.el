@@ -2072,8 +2072,9 @@ With a prefix argument P, isearch for the symbol at point."
   :mode (("\\.xml$" . nxml-mode)
          ("\\.gpx$" . nxml-mode)
          ("\\.plist$" . nxml-mode))
+  :commands (xml-format)
   :bind ("C-c x x" . xml-format)
-  :init
+  :config
   (defun xml-format ()
     "Format XML file with xmllint."
     (interactive)
@@ -2083,7 +2084,6 @@ With a prefix argument P, isearch for the symbol at point."
             (shell-command-on-region
              (point-min) (point-max) "xmllint --format -" (buffer-name) t)))
       (user-error "The executable `xmllint' not found!")))
-  :config
   (defun gpx-setup ()
     (when (and (stringp buffer-file-name)
                (string-match "\\.gpx\\'" buffer-file-name))
