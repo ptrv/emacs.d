@@ -267,11 +267,6 @@ Something like: `python -m certifi'."
          ("M-g n" . ptrv-errors/next-error)
          ("M-g p" . ptrv-errors/previous-error))
   :init
-  (defhydra ptrv-errors ()
-    "Errors."
-    ("n" next-error "next")
-    ("p" previous-error "previous")
-    ("f" first-error "first"))
   (defun ptrv/join-line ()
     (interactive)
     (join-line -1))
@@ -282,6 +277,11 @@ Something like: `python -m certifi'."
   (advice-add 'pop-to-mark-command :around
               #'pop-to-mark-command--around)
   :config
+  (defhydra ptrv-errors ()
+    "Errors."
+    ("n" next-error "next")
+    ("p" previous-error "previous")
+    ("f" first-error "first"))
   (setq set-mark-command-repeat-pop t
         column-number-mode t
         transient-mark-mode t
