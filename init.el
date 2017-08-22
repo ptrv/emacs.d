@@ -2140,11 +2140,9 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * editing
 (setq sentence-end-double-space nil)
 
-(use-package subword-mode
-  :init (add-hook 'prog-mode-hook 'subword-mode))
-
-(with-eval-after-load 'subword
-  (diminish 'subword-mode))
+(use-package subword
+  :init (add-hook 'prog-mode-hook 'subword-mode)
+  :diminish subword-mode)
 
 (use-package delsel
   :init (delete-selection-mode))
