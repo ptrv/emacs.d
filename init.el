@@ -869,7 +869,7 @@ Something like: `python -m certifi'."
 (use-package page
   :bind (("C-x ]" . ptrv-pages/forward-page)
          ("C-x [" . ptrv-pages/backward-page))
-  :init
+  :config
   (defhydra ptrv-pages ()
     "Pages"
     ("[" backward-page "backward")
@@ -1001,7 +1001,7 @@ Something like: `python -m certifi'."
 (use-package embrace
   :ensure t
   :bind (("C-c x e" . ptrv/embrace/body))
-  :init
+  :config
   (defhydra ptrv/embrace (:hint nil)
     "
 Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
@@ -1352,6 +1352,7 @@ _q_uit _RET_: current
     (diff-hl-margin-mode))
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  :config
   (defhydra ptrv-hunks ()
     "Hunks"
     ("]" diff-hl-next-hunk "next")
@@ -2307,6 +2308,7 @@ With a prefix argument P, isearch for the symbol at point."
              flycheck-may-enable-mode)
   :init
   (add-hook 'after-init-hook #'global-flycheck-mode)
+  :config
   (defhydra ptrv/flycheck-errors ()
     "Flycheck errors."
     ("n" flycheck-next-error "next")
@@ -2314,7 +2316,6 @@ With a prefix argument P, isearch for the symbol at point."
     ("f" flycheck-first-error "first")
     ("l" flycheck-list-errors "list")
     ("w" flycheck-copy-errors-as-kill "copy message"))
-  :config
   (defun ptrv/flycheck-mode-on-safe ()
     (when (and (flycheck-may-enable-mode)
                (flycheck-get-checker-for-buffer))
