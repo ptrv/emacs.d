@@ -364,10 +364,10 @@ Something like: `python -m certifi'."
   :init (winner-mode))
 
 (use-package windmove
-  :bind (("s-<left>"  . windmove-left)
-         ("s-<right>" . windmove-right)
-         ("s-<up>"    . windmove-up)
-         ("s-<down>"  . windmove-down)))
+  :bind (("S-<left>"  . windmove-left)
+         ("S-<right>" . windmove-right)
+         ("S-<up>"    . windmove-up)
+         ("S-<down>"  . windmove-down)))
 
 (use-package recentf
   :init (recentf-mode)
