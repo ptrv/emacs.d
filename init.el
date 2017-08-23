@@ -2825,9 +2825,6 @@ With a prefix argument P, isearch for the symbol at point."
                                   (interactive)
                                   (switch-to-buffer
                                    (other-buffer (current-buffer) 1))))
-  (key-chord-define-global "fg" 'jump-char-forward)
-  (key-chord-define-global "df" 'jump-char-backward)
-
   (with-eval-after-load 'cc-mode
     (key-chord-define c++-mode-map ";;" "\C-e;")))
 
@@ -2836,11 +2833,6 @@ With a prefix argument P, isearch for the symbol at point."
 (use-package ace-jump-mode
   :ensure t
   :bind ("C-o" . ace-jump-mode))
-
-;; (use-package jump-char
-;;   :ensure t
-;;   :bind (:map jump-char-isearch-map
-;;               ("<return>" . jump-char-exit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * browse-kill-ring
