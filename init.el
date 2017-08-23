@@ -623,7 +623,7 @@ Something like: `python -m certifi'."
 
 (setq column-number-mode t)
 (use-package hl-line
-  :config (global-hl-line-mode))
+  :init (global-hl-line-mode))
 
 (use-package zeburn
   :ensure zenburn-theme
