@@ -2829,8 +2829,18 @@ With a prefix argument P, isearch for the symbol at point."
     (key-chord-define c++-mode-map ";;" "\C-e;")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * avy
+(use-package avy
+  :ensure t
+  :bind (("C-o" . avy-goto-word-or-subword-1)
+         ("C-O" . avy-goto-char))
+  :config
+  (setq avy-background t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * ace-jump-mode
 (use-package ace-jump-mode
+  :disabled t
   :ensure t
   :bind ("C-o" . ace-jump-mode))
 
