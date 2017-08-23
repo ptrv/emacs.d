@@ -1396,6 +1396,7 @@ _q_uit _RET_: current
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * undo-tree
 (use-package undo-tree
+  :demand t
   :ensure t
   :config (global-undo-tree-mode)
   :diminish undo-tree-mode)
