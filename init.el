@@ -82,12 +82,6 @@
 ;; set all dirs
 (defvar ptrv/etc-dir      (file-name-as-directory (locate-user-emacs-file "etc")))
 
-(defmacro ptrv/hook-into-modes (func modes)
-  "Add FUNC to list of MODES."
-  (declare (indent 1))
-  `(dolist (mode-hook ,modes)
-     (add-hook mode-hook ,func)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * backup
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
@@ -414,8 +408,9 @@ Something like: `python -m certifi'."
 
 (use-package whitespace
   :bind ("C-c t w" . whitespace-mode)
-  :init (ptrv/hook-into-modes #'whitespace-mode
-          '(prog-mode-hook text-mode-hook))
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-mode))
   :config
   ;; Highlight tabs, empty lines at beg/end, trailing whitespaces and overlong
   ;; portions of lines via faces.  Also indicate tabs via characters
@@ -429,8 +424,9 @@ Something like: `python -m certifi'."
   :ensure t
   :bind (("C-c t W" . whitespace-cleanup-mode)
          ("C-c x w" . whitespace-cleanup))
-  :init (ptrv/hook-into-modes #'whitespace-cleanup-mode
-          '(prog-mode-hook text-mode-hook))
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-cleanup-mode))
   :config
   (setq whitespace-cleanup-mode-only-if-initially-clean t)
   (add-to-list 'whitespace-cleanup-mode-ignore-modes 'go-mode))
@@ -1088,27 +1084,28 @@ This checks in turn:
 (use-package elisp-slime-nav
   :ensure t
   :init
-  (ptrv/hook-into-modes #'elisp-slime-nav-mode
-    '(emacs-lisp-mode-hook ielm-mode-hook))
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+     (add-hook hook #'elisp-slime-nav-mode))
   :diminish elisp-slime-nav-mode)
 
 (use-package eldoc
-  :init (ptrv/hook-into-modes #'eldoc-mode
-          '(emacs-lisp-mode-hook
-            lisp-interaction-mode-hook
-            ielm-mode-hook
-            eval-expression-minibuffer-setup-hook
-            c-mode-common-hook
-            python-mode-hook
-            cider-mode-hook
-            cider-repl-mode-hook))
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  ielm-mode-hook
+                  eval-expression-minibuffer-setup-hook
+                  c-mode-common-hook
+                  python-mode-hook
+                  cider-mode-hook
+                  cider-repl-mode-hook))
+    (add-hook hook #'eldoc-mode))
   :diminish eldoc-mode)
 
 (use-package rainbow-delimiters         ; Highlight delimiters by depth
   :ensure t
   :init
-  (ptrv/hook-into-modes #'rainbow-delimiters-mode
-    '(text-mode-hook prog-mode-hook)))
+  (dolist (hook '(text-mode-hook prog-mode-hook))
+    (add-hook hook #'rainbow-delimiters-mode)))
 
 (use-package macrostep
   :ensure t
@@ -1372,14 +1369,14 @@ _q_uit _RET_: current
   :ensure t
   :mode ("\\.yasnippet$" . yasnippet-mode)
   :init
-  (ptrv/hook-into-modes #'yas-minor-mode
-    '(lua-mode-hook
-      c++-mode-hook
-      sclang-mode-hook
-      processing-mode-hook
-      go-mode-hook
-      clojure-mode-hook
-      org-mode-hook))
+  (dolist (hook '(lua-mode-hook
+                  c++-mode-hook
+                  sclang-mode-hook
+                  processing-mode-hook
+                  go-mode-hook
+                  clojure-mode-hook
+                  org-mode-hook))
+    (add-hook hook #'yas-minor-mode))
   :config
   (setq yas-prompt-functions '(yas-x-prompt
                                yas-ido-prompt
@@ -2164,10 +2161,10 @@ With a prefix argument P, isearch for the symbol at point."
   (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
   (add-hook 'text-mode-hook 'bug-reference-mode)
   (with-eval-after-load 'magit
-    (ptrv/hook-into-modes #'bug-reference-mode
-      '(magit-status-mode-hook magit-log-mode-hook))
-    (ptrv/hook-into-modes #'hack-dir-local-variables-non-file-buffer
-      '(magit-status-mode-hook magit-log-mode-hook))))
+    (dolist (hook '(magit-status-mode-hook magit-log-mode-hook))
+      (add-hook hook #'bug-reference-mode))
+    (dolist (hook '(magit-status-mode-hook magit-log-mode-hook))
+      (add-hook hook #'hack-dir-local-variables-non-file-buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * move-text
@@ -2554,8 +2551,8 @@ With a prefix argument P, isearch for the symbol at point."
           c-default-style "bsd"
           indent-tabs-mode nil)
     (setq-local split-width-threshold nil))
-  (ptrv/hook-into-modes #'ptrv/cc-mode-init
-    '(c-mode-hook c++-mode-hook))
+  (dolist (hook '(c-mode-hook c++-mode-hook))
+    (add-hook hook #'ptrv/cc-mode-init))
   :config
   (setq c-default-style '((java-mode . "java")
                           (awk-mode . "awk")
@@ -2641,14 +2638,15 @@ With a prefix argument P, isearch for the symbol at point."
   :load-path "~/src/emacs-ycmd"
   :commands (ycmd-mode)
   :init
-  (ptrv/hook-into-modes #'ycmd-mode
-    '(c-mode-hook
-      c++-mode-hook
-      go-mode-hook
-      python-mode-hook
-      rust-mode-hook
-      js-mode-hook
-      typescript-mode-hook))
+  (dolist (hook '(c-mode-hook
+                  c++-mode-hook
+                  go-mode-hook
+                  python-mode-hook
+                  rust-mode-hook
+                  js-mode-hook
+                  typescript-mode-hook
+                  csharp-mode-hook))
+    (add-hook 'hook #'ycmd-mode))
   :config
   (defun ptrv/ycmd-show-server-buffer ()
     (interactive)
