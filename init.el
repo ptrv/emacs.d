@@ -1554,6 +1554,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * iedit
 (use-package iedit
+  :disabled t
   :ensure t
   :bind ("C-c s i" . iedit-mode))
 
