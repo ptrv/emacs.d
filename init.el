@@ -1119,6 +1119,7 @@ This checks in turn:
 
 (use-package eval-sexp-fu
   :ensure t
+  :demand t
   :init
   (when (>= emacs-major-version 25)
     (eval-after-load 'bytecomp
