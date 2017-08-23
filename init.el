@@ -2789,8 +2789,10 @@ With a prefix argument P, isearch for the symbol at point."
 ;;;; * multiple-cursors
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c u n"   . mc/mark-next-like-this)
-         ("C-c u p"   . mc/mark-previous-like-this)
+  :bind (("C-S->"     . mc/mark-next-like-this)
+         ("C-S-<"     . mc/mark-previous-like-this)
+         ("C-c u n"   . mc/skip-to-next-like-this)
+         ("C-c u p"   . mc/skip-to-previous-like-this)
          ("C-c u N"   . mc/unmark-next-like-this)
          ("C-c u P"   . mc/unmark-previous-like-this)
          ("C-c u m"   . mc/mark-all-dwim)
