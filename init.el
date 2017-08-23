@@ -1677,6 +1677,11 @@ With a prefix argument P, isearch for the symbol at point."
           ;; (sequence "WAITING(w!)" "|" "DONE(d)")
           ))
 
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
+
   (with-eval-after-load 'yasnippet
     (defun yas-org-very-safe-expand ()
       (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
