@@ -643,7 +643,13 @@ Something like: `python -m certifi'."
 
 (use-package hl-todo
   :ensure t
-  :init (global-hl-todo-mode))
+  :bind ("C-c l t" . ptrv/todos/body)
+  :init (global-hl-todo-mode)
+  :config
+  (defhydra ptrv/todos ()
+    "Todos"
+    ("n" hl-todo-next "next")
+    ("p" hl-todo-previous "previous")))
 
 (use-package smart-mode-line
   :ensure t
