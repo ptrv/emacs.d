@@ -2646,7 +2646,7 @@ With a prefix argument P, isearch for the symbol at point."
                   js-mode-hook
                   typescript-mode-hook
                   csharp-mode-hook))
-    (add-hook 'hook #'ycmd-mode))
+    (add-hook hook #'ycmd-mode))
   :config
   (defun ptrv/ycmd-show-server-buffer ()
     (interactive)
