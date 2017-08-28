@@ -2609,7 +2609,8 @@ With a prefix argument P, isearch for the symbol at point."
           ("C-c , =" . helm-cscope-find-assignments-to-this-symbol))
     :init
     (dolist (hook '(c++-mode-hook c-mode-hook))
-      (add-hook hook #'helm-cscope-mode))))
+      (add-hook hook #'helm-cscope-mode))
+    :diminish helm-cscope-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * gud
