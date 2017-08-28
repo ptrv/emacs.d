@@ -2983,6 +2983,12 @@ With a prefix argument P, isearch for the symbol at point."
          ("C-c f S" . sudo-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * bool-flip
+(use-package bool-flip
+  :ensure t
+  :bind ("C-c x b" . bool-flip-do-flip))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; * docs
 (use-package zeal-at-point
   :if *is-linux*
