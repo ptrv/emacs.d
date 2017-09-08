@@ -691,18 +691,21 @@ Something like: `python -m certifi'."
 
 (use-package helm-files
   :ensure helm
-  :bind (([remap find-file] . helm-find-files)
-         ("C-c f s"         . helm-for-files)
-         ("C-c f r"         . helm-recentf))
+  :bind ([remap find-file] . helm-find-files)
   :config
-  (setq helm-recentf-fuzzy-match t
-        ;; Use recentf to find recent files
-        helm-ff-file-name-history-use-recentf t
-        ;; Find library from `require', `declare-function' and friends
-        helm-ff-search-library-in-sexp t
-        helm-ff-fuzzy-matching t)
+  (setq ;;helm-recentf-fuzzy-match t
+   ;; Use recentf to find recent files
+   helm-ff-file-name-history-use-recentf t
+   ;; Find library from `require', `declare-function' and friends
+   helm-ff-search-library-in-sexp t
+   helm-ff-fuzzy-matching t))
 
-  (when (eq system-type 'darwin)
+(use-package helm-for-files
+  :ensure helm
+  :bind (("C-c f s" . helm-for-files)
+         ("C-c f r" . helm-recentf))
+  :config
+  (when *is-mac*
     ;; Replace locate with spotlight for `helm-for-files'
     (setq helm-for-files-preferred-list
           (append (delq 'helm-source-locate
