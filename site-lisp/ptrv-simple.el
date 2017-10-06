@@ -350,5 +350,12 @@ With a prefix argument N, (un)comment that many sexps."
         (comment-style 'aligned))
     (comment-region start end)))
 
+(defun ptrv/html-entity-encode (b e)
+  (interactive "r")
+  (let ((recode-executable (executable-find "recode")))
+    (if recode-executable
+        (call-process-region b e "recode" t t nil "..HTML_4.0")
+      (user-error "recode executable not found"))))
+
 (provide 'ptrv-simple)
 ;;; ptrv-simple.el ends here
